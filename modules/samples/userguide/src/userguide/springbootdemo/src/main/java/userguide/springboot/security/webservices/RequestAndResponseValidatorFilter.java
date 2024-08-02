@@ -21,7 +21,6 @@ package userguide.springboot.security.webservices;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -31,10 +30,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -84,27 +83,21 @@ public class RequestAndResponseValidatorFilter extends OncePerRequestFilter {
 
         requestBeginTime.set(System.currentTimeMillis());
 
-        String currentUserIPAddress = null;
-        if (requestToUse.getHeader("X-Forwarded-For") != null) {
-            currentUserIPAddress = requestToUse.getHeader("X-Forwarded-For");
-        } else {
-            logger.warn(logPrefix + "cannot find X-Forwarded-For header, this field is required for proper IP auditing");
-            logger.warn(logPrefix + "Because no X-Forwarded-For header was found, setting 'currentUserIPAddress = requestToUse.getRemoteAddr()' which is typically an internal address");
-            currentUserIPAddress = requestToUse.getRemoteAddr();
-        }
-
-        if (currentUserIPAddress == null || currentUserIPAddress.length() == 0 || "unknown".equalsIgnoreCase(currentUserIPAddress)) {
-            logger.warn(logPrefix + "cannot find valid currentUserIPAddress");
-        } else {
-            logger.warn(logPrefix + "proceeding on currentUserIPAddress: " + currentUserIPAddress);
-            // rate limiting and extra validation can go here
-        }
-        
         try {
             filterChain.doFilter(requestToUse, responseToUse);
         } finally {
             logRequest(createRequestMessage(requestToUse,uuid));
-            logRequest(createResponseMessage(responseToUse,uuid));
+	    
+            ContentCachingResponseWrapper responseWrapper = WebUtils.getNativeResponse(responseToUse, ContentCachingResponseWrapper.class);
+            if (responseWrapper != null) {
+                if (isFirstRequest) {
+                    try {
+                        responseWrapper.copyBodyToResponse();
+                    } catch (IOException e) {
+                        logger.error("Fail to write response body back", e);
+                    }
+                }
+            } 
         }
     }
 

@@ -81,7 +81,7 @@ This quide supplies a pom.xml for building an exploded WAR with Spring Boot -
 however this WAR does not have an embedded web server such as Tomcat. 
 </p>
 <p>
-The testing was carried out on Wildfly, by installing the WAR in its app server. 
+The testing was carried out on Wildfly 32, by installing the WAR in its app server. 
 </p>
 <p>Please deploy the result of the maven build via 'mvn clean install', axis2-json-api.war, into your servlet container and ensure that it installs without any errors.</p>
 
@@ -121,7 +121,8 @@ The intent of this guide is to show a place that the JWT and JWE standards can b
 implemented.
 </p>
 <p>
-Axis2 JSON support is via POJO Objects. LoginRequest and LoginResponse are coded in the LoginService as the names would indicate. 
+Axis2 JSON support is via POJO Objects. LoginRequest and LoginResponse are coded in the LoginService as the names would indicate. A flag in the suupplied axis2.xml file, enableJSONOnly, 
+disables Axis2 functionality not required for JSON and sets up the server to expect JSON.
 </p>
 <p>
 Also provided is a test service, TestwsService. It includes two POJO Objects as would

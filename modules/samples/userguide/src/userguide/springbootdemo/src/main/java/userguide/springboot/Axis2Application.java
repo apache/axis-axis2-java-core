@@ -19,10 +19,10 @@
  */
 package userguide.springboot;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.Filter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
 
 import java.io.PrintWriter;
 import java.io.IOException;
@@ -83,7 +83,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -107,13 +106,10 @@ public class Axis2Application extends SpringBootServletInitializer {
     @EnableWebSecurity
     @Order(1)
     @PropertySource("classpath:application.properties")
-    public static class SecurityConfigurationTokenWebServices extends WebSecurityConfigurerAdapter {
+    public static class SecurityConfigurationTokenWebServices {
         private static final Logger logger = LogManager.getLogger(SecurityConfigurationTokenWebServices.class);
 
         public SecurityConfigurationTokenWebServices() {
-            super(true);
-            String logPrefix = "SecurityConfigurationTokenWebServices , ";
-            logger.debug(logPrefix + "inside constructor, defaults disabled via super(true) ...");
         }
 
         class AnonRequestMatcher implements RequestMatcher {
@@ -255,12 +251,6 @@ public class Axis2Application extends SpringBootServletInitializer {
             auth.authenticationProvider(jwtAuthenticationProvider);
         }
         
-        @Override
-        protected void configure(final HttpSecurity http) throws Exception {
-            String logPrefix = "StatelessSecurityContextRepository.configure(final HttpSecurity http) , ";
-            logger.debug(logPrefix + "inside Spring Boot filter config ...");
-        }
-        
         @Bean
         WSLoginFilter wsLoginFilter() throws Exception {
           final WSLoginFilter filter = new WSLoginFilter();
@@ -308,7 +298,10 @@ public class Axis2Application extends SpringBootServletInitializer {
         public GenericAccessDecisionManager genericAccessDecisionManager() {
             return new GenericAccessDecisionManager();
         }
-    
+   
+	// Note: This nethod is invoked only on token validation after a successful login 
+        // See https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html
+	// AuthorizationFilter supersedes FilterSecurityInterceptor. To remain backward compatible, FilterSecurityInterceptor remains the default.
         public FilterSecurityInterceptor filterSecurityInterceptor() throws Exception {
             final FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
             filterSecurityInterceptor.setAuthenticationManager(authenticationManager());
@@ -348,22 +341,28 @@ public class Axis2Application extends SpringBootServletInitializer {
             return headerFilter;
         }
       
-        @Bean(name = "springSecurityFilterChain")
-        public FilterChainProxy springSecurityFilterChain() throws ServletException, Exception {
+        // these two chains are a binary choice. 
+        // A login url will match, otherwise invoke jwtAuthenticationFilter
+
+        @Bean(name = "springSecurityFilterChainLogin")
+	@Order(1)
+        public SecurityFilterChain springSecurityFilterChainLogin() throws ServletException, Exception {
             String logPrefix = "GenericAccessDecisionManager.springSecurityFilterChain , ";
             logger.debug(logPrefix + "inside main filter config ...");
 
-            final List<SecurityFilterChain> listOfFilterChains = new ArrayList<SecurityFilterChain>();
+            SecurityFilterChain securityFilterChain1 = new DefaultSecurityFilterChain(new AnonRequestMatcher(), headerWriterFilter(), httpPostOnlyRejectionFilter(), requestAndResponseValidatorFilter(), wsLoginFilter(), sessionManagementFilter());
 
-	    // these two chains are a binary choice. 
-	    // A login url will match, otherwise invoke jwtAuthenticationFilter
-            listOfFilterChains.add(new DefaultSecurityFilterChain(new AnonRequestMatcher(), headerWriterFilter(), httpPostOnlyRejectionFilter(), requestAndResponseValidatorFilter(), wsLoginFilter(), sessionManagementFilter()));
+            return securityFilterChain1;
+        }
 
-            listOfFilterChains.add(new DefaultSecurityFilterChain(new NegatedRequestMatcher(new AnonRequestMatcher()), headerWriterFilter(), httpPostOnlyRejectionFilter(), requestAndResponseValidatorFilter(), jwtAuthenticationFilter(), sessionManagementFilter(), exceptionTranslationFilter(), filterSecurityInterceptor()));
+        @Bean(name = "springSecurityFilterChainToken")
+        public SecurityFilterChain springSecurityFilterChainToken() throws ServletException, Exception {
+            String logPrefix = "GenericAccessDecisionManager.springSecurityFilterChain , ";
+            logger.debug(logPrefix + "inside main filter config ...");
 
-            final FilterChainProxy filterChainProxy = new FilterChainProxy(listOfFilterChains);
+            SecurityFilterChain securityFilterChain2 = new DefaultSecurityFilterChain(new NegatedRequestMatcher(new AnonRequestMatcher()), headerWriterFilter(), httpPostOnlyRejectionFilter(), requestAndResponseValidatorFilter(), jwtAuthenticationFilter(), sessionManagementFilter(), exceptionTranslationFilter(), filterSecurityInterceptor());
 
-            return filterChainProxy;
+            return securityFilterChain2;
         }
 
         /**
@@ -420,6 +419,7 @@ public class Axis2Application extends SpringBootServletInitializer {
             return filter;
         }
         
+	/*
         @Bean()
         FilterRegistrationBean FilterRegistrationBean() {
             final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
@@ -429,6 +429,7 @@ public class Axis2Application extends SpringBootServletInitializer {
             filterRegistrationBean.addUrlPatterns("/*");
             return filterRegistrationBean;
         }
+	*/
 
         @Bean
         AuthenticationEntryPoint forbiddenEntryPoint() {

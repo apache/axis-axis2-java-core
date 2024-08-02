@@ -33,15 +33,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
+        <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <spring-boot.version>2.6.4</spring-boot.version>
+        <java.version>17</java.version>
+        <spring-boot.version>3.3.2</spring-boot.version>
     </properties>
 
     <dependencies>
@@ -61,27 +61,32 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>1.6.7</version>
+            <version>3.15.0</version>
         </dependency>
         <dependency>
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>
-            <version>1.2.1</version>
+            <version>2.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+            <version>2.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.6</version>
+            <version>4.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>2.3.3</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -90,7 +95,7 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jul</artifactId>
-            <version>2.17.2</version>
+            <version>2.23.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -129,17 +134,18 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
+	    <version>6.1.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>2.7.0</version>
+            <version>3.3.2</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>2.16.0</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -157,10 +163,15 @@
             <version>1.7</version>
         </dependency>
         <!-- axis2 -->
+	<dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-core</artifactId>
+            <version>2.0.0-M2</version>
+        </dependency>
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.5</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+            <version>2.0.0-M2</version>
         </dependency>
         <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
@@ -175,52 +186,52 @@
 	<dependency>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-kernel</artifactId>
-		<version>1.8.1</version>
+		<version>1.8.3-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-transport-http</artifactId>
-		<version>1.8.1</version>
+		<version>1.8.3-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-transport-local</artifactId>
-		<version>1.8.1</version>
+		<version>1.8.3-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-json</artifactId>
-		<version>1.8.1</version>
+		<version>1.8.3-SNAPSHOT</version>
 	</dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-ant-plugin</artifactId>
-	    <version>1.8.1</version>
+	    <version>1.8.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-	    <version>1.8.1</version>
+	    <version>1.8.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
-	    <version>1.8.1</version>
+	    <version>1.8.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-metadata</artifactId>
-	    <version>1.8.1</version>
+	    <version>1.8.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-spring</artifactId>
-	    <version>1.8.1</version>
+	    <version>1.8.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-	    <version>1.8.1</version>
+	    <version>1.8.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
@@ -248,29 +259,34 @@
             <version>4.2.1</version>
         </dependency>
         <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.woden</groupId>
             <artifactId>woden-core</artifactId>
             <version>1.0M10</version>
         </dependency>
-        <dependency>
+	<dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-api</artifactId>
-            <version>1.4.0</version>
+            <artifactId>axiom-impl</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-dom</artifactId>
-            <version>1.4.0</version>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-impl</artifactId>
-            <version>1.4.0</version>
+            <artifactId>axiom-jakarta-activation</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-legacy-attachments</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-jakarta-jaxb</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -280,17 +296,18 @@
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <version>2.5.2.0</version>
+            <version>2.5.4.0</version>
+            <classifier>jakarta</classifier>
+        </dependency>
+	<dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>5.3-beta1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.4.15</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.3.1</version>
         </dependency>
     </dependencies>
     <build>
@@ -298,7 +315,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.7.1</version>
                 <executions>
                     <execution>
                         <id>unpack</id>
@@ -330,13 +347,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>install</id>
                         <phase>install</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/Login.aar">
                                     <metainf file="resources-axis2/login_resources/services.xml"/>
                                 </jar>
@@ -360,7 +377,7 @@
                                         <include name="axis2.xml"/>
                                     </fileset>
                                 </copy>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -371,7 +388,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>3.4.0</version>
                 <configuration>
                     <webResources>
                         <resource>

@@ -38,7 +38,7 @@ import userguide.springboot.security.webservices.LoginDTO;
 import userguide.springboot.security.webservices.RequestAndResponseValidatorFilter;
 import userguide.springboot.hibernate.dao.SpringSecurityDAOImpl;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.HTTPConstants;

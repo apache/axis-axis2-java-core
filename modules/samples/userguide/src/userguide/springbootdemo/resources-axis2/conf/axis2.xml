@@ -25,6 +25,7 @@
     <parameter name="hotupdate">false</parameter>
     <parameter name="enableMTOM">false</parameter>
     <parameter name="enableSwA">false</parameter>
+    <parameter name="enableJSONOnly">true</parameter>
 
     <!--Uncomment if you want to enable file caching for attachments -->
     <!--parameter name="cacheAttachments">true</parameter>
@@ -435,6 +436,14 @@
     <phaseOrder type="InFlow">
         <!--  System predefined phases       -->
         <phase name="Transport">
+	    <handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher">
+                <order phase="Transport"/>
+            </handler>
+            <handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
+                <order phase="Transport"/>
+            </handler>	
             <handler name="JSONMessageHandler"
                      class="org.apache.axis2.json.moshi.JSONMessageHandler">
                 <order phase="Transport"/>

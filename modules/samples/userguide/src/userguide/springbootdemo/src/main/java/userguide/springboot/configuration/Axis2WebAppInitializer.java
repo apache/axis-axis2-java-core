@@ -33,8 +33,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import javax.servlet.ServletContext; 
-import javax.servlet.ServletRegistration; 
+import jakarta.servlet.ServletContext; 
+import jakarta.servlet.ServletRegistration; 
 
 import java.util.Set; 
  
