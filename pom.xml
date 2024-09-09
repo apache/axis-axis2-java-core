@@ -1204,7 +1204,7 @@
                 <plugin>
                     <groupId>com.github.veithen.daemon</groupId>
                     <artifactId>daemon-maven-plugin</artifactId>
-                    <version>0.6.2</version>
+                    <version>0.6.3</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
