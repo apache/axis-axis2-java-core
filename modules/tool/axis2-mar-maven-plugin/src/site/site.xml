@@ -41,6 +41,6 @@
       <item name="How to Use" href="howto.html"/>
       <item name="Configuration" href="configuration.html"/>
     </menu>
-    ${reports}
+    <menu ref="reports"/>
   </body>
 </project>
