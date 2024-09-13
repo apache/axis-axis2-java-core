@@ -282,6 +282,12 @@
             <artifactId>axis2-transport-xmpp</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Artifacts that are needed to generate the Javadoc but that are not transitive dependencies
+             because they are in scope "provided". -->
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

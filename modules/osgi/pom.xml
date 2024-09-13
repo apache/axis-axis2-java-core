@@ -47,7 +47,6 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -62,7 +61,6 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.framework</artifactId>
-            <scope>provided</scope>
         </dependency>
          <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -78,27 +76,23 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.util.tracker</artifactId>
             <version>1.5.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.http</artifactId>
             <version>1.2.2</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.cm</artifactId>
             <version>1.6.1</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.log</artifactId>
             <version>1.5.0</version>
-            <scope>provided</scope>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.jakartars</artifactId>
             <version>2.0.0</version>
