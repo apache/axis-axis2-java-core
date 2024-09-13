@@ -1219,7 +1219,7 @@
                         <javaHome>${java.home}</javaHome>
                         <!-- Enable the JaCoCo agent. -->
                         <mavenOpts>${argLine}</mavenOpts>
-                        <skipInvocation>${skipTests}</skipInvocation>
+                        <skipInvocation>${maven.test.skip}</skipInvocation>
                         <streamLogsOnFailures>true</streamLogsOnFailures>
                     </configuration>
                 </plugin>
