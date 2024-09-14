@@ -1219,7 +1219,6 @@
                         <javaHome>${java.home}</javaHome>
                         <!-- Enable the JaCoCo agent. -->
                         <mavenOpts>${argLine}</mavenOpts>
-                        <skipInvocation>${maven.test.skip}</skipInvocation>
                         <streamLogsOnFailures>true</streamLogsOnFailures>
                     </configuration>
                 </plugin>
@@ -1427,7 +1426,7 @@
                 <artifactId>gmavenplus-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>create-tmp-directory</id>
+                        <id>initialize</id>
                         <phase>initialize</phase>
                         <goals>
                             <goal>execute</goal>
@@ -1439,6 +1438,11 @@
                                     
                                     // Create the temporary directory specified in the surefire configuration
                                     new File(project.build.directory, 'tmp').mkdirs()
+                                    
+                                    // Skip maven-invoker-plugin if tests are skipped.
+                                    if (session.systemProperties['maven.test.skip'] == 'true' || session.systemProperties['skipTests'] == 'true') {
+                                        project.properties['invoker.skip'] = 'true'
+                                    }
                                 ]]></script>
                             </scripts>
                         </configuration>
