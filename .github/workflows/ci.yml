@@ -51,11 +51,36 @@ jobs:
       run: mvn -B -e -Papache-release -Dgpg.skip=true verify
     - name: Remove Snapshots
       run: find ~/.m2/repository -name '*-SNAPSHOT' -a -type d -print0 | xargs -0 rm -rf
+  site:
+    name: Site
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Cache Maven Repository
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: maven-site-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          maven-site-
+          maven-
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: 17
+    - name: Build
+      run: mvn -B -e -Dmaven.test.skip=true package site-deploy
+    - name: Remove Snapshots
+      run: find ~/.m2/repository -name '*-SNAPSHOT' -a -type d -print0 | xargs -0 rm -rf
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'apache/axis-axis2-java-core'
     name: Deploy
     runs-on: ubuntu-22.04
-    needs: build
+    needs:
+      - build
+      - site
     steps:
     - name: Checkout
       uses: actions/checkout@v4
