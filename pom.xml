@@ -1139,6 +1139,10 @@
                     <version>${maven-plugin-tools.version}</version>
                 </plugin>
                 <plugin>
+                    <artifactId>maven-plugin-report-plugin</artifactId>
+                    <version>${maven-plugin-tools.version}</version>
+                </plugin>
+                <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.3.1</version>
                 </plugin>
