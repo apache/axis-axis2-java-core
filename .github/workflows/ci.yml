@@ -76,7 +76,7 @@ jobs:
         server-username: NEXUS_USER
         server-password: NEXUS_PW
     - name: Deploy
-      run: mvn -B -e -Papache-release -Dgpg.skip=true -DskipTests=true deploy
+      run: mvn -B -e -Papache-release -Dgpg.skip=true -Dmaven.test.skip=true deploy
       env:
         NEXUS_USER: ${{ secrets.NEXUS_USER }}
         NEXUS_PW: ${{ secrets.NEXUS_PW }}
