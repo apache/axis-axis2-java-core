@@ -48,7 +48,7 @@ public class CreateTestRepositoryMojo extends AbstractCreateRepositoryMojo {
     @Parameter(defaultValue = "${project.build.directory}/test-repository")
     private File outputDirectory;
     
-    @Parameter(property = "maven.test.skip", readonly = true)
+    @Parameter(property = "maven.test.skip")
     private boolean skip;
     
     @Parameter(property = "project.build.outputDirectory", readonly = true)
@@ -80,7 +80,7 @@ public class CreateTestRepositoryMojo extends AbstractCreateRepositoryMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
-            getLog().info("Tests are skipped");
+            getLog().info("Not creating test repository");
         } else {
             super.execute();
         }
