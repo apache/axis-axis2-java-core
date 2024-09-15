@@ -20,6 +20,8 @@ package org.apache.axis2.maven.xsd2java;
 
 import java.io.File;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -38,6 +40,9 @@ public class GenerateTestSourcesMojo extends AbstractXSD2JavaMojo {
     @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/xsd2java")
     private File outputDirectory;
     
+    @Parameter(property = "maven.test.skip")
+    private boolean skip;
+    
     @Override
     protected File getOutputDirectory() {
         return outputDirectory;
@@ -46,5 +51,14 @@ public class GenerateTestSourcesMojo extends AbstractXSD2JavaMojo {
     @Override
     protected void addSourceRoot(MavenProject project) {
         project.addTestCompileSourceRoot(outputDirectory.getPath());
+    }
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            getLog().info("Not generating test sources");
+        } else {
+            super.execute();
+        }
     }
 }
