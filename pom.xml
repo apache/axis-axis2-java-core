@@ -1340,7 +1340,7 @@
             <plugin>
                 <groupId>com.github.veithen.alta</groupId>
                 <artifactId>alta-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.1</version>
                 <executions>
                     <!-- Automatically configure the Byte Buddy agent if it's present in the dependencies.
                          This avoids problems with installation at runtime. -->
