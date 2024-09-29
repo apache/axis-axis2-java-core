@@ -40,19 +40,19 @@ public abstract class XMLSchemaTest extends TestCase {
 
     public final String XMLSchemaNameSpace = "xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"";
 
-    public final String CustomSchemaLocation = "test-resources"
+    public final String CustomSchemaLocation = "src/test/resources"
             + File.separator + "schemas" + File.separator + "custom_schemas"
             + File.separator + "note.xsd";
     
-    public final String customDirectoryLocation = "test-resources"
+    public final String customDirectoryLocation = "src/test/resources"
             + File.separator + "schemas" + File.separator + "custom_schemas"
             + File.separator;
 
-    public final String SampleSchemasDirectory = "test-resources"
+    public final String SampleSchemasDirectory = "src/test/resources"
             + File.separator + "schemas" + File.separator + "custom_schemas"
             + File.separator;
 
-    public final String MappingFileLocation = "test-resources" + File.separator
+    public final String MappingFileLocation = "src/test/resources" + File.separator
             + "schemas" + File.separator + "mapping_files" + File.separator
             + "mapping1.txt";
 

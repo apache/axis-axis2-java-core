@@ -21,7 +21,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
             xmlns:ord="http://www.w3schools.com">
   <xs:import namespace="http://www.w3schools.com"
-              schemaLocation="test-resources/schemas/custom_schemas/sampleSchema.xsd"/>
+              schemaLocation="src/test/resources/schemas/custom_schemas/sampleSchema.xsd"/>
   <xs:element name="envelope" type="EnvelopeType"/>
   <xs:complexType name="EnvelopeType">
     <xs:sequence>
