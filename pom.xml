@@ -511,7 +511,7 @@
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
         <axis2_version>${project.version}</axis2_version>
         <project.build.outputTimestamp>2022-07-13T22:32:32Z</project.build.outputTimestamp>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
