@@ -95,6 +95,8 @@ public class HttpServiceProcessor implements IOProcessor {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("HTTP protocol error: " + ex.getMessage());
             }
+        } catch (Throwable ex) {
+            LOG.error("Unexpected exception", ex);
         } finally {
             destroy();
             if (this.callback == null) {
