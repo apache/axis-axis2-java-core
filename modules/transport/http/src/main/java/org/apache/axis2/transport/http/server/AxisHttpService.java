@@ -175,7 +175,7 @@ public class AxisHttpService {
                     (HttpStatus.SC_OK);
 
 	    final HttpClientContext clientContext = HttpClientContext.adapt(context);
-            if (clientContext.getRequestConfig().isExpectContinueEnabled()) {
+            if (clientContext.getRequestConfigOrDefault().isExpectContinueEnabled()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("isExpectContinueEnabled is true");
                 }
