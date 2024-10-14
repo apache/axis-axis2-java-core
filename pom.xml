@@ -457,7 +457,7 @@
     <distributionManagement>
         <site>
             <id>site</id>
-            <url>scm:git:https://gitbox.apache.org/repos/asf/axis-site.git</url>
+	    <url>scm:git:https://github.com/apache/axis-site/tree/master/axis2/java/core-staging</url>
         </site>
     </distributionManagement>
 

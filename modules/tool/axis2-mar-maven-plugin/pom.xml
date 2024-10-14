@@ -61,7 +61,7 @@
     <distributionManagement>
         <site>
             <id>site</id>
-            <url>scm:svn:https://svn.apache.org/repos/asf/axis/site/axis2/java/core-staging/tools/maven-plugins/axis2-mar-maven-plugin</url>
+	    <url>scm:git:https://github.com/apache/axis-site/tree/master/axis2/java/core-staging/tools/maven-plugins/axis2-mar-maven-plugin</url>
         </site>
     </distributionManagement>
 
