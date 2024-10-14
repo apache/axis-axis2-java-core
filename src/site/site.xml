@@ -58,6 +58,9 @@
                 <item name="1.7.8" href="release-notes/1.7.8.html"/>
                 <item name="1.7.9" href="release-notes/1.7.9.html"/>
                 <item name="1.8.0" href="release-notes/1.8.0.html"/>
+                <item name="1.8.1" href="release-notes/1.8.1.html"/>
+                <item name="1.8.2" href="release-notes/1.8.2.html"/>
+                <item name="2.0.0" href="release-notes/2.0.0.html"/>
             </item>
             <item name="Modules" href="modules/index.html" />
             <item name="Tools" href="tools/index.html" />
