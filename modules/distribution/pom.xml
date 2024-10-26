@@ -303,11 +303,6 @@
             <artifactId>angus-mail</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.woodstox</groupId>
-            <artifactId>woodstox-core</artifactId>
-            <version>7.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
         </dependency>
