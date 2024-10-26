@@ -18,12 +18,10 @@
   ~ under the License.
   -->
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
-<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+<Configure class="org.eclipse.jetty.ee10.webapp.WebAppContext">
     <Get name="sessionHandler">
-        <Get name="sessionManager">
-            <!-- Disable session cookies so that we can test that the admin console
-                 implements URL rewriting correctly. -->
-            <Set name="usingCookies" type="boolean">false</Set>
-        </Get>
+        <!-- Disable session cookies so that we can test that the admin console
+                implements URL rewriting correctly. -->
+        <Set name="usingCookies" type="boolean">false</Set>
     </Get>
 </Configure>
