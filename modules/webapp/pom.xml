@@ -301,9 +301,8 @@
                 </executions>
             </plugin>
             <plugin><!-- Compile the JSPs so that syntax errors are detected during the build. -->
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-jspc-maven-plugin</artifactId>
-                <version>11.0.20</version>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-jspc-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
