@@ -145,16 +145,14 @@ public class HTTPProxyConfigurator {
 
 	// AXIS2-6051, CredentialsProvider no longer has setCredentialsProvider() however BasicCredentialsProvider
 	// does have it. clientContext.getCredentialsProvider() returns CredentialsProvider. 
-        HttpHost proxy = new HttpHost(proxyHost, proxyPort);
 	if (proxyCredentials != null) {
-            if (clientContext.getCredentialsProvider() == null) {
-                BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-                clientContext.setCredentialsProvider(credsProvider);
-                credsProvider.setCredentials(new AuthScope(null, -1), proxyCredentials);
-            }
             requestConfig.setAuthenticationEnabled(true);
-            requestConfig.setProxy(proxy);
+            BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+            clientContext.setCredentialsProvider(credsProvider);
+            credsProvider.setCredentials(new AuthScope(null, -1), proxyCredentials);
 	}
+        HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+        requestConfig.setProxy(proxy);
     }
 
     private static OMElement getProxyConfigurationElement(Parameter proxySettingsFromAxisConfig)
