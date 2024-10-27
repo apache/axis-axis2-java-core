@@ -500,7 +500,7 @@
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
         <jaxws.rt.version>4.0.3</jaxws.rt.version>
-        <jaxws.api.version>4.0.0</jaxws.api.version>
+        <jaxws.api.version>4.0.2</jaxws.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <maven-plugin-tools.version>3.15.1</maven-plugin-tools.version>
         <maven-archetype.version>3.3.0</maven-archetype.version>
