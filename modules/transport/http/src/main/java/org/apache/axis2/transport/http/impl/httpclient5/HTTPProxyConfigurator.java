@@ -143,7 +143,7 @@ public class HTTPProxyConfigurator {
             proxyPort = Integer.parseInt(port);
         }
 
-	// AXIS2-6051, CredentialsProvider no longer has setCredentialsProvider() however BasicCredentialsProvider
+	// AXIS2-6051, CredentialsProvider no longer has setCredentials() however BasicCredentialsProvider
 	// does have it. clientContext.getCredentialsProvider() returns CredentialsProvider. 
 	if (proxyCredentials != null) {
             requestConfig.setAuthenticationEnabled(true);
