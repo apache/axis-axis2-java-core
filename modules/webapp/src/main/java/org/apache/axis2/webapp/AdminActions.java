@@ -214,11 +214,6 @@ final class AdminActions {
             return new Redirect(WELCOME).withParameter("failed", "true");
         }
 
-        if (password != null && !password.matches(HTTP_PARAM_VALUE_REGEX_WHITELIST_CHARS)) {
-            log.error("login() received invalid 'password' param, redirecting to: " + WELCOME);
-            return new Redirect(WELCOME).withParameter("failed", "true");
-        }
-
         if ((username == null) || (password == null) || username.trim().length() == 0
                 || password.trim().length() == 0) {
             return new Redirect(WELCOME).withParameter("failed", "true");
