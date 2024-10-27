@@ -131,7 +131,7 @@
                  importing the project into an IDE. -->
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>3.1.1</version>
+            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
