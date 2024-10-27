@@ -441,7 +441,10 @@ public abstract class HTTPSender {
                 HTTPConstants.MC_HTTP_STATUS_CODE,
                 Integer.valueOf(request.getStatusCode()));
         
+	// AXIS2-6046 , we supported a null content-type and null charSetEnc up until 1.7.9,
+        // so let's support that here now
         String contentTypeString = request.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+        String charSetEnc = null;
         if (contentTypeString != null) {
             ContentType contentType;
             try {
@@ -449,22 +452,27 @@ public abstract class HTTPSender {
             } catch (ParseException ex) {
                 throw AxisFault.makeFault(ex);
             }
-            String charSetEnc = contentType.getParameter(HTTPConstants.CHAR_SET_ENCODING);
-            MessageContext inMessageContext = msgContext.getOperationContext().getMessageContext(
-                    WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (inMessageContext != null) {
-                inMessageContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentTypeString);
-                inMessageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-            } else {
-                // Transport details will be stored in a HashMap so that anybody
-                // interested can
-                // retrieve them
-                Map<String,String> transportInfoMap = new HashMap<String,String>();
-                transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentTypeString);
-                transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-                // the HashMap is stored in the outgoing message.
-                msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
-            }
+            charSetEnc = contentType.getParameter(HTTPConstants.CHAR_SET_ENCODING);
+        }
+
+        if (contentTypeString == null) {
+            log.debug("contentType and charSetEnc detected as null, proceeding anyway");
+        }
+
+        MessageContext inMessageContext = msgContext.getOperationContext().getMessageContext(
+                WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        if (inMessageContext != null) {
+            inMessageContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentTypeString);
+            inMessageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+        } else {
+            // Transport details will be stored in a HashMap so that anybody
+            // interested can
+            // retrieve them
+            Map<String,String> transportInfoMap = new HashMap<String,String>();
+            transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentTypeString);
+            transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+            // the HashMap is stored in the outgoing message.
+            msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
         }
 
         Map<String,String> cookies = request.getCookies();
