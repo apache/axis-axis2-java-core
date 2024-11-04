@@ -76,7 +76,18 @@ public class HTTPProxyConfigurator {
         String proxyUser = null;
         String proxyPassword = null;
 
-        // Getting configuration values from Axis2.xml
+
+        // First: get settings from system properties
+        String host = System.getProperty(HTTPTransportConstants.HTTP_PROXY_HOST);
+        if (host != null) {
+            proxyHost = host;
+        }
+        String port = System.getProperty(HTTPTransportConstants.HTTP_PROXY_PORT);
+        if (port != null && !port.isEmpty()) {
+            proxyPort = Integer.parseInt(port);
+        }
+
+        // Override with settings from Axis2.xml
         Parameter proxySettingsFromAxisConfig = messageContext.getConfigurationContext()
                 .getAxisConfiguration().getParameter(HTTPTransportConstants.ATTR_PROXY);
         if (proxySettingsFromAxisConfig != null) {
@@ -99,17 +110,16 @@ public class HTTPProxyConfigurator {
                     if (proxyUser.length() > proxyUserDomainIndex + 1) {
                         String user = proxyUser.substring(proxyUserDomainIndex + 1);
                         proxyCredentials = new NTCredentials(user, proxyPassword.toCharArray(), proxyHost,
-                                                             domain);
+                                domain);
                     }
                 }
             }
         }
 
-        // If there is runtime proxy settings, these settings will override
-        // settings from axis2.xml
+        // Override with settings from MessageContext
         HttpTransportProperties.ProxyProperties proxyProperties =
                 (HttpTransportProperties.ProxyProperties) messageContext
-                .getProperty(HTTPConstants.PROXY);
+                        .getProperty(HTTPConstants.PROXY);
         if (proxyProperties != null) {
             String proxyHostProp = proxyProperties.getProxyHostName();
             if (proxyHostProp == null || proxyHostProp.length() <= 0) {
@@ -132,16 +142,7 @@ public class HTTPProxyConfigurator {
 
         }
 
-        // Overriding proxy settings if proxy is available from JVM settings
-        String host = System.getProperty(HTTPTransportConstants.HTTP_PROXY_HOST);
-        if (host != null) {
-            proxyHost = host;
-        }
 
-        String port = System.getProperty(HTTPTransportConstants.HTTP_PROXY_PORT);
-        if (port != null && !port.isEmpty()) {
-            proxyPort = Integer.parseInt(port);
-        }
 
 	// AXIS2-6051, CredentialsProvider no longer has setCredentials() however BasicCredentialsProvider
 	// does have it. clientContext.getCredentialsProvider() returns CredentialsProvider. 
