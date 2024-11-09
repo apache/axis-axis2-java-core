@@ -34,9 +34,6 @@
     <!--  <vendor logo="/general/ijLogo.png">IntelliJ</vendor>-->
     <vendor email="deepal@apache.org">Deepal Jayasinghe</vendor>
 
-    <!-- the IDEA build number which works with plugin -->
-    <idea-version since-build="2000"/>
-
     <!-- Plugin's application components -->
     <application-components>
         <component>
