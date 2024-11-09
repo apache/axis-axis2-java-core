@@ -486,7 +486,7 @@ public class Options implements Externalizable, SafeSerializable {
      * @return version
      */
     public String getSoapVersionURI() {
-        if (soapVersionURI == null && parent != null) {
+        if (soapVersionURI == null && parent != null && this != parent) {
             return parent.getSoapVersionURI();
         }
 
