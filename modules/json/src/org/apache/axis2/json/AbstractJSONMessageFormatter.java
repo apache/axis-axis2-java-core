@@ -135,7 +135,12 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
             }
             String jsonToWrite = getStringToWrite(element);
             if (jsonToWrite != null) {
-                out.write(jsonToWrite.getBytes());
+                String encoding = format.getCharSetEncoding();
+                if (encoding != null) {
+                    out.write(jsonToWrite.getBytes(encoding));
+                } else {
+                    out.write(jsonToWrite.getBytes());
+		}
             } else {
                 XMLStreamWriter jsonWriter = getJSONWriter(out, format, msgCtxt);
                 // Jettison v1.2+ relies on writeStartDocument being called (AXIS2-5044)
