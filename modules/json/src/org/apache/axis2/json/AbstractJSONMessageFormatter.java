@@ -135,9 +135,8 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
             }
             String jsonToWrite = getStringToWrite(element);
             if (jsonToWrite != null) {
-                String encoding = format.getCharSetEncoding();
-                if (encoding != null) {
-                    out.write(jsonToWrite.getBytes(encoding));
+                if (format != null && format.getCharSetEncoding() != null) {
+                    out.write(jsonToWrite.getBytes(format.getCharSetEncoding()));
                 } else {
                     out.write(jsonToWrite.getBytes());
 		}
