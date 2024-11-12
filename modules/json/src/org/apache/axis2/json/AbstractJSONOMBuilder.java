@@ -35,6 +35,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import javax.servlet.http.HttpServletRequest;
+
 /** Makes the OMSourcedElement object with the JSONDataSource inside. */
 
 public abstract class AbstractJSONOMBuilder implements Builder {
@@ -86,7 +88,20 @@ public abstract class AbstractJSONOMBuilder implements Builder {
                 jsonString = requestURL.substring(index + 1);
                 reader = new StringReader(jsonString);
             } else {
-                throw new AxisFault("No JSON message received through HTTP GET or POST");
+                /*
+		 * AXIS2-5929 REST GET request using Accept HTTP Header to indicate JSON, does not working
+                 * MARTI PAMIES SOLA
+                 * Get JSON message from request URI if not present as parameter.
+                 * To be able to response to full URL requests 
+                 */
+            	HttpServletRequest httpServeltRqst =(HttpServletRequest)messageContext.getProperty("transport.http.servletRequest");
+            	String requestParam=httpServeltRqst.getRequestURI();
+            	if (!(requestParam.equals(""))) {
+            		jsonString = requestParam;
+                    reader = new StringReader(jsonString);
+            	}else {
+        			throw new AxisFault("No JSON message received through HTTP GET or POST");
+            	}
             }
         } else {
             // Not sure where this is specified, but SOAPBuilder also determines the charset
