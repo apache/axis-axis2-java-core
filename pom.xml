@@ -1556,6 +1556,30 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- site-deploy is not finding our JavaDoc, so fix that with some maven-resources-plugin config -->
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+				<outputDirectory>${project.parent.basedir}/target/staging/apidocs</outputDirectory>
+                            <resources>
+                                <resource>
+					<directory>${project.parent.basedir}/apidocs/target/reports/apidocs</directory>
+                                    <includes>
+                                        <include>**/*.*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-publish-plugin</artifactId>
                 <version>3.3.0</version>
