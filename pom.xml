@@ -499,7 +499,6 @@
         <m2Repository>'${settings.localRepository}'</m2Repository>
         <jaxws.rt.version>4.0.3</jaxws.rt.version>
         <jaxws.api.version>4.0.2</jaxws.api.version>
-        <jsr311.api.version>1.1.1</jsr311.api.version>
         <maven-plugin-tools.version>3.15.1</maven-plugin-tools.version>
         <maven-archetype.version>3.3.1</maven-archetype.version>
         <activemq.version>6.1.4</activemq.version>
@@ -814,14 +813,6 @@
                 <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>4.0.0</version>
             </dependency>
-
-	    <!--
-            <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>jsr311-api</artifactId>
-                <version>${jsr311.api.version}</version>
-            </dependency>
-	    -->	    
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-legacy</artifactId>
@@ -1555,8 +1546,7 @@
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
-            <plugin>
-                <!-- site-deploy is not finding our JavaDoc, so fix that with some maven-resources-plugin config -->
+            <plugin><!-- site-deploy is not finding our JavaDoc, so fix that with some maven-resources-plugin config -->
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
