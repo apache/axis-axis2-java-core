@@ -425,7 +425,7 @@
         <module>modules/clustering</module>
         <module>modules/corba</module>
         <module>modules/osgi</module>
-	<!-- FIXME AXIS2-6051, need to figure out OSGI
+	<!-- FIXME AXIS2-6076, need to figure out OSGI
 	     in the transition to jakarta
         <module>modules/osgi-tests</module>
 	-->
@@ -776,18 +776,18 @@
                 <artifactId>httpclient5</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
-	    <!-- FIXME 
+	    <!--
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore-osgi</artifactId>
-                <version>${httpcore.version}</version>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5-osgi</artifactId>
+                <version>5.0-beta2</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient-osgi</artifactId>
-                <version>${httpclient.version}</version>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-osgi</artifactId>
+                <version>5.0-beta5</version>
             </dependency>
-            -->		    
+	    -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-core</artifactId>
@@ -931,13 +931,6 @@
                 <artifactId>org.eclipse.ui.ide</artifactId>
                 <version>3.22.300</version>
             </dependency>
-	    <!--
-            <dependency>
-                <groupId>osgi.bundle</groupId>
-                <artifactId>org.eclipse.ui.ide</artifactId>
-                <version>3.17.100.v20200530-0835</version>
-            </dependency>
-	    -->
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.ui.workbench</artifactId>
@@ -1169,7 +1162,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.9</version>
+                    <version>6.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>net.nicoulaj.maven.plugins</groupId>

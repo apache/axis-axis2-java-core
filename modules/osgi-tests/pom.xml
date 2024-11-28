@@ -56,9 +56,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
         </dependency>
 	<dependency>
             <groupId>com.sun.activation</groupId>
@@ -118,22 +121,22 @@
                                     <artifact>
                                         <groupId>org.apache.felix</groupId>
                                         <artifactId>org.apache.felix.http.jetty</artifactId>
-                                        <version>2.2.2</version>
+                                        <version>5.1.26</version>
                                     </artifact>
                                     <artifact>
                                         <groupId>org.apache.felix</groupId>
                                         <artifactId>org.apache.felix.http.whiteboard</artifactId>
-                                        <version>2.2.2</version>
+                                        <version>4.0.0</version>
                                     </artifact>
                                     <artifact>
                                         <groupId>org.apache.felix</groupId>
                                         <artifactId>org.apache.felix.configadmin</artifactId>
-                                        <version>1.8.0</version>
+                                        <version>1.9.26</version>
                                     </artifact>
                                     <artifact>
                                         <groupId>org.apache.servicemix.bundles</groupId>
                                         <artifactId>org.apache.servicemix.bundles.wsdl4j</artifactId>
-                                        <version>1.6.2_6</version>
+                                        <version>1.6.3_1</version>
                                     </artifact>
                                     <artifact>
                                         <groupId>org.apache.geronimo.specs</groupId>
@@ -142,21 +145,16 @@
                                     </artifact>
                                     <artifact>
                                         <groupId>org.apache.servicemix.bundles</groupId>
-                                        <artifactId>org.apache.servicemix.bundles.commons-httpclient</artifactId>
-                                        <version>3.1_7</version>
-                                    </artifact>
-                                    <artifact>
-                                        <groupId>org.apache.servicemix.bundles</groupId>
                                         <artifactId>org.apache.servicemix.bundles.commons-codec</artifactId>
                                         <version>1.3_5</version>
                                     </artifact>
                                     <artifact>
-                                        <groupId>org.apache.httpcomponents</groupId>
-                                        <artifactId>httpcore-osgi</artifactId>
+                                        <groupId>org.apache.httpcomponents.core5</groupId>
+                                        <artifactId>httpcore5-osgi</artifactId>
                                     </artifact>
                                     <artifact>
-                                        <groupId>org.apache.httpcomponents</groupId>
-                                        <artifactId>httpclient-osgi</artifactId>
+                                        <groupId>org.apache.httpcomponents.client5</groupId>
+                                        <artifactId>httpclient5-osgi</artifactId>
                                     </artifact>
                                 </artifacts>
                             </artifactSet>

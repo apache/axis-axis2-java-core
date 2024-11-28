@@ -61,20 +61,20 @@ public class OSGiTest {
                 url("link:classpath:org.apache.felix.configadmin.link"),
                 url("link:classpath:org.apache.servicemix.bundles.wsdl4j.link"),
                 url("link:classpath:org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec.link"),
-                url("link:classpath:com.sun.activation.jakata.activation.link"),
-                url("link:classpath:com.sun.mail.jakarta.mail.link"), // TODO: should no longer be necessary
-                url("link:classpath:org.apache.geronimo.specs.geronimo-servlet_2.5_spec.link"),
+                url("link:classpath:jakarta.activation.link"),
+                url("link:classpath:jakarta.mail.link"), // TODO: should no longer be necessary
+                // no obvious replacement in Maven Central ? url("link:classpath:org.apache.geronimo.specs.geronimo-servlet_2.5_spec.link"),
                 url("link:classpath:org.apache.james.apache-mime4j-core.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-api.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-impl.link"),
-                url("link:classpath:org.apache.ws.commons.axiom.axiom-javax-activation.link"),
+                url("link:classpath:org.apache.ws.commons.axiom.axiom-jakarta-activation.link"),
                 url("link:classpath:org.apache.ws.commons.axiom.axiom-legacy-attachments.link"),
-                url("link:classpath:org.apache.commons.commons-fileupload.link"),
+                url("link:classpath:commons-fileupload2-core.link"),
                 url("link:classpath:org.apache.commons.commons-io.link"),
-                url("link:classpath:org.apache.servicemix.bundles.commons-httpclient.link"), // TODO: still necessary???
+                // url("link:classpath:org.apache.servicemix.bundles.commons-httpclient.link"), // TODO: still necessary???
                 url("link:classpath:org.apache.servicemix.bundles.commons-codec.link"), // TODO: still necessary???
-                url("link:classpath:org.apache.httpcomponents.httpcore.link"),
-                url("link:classpath:org.apache.httpcomponents.httpclient.link"),
+                url("link:classpath:org.apache.hc.core5.link"),
+                url("link:classpath:org.apache.hc.client5.link"),
                 url("link:classpath:org.apache.neethi.link"),
                 url("link:classpath:org.apache.woden.core.link"),
                 url("link:classpath:org.apache.ws.xmlschema.core.link"),
