@@ -894,7 +894,7 @@
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.resources</artifactId>
-                <version>3.21.0</version>
+                <version>3.22.0</version>
             </dependency>
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
