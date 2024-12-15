@@ -29,6 +29,11 @@ updates:
       - dependency-name: "org.apache.maven.plugins:maven-plugin-plugin"
         versions:
         - "3.6.2"
+      # Recent versions of google-java-format access internal Java APIs and adding the required JVM
+      # flags isn't an option because the code needs to run in Ant.
+      - dependency-name: "com.google.googlejavaformat:google-java-format"
+        versions:
+        - ">= 1.8"
     open-pull-requests-limit: 15
   - package-ecosystem: "github-actions"
     directory: "/"
