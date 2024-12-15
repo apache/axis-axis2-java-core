@@ -103,11 +103,19 @@ final class RequestImpl implements Request {
         }
         int port = requestUri.getPort();
 	String protocol;
+	// AXIS2-6073
+	// This may always be null here, HttpUriRequestBase has the scheme but is unused?
+	// And also, protocol doesn't need to be set on HttpUriRequestBase?
 	if (this.httpRequestMethod.getVersion() != null && this.httpRequestMethod.getVersion().getProtocol() != null) {
 	    protocol = this.httpRequestMethod.getVersion().getProtocol();
+            log.debug("Received protocol from this.httpRequestMethod.getVersion().getProtocol(): " + protocol);
+        } else if (requestUri.getScheme() != null) {
+	    protocol = requestUri.getScheme();
+            log.debug("Received protocol from requestUri.getScheme(): " + protocol);
 	} else {
 	    protocol = "http";
-	}	
+            log.warn("Cannot find protocol, using default as http on requestUri: " + requestUri);
+	}
         if (port == -1) {
             if (HTTPTransportConstants.PROTOCOL_HTTP.equals(protocol)) {
                 port = 80;
