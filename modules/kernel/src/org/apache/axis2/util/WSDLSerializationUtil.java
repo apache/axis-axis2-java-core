@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
@@ -36,12 +35,15 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
 
 import javax.xml.namespace.QName;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
  * Helps the AxisService to WSDL process
  */
 public class WSDLSerializationUtil {
+    private static final OnDemandLogger log = new OnDemandLogger(WSDLSerializationUtil.class);
 
     public static final String CDATA_START = "<![CDATA[";
     public static final String CDATA_START_REGEX = "<!\\[CDATA\\[";
@@ -422,29 +424,31 @@ public class WSDLSerializationUtil {
 		}
 	}                              
         
-	public static String extractHostIP(String serviceURL){
-            
+	public static String extractHostIP(String serviceURL) {
+        try {
+            return new URI(serviceURL).getHost();
+        } catch (URISyntaxException | NullPointerException e) {
+            log.debug("encountered invalid URI when trying to extract host ip, will try to parse manually now", e);
             String ip = null;
-            
+
             if (serviceURL != null) {
-            
+
                 int ipindex = serviceURL.indexOf("//");
-                        
+
                 if (ipindex >= 0) {
-                    ip = serviceURL.substring(ipindex + 2, serviceURL.length());
+                    ip = serviceURL.substring(ipindex + 2);
                     int seperatorIndex = ip.indexOf(":");
                     int slashIndex = ip.indexOf("/");
-                        
+
                     if (seperatorIndex >= 0) {
                         ip = ip.substring(0, seperatorIndex);
                     } else {
                         ip = ip.substring(0, slashIndex);
-                    }                      
+                    }
                 }
             }
-               
-            return ip;      
-        }      
 
-	
+            return ip;
+        }
+    }
 }
