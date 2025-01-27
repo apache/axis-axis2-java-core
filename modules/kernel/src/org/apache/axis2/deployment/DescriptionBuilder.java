@@ -96,6 +96,11 @@ public class DescriptionBuilder implements DeploymentConstants {
     public OMElement buildOM() throws XMLStreamException {
         OMElement element = (OMElement) XMLUtils.toOM(descriptionStream);
         element.build();
+        try {
+            descriptionStream.close();
+        } catch(Exception e) {
+            throw new XMLStreamException(e);
+        }
         return element;
     }
 
