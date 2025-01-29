@@ -667,7 +667,7 @@ public class Utils {
      * @return Returns String.
       */
     public static String getIpAddress() throws SocketException {
-        return getLocalHostLANAddresses().stream().findFirst().map(InetAddress::toString).orElse("127.0.0.1");
+        return getLocalHostLANAddresses().stream().findFirst().map(InetAddress::getHostAddress).orElse("127.0.0.1");
     }
 
     /**
