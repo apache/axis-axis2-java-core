@@ -120,7 +120,7 @@ public class JMSSender extends AbstractTransportSender implements ManagementSupp
         JMSOutTransportInfo jmsOut = null;
         JMSMessageSender messageSender = null;
 
-        if (targetAddress != null&& (targetAddress.toUpperCase().indexOf("LDAP")!=-1 || targetAddress.toUpperCase().indexOf("RMI")!=-1 || targetAddress.toUpperCase().indexOf("JMX")!=-1 || targetAddress.toUpperCase().indexOf("JRMP")!=-1 || targetAddress.toUpperCase().indexOf("DNS")!=-1 || targetAddress.toUpperCase().indexOf("IIOP")!=-1 || targetAddress.toUpperCase().indexOf("CORBANAME")!=-1)) {
+        if (targetAddress != null && (targetAddress.toUpperCase().indexOf("LDAP")!=-1 || targetAddress.toUpperCase().indexOf("RMI")!=-1 || targetAddress.toUpperCase().indexOf("JMX")!=-1 || targetAddress.toUpperCase().indexOf("JRMP")!=-1 || targetAddress.toUpperCase().indexOf("DNS")!=-1 || targetAddress.toUpperCase().indexOf("IIOP")!=-1 || targetAddress.toUpperCase().indexOf("CORBANAME")!=-1)) {
             throw new AxisFault("targetAddress received by JMSSender is not supported by this method: " + targetAddress);
 	}
 
