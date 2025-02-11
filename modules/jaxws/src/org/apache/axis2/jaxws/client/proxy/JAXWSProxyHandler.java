@@ -58,6 +58,7 @@ import jakarta.xml.ws.Response;
 import jakarta.xml.ws.WebServiceException;
 import jakarta.xml.ws.WebServiceFeature;
 import jakarta.xml.ws.soap.SOAPBinding;
+import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -65,6 +66,8 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * ProxyHandler is the java.lang.reflect.InvocationHandler implementation. When a JAX-WS client
@@ -567,9 +570,32 @@ public class JAXWSProxyHandler extends BindingProvider implements
             // Free incoming stream
             try {
                 responseContext.freeInputStream();
+                closeInputStream(responseContext);
             }
             catch (Throwable t) {
                 throw ExceptionFactory.makeWebServiceException(t);
+            }
+        }
+    }
+
+    private void closeInputStream(MessageContext responseContext) {
+        // accessing the input stream is not possible via get
+        // workaround using entry set
+        Iterator var2 = responseContext.getMEPContext().entrySet().iterator();
+    
+        while(var2.hasNext()) {
+            Object entry = var2.next();
+            if (entry instanceof Map.Entry && "TRANSPORT_IN".equals(((Map.Entry)entry).getKey())) {
+                Object prop = ((Map.Entry)entry).getValue();
+                if (prop instanceof InputStream) {
+                    try {
+                        InputStream inputStream = (InputStream)prop;
+                        inputStream.close();
+                    } catch (Exception var6) {
+                        log.error(var6.getMessage(), var6);
+                    }
+                }
+                break;
             }
         }
     }
