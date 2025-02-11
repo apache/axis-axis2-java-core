@@ -583,4 +583,46 @@ public class ConverterUtilTest extends TestCase {
         long result = ConverterUtil.compare(value, decimalNotationString);
         assertThat(result).isGreaterThanOrEqualTo(0L);
     }
+
+    public void testCompareLongIsLessThanTotalDigitsFacetRestriction() {
+        long value = 1L;
+        String totalDigitsFromXsd = "1";
+        String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
+        assertThat(ConverterUtil.compare(value, decimalNotationString)).isLessThan(0L);
+    }
+
+    public void testCompareLongIsGreaterThanOrEqualToTotalDigitsFacetRestriction() {
+        long value = 10L;
+        String totalDigitsFromXsd = "1";
+        String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
+        assertThat(ConverterUtil.compare(value, decimalNotationString)).isGreaterThanOrEqualTo(0L);
+    }
+
+    public void testCompareIntIsLessThanTotalDigitsFacetRestriction() {
+        int value = 1;
+        String totalDigitsFromXsd = "1";
+        String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
+        assertThat(ConverterUtil.compare(value, decimalNotationString)).isLessThan(0);
+    }
+
+    public void testCompareIntIsGreaterThanOrEqualToTotalDigitsFacetRestriction() {
+        int value = 10;
+        String totalDigitsFromXsd = "1";
+        String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
+        assertThat(ConverterUtil.compare(value, decimalNotationString)).isGreaterThanOrEqualTo(0);
+    }
+
+    public void testCompareShortIsLessThanTotalDigitsFacetRestriction() {
+        short value = 1;
+        String totalDigitsFromXsd = "1";
+        String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
+        assertThat(ConverterUtil.compare(value, decimalNotationString)).isLessThan(0);
+    }
+
+    public void testCompareShortIsGreaterThanOrEqualToTotalDigitsFacetRestriction() {
+        short value = 10;
+        String totalDigitsFromXsd = "1";
+        String decimalNotationString = ConverterUtil.convertToStandardDecimalNotation(totalDigitsFromXsd).toPlainString();
+        assertThat(ConverterUtil.compare(value, decimalNotationString)).isGreaterThanOrEqualTo(0);
+    }
 }
