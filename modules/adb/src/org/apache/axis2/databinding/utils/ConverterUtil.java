@@ -1292,7 +1292,7 @@ public class ConverterUtil {
     public static int compare(int intValue, String value) {
         int param;
         try {
-            NumberFormat nf = NumberFormat.getInstance();
+            NumberFormat nf = NumberFormat.getInstance(Locale.US);
             param = nf.parse(value).intValue();
         } catch (Exception e) {
             throw new ObjectConversionException(e);
@@ -1327,7 +1327,7 @@ public class ConverterUtil {
     public static long compare(long longValue, String value) {
         long param;
         try {
-            NumberFormat nf = NumberFormat.getInstance();
+            NumberFormat nf = NumberFormat.getInstance(Locale.US);
             param = nf.parse(value).longValue();
         } catch (Exception e) {
             throw new ObjectConversionException(e);
@@ -1343,7 +1343,7 @@ public class ConverterUtil {
     public static int compare(short shortValue, String value) {
         short param;
         try {
-            NumberFormat nf = NumberFormat.getInstance();
+            NumberFormat nf = NumberFormat.getInstance(Locale.US);
             param = nf.parse(value).shortValue();
         } catch (Exception e) {
             throw new ObjectConversionException(e);
