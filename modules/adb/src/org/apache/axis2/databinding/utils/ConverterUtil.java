@@ -1292,6 +1292,7 @@ public class ConverterUtil {
     public static int compare(int intValue, String value) {
         int param;
         try {
+	    // See AXIS2-6041 and AXIS2-6068 that require Locale.US
             NumberFormat nf = NumberFormat.getInstance(Locale.US);
             param = nf.parse(value).intValue();
         } catch (Exception e) {
