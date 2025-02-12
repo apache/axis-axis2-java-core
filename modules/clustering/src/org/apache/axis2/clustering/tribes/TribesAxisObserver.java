@@ -54,8 +54,6 @@ public class TribesAxisObserver implements AxisObserver {
     public void moduleUpdate(AxisEvent axisEvent, AxisModule axisModule) {
         if (axisEvent.getEventType() == AxisEvent.MODULE_DEPLOY) {
             ClassLoaderUtil.addModuleClassLoader(axisModule);
-        } else if (axisEvent.getEventType() == AxisEvent.MODULE_DEPLOY) {
-            ClassLoaderUtil.removeModuleClassLoader(axisModule);
         }
     }
 
