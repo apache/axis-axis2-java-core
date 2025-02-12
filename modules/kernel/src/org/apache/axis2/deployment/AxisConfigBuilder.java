@@ -439,9 +439,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         log.info("Disabled - " + deployerClassName + " - " + ex.getMessage());
                         continue;
                     } catch (Throwable e) {
-                        log.warn("Unable to instantiate deployer " + deployerClassName
-                                + "; see debug logs for more details");
-                        log.debug(e.getMessage(), e);
+                        log.warn("Unable to instantiate serviceBuilderClass " + serviceBuilderClass + " , error: " + e.getMessage(), e);
+                        log.warn("This error could mean the server was able to instantiate the deployer, however was unable to load an extension for it. This class will continue processing the next extension...");
                         continue;
                     }
                     if (deployer instanceof AbstractDeployer) {
