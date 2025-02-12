@@ -162,12 +162,12 @@
                          protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                          <xsl:if test="not(@unbound) and @array">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, not unbound and array found XSL condition 'param != null' and param.length greater than maxOccurs");
                               }
                          </xsl:if>
                          <xsl:if test="$min!=0 and @array">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, min!=0 and array found XSL condition 'param != null' and param.length less than min");
                               }
                          </xsl:if>
                          }
@@ -334,12 +334,12 @@
                               protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                              <xsl:if test="not(@unbound)">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, not unbound found XSL condition 'param != null' and param.length greater than maxOccurs");
                               }
                               </xsl:if>
                               <xsl:if test="$min!=0">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, min!=0 found XSL condition 'param != null' and param.length less than min");
                               }
                               </xsl:if>
                               }
@@ -463,7 +463,7 @@
 
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with maxLenFacet and minLenFacet and patternFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).matches()'");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@patternFacet)">
@@ -471,7 +471,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with patternFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).matches(patternFacet)'");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@lenFacet)">
@@ -479,7 +479,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with lenFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).length() == lenFacet)'");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
@@ -488,7 +488,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with maxLenFacet or minLenFacetlen failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).length() == maxLenFacet)'");
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@totalDigitsFacet)">
@@ -497,7 +497,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with totalDigitsFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.compare(param, totalDigitsDecimal) less than zero'");
                                             }
                                         </xsl:when>
                                         <xsl:when test="@maxExFacet or @minExFacet or @maxInFacet or @minInFacet">
@@ -506,7 +506,7 @@
                                                         this.<xsl:value-of select="$varName"/>=param;
                                                     }
                                                     else {
-                                                        throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                        throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with maxExFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.compare(param, maxExFacet)' less than zero");
                                                     }
                                             </xsl:if>
                                             <xsl:if test="@minExFacet">
@@ -514,7 +514,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
-                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with minExFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.compare(param, minExFacet) greater than zero'");
                                                 }
                                             </xsl:if>
                                             <xsl:if test="@maxInFacet">
@@ -522,7 +522,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
-                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with maxInFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.compare(param, maxInFacet) less than or equal zero'");
                                                 }
                                             </xsl:if>
                                             <xsl:if test="@minInFacet">
@@ -530,7 +530,7 @@
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
-                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions");
+                                                    throw new java.lang.RuntimeException("Input values do not follow defined XSD restrictions, on restrictionBaseType with minInFacet failed XSL 'if' condition 'org.apache.axis2.databinding.utils.ConverterUtil.compare(param, minInFacet) greater than or equal zero'");
                                                 }
                                             </xsl:if>
                                         </xsl:when>

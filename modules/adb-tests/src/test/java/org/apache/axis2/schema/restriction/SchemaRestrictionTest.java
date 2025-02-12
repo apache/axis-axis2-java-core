@@ -65,7 +65,7 @@ public class SchemaRestrictionTest extends TestCase {
             LimitedStringE.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -79,7 +79,7 @@ public class SchemaRestrictionTest extends TestCase {
             LimitedString.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -93,7 +93,7 @@ public class SchemaRestrictionTest extends TestCase {
             LimitedString.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -107,7 +107,7 @@ public class SchemaRestrictionTest extends TestCase {
             LimitedString.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -121,7 +121,7 @@ public class SchemaRestrictionTest extends TestCase {
             LimitedString.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -143,7 +143,7 @@ public class SchemaRestrictionTest extends TestCase {
             Rating.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -157,7 +157,7 @@ public class SchemaRestrictionTest extends TestCase {
             Rating.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -171,7 +171,7 @@ public class SchemaRestrictionTest extends TestCase {
             Rating.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -185,7 +185,7 @@ public class SchemaRestrictionTest extends TestCase {
             Rating.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
@@ -199,7 +199,7 @@ public class SchemaRestrictionTest extends TestCase {
             Rating.Factory.parse(element.getXMLStreamReader());
             fail("This should throw RuntimeException");
         } catch (RuntimeException e) {
-            assertEquals(toString(e), ERROR_MSG, e.getMessage());
+            assertTrue(e.getMessage().contains(ERROR_MSG));
 
         }
     }
