@@ -738,9 +738,7 @@ public class OperationContext extends AbstractContext
             // We only want to (re)register this if it's an outbound message
             String mepString = getAxisOperation().getMessageExchangePattern();
             if (mepString.equals(WSDL2Constants.MEP_URI_OUT_ONLY)
-                || mepString.equals(WSDL2Constants.MEP_URI_OUT_ONLY)
-                || ((mepString.equals(WSDL2Constants.MEP_URI_OUT_IN)
-                    || mepString.equals(WSDL2Constants.MEP_URI_OUT_IN))
+                || ((mepString.equals(WSDL2Constants.MEP_URI_OUT_IN))
                     && !isComplete)) {
                     
                 // make sure this OperationContext object is registered in the 
