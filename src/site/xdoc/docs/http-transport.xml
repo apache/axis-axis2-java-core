@@ -118,7 +118,7 @@ set the cached httpclient object when your application starts up
 (before any actual axis request). You can set the relevant property
 as shown below by using HTTPConstants.CACHED_HTTP_CLIENT.  </p>
 
-<p>The following code was testing Axis2 on Wildfly 20, the cert was obtained by
+<p>The following code was tested with Axis2 on Wildfly 32, the cert was obtained by
 'openssl s_client -connect myserver:8443 -showcerts' </p>
 
 <pre>
@@ -136,20 +136,15 @@ as shown below by using HTTPConstants.CACHED_HTTP_CLIENT.  </p>
             throw new Exception("Unexpected default trust managers:" + Arrays.toString(trustManagers));
         }
 
-        SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+        SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
         sslContext.init(null, trustManagers, new SecureRandom());
 
 	// NoopHostnameVerifier to trust self-singed cert
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
-        Registry&lt;ConnectionSocketFactory&gt; socketFactoryRegistry = RegistryBuilder.&lt;ConnectionSocketFactory&gt;create().register("https", sslsf).build();
+	HttpClientConnectionManager connManager = PoolingHttpClientConnectionManagerBuilder.create().setSSLSocketFactory(sslsf).setMaxConnTotal(100).setMaxConnPerRoute(100).build();
 
-	// This code is taken from HTTPSenderImpl, from 200 connections to 20
-        HttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        ((PoolingHttpClientConnectionManager)connManager).setMaxTotal(20);
-        ((PoolingHttpClientConnectionManager)connManager).setDefaultMaxPerRoute(20);
-
-        HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(connManager).setConnectionManagerShared(true).build();
+        HttpClient httpclient = HttpClients.custom().setConnectionManager(connManager.setConnectionManagerShared(true).build();
 	Options options = new Options();
         options.setTo("myurl");
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
@@ -290,6 +285,10 @@ options.setProperty(HttpConstants.PROXY, proxyProperties);
 <a name="preemptive_auth"></a>
 
 <h2>Basic, Digest and NTLM Authentication</h2>
+
+<p>Note: Basic preemptive authentication requires a work around described in 
+https://issues.apache.org/jira/browse/AXIS2-6055 until a proper fix is contributed by
+the community as we lack committers who use it. </p>
 
 <p>HttpClient supports three different types of HTTP authentication schemes:
 Basic, Digest and NTLM. Based on the challenge provided by the server,
