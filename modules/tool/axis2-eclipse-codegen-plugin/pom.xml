@@ -101,7 +101,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-jibx-codegen</artifactId>
+            <artifactId>axis2-jaxws</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
