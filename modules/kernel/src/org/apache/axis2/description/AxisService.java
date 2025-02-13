@@ -1175,7 +1175,7 @@ public class AxisService extends AxisDescription {
             definition = (Definition) wsdlParameter.getValue();
         }
 
-        if (!wsdlImportLocationAdjusted) {
+        if (!wsdlImportLocationAdjusted && definition != null) {
             changeImportAndIncludeLocations(definition);
             wsdlImportLocationAdjusted = true;
         }
