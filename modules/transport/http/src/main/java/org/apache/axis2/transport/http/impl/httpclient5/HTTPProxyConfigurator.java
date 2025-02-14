@@ -152,8 +152,10 @@ public class HTTPProxyConfigurator {
             clientContext.setCredentialsProvider(credsProvider);
             credsProvider.setCredentials(new AuthScope(null, -1), proxyCredentials);
 	}
-        HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-        requestConfig.setProxy(proxy);
+	if (proxyHost != null && proxyPort > 0) {
+            HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+            requestConfig.setProxy(proxy);
+        }
     }
 
     private static OMElement getProxyConfigurationElement(Parameter proxySettingsFromAxisConfig)
