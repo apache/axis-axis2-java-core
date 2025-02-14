@@ -24,7 +24,10 @@
         <title>Code Generator Wizard Guide for Eclipse Plug-in</title>
     </properties>
     <body>
+	<!--
         <h1>Code Generator Wizard Guide for Eclipse Plug-in</h1>
+	-->
+        <h1>Update: The Code generator plugin for Eclipse is broken. The docs as well as the code are outdated. If interested in contributing a fix, see Jira issue AXIS2-5955.</h1>
         <p>This document explains the usage of this code generator plug-in
         for Eclipse. In other words, this document will guide you through
         the operations of generating a WSDL file from a Java class and/or
