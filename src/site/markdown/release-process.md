@@ -156,25 +156,32 @@ The following things are required to perform the actual release:
 
 In order to prepare the release artifacts for vote, execute the following steps:
 
-1.  Start the release process using the following command:
+If not yet done, export your public key and <a href="https://dist.apache.org/repos/dist/release/axis/axis2/java/core/KEYS"> append it there. </a>
+
+If not yet done, also export your public key to the dev area and <a href="https://dist.apache.org/repos/dist/release/axis/axis2/java/core/KEYS"> append it there. </a>
+
+The command to export a public key is as follows:
+
+<code>gpg --armor --export key_id</code>
+
+If you have multiple keys, you can define a ~/.gnupg/gpg.conf file for a default. Note that while 'gpg --list-keys' will show your public keys, using maven-release-plugin with the command 'release:perform' below requires 'gpg --list-secret-keys' to have a valid entry that matches your public key, in order to create 'asc' files that are used to verify the release artifcats. 'release:prepare' creates the sha512 checksum files.
+
+The created artifacts i.e. zip files can be checked with, for example, sha512sum 'axis2-2.0.0-bin.zip.asc' which should match the generated sha512 files. In that example, use 'gpg --verify axis2-2.0.0-bin.zip.asc axis2-2.0.0-bin.zip' to verify the artifacts were signed correctly.
+
+1.  Start the release process using the following command - use 'mvn release:rollback' to undo and be aware that in the main pom.xml there is an apache parent that defines some plugin versions<a href="https://maven.apache.org/pom/asf/"> documented here. </a>
 
         mvn release:prepare
 
     When asked for a tag name, accept the default value (in the following format: `vX.Y.Z`).
-    The execution of the `release:prepare` goal may occasionally fail because `svn.apache.org`
-    resolves to one of the geolocated SVN mirrors and there is a propagation delay between
-    the master and these mirrors. If this happens,
-    wait for a minute (so that the mirrors can catch up with the master) and simply rerun the command.
-    It will continue where the error occurred.
 
 2.  Perform the release using the following command:
 
         mvn release:perform
 
 3.  Login to Nexus and close the staging repository. For more details about this step, see
-    [here](https://docs.sonatype.org/display/Repository/Closing+a+Staging+Repository).
+    [here](https://maven.apache.org/developers/release/maven-project-release-procedure.html).
 
-4.  Execute the `target/checkout/etc/dist.py` script to upload the distributions.
+4.  Execute the `target/checkout/etc/dist.py` script to upload the source and binary distributions to the development area of the <a href="https://dist.apache.org/repos/dist/"> repository. </a>
 
 5.  Create a staging area for the Maven site:
 
@@ -204,7 +211,7 @@ In order to prepare the release artifacts for vote, execute the following steps:
 If the vote passes, execute the following steps:
 
 1.  Promote the artifacts in the staging repository. See
-    [here](https://maven.apache.org/developers/release/maven-project-release-procedure.html)
+    [here](https://central.sonatype.org/publish/release/#close-and-drop-or-release-your-staging-repository)
     for detailed instructions for this step.
 
 2.  Publish the distributions:
