@@ -33,7 +33,7 @@ import jakarta.jms.MessageProducer;
 import jakarta.jms.QueueSender;
 import jakarta.jms.Session;
 import jakarta.jms.TopicPublisher;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 
 /**
  * Performs the actual sending of a JMS message, and the subsequent committing of a JTA transaction

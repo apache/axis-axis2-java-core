@@ -36,10 +36,10 @@ import jakarta.jms.Session;
 import javax.naming.InitialContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.transaction.UserTransaction;
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
-import javax.transaction.Status;
+import jakarta.transaction.UserTransaction;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Status;
 
 import java.util.ArrayList;
 import java.util.Collections;

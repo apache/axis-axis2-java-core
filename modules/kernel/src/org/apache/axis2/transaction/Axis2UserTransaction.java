@@ -19,7 +19,7 @@
 
 package org.apache.axis2.transaction;
 
-import javax.transaction.*;
+import jakarta.transaction.*;
 
 
 public class Axis2UserTransaction implements UserTransaction {

@@ -29,8 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 import java.util.Hashtable;
 import java.util.Iterator;
 
