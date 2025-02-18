@@ -68,6 +68,11 @@
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxws</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>wsdl4j</groupId>
