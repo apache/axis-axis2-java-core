@@ -30,8 +30,8 @@ The following distributions are available for download:
 Binary distribution                | [axis2-${release_version}-bin.zip][1]                     | [SHA512][3] [PGP][4]
 Source distribution                | [axis2-${release_version}-src.zip][5]                     | [SHA512][7] [PGP][8]
 WAR distribution                   | [axis2-${release_version}-war.zip][9]                     | [SHA512][11] [PGP][12]
-Service Archive plugin for Eclipse | [axis2-eclipse-service-plugin-${release_version}.zip][13] | [SHA512][15] [PGP][16]
-Code Generator plugin for Eclipse  | [axis2-eclipse-codegen-plugin-${release_version}.zip][17] | [SHA512][19] [PGP][20]
+## Service Archive plugin for Eclipse | [axis2-eclipse-service-plugin-${release_version}.zip][13] | [SHA512][15] [PGP][16]
+## Code Generator plugin for Eclipse  | [axis2-eclipse-codegen-plugin-${release_version}.zip][17] | [SHA512][19] [PGP][20]
 Axis2 plugin for IntelliJ IDEA     | [axis2-idea-plugin-${release_version}.zip][21]            | [SHA512][23] [PGP][24]
 
 The binary distribution contains all the Axis2 libraries and modules, except for [Apache Rampart](../rampart/)
