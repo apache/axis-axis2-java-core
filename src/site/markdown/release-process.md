@@ -23,6 +23,8 @@ Release Process
 Release process overview
 ------------------------
 
+### Update: Since the 1.8.x series we have released from git master without branches. Skip to Performing a Release. We may or may not use branches again in the future. 
+
 ### Cutting a branch
 
 *   When a release is ready to go, release manager (RM) puts
@@ -185,7 +187,7 @@ The created artifacts i.e. zip files can be checked with, for example, sha512sum
         mvn release:perform
 
 3.  Login to Nexus and close the staging repository. For more details about this step, see
-    [here](https://maven.apache.org/developers/release/maven-project-release-procedure.html).
+    [here](https://maven.apache.org/developers/release/maven-project-release-procedure.html) and [here](https://infra.apache.org/publishing-maven-artifacts.html#promote).
 
 4.  Execute the `target/checkout/etc/dist.py` script to upload the source and binary distributions to the development area of the <a href="https://dist.apache.org/repos/dist/"> repository. </a>
 
