@@ -105,9 +105,15 @@ Verify that the code meets the basic requirements for being releasable:
     
         mvn clean install -Papache-release
 
-3.  Check that the source distribution is buildable.
+You may also execute a dry run of the release process: mvn release:prepare -DdryRun=true. In a dry run, the generated zip files will still be labled as SNAPSHOT. After this, you need to clean up using the following command: mvn release:clean
 
-4.  Check that the source tree is buildable with an empty local Maven repository.
+3. Check that the Maven site can be generated and deployed successfully, and that it has the expected content.
+
+To generate the entire documentation in one place, complete with working inter-module links, execute the site-deploy phase (and check the files under target/staging). A quick and reliable way of doing that is to use the following command: mvn -Dmaven.test.skip=true clean package site-deploy
+
+4.  Check that the source distribution is buildable.
+
+5.  Check that the source tree is buildable with an empty local Maven repository.
 
 If any problems are detected, they should be fixed on the trunk (except for issues specific to the
 release branch) and then merged to the release branch.
@@ -199,6 +205,8 @@ The created artifacts i.e. zip files can be checked with, for example, sha512sum
 
     Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there
     are no unexpected changes to the site. Then commit the changes.
+
+    The root dir of axis-site has a .asf.yaml file, referenced here at target/scmpublish-checkout/.asf.yaml, that is  <a href="https://github.com/apache/infrastructure-asfyaml/blob/main/README.md"> documented here. </a>
 
 7.  Start the release vote by sending a mail to `java-dev@axis.apache.org`.
     The mail should mention the following things:
