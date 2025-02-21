@@ -173,16 +173,6 @@ public class MockHttpServletResponse implements HttpServletResponse, OutTranspor
     }
 
     @Override
-    public String encodeUrl(String url) {
-        return null;
-    }
-
-    @Override
-    public String encodeRedirectUrl(String url) {
-        return null;
-    }
-
-    @Override
     public void sendError(int sc, String msg) throws IOException {
     }
 
@@ -192,6 +182,10 @@ public class MockHttpServletResponse implements HttpServletResponse, OutTranspor
 
     @Override
     public void sendRedirect(String location) throws IOException {
+    }
+
+    @Override
+    public void sendRedirect(String location, int sc, boolean clearBuffer) throws IOException {
     }
 
     @Override
@@ -209,10 +203,6 @@ public class MockHttpServletResponse implements HttpServletResponse, OutTranspor
 
     @Override
     public void setStatus(int sc) {
-    }
-
-    @Override
-    public void setStatus(int sc, String sm) {
     }
 
     @Override
