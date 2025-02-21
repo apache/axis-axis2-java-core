@@ -27,10 +27,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.transport.http.server.HttpUtils;
-import org.apache.axis2.util.ExternalPolicySerializer;
-import org.apache.axis2.util.IOUtils;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.OnDemandLogger;
+import org.apache.axis2.util.*;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyRegistry;
@@ -46,11 +43,12 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 public class ListingAgent extends AbstractAgent {
 
@@ -99,19 +97,7 @@ public class ListingAgent extends AbstractAgent {
     }
 
     private String extractHost(String filePart) {
-        int ipindex = filePart.indexOf("//");
-        String ip = null;
-        if (ipindex >= 0) {
-            ip = filePart.substring(ipindex + 2, filePart.length());
-            int seperatorIndex = ip.indexOf(":");
-            int slashIndex = ip.indexOf("/");
-            if (seperatorIndex >= 0) {
-                ip = ip.substring(0, seperatorIndex);
-            } else {
-                ip = ip.substring(0, slashIndex);
-            }
-        }
-        return ip;
+        return WSDLSerializationUtil.extractHostIP(filePart);
     }
 
     public void processExplicitSchemaAndWSDL(HttpServletRequest req,
