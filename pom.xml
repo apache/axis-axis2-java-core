@@ -1278,6 +1278,11 @@
                                     <allowSnapshotRepositories>true</allowSnapshotRepositories>
                                     <allowSnapshotPluginRepositories>true</allowSnapshotPluginRepositories>
                                 </requireNoRepositories>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.eclipse.jetty.toolchain:jetty-jakarta-servlet-api</exclude>
+                                    </excludes>
+                                </bannedDependencies>
                             </rules>
                         </configuration>
                     </execution>
