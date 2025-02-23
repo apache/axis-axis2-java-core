@@ -900,13 +900,26 @@ public class AxisServlet extends HttpServlet {
             try {
 		// AXIS2-5971, content-type is not present on some
 		// types of REST requests that have no body and in 
-		// those cases use the 'accept' header if defined
+		// those cases use the 'accept' header if defined.
+		// On a null content-type it will default to application/x-www-form-urlencoded.
 		final String accept = request.getHeader(HttpHeaders.ACCEPT);
 		final String contentType = request.getContentType();
-		if (contentType == null && accept != null) {
-                    RESTUtil.processURLRequest(messageContext, response.getOutputStream(), accept);
-		} else {
+		if (contentType != null) {
                     RESTUtil.processURLRequest(messageContext, response.getOutputStream(), contentType);
+		} else if (accept != null && !accept.isEmpty()) {
+		    // TODO: not easy to parse without adding code or libs, and needs to match
+		    // a MessageFormatter we support. Curl by default sends */* . Example from FireFox:
+		    // text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8
+		    if (accept.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) != -1) {
+                        log.debug("processURLRequest() will default to this content type found as one of the values in accept header: " + HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+                        RESTUtil.processURLRequest(messageContext, response.getOutputStream(), HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+		    } else {
+                        log.debug("AxisServlet.processURLRequest() found null contentType with an Accept header: "+accept+" , that we could not match a content-type, will use default contentType: application/x-www-form-urlencoded");
+                        RESTUtil.processURLRequest(messageContext, response.getOutputStream(), null);
+		    }
+		} else {
+                    log.debug("AxisServlet.processURLRequest() found null contentType and null Accept header, will use default contentType: application/x-www-form-urlencoded");
+                    RESTUtil.processURLRequest(messageContext, response.getOutputStream(), null);
 		}
                 this.checkResponseWritten();
             } catch (AxisFault e) {
