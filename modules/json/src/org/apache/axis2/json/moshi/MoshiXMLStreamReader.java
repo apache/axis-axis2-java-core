@@ -74,6 +74,10 @@ public class MoshiXMLStreamReader implements XMLStreamReader {
 
     private Queue<JsonObject> queue = new LinkedList<JsonObject>();
 
+    private Queue<JsonObject> attribute_queue = new LinkedList<JsonObject>();
+
+    private List<Attribute> attributes;
+
     private XmlNodeGenerator xmlNodeGenerator;
 
     private Stack<JsonObject> stackObj = new Stack<JsonObject>();
@@ -134,6 +138,17 @@ public class MoshiXMLStreamReader implements XMLStreamReader {
             newNodeMap.put(elementQname, mainXmlNode);
             configContext.setProperty(JsonConstant.XMLNODES, newNodeMap);
         }
+        log.debug("MoshiXMLStreamReader.process() completed on queue size: " + queue.size());
+	// XML Elements
+        for (JsonObject jsonobject : queue) {
+            log.debug("moshixmlstreamreader.process() found Element to process as jsonobject name: " + jsonobject.getName() + " , type: " + jsonobject.getType());
+	}
+
+	// XML attributes
+        attribute_queue = xmlNodeGenerator.getAttributeQueue();
+        for (JsonObject jsonobject : attribute_queue) {
+            log.debug("moshixmlstreamreader.process() found Attribute to process as jsonobject name: " + jsonobject.getName() + " , type: " + jsonobject.getType());
+	}
         isProcessed = true;
         log.debug("MoshiXMLStreamReader.process() completed");
     }
@@ -231,12 +246,9 @@ public class MoshiXMLStreamReader implements XMLStreamReader {
     }
 
 
-    public String getAttributeValue(String namespaceURI, String localName) {
-        throw new UnsupportedOperationException("Method is not implemented");
-    }
-
-
     public int getAttributeCount() {
+	// TODO populate the List of the class Attributes here by readName() 
+	// and using the attribute_queue instead of queue if attribute_queue not empty
         if (isStartElement()) {
             return 0; // don't support attributes on tags  in JSON convention
         } else {
@@ -245,38 +257,60 @@ public class MoshiXMLStreamReader implements XMLStreamReader {
     }
 
 
-    public QName getAttributeName(int index) {
-        throw new UnsupportedOperationException("Method is not implemented");
-    }
-
-
-    public String getAttributeNamespace(int index) {
-        throw new UnsupportedOperationException("Method is not implemented");
-    }
-
-
     public String getAttributeLocalName(int index) {
-        throw new UnsupportedOperationException("Method is not implemented");
+        if ((null == attributes) || (index >= attributes.size())) {
+            throw new IndexOutOfBoundsException();
+        }
+        return attributes.get(index).name.getLocalPart();
+    }
+
+
+    public QName getAttributeName(int index) {
+        return attributes.get(index).name;
     }
 
 
     public String getAttributePrefix(int index) {
-        throw new UnsupportedOperationException("Method is not implemented");
+        if ((null == attributes) || (index >= attributes.size())) {
+            throw new IndexOutOfBoundsException();
+        }
+        return null;
     }
 
 
     public String getAttributeType(int index) {
-        throw new UnsupportedOperationException("Method is not implemented");
+        return null;
+    }
+
+
+    public String getAttributeNamespace(int index) {
+        return null;
     }
 
 
     public String getAttributeValue(int index) {
-        throw new UnsupportedOperationException("Method is not implemented");
+        if ((null == attributes) || (index >= attributes.size())) {
+            throw new IndexOutOfBoundsException();
+        }
+        return attributes.get(index).value;
+    }
+
+
+    public String getAttributeValue(String namespaceURI, String localName) {
+        if ((null == attributes) || (null == localName) || ("".equals(localName))) {
+            throw new NoSuchElementException();
+        }
+        for (Attribute a : attributes) {
+            if (localName.equals(a.name.getLocalPart())) {
+                return a.value;
+            }
+        }
+        throw new NoSuchElementException();
     }
 
 
     public boolean isAttributeSpecified(int index) {
-        throw new UnsupportedOperationException("Method is not implemented");
+        return (null != attributes) && (attributes.size() >= index);
     }
 
 
@@ -542,7 +576,6 @@ public class MoshiXMLStreamReader implements XMLStreamReader {
                 localName = "";
             }
         } else {
-            System.out.println("stackObj is empty");
             throw new XMLStreamException("Error while processing input JSON stream, JSON request may not valid ," +
                     " it may has more end object characters ");
         }
@@ -735,5 +768,15 @@ public class MoshiXMLStreamReader implements XMLStreamReader {
         EndObjectBeginObject_END,
         EndObjectBeginObject_START,
         EndObjectEndDocument,
+    }
+
+    private static class Attribute {
+        private final QName name;
+        private final String value;
+
+        Attribute(QName name, String value) {
+            this.name = name;
+            this.value = value;
+        }
     }
 }

@@ -22,7 +22,12 @@ package org.apache.axis2.json.factory;
 import org.apache.axis2.AxisFault;
 import org.apache.ws.commons.schema.utils.XmlSchemaRef;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaAttribute;
+import org.apache.ws.commons.schema.XmlSchemaAttributeOrGroupRef;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
@@ -32,11 +37,14 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class XmlNodeGenerator {
+
+    private static final Log log = LogFactory.getLog(XmlNodeGenerator.class);
 
     List<XmlSchema> xmlSchemaList;
 
@@ -45,6 +53,7 @@ public class XmlNodeGenerator {
     private XmlNode mainXmlNode;
 
     Queue<JsonObject> queue = new LinkedList<JsonObject>();
+    Queue<JsonObject> attribute_queue = new LinkedList<JsonObject>();
 
     public XmlNodeGenerator(List<XmlSchema> xmlSchemaList, QName elementQname) {
         this.xmlSchemaList = xmlSchemaList;
@@ -84,6 +93,7 @@ public class XmlNodeGenerator {
     }
 
     private void processElement(XmlSchemaElement element, XmlNode parentNode , XmlSchema schema) throws AxisFault {
+        log.debug("XmlNodeGenerator.processElement() found parentNode node name: " + parentNode.getName() + " , isAttribute: " + parentNode.isAttribute() + " , element name: " + element.getName());
         String targetNamespace = schema.getTargetNamespace();
         XmlNode xmlNode;
         QName schemaTypeName = element.getSchemaTypeName();
@@ -147,6 +157,48 @@ public class XmlNodeGenerator {
                     }
                 }
             }
+	    /*
+            TODO: attribute support Proof of Concept (POC) by adding currency attribute to:
+
+                samples/quickstartadb/resources/META-INF/StockQuoteService.wsdl:
+
+                <xs:element name="getPrice">
+                        <xs:complexType>
+                                <xs:sequence>
+                                        <xs:element name="symbol" nillable="true" type="xs:string"/>
+                                </xs:sequence>
+                                <xs:attribute name="currency" type="xs:string" use="required"/>
+                        </xs:complexType>
+                </xs:element>
+
+		resulting in this SOAP Envelope:
+
+		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header/><soapenv:Body><ns1:getPrice xmlns:ns1="http://quickstart.samples/xsd" ns1:currency="USD"><ns1:symbol>ABC</ns1:symbol></ns1:getPrice></soapenv:Body></soapenv:Envelope>
+
+		Below, add complexType.getAttributes() code to support this JSON: 
+
+		{ "getPrice" : {"symbol": "IBM","currency":USD}}
+
+		Possibly using @ as @currency to flag a variable name as as attribute. 
+
+		One thing to note is XmlNode has isAttribute() but was never used
+	    */
+            if (complexType.getAttributes() != null && complexType.getAttributes().size() > 0) {
+                log.debug("XmlNodeGenerator.processSchemaType() found attribute size from complexType: " + complexType.getAttributes().size());
+                List<XmlSchemaAttributeOrGroupRef> list = complexType.getAttributes();
+                for (XmlSchemaAttributeOrGroupRef ref : list) {
+		    XmlSchemaAttribute xsa = (XmlSchemaAttribute)ref;
+                    String name = xsa.getName();
+                    QName schemaTypeName = xsa.getSchemaTypeName();
+		    if (schema != null && schema.getTargetNamespace() != null && schemaTypeName != null && schemaTypeName.getLocalPart() != null) {
+                        log.debug("XmlNodeGenerator.processSchemaType() found attribute name from complexType: " + name + " , adding it to parentNode");
+                        XmlNode xmlNode = new XmlNode(name, schema.getTargetNamespace(), true, false, schemaTypeName.getLocalPart());
+                        parentNode.addChildToList(xmlNode);
+		    } else {
+                        log.debug("XmlNodeGenerator.processSchemaType() found attribute name from complexType: " + name + " , however could not resolve namespace and localPart");
+		    }
+                }
+            }
         }else if (xmlSchemaType instanceof XmlSchemaSimpleType) {
             // nothing to do with simpleType
         }
@@ -163,6 +215,11 @@ public class XmlNodeGenerator {
     }
 
     private void generateQueue(XmlNode node) {
+        log.debug("XmlNodeGenerator.generateQueue() found node name: " + node.getName() + " , isAttribute: " + node.isAttribute());
+	if (node.isAttribute()) {
+            attribute_queue.add(new JsonObject(node.getName(), JSONType.OBJECT , node.getValueType() , node.getNamespaceUri()));
+	    return;
+	}
         if (node.isArray()) {
             if (node.getChildrenList().size() > 0) {
                 queue.add(new JsonObject(node.getName(), JSONType.NESTED_ARRAY, node.getValueType() , node.getNamespaceUri()));
@@ -186,7 +243,6 @@ public class XmlNodeGenerator {
         }
     }
 
-
     public XmlNode getMainXmlNode() throws AxisFault {
         if (mainXmlNode == null) {
             try {
@@ -201,6 +257,11 @@ public class XmlNodeGenerator {
     public Queue<JsonObject> getQueue(XmlNode node) {
         generateQueue(node);
         return queue;
+    }
+
+    // need to invoke getQueue() before getAttributeQueue()
+    public Queue<JsonObject> getAttributeQueue() {
+        return attribute_queue;
     }
 
 }
