@@ -212,7 +212,7 @@ public class AxisServlet extends HttpServlet {
 
             } catch (AxisFault e) {
                 setResponseState(msgContext, response);
-                log.debug(e);
+                log.error(e.getMessage(), e);
                 if (msgContext != null) {
                     processAxisFault(msgContext, response, out, e);
                 } else {
@@ -418,7 +418,7 @@ public class AxisServlet extends HttpServlet {
                 String status =
                         (String) msgContext.getProperty(Constants.HTTP_RESPONSE_STATE);
                 if (status == null) {
-                    log.debug("processAxisFault() on error message: " + e.getMessage() + " , found a null HTTP status from the MessageContext instance, setting HttpServletResponse status to HttpServletResponse.SC_INTERNAL_SERVER_ERROR");
+                    log.error("processAxisFault() on error message: " + e.getMessage() + " , found a null HTTP status from the MessageContext instance, setting HttpServletResponse status to HttpServletResponse.SC_INTERNAL_SERVER_ERROR", e);
                     res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } else {
                     log.error("processAxisFault() found an HTTP status from the MessageContext instance, setting HttpServletResponse status to: " + status);
@@ -937,7 +937,7 @@ public class AxisServlet extends HttpServlet {
         }
 
         private void processFault(AxisFault e) throws ServletException, IOException {
-            log.debug(e);
+            log.error(e.getMessage(), e);
             if (messageContext != null) {
                 processAxisFault(messageContext, response, response.getOutputStream(), e);
             } else {
