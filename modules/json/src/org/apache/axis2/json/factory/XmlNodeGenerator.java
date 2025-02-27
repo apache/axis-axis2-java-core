@@ -179,7 +179,7 @@ public class XmlNodeGenerator {
 
 		{ "getPrice" : {"symbol": "IBM","currency":USD}}
 
-		Possibly using @ as @currency to flag a variable name as as attribute. 
+		Possibly using @ as @currency to flag a variable name as an attribute. 
 
 		One thing to note is XmlNode has isAttribute() but was never used
 	    */
