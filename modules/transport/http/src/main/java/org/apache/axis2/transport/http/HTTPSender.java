@@ -209,6 +209,10 @@ public abstract class HTTPSender {
                            || statusCode == HttpStatus.SC_BAD_REQUEST || statusCode == HttpStatus.SC_NOT_FOUND) {
                     processResponse = true;
                     fault = true;
+                } else if (statusCode == HttpStatus.SC_NOT_FOUND) {
+		    System.out.println("HTTPSender, HttpStatus.SC_NOT_FOUND");	
+                    processResponse = false;
+                    fault = true;
                 } else {
                     throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
                                                             request.getStatusText()));
