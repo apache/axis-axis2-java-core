@@ -62,7 +62,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.core.HttpHeaders;
 import javax.xml.namespace.QName;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -902,16 +901,8 @@ public class AxisServlet extends HttpServlet {
 
         public void processURLRequest() throws IOException, ServletException {
             try {
-		// AXIS2-5971, content-type is not present on some
-		// types of REST requests that have no body and in 
-		// those cases use the 'accept' header if defined
-		final String accept = request.getHeader(HttpHeaders.ACCEPT);
-		final String contentType = request.getContentType();
-		if (contentType == null && accept != null) {
-                    RESTUtil.processURLRequest(messageContext, response.getOutputStream(), accept);
-		} else {
-                    RESTUtil.processURLRequest(messageContext, response.getOutputStream(), contentType);
-		}
+                RESTUtil.processURLRequest(messageContext, response.getOutputStream(),
+                        request.getContentType());
                 this.checkResponseWritten();
             } catch (AxisFault e) {
                 setResponseState(messageContext, response);
