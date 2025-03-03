@@ -31,7 +31,9 @@
 	   similar in features though Moshi is widely considered to have better
 	   performance. GSON development has largely ceased. Switching between
 	   Moshi and GSON is a matter of editing the axis2.xml file. 
-	   For users of JSON and Spring Boot, see the sample application in 
+	</p>
+	<p>
+	   For users of JSON and Spring Boot, the Native approach discussed below can be seen as a complete sample application in 
 	   the <a href="json-springboot-userguide.html">JSON and Spring Boot 3 User's Guide.</a> 
 	</p>
         <p>This documentation explains how the existing JSON support in Apache Axis2 have been improved with two new
@@ -172,7 +174,7 @@
                 the XmlSchema it can provide accurate XML infoset of the JSON message. To get the relevant XMLSchema
                 for the operation, it uses element qname of the message. At the MessageBuilder level Axis2 doesn't know
                 the element qname hence it can't get the XmlSchema of the operation. To solve this issue Axis2 uses a
-                new handler call JSONMessageHandler, which executes after the RequestURIOperationDispatcher handler.
+                new handler call JSONMessageHandler, which executes after the RequestURIOperationDispatcher handler or optionally the JSONBasedDefaultDispatcher that can be used in the native approach though it is not mandatory (See the JSON based Spring Boot User Guide). 
                 In the MessageBuilder it creates GsonXMLStreamReader parsing JsonReader instance which is created using
                 inputStream and stores it in input MessageContext as a message property and returns a default SOAP
                 envelop. Inside the JSONMessageHandler it checks for this GsonXMLStreamReader property, if it is not
