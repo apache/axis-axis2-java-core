@@ -75,7 +75,7 @@ public class JSONMessageHandler extends AbstractHandler {
             } else {
                 log.debug("JSON MessageReceiver found, proceeding with the JSON request");
                 Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
-                if (tempObj != null) {
+                if (tempObj != null && Boolean.valueOf(tempObj.toString())) {
                     Object o = msgContext.getProperty(JsonConstant.MOSHI_XML_STREAM_READER);
                     if (o != null) {
                         MoshiXMLStreamReader moshiXMLStreamReader = (MoshiXMLStreamReader) o;

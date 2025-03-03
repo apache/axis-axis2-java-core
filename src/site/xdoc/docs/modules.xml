@@ -166,7 +166,7 @@ class of the module (in this example it is the "LoggingModule"
 class and various handlers that will run in different phases). The
 "module.xml" for the logging module will be as follows:</p>
 <pre>
-&lt;module name="logging" class="userguide.loggingmodule.LoggingModule"&gt;
+&lt;module name="sample-logging" class="userguide.loggingmodule.LoggingModule"&gt;
    &lt;InFlow&gt;
         &lt;handler name="InFlowLogHandler" class="userguide.loggingmodule.LogHandler"&gt;
         &lt;order phase="loggingPhase" /&gt;
@@ -316,7 +316,7 @@ configuration descriptions for the logging module, and by changing
 the "axis2.xml" we created the required phases for the logging
 module.</p>
 <p>Next step is to "<b>engage</b>" (use) this module in one of our
-services. For this, let's use the same Web service that we have
+services. (Hint: it is often easier to edit the axis2.xml for global logging). For this, let's use the same Web service that we have
 used throughout the user's guide- MyService. However, since we need
 to modify the "services.xml" of MyService in order to engage this
 module, we use a separate Web service, but with similar
