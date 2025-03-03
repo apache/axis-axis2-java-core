@@ -458,6 +458,10 @@ public class AxisServlet extends HttpServlet {
                 (HttpServletResponse) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE);
         if (response != null) {
 
+	    // AXIS2-6061 make it easier to customize the error response in the method writeTo()
+	    // of the Message Formatter classes ... HTTPConstants.RESPONSE_CODE was until now unused
+            faultContext.setProperty(HTTPConstants.RESPONSE_CODE, response.getStatus());
+
             //TODO : Check for SOAP 1.2!
             SOAPFaultCode code = faultContext.getEnvelope().getBody().getFault().getCode();
 
