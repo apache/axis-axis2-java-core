@@ -76,7 +76,6 @@ public class JSONMessageHandler extends AbstractHandler {
                 log.debug("JSON MessageReceiver found, proceeding with the JSON request");
                 Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
                 if (tempObj != null) {
-                    boolean isJSON = Boolean.valueOf(tempObj.toString());
                     Object o = msgContext.getProperty(JsonConstant.MOSHI_XML_STREAM_READER);
                     if (o != null) {
                         MoshiXMLStreamReader moshiXMLStreamReader = (MoshiXMLStreamReader) o;
@@ -100,8 +99,7 @@ public class JSONMessageHandler extends AbstractHandler {
                 log.debug("On enableJSONOnly=true Axis operation is null on JSON request, message hasn't been dispatched to an operation, proceeding on JSON message name discovery and AxisOperation mapping");
                 try{
                     Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
-                    if (tempObj != null) {
-                        boolean isJSON = Boolean.valueOf(tempObj.toString());
+                    if (tempObj != null && Boolean.valueOf(tempObj.toString()) {
                         Object o = msgContext.getProperty(JsonConstant.MOSHI_XML_STREAM_READER);
                         if (o != null) {
                             MoshiXMLStreamReader moshiXMLStreamReader = (MoshiXMLStreamReader) o;

@@ -75,8 +75,7 @@ public class JSONMessageHandler extends AbstractHandler {
             } else {
                 log.debug("JSON MessageReceiver found, proceeding with the JSON request");
                 Object tempObj = msgContext.getProperty(JsonConstant.IS_JSON_STREAM);
-                if (tempObj != null) {
-                    boolean isJSON = Boolean.valueOf(tempObj.toString());
+                if (tempObj != null && Boolean.valueOf(tempObj.toString()) {
                     Object o = msgContext.getProperty(JsonConstant.GSON_XML_STREAM_READER);
                     if (o != null) {
                         GsonXMLStreamReader gsonXMLStreamReader = (GsonXMLStreamReader) o;
