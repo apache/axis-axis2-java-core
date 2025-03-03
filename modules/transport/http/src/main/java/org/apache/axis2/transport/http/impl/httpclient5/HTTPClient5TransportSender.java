@@ -63,7 +63,7 @@ public class HTTPClient5TransportSender extends AbstractHTTPTransportSender {
 
     public void setHTTPClientVersion(ConfigurationContext configurationContext) {
         configurationContext.setProperty(HTTPTransportConstants.HTTP_CLIENT_VERSION,
-                                         HTTPTransportConstants.HTTP_CLIENT_4_X_VERSION);
+                                         HTTPTransportConstants.HTTP_CLIENT_5_X_VERSION);
     }
 
 

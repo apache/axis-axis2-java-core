@@ -589,17 +589,10 @@ public class AxisServlet extends HttpServlet {
         // AXIS2-4898: MultiThreadedHttpConnectionManager starts a thread that is not stopped by the
         // shutdown of the connection manager. If we want to avoid a resource leak, we need to call
         // shutdownAll here.
-        // TODO - This action need be changed according to current HTTPClient.
-        String clientVersion = getHTTPClientVersion();
-        if (clientVersion != null
-                && HTTPTransportConstants.HTTP_CLIENT_4_X_VERSION.equals(clientVersion)) {
-            // TODO - Handle for HTTPClient 4
-        } else {
-            try {
-                Class.forName("org.apache.commons.httpclient.MultiThreadedHttpConnectionManager").getMethod("shutdownAll").invoke(null);
-            } catch (Exception ex) {
-                log.warn("Failed to shut down MultiThreadedHttpConnectionManager", ex);
-            }
+        try {
+            Class.forName("org.apache.commons.httpclient.MultiThreadedHttpConnectionManager").getMethod("shutdownAll").invoke(null);
+        } catch (Exception ex) {
+            log.error("Failed to shut down MultiThreadedHttpConnectionManager", ex);
         }
 
     }

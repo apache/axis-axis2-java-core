@@ -40,8 +40,7 @@ public class HTTPTransportConstants {
     
     //Settings to define HTTPClient version
     public static final String HTTP_CLIENT_VERSION = "http.client.version"; 
-    public static final String HTTP_CLIENT_3_X_VERSION = "http.client.version.3x";
-    public static final String HTTP_CLIENT_4_X_VERSION = "http.client.version.4x";  
+    public static final String HTTP_CLIENT_5_X_VERSION = "http.client.version.5x";  
     
     public static final String ANONYMOUS = "anonymous";
     public static final String PROXY_HOST_NAME = "proxy_host";

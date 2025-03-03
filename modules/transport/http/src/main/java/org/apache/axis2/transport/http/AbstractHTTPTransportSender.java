@@ -495,7 +495,7 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
     
     public void setHTTPClientVersion(ConfigurationContext configurationContext) {
         configurationContext.setProperty(HTTPTransportConstants.HTTP_CLIENT_VERSION,
-                HTTPTransportConstants.HTTP_CLIENT_3_X_VERSION);
+                HTTPTransportConstants.HTTP_CLIENT_5_X_VERSION);
     }
     
 }
