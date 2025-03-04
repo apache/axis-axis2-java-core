@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2.examples</groupId>
         <artifactId>samples</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.0</version>
     </parent>
 
     <artifactId>jaxws-interop</artifactId>
@@ -36,7 +36,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary</url>
-        <tag>HEAD</tag>
+        <tag>v2.0.0</tag>
     </scm>
 
     <dependencies>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -66,13 +66,13 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-testutils</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
