@@ -46,6 +46,6 @@ for suffix in [ "zip", "zip.asc", "zip.sha512" ]:
 
 call(["svn", "add", dist_dir])
 if release.endswith("-SNAPSHOT"):
-    print "Skipping commit because version is a snapshot."
+    print ("Skipping commit because version is a snapshot.")
 else:
     call(["svn", "commit", dist_dir])
