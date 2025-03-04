@@ -61,6 +61,8 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -607,11 +609,25 @@ public class Utils {
                     final InetAddress inetAddr = inetAddrs.nextElement();
                     if ( !inetAddr.isLoopbackAddress() )
                     {
-                        if (inetAddr.isSiteLocalAddress())
+                        if (!inetAddr.isLinkLocalAddress())
                         {
-                            // Found non-loopback site-local address.
-                            addresses.add(inetAddr);
+                            if (inetAddr instanceof Inet6Address) {
+                                Inet6Address inet6Addr = (Inet6Address) inetAddr;
+                                if ((inet6Addr.getAddress()[0] ^ 0xfc) > 1)
+                                {
+                                    // we ignore the site-local attribute for IPv6 because
+                                    // it has been deprecated, see https://www.ietf.org/rfc/rfc3879.txt
+                                    // instead we verify that this is not a unique local address,
+                                    // this check is unfortunately not in the standard library (yet)
+                                    // https://en.wikipedia.org/wiki/Unique_local_address
+                                    addresses.add(inetAddr);
+                                }
+                            } else if (inetAddr instanceof Inet4Address && inetAddr.isSiteLocalAddress()) {
+                                // check site-local
+                                addresses.add(inetAddr);
+                            }
                         }
+
                         if ( candidateAddress == null )
                         {
                             // Found non-loopback address, but not necessarily site-local.
