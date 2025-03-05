@@ -174,17 +174,18 @@ The command to export a public key is as follows:
 
 If you have multiple keys, you can define a ~/.gnupg/gpg.conf file for a default. Note that while 'gpg --list-keys' will show your public keys, using maven-release-plugin with the command 'release:perform' below requires 'gpg --list-secret-keys' to have a valid entry that matches your public key, in order to create 'asc' files that are used to verify the release artifcats. 'release:prepare' creates the sha512 checksum files.
 
-The created artifacts i.e. zip files can be checked with, for example, sha512sum 'axis2-2.0.0-bin.zip.asc' which should match the generated sha512 files. In that example, use 'gpg --verify axis2-2.0.0-bin.zip.asc axis2-2.0.0-bin.zip' to verify the artifacts were signed correctly.
-
 1.  Start the release process using the following command - use 'mvn release:rollback' to undo and be aware that in the main pom.xml there is an apache parent that defines some plugin versions<a href="https://maven.apache.org/pom/asf/"> documented here. </a>
 
         mvn release:prepare
 
     When asked for a tag name, accept the default value (in the following format: `vX.Y.Z`).
 
-2.  Perform the release using the following command:
+2.  Perform the release using the following command - though be aware you cannot rollback as shown above after that. That may need to happen if there are site problems further below. To start over, use 'git reset --hard last-hash-before-release-started' , then 'git push --delete origin vX.Y.Z':
 
         mvn release:perform
+
+        The created artifacts i.e. zip files can be checked with, for example, 'sha512sum axis2-2.0.0-bin.zip' which should match the generated axis2-2.0.0-bin.zip.sha512 file. In that example, use 'gpg --verify axis2-2.0.0-bin.zip.asc axis2-2.0.0-bin.zip' to verify the artifacts were signed correctly.
+
 
 3.  Login to Nexus and close the staging repository. For more details about this step, see
     [here](https://maven.apache.org/developers/release/maven-project-release-procedure.html) and [here](https://infra.apache.org/publishing-maven-artifacts.html#promote).
@@ -197,7 +198,7 @@ The created artifacts i.e. zip files can be checked with, for example, sha512sum
         cd axis-site
         cp -r axis2/java/core/ axis2/java/core-staging
         git add  axis2/java/core-staging
-        git commit -am "core-staging"
+        git commit -am "create core-staging dir as a prerequisite for the publish-scm plugin"
         git push
 
 6.  Change to the `target/checkout` directory and prepare the site using the following commands:
@@ -207,6 +208,7 @@ The created artifacts i.e. zip files can be checked with, for example, sha512sum
 
     Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there
     are no unexpected changes to the site. Then commit the changes.
+    Update: This plugin has a problem with specifying the core-staging    with the git URL. See https://issues.apache.org/jira/browse/MSITE-1033 . For now, copy the output of the scmpublish-checkout dir listed above to the core-staging dir created earlier in this doc.   
 
     The root dir of axis-site has a .asf.yaml file, referenced here at target/scmpublish-checkout/.asf.yaml, that is  <a href="https://github.com/apache/infrastructure-asfyaml/blob/main/README.md"> documented here. </a>
 
