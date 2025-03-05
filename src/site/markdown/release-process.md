@@ -206,9 +206,9 @@ If you have multiple keys, you can define a ~/.gnupg/gpg.conf file for a default
         mvn site-deploy
         mvn scm-publish:publish-scm -Dscmpublish.skipCheckin=true
 
-    Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there
-    are no unexpected changes to the site. Then commit the changes.
-    Update: This plugin has a problem with specifying the core-staging    with the git URL. See https://issues.apache.org/jira/browse/MSITE-1033 . For now, copy the output of the scmpublish-checkout dir listed above to the core-staging dir created earlier in this doc.   
+    Now go to the `target/scmpublish-checkout` directory (relative to `target/checkout`) and check that there are no unexpected changes to the site. Then commit the changes.
+
+    Update: This plugin has a problem with specifying the remote core-staging dir, created above, with the git URL. See https://issues.apache.org/jira/browse/MSITE-1033 . For now, copy the output of the scmpublish-checkout dir listed above to the core-staging dir created earlier in this doc.
 
     The root dir of axis-site has a .asf.yaml file, referenced here at target/scmpublish-checkout/.asf.yaml, that is  <a href="https://github.com/apache/infrastructure-asfyaml/blob/main/README.md"> documented here. </a>
 
