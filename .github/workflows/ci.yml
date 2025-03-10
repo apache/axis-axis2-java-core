@@ -28,9 +28,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 17, 19 ]
+        java: [ 17, 21 ]
     name: "Java ${{ matrix.java }}"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
       run: find ~/.m2/repository -name '*-SNAPSHOT' -a -type d -print0 | xargs -0 rm -rf
   site:
     name: Site
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'apache/axis-axis2-java-core'
     name: Deploy
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - build
       - site
