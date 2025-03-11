@@ -101,9 +101,9 @@
             <p>With this approach you can expose your POJO service to accept pure JSON request other than converting to
                 any representation or format. You just need to send a valid JSON string request to the service url and,
                 in the url you should have addressed the operation as well as the service. Because in this scenario Axis2
-                uses URI based operation dispatcher to dispatch the correct operation. in
+                uses URI based operation dispatcher to dispatch the correct operation. In the docs
                 <a href="json_gson_user_guide.html#native_approach">here</a> you can
-                find the complete user guide for this native approach.</p>
+                find the guide for setting up this native approach, while <a href="json-springboot-userguide.html">here</a> you can find a complete Native Approach example for the client and server with a Spring Boot 3 sample application. </p>
 
             <p>The Native approach is being implemented to use pure JSON throughout the axis2 message processing
                 process. In Axis2 as the content-type header is used to specify the type of data in the message body,

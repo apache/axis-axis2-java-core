@@ -68,8 +68,7 @@ prefix the subject of the mail with [Axis2].</p>
 <h2>Getting Started</h2>
 
 <p>This user guide explains how to write and deploy a
-new JSON and REST based Web Service using Axis2, and how to write a Web Service client 
-using JSON with Curl.
+new JSON and REST based Web Service using Axis2, and how to invoke a Web Service client using JSON with Curl.
 </p>
 
 <p>All the sample code mentioned in this guide is located in
@@ -150,7 +149,7 @@ that registers AxisServlet with Spring Boot 3.
 </p>
 <p>
 Axis2 web services are installed via a WEB-INF/services directory that contains
-files with an .aar extention for each service. These aar files are similar to
+files with an .aar extension for each service. These aar files are similar to
 jar files, and contain a services.xml that defines the web service behavior. 
 The pom.xml supplied in this guide generates these files.
 </p>
