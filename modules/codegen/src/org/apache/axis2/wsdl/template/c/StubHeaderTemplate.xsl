@@ -36,7 +36,7 @@
         * <xsl:value-of select="@name"/>.h
         *
         * This file was auto-generated from WSDL for "<xsl:value-of select="$qname"/>" service
-        * by the Apache Axis2/Java version: #axisVersion# #today#
+        * by the Apache Axis2/Java version: #axisVersion#
         */
 
         #ifndef <xsl:value-of select="$caps_name"/>_H

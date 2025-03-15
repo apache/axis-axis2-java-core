@@ -37,7 +37,7 @@ import javax.xml.ws.Service;<!--<xsl:for-each select="importList/import">-->
  * <xsl:value-of select="@name"/>.java
  *
  * This class was auto-generated from WSDL.
- * Apache Axis2 version: #axisVersion# #today#
+ * Apache Axis2 version: #axisVersion#
  *
  */
 <xsl:for-each select="annotation">

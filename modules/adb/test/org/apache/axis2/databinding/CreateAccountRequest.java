@@ -21,7 +21,7 @@
  * CreateAccountRequest.java
  *
  * This file was auto-generated from WSDL
- * by the Apache Axis2 version: #axisVersion# #today#
+ * by the Apache Axis2 version: #axisVersion#
  */
 
 package org.apache.axis2.databinding;

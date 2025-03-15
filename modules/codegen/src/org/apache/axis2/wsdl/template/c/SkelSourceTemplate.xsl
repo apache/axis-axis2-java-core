@@ -29,7 +29,7 @@
      * <xsl:value-of select="@name"/>.c
      *
      * This file was auto-generated from WSDL for "<xsl:value-of select="$qname"/>" service
-     * by the Apache Axis2/C version: #axisVersion# #today#
+     * by the Apache Axis2/C version: #axisVersion#
      * <xsl:value-of select="@name"/> Axis2/C skeleton for the axisService
      */
 

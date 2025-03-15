@@ -27,7 +27,7 @@
  * <xsl:value-of select="@name"/>.java
  *
  * This class was auto-generated from WSDL.
- * Apache Axis2 version: #axisVersion# #today#
+ * Apache Axis2 version: #axisVersion#
  */
 <xsl:for-each select="annotation">
     <xsl:variable name="annoparamcount" select="count(param)"/>
