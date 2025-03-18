@@ -212,9 +212,6 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <target>
-                                <tstamp>
-                                    <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en" />
-                                </tstamp>
                                 <filter token="axisVersion" value="${project.version}" />
                                 <copy toDir="${basedir}/target/classes/org/apache/axis2/i18n" overwrite="true" filtering="on" file="${basedir}/src/org/apache/axis2/i18n/resource.properties" />
                             </target>
