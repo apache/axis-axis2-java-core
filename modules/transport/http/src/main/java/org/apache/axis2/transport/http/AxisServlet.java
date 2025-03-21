@@ -417,11 +417,16 @@ public class AxisServlet extends HttpServlet {
                 String status =
                         (String) msgContext.getProperty(Constants.HTTP_RESPONSE_STATE);
                 if (status == null) {
-                    log.error("processAxisFault() on error message: " + e.getMessage() + " , found a null HTTP status from the MessageContext instance, setting HttpServletResponse status to HttpServletResponse.SC_INTERNAL_SERVER_ERROR", e);
+                    log.info("processAxisFault() on error message: " + e.getMessage() + " , found a null HTTP status from the MessageContext instance, setting HttpServletResponse status to HttpServletResponse.SC_INTERNAL_SERVER_ERROR", e);
                     res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } else {
-                    log.error("processAxisFault() found an HTTP status from the MessageContext instance, setting HttpServletResponse status to: " + status);
-                    res.setStatus(Integer.parseInt(status));
+                    log.debug("processAxisFault() found an HTTP status from the MessageContext instance, setting HttpServletResponse status to: " + status);
+                    try {
+                        res.setStatus(Integer.parseInt(status));
+                    } catch (Exception ex) {
+                        log.error("Invalid http status, setting status to http error state: " + ex.getMessage(), ex);
+                        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    }
                     return;
                 }
 
