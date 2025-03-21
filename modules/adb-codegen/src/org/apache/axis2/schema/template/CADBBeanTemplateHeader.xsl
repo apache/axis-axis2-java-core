@@ -32,7 +32,7 @@
         * <xsl:value-of select="$axis2_name"/>.h
         *
         * This file was auto-generated from WSDL
-        * by the Apache Axis2/Java version: #axisVersion# #today#
+        * by the Apache Axis2/Java version: #axisVersion#
         */
 
         #include &lt;stdio.h&gt;
@@ -89,7 +89,7 @@
         * <xsl:value-of select="$axis2_name"/>.h
         *
         * This file was auto-generated from WSDL
-        * by the Apache Axis2/Java version: #axisVersion# #today#
+        * by the Apache Axis2/Java version: #axisVersion#
         */
 
        /**
@@ -1087,7 +1087,7 @@
          * <xsl:value-of select="$axis2_name"/>.h
          *
          * This file was auto-generated from WSDL
-         * by the Apache Axis2/Java version: #axisVersion# #today#
+         * by the Apache Axis2/Java version: #axisVersion#
          */
 
         #include &lt;stdio.h&gt;

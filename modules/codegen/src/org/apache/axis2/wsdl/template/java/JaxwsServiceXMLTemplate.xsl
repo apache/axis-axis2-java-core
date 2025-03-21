@@ -22,7 +22,7 @@
 
     <xsl:template match="/">
         <xsl:comment> This file was auto-generated from WSDL </xsl:comment>
-        <xsl:comment> Apache Axis2 version: #axisVersion# #today# </xsl:comment>
+        <xsl:comment> Apache Axis2 version: #axisVersion# </xsl:comment>
         <serviceGroup>
             <xsl:apply-templates/>
         </serviceGroup>

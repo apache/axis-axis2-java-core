@@ -27,7 +27,7 @@
  * <xsl:value-of select="$name"/>.java
  *
  * This file was auto-generated from WSDL
- * by the Apache Axis2 version: #axisVersion# #today#
+ * by the Apache Axis2 version: #axisVersion#
  */
 
         package <xsl:value-of select="@package"/>;
@@ -54,7 +54,7 @@
  * <xsl:value-of select="@name"/>.java
  *
  * This file was auto-generated from WSDL
- * by the Apache Axis2 version: #axisVersion# #today#
+ * by the Apache Axis2 version: #axisVersion#
  */
 
         package <xsl:value-of select="@package"/>;

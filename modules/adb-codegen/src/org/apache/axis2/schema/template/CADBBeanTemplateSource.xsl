@@ -28,7 +28,7 @@
          * <xsl:value-of select="$axis2_name"/>.c
          *
          * This file was auto-generated from WSDL
-         * by the Apache Axis2/Java version: #axisVersion# #today#
+         * by the Apache Axis2/Java version: #axisVersion#
          */
          
         #include "<xsl:value-of select="$axis2_name"/>.h"
@@ -6617,7 +6617,7 @@
          * <xsl:value-of select="$axis2_name"/>.c
          *
          * This file was auto-generated from WSDL
-         * by the Apache Axis2/Java version: #axisVersion# #today#
+         * by the Apache Axis2/Java version: #axisVersion#
          */
 
         #include "<xsl:value-of select="$axis2_name"/>.h"
