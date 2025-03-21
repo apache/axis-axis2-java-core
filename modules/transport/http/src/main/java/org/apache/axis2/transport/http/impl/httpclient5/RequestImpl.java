@@ -20,13 +20,9 @@ package org.apache.axis2.transport.http.impl.httpclient5;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URI;
-import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,9 +52,11 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.ProtocolVersion;
-import org.apache.hc.core5.http.ProtocolException;
+import org.apache.hc.core5.http.HeaderElement;
+import org.apache.hc.core5.http.message.BasicHeaderValueParser;
 import org.apache.hc.core5.http.message.HeaderGroup;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.ParserCursor;
 import org.apache.hc.core5.net.URIAuthority;
 import org.apache.hc.core5.util.Timeout;
 
@@ -195,8 +193,17 @@ final class RequestImpl implements Request {
     public Map<String,String> getCookies() {
         Map<String,String> cookies = new HashMap<>();
         for (String name : COOKIE_HEADER_NAMES) {
-            for (final org.apache.hc.core5.http.Header header : response.getHeaders()) {
-                cookies.put(header.getName(), header.getValue());
+            for (final org.apache.hc.core5.http.Header header : response.getHeaders(name)) {
+                final String headerValue = header.getValue();
+                if (headerValue == null) {
+                    continue;
+                }
+                final ParserCursor cursor = new ParserCursor(0, headerValue.length());
+                final HeaderElement[] headerElements = BasicHeaderValueParser.INSTANCE.parseElements(headerValue,
+                        cursor);
+                for (final HeaderElement headerElement : headerElements) {
+                    cookies.put(headerElement.getName(), headerElement.getValue());
+                }
             }	
         }
         return cookies;

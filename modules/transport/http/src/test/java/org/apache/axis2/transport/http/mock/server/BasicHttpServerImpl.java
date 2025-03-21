@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
@@ -263,6 +264,10 @@ public class BasicHttpServerImpl implements BasicHttpServer {
                 response.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 body = HttpEntities.create(outStream -> outStream.write((" Server Error").getBytes(StandardCharsets.UTF_8)), ContentType.TEXT_HTML.withCharset(StandardCharsets.UTF_8));
                 
+            } else if (server.getResponseTemplate().equals(BasicHttpServer.RESPONSE_HTTP_COOKIE)) {
+                response.setCode(HttpStatus.SC_OK);
+                response.addHeader(HTTPConstants.HEADER_SET_COOKIE, "JSESSIONID=abcde12345; Path=/; HttpOnly");
+                body = HttpEntities.create(outStream -> outStream.write(("<Response>Cookie should be set<Response>").getBytes(StandardCharsets.UTF_8)), ContentType.TEXT_HTML.withCharset(StandardCharsets.UTF_8));
             }
 
 	    if (body != null) {
