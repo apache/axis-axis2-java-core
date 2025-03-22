@@ -393,9 +393,7 @@ public class HTTPConstants {
     public static final String PROXY = "PROXY";
     public static final String AUTHENTICATE = "_NTLM_DIGEST_BASIC_AUTHENTICATION_";
 
-    /**
-     * @deprecated
-     */
+    @Deprecated
     public static final String MTOM_RECEIVED_CONTENT_TYPE = "MTOM_RECEIVED";
 
     /**

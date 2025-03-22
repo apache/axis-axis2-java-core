@@ -77,6 +77,7 @@ public class BuilderUtil {
     /**
      * @deprecated
      */
+    @Deprecated
     public static final int BOM_SIZE = 4;
 
     public static SOAPEnvelope buildsoapMessage(MessageContext messageContext,
@@ -275,6 +276,7 @@ public class BuilderUtil {
      *             directly to the XML parser. If the stream is not XML, you shouldn't be using this
      *             method anyway.
      */
+    @Deprecated
     public static Reader getReader(final InputStream is, final String charSetEncoding)
             throws IOException {
         final PushbackInputStream is2 = getPushbackInputStream(is);
@@ -298,6 +300,7 @@ public class BuilderUtil {
      * @deprecated If you need a {@link PushbackInputStream} just construct one (with the
      *             appropriate size).
      */
+    @Deprecated
     public static PushbackInputStream getPushbackInputStream(InputStream is) {
         return new PushbackInputStream(is, BOM_SIZE);
     }
@@ -309,6 +312,7 @@ public class BuilderUtil {
      *             probably you are using a {@link Reader} where you should use an
      *             {@link InputStream}.
      */
+    @Deprecated
     public static String getCharSetEncoding(PushbackInputStream is2, String defaultEncoding)
             throws IOException {
         String encoding;
@@ -584,6 +588,7 @@ public class BuilderUtil {
     /**
      * @deprecated Use {@link MessageProcessorSelector#getMessageBuilder(String, MessageContext)}.
      */
+    @Deprecated
     public static Builder getBuilderFromSelector(String type, MessageContext msgContext)
             throws AxisFault {
         return MessageProcessorSelector.getMessageBuilder(type, msgContext);

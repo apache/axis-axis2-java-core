@@ -69,7 +69,7 @@
 	</wsdl:message>	
 	
 	<wsdl:portType name="DocLitnonWrappedProxy">
-	    <jaxws:bindings xmlns:jaxws="http://java.sun.com/xml/ns/jaxws">
+	    <jaxws:bindings xmlns:jaxws="https://jakarta.ee/xml/ns/jaxws">
 	        <jaxws:enableWrapperStyle>false</jaxws:enableWrapperStyle>
 	        <jaxws:enableAsyncMapping>true</jaxws:enableAsyncMapping>
 	    </jaxws:bindings>

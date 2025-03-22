@@ -222,12 +222,9 @@
                     <includes>
                         <include>**/*Tests.java</include>
                     </includes>
-                    <systemProperties>
-                        <property>
-                            <name>org.apache.axis2.jaxws.repo.path</name>
-                            <value>./target/repository</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <org.apache.axis2.jaxws.repo.path>./target/repository</org.apache.axis2.jaxws.repo.path>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

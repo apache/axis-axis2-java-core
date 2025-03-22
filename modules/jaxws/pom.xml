@@ -342,7 +342,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <forkMode>once</forkMode>
                     <argLine>${argLine} -Xms256m -Xmx512m --add-opens java.base/java.net=ALL-UNNAMED</argLine>
                     <!-- Enable the next 2 lines if you want to attach a debugger
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
@@ -350,46 +349,21 @@
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                     </includes>
-                    <systemProperties>
-                        <!--<property>
-                            <name>OASISCatalogManager.catalog.debug.level</name>
-                            <value>9999</value>
-                        </property>-->
-                        <property>
-                            <name>build.repository</name>
-                            <value>./target/test-classes</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.MessageFactory</name>
-                            <value>org.apache.axis2.saaj.MessageFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.SOAPFactory</name>
-                            <value>org.apache.axis2.saaj.SOAPFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.SOAPConnectionFactory</name>
-                            <value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.MetaFactory</name>
-                            <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
-                        </property>
+                    <systemPropertyVariables>
+                        <!--
+                            <OASISCatalogManager.catalog.debug.level>9999</OASISCatalogManager.catalog.debug.level>
+                        -->
+                        <build.repository>./target/test-classes</build.repository>
+                        <jakarta.xml.soap.MessageFactory>org.apache.axis2.saaj.MessageFactoryImpl</jakarta.xml.soap.MessageFactory>
+                        <jakarta.xml.soap.SOAPFactory>org.apache.axis2.saaj.SOAPFactoryImpl</jakarta.xml.soap.SOAPFactory>
+                        <jakarta.xml.soap.SOAPConnectionFactory>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</jakarta.xml.soap.SOAPConnectionFactory>
+                        <jakarta.xml.soap.MetaFactory>org.apache.axis2.saaj.SAAJMetaFactoryImpl</jakarta.xml.soap.MetaFactory>
                         <!-- Need this for the client side to pickup an axis2.xml to configure SoapMessageMUProviderChecker -->
-                        <property>
-                            <name>org.apache.axis2.jaxws.config.path</name>
-                            <value>./target/test-classes/axis2.xml</value>
-                        </property>
-                        <property>
-                            <name>org.apache.axis2.jaxws.repo.path</name>
-                            <value>./target/repository</value>
-                        </property>
+                        <org.apache.axis2.jaxws.config.path>./target/test-classes/axis2.xml</org.apache.axis2.jaxws.config.path>
+                        <org.apache.axis2.jaxws.repo.path>./target/repository</org.apache.axis2.jaxws.repo.path>
                         <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
-                        <property>
-                            <name>java.awt.headless</name>
-                            <value>true</value>
-                        </property>
-                    </systemProperties>
+                        <java.awt.headless>true</java.awt.headless>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
