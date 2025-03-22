@@ -228,6 +228,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
      * @deprecated As of release 1.4, if you want to access the policy cache of a particular
      *             AxisDescription object use {@link #getPolicySubject()} instead.
      */
+    @Deprecated
     public void setPolicyInclude(PolicyInclude policyInclude) {
         this.policyInclude = policyInclude;
     }
@@ -238,6 +239,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
      * @see org.apache.axis2.description.AxisDescription#getPolicySubject()
      * @deprecated As of release 1.4, replaced by {@link #getPolicySubject()}
      */
+    @Deprecated
     public PolicyInclude getPolicyInclude() {
         if (policyInclude == null) {
             policyInclude = new PolicyInclude(this);

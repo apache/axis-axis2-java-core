@@ -320,17 +320,10 @@ public class EndpointReference implements Externalizable, SafeSerializable {
 
     }
 
-    /**
-     * @deprecated
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name
-     * @deprecated
-     */
     public void setName(String name) {
         this.name = name;
     }

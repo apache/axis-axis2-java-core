@@ -114,6 +114,7 @@ public class PolicyInclude {
 	 *             {@link AxisDescription} has to be set as the argument.
 	 * 
 	 */
+    @Deprecated
     public void setPolicy(Policy policy) {
         wrapperElements.clear();
 
@@ -144,6 +145,7 @@ public class PolicyInclude {
 	 *             {@link PolicySubject #attachPolicy(Policy)} accordingly.
 	 * 
 	 */
+    @Deprecated
     public void setEffectivePolicy(Policy effectivePolicy) {
         this.effectivePolicy = effectivePolicy;
         
@@ -228,6 +230,7 @@ public class PolicyInclude {
 	 *             {@link AxisDescription}, use
 	 *             {@link PolicySubject #getAttachedPolicyComponents() and {@link org.PolicyUtil #getMergedPolicy(List, AxisDescription)}}
 	 */
+    @Deprecated
     public Policy getPolicy() {
     	if (description != null) {
 			ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>(description.getPolicySubject()
@@ -245,6 +248,7 @@ public class PolicyInclude {
 	 *             {@link AxisBindingMessage #getEffectivePolicy()} when
 	 *             applicable.
 	 */
+    @Deprecated
     public Policy getEffectivePolicy() {
     	if (description != null) {
 			if (description instanceof AxisMessage) {
@@ -265,6 +269,7 @@ public class PolicyInclude {
 	 *             {@link PolicySubject #getAttachedPolicyComponents()} on
 	 *             appropriate description object.
 	 */
+    @Deprecated
     public ArrayList getPolicyElements(int type) {
         ArrayList policyElementList = new ArrayList();
         Iterator<Wrapper> wrapperElementIterator = wrapperElements.values().iterator();
