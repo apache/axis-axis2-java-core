@@ -578,21 +578,12 @@
                         <exclude>**/ComplexDataTypesDocLitBareTest.java</exclude>
                         <exclude>**/ComplexDataTypesTest.java</exclude>
                     </excludes>
-                    <systemProperties>
-                        <property>
-                            <name>build.repository</name>
-                            <value>./target/test-classes</value>
-                        </property>
+                    <systemPropertyVariables>
+                        <build.repository>./target/test-classes</build.repository>
                         <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
-                        <property>
-                            <name>java.awt.headless</name>
-                            <value>true</value>
-                        </property>
-                        <property>
-                            <name>org.apache.axis2.transport.http.server.fastShutdown</name>
-                            <value>true</value>
-                        </property>
-                    </systemProperties>
+                        <java.awt.headless>true</java.awt.headless>
+                        <org.apache.axis2.transport.http.server.fastShutdown>true</org.apache.axis2.transport.http.server.fastShutdown>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>

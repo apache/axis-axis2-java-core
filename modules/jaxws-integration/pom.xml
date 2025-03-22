@@ -1387,41 +1387,17 @@
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                     </includes>
-                    <systemProperties>
-                        <property>
-                            <name>javax.xml.accessExternalSchema</name>
-                            <value>all</value>
-                        </property>
-                        <property>
-                            <name>OASISCatalogManager.catalog.debug.level</name>
-                            <value>0</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.MessageFactory</name>
-                            <value>org.apache.axis2.saaj.MessageFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.SOAPFactory</name>
-                            <value>org.apache.axis2.saaj.SOAPFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.SOAPConnectionFactory</name>
-                            <value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>jakarta.xml.soap.MetaFactory</name>
-                            <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
-                        </property>
+                    <systemPropertyVariables>
+                        <javax.xml.accessExternalSchema>all</javax.xml.accessExternalSchema>
+                        <OASISCatalogManager.catalog.debug.level>0</OASISCatalogManager.catalog.debug.level>
+                        <jakarta.xml.soap.MessageFactory>org.apache.axis2.saaj.MessageFactoryImpl</jakarta.xml.soap.MessageFactory>
+                        <jakarta.xml.soap.SOAPFactory>org.apache.axis2.saaj.SOAPFactoryImpl</jakarta.xml.soap.SOAPFactory>
+                        <jakarta.xml.soap.SOAPConnectionFactory>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</jakarta.xml.soap.SOAPConnectionFactory>
+                        <jakarta.xml.soap.MetaFactory>org.apache.axis2.saaj.SAAJMetaFactoryImpl</jakarta.xml.soap.MetaFactory>
                         <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
-                        <property>
-                            <name>java.awt.headless</name>
-                            <value>true</value>
-                        </property>
-                        <property>
-                            <name>org.apache.axis2.transport.http.server.fastShutdown</name>
-                            <value>true</value>
-                        </property>
-                    </systemProperties>
+                        <java.awt.headless>true</java.awt.headless>
+                        <org.apache.axis2.transport.http.server.fastShutdown>true</org.apache.axis2.transport.http.server.fastShutdown>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
