@@ -568,7 +568,6 @@ public abstract class HTTPSender {
         fault.setDetail(faultDetail);
 
         return fault;
-
     }
 
     /**
@@ -621,7 +620,6 @@ public abstract class HTTPSender {
         }
 
         return Optional.ofNullable(faultQName);
-
     }
 
     /**
@@ -644,7 +642,6 @@ public abstract class HTTPSender {
         faultDetail.addChild(textNode);
 
         return faultDetail;
-
     }
 
     /**
@@ -662,7 +659,6 @@ public abstract class HTTPSender {
         // Replace closing CDATA sequences properly
         String safeContent = responseContent.replace("]]>", "]]]]><![CDATA[>").replace("\n", "&#10;");
         return "<![CDATA[" + safeContent + "]]>";
-
     }
 
 }
