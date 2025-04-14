@@ -41,6 +41,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.HttpHeaders;
 
@@ -54,7 +55,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -294,7 +294,7 @@ public abstract class HTTPSender {
             log.info("Unable to send to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
-    }   
+    }
 
     private void addCustomHeaders(MessageContext msgContext, Request request) {
     
