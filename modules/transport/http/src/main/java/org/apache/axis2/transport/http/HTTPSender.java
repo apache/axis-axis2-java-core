@@ -22,6 +22,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axiom.mime.ContentType;
 import org.apache.axiom.mime.Header;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -40,21 +41,38 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.HttpHeaders;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.namespace.QName;
+
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_BAD_REQUEST;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_CONFLICT;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_FORBIDDEN;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_GONE;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_INTERNAL_SERVER_ERROR;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_METHOD_NOT_ALLOWED;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_NOT_ACCEPTABLE;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_NOT_FOUND;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_PROXY_AUTH_REQUIRED;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_REQUEST_TIMEOUT;
+import static org.apache.axis2.kernel.http.HTTPConstants.QNAME_HTTP_UNAUTHORIZED;
 
 //TODO - It better if we can define these method in a interface move these into AbstractHTTPSender and get rid of this class.
 public abstract class HTTPSender {
@@ -196,7 +214,9 @@ public abstract class HTTPSender {
             boolean cleanup = true;
             try {
                 int statusCode = request.getStatusCode();
-                log.trace("Handling response - " + statusCode);
+
+                log.trace("Handling response - [content-type='" + contentType + "', statusCode=" + statusCode + "]");
+
                 boolean processResponse;
                 boolean fault;
                 if (statusCode == HttpStatus.SC_ACCEPTED) {
@@ -205,14 +225,22 @@ public abstract class HTTPSender {
                 } else if (statusCode >= 200 && statusCode < 300) {
                     processResponse = true;
                     fault = false;
-                } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR
-                           || statusCode == HttpStatus.SC_BAD_REQUEST || statusCode == HttpStatus.SC_NOT_FOUND) {
-                    processResponse = true;
-                    fault = true;
+                } else if (statusCode >= 400 && statusCode <= 500) {
+
+                    // if the response has a HTTP error code (401/404/500) but is *not* a SOAP response, handle it here
+                    if (contentType != null && contentType.startsWith("text/html")) {
+                        throw handleNonSoapError(request, statusCode);
+                    } else {
+                        processResponse = true;
+                        fault = true;
+                    }
+
                 } else {
-                    throw new AxisFault(Messages.getMessage("transportError", String.valueOf(statusCode),
+                    throw new AxisFault(Messages.getMessage("transportError",
+                                                            String.valueOf(statusCode),
                                                             request.getStatusText()));
                 }
+
                 obtainHTTPHeaderInformation(request, msgContext);
                 if (processResponse) {
                     OperationContext opContext = msgContext.getOperationContext();
@@ -266,7 +294,7 @@ public abstract class HTTPSender {
             log.info("Unable to send to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
-    }   
+    }
 
     private void addCustomHeaders(MessageContext msgContext, Request request) {
     
@@ -498,4 +526,143 @@ public abstract class HTTPSender {
         String value = cookies.get(name);
         return value == null ? null : name + "=" + value;
     }
+
+    /**
+     * Handles non-SOAP HTTP error responses (e.g., 404, 500) by creating an AxisFault.
+     * <p>
+     *   If the response is `text/html`, it extracts the response body and includes it
+     *   as fault details, wrapped within a CDATA block.
+     * </p>
+     *
+     * @param request the HTTP request instance
+     * @param statusCode the HTTP status code
+     * @return AxisFault containing the error details
+     */
+    private AxisFault handleNonSoapError(final Request request, final int statusCode) {
+
+        String responseContent = null;
+
+        InputStream responseContentInputStream = null;
+        try {
+            responseContentInputStream = request.getResponseContent();
+        } catch (final IOException ex) {
+            // NO-OP
+        }
+
+        if (responseContentInputStream != null) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(responseContentInputStream))) {
+                responseContent = reader.lines().collect(Collectors.joining("\n")).trim();
+            } catch (IOException e) {
+                log.warn("Failed to read response content from HTTP error response", e);
+            }
+        }
+
+        // Build and throw an AxisFault with the response content
+        final String faultMessage =
+            Messages.getMessage("transportError", String.valueOf(statusCode), responseContent);
+
+        final QName faultQName = getFaultQNameForStatusCode(statusCode).orElse(null);
+
+        final AxisFault fault = new AxisFault(faultMessage, faultQName);
+        final OMElement faultDetail = createFaultDetailForNonSoapError(responseContent);
+        fault.setDetail(faultDetail);
+
+        return fault;
+
+    }
+
+    /**
+     * Returns an appropriate QName for the given HTTP status code.
+     *
+     * @param statusCode the HTTP status code (e.g., 404, 500)
+     * @return an Optional containing the QName if available, or an empty Optional if the status code is unsupported
+     */
+    private Optional<QName> getFaultQNameForStatusCode(int statusCode) {
+
+        final QName faultQName;
+
+        switch (statusCode) {
+            case HttpStatus.SC_BAD_REQUEST:
+                faultQName = QNAME_HTTP_BAD_REQUEST;
+                break;
+            case HttpStatus.SC_UNAUTHORIZED:
+                faultQName = QNAME_HTTP_UNAUTHORIZED;
+                break;
+            case HttpStatus.SC_FORBIDDEN:
+                faultQName = QNAME_HTTP_FORBIDDEN;
+                break;
+            case HttpStatus.SC_NOT_FOUND:
+                faultQName = QNAME_HTTP_NOT_FOUND;
+                break;
+            case HttpStatus.SC_METHOD_NOT_ALLOWED:
+                faultQName = QNAME_HTTP_METHOD_NOT_ALLOWED;
+                break;
+            case HttpStatus.SC_NOT_ACCEPTABLE:
+                faultQName = QNAME_HTTP_NOT_ACCEPTABLE;
+                break;
+            case HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED:
+                faultQName = QNAME_HTTP_PROXY_AUTH_REQUIRED;
+                break;
+            case HttpStatus.SC_REQUEST_TIMEOUT:
+                faultQName = QNAME_HTTP_REQUEST_TIMEOUT;
+                break;
+            case HttpStatus.SC_CONFLICT:
+                faultQName = QNAME_HTTP_CONFLICT;
+                break;
+            case HttpStatus.SC_GONE:
+                faultQName = QNAME_HTTP_GONE;
+                break;
+            case HttpStatus.SC_INTERNAL_SERVER_ERROR:
+                faultQName = QNAME_HTTP_INTERNAL_SERVER_ERROR;
+                break;
+            default:
+                faultQName = null;
+                break;
+        }
+
+        return Optional.ofNullable(faultQName);
+
+    }
+
+    /**
+     * Creates a fault detail element containing the response content.
+     */
+    private OMElement createFaultDetailForNonSoapError(String responseContent) {
+
+        final OMElement faultDetail =
+            OMAbstractFactory.getOMFactory().createOMElement(new QName("http://ws.apache.org/axis2", "Details"));
+
+        final OMElement textNode =
+            OMAbstractFactory.getOMFactory().createOMElement(new QName("http://ws.apache.org/axis2", "Text"));
+
+        if (responseContent != null && !responseContent.isEmpty()) {
+            textNode.setText(wrapResponseWithCDATA(responseContent));
+        } else {
+            textNode.setText(wrapResponseWithCDATA("The endpoint returned no response content."));
+        }
+
+        faultDetail.addChild(textNode);
+
+        return faultDetail;
+
+    }
+
+    /**
+     * Wraps the given HTML response content in a CDATA block to allow it to be added as Text in a fault-detail.
+     *
+     * @param responseContent the response content
+     * @return the CDATA-wrapped response
+     */
+    private String wrapResponseWithCDATA(final String responseContent) {
+
+        if (responseContent == null || responseContent.isEmpty()) {
+            return "<![CDATA[The endpoint returned no response content.]]>";
+        }
+
+        // Replace closing CDATA sequences properly
+        String safeContent = responseContent.replace("]]>", "]]]]><![CDATA[>").replace("\n", "&#10;");
+        return "<![CDATA[" + safeContent + "]]>";
+
+    }
+
 }

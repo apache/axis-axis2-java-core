@@ -21,6 +21,7 @@
 package org.apache.axis2.kernel.http;
 
 import java.io.UnsupportedEncodingException;
+import javax.xml.namespace.QName;
 
 /**
  * HTTP protocol and message context constants.
@@ -533,4 +534,53 @@ public class HTTPConstants {
 
     public static final String USER_AGENT = "userAgent";
     public static final String SERVER = "server";
+
+    /** Base QName namespace for HTTP errors. */
+    public static final String QNAME_HTTP_NS =
+        "http://ws.apache.org/axis2/http";
+
+    /** QName for faults caused by a 400 Bad Request HTTP response. */
+    public static final QName QNAME_HTTP_BAD_REQUEST =
+        new QName(QNAME_HTTP_NS, "BAD_REQUEST");
+
+    /** QName for faults caused by a 401 Unauthorized HTTP response. */
+    public static final QName QNAME_HTTP_UNAUTHORIZED =
+        new QName(QNAME_HTTP_NS, "UNAUTHORIZED");
+
+    /** QName for faults caused by a 403 Forbidden HTTP response. */
+    public static final QName QNAME_HTTP_FORBIDDEN =
+        new QName(QNAME_HTTP_NS, "FORBIDDEN");
+
+    /** QName for faults caused by a 404 Not Found HTTP response. */
+    public static final QName QNAME_HTTP_NOT_FOUND =
+        new QName(QNAME_HTTP_NS, "NOT_FOUND");
+
+    /** QName for faults caused by a 405 Method Not Allowed HTTP response. */
+    public static final QName QNAME_HTTP_METHOD_NOT_ALLOWED =
+        new QName(QNAME_HTTP_NS, "METHOD_NOT_ALLOWED");
+
+    /** QName for faults caused by a 406 Not Acceptable HTTP response. */
+    public static final QName QNAME_HTTP_NOT_ACCEPTABLE =
+        new QName(QNAME_HTTP_NS, "NOT_ACCEPTABLE");
+
+    /** QName for faults caused by a 407 Proxy Authentication Required HTTP response. */
+    public static final QName QNAME_HTTP_PROXY_AUTH_REQUIRED =
+        new QName(QNAME_HTTP_NS, "PROXY_AUTHENTICATION_REQUIRED");
+
+    /** QName for faults caused by a 408 Request Timeout HTTP response. */
+    public static final QName QNAME_HTTP_REQUEST_TIMEOUT =
+        new QName(QNAME_HTTP_NS, "REQUEST_TIMEOUT");
+
+    /** QName for faults caused by a 409 Conflict HTTP response. */
+    public static final QName QNAME_HTTP_CONFLICT =
+        new QName(QNAME_HTTP_NS, "CONFLICT");
+
+    /** QName for faults caused by a 410 Gone HTTP response. */
+    public static final QName QNAME_HTTP_GONE =
+        new QName(QNAME_HTTP_NS, "GONE");
+
+    /** QName for faults caused by a 500 Internal Server Error HTTP response. */
+    public static final QName QNAME_HTTP_INTERNAL_SERVER_ERROR =
+        new QName(QNAME_HTTP_NS, "INTERNAL_SERVER_ERROR");
+
 }
