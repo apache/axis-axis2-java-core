@@ -76,6 +76,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.function.Function;
 
 public class Utils {
     private static final Log log = LogFactory.getLog(Utils.class);
@@ -612,16 +614,9 @@ public class Utils {
                         if (!inetAddr.isLinkLocalAddress())
                         {
                             if (inetAddr instanceof Inet6Address) {
-                                Inet6Address inet6Addr = (Inet6Address) inetAddr;
-                                if ((inet6Addr.getAddress()[0] ^ 0xfc) > 1)
-                                {
-                                    // we ignore the site-local attribute for IPv6 because
-                                    // it has been deprecated, see https://www.ietf.org/rfc/rfc3879.txt
-                                    // instead we verify that this is not a unique local address,
-                                    // this check is unfortunately not in the standard library (yet)
-                                    // https://en.wikipedia.org/wiki/Unique_local_address
-                                    addresses.add(inetAddr);
-                                }
+                                // we ignore the site-local attribute for IPv6 because
+                                // it has been deprecated, see https://www.ietf.org/rfc/rfc3879.txt
+                                addresses.add(inetAddr);
                             } else if (inetAddr instanceof Inet4Address && inetAddr.isSiteLocalAddress()) {
                                 // check site-local
                                 addresses.add(inetAddr);
@@ -683,7 +678,11 @@ public class Utils {
      * @return Returns String.
       */
     public static String getIpAddress() throws SocketException {
-        return getLocalHostLANAddresses().stream().findFirst().map(InetAddress::getHostAddress).orElse("127.0.0.1");
+        //prefer ipv4 for backwards compatibility, we used to only consider ipv4 addresses
+        Function<InetAddress,Integer> preferIpv4 = (i) -> i instanceof Inet4Address ? 1 : 0;
+        return getLocalHostLANAddresses().stream()
+                .min(Comparator.comparing(preferIpv4))
+                .map(InetAddress::getHostAddress).orElse("127.0.0.1");
     }
 
     /**
