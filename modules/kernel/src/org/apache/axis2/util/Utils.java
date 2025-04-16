@@ -681,7 +681,7 @@ public class Utils {
         //prefer ipv4 for backwards compatibility, we used to only consider ipv4 addresses
         Function<InetAddress,Integer> preferIpv4 = (i) -> i instanceof Inet4Address ? 1 : 0;
         return getLocalHostLANAddresses().stream()
-                .min(Comparator.comparing(preferIpv4))
+                .max(Comparator.comparing(preferIpv4))
                 .map(InetAddress::getHostAddress).orElse("127.0.0.1");
     }
 
