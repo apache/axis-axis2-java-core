@@ -61,9 +61,12 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
@@ -71,6 +74,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.function.Function;
 
 public class Utils {
     private static final Log log = LogFactory.getLog(Utils.class);
@@ -569,6 +576,93 @@ public class Utils {
         }
         return threshold;
     }
+    /**
+     * Returns all <code>InetAddress</code> objects encapsulating what are most likely the machine's
+     * LAN IP addresses. This method was copied from apache-commons-jcs HostNameUtil.java.
+     * <p>
+     * This method will scan all IP addresses on all network interfaces on the host machine to
+     * determine the IP addresses most likely to be the machine's LAN addresses.
+     * <p>
+     * @return List<InetAddress>
+     * @throws IllegalStateException If the LAN address of the machine cannot be found.
+     */
+    public static List<InetAddress> getLocalHostLANAddresses() throws SocketException
+    {
+        final List<InetAddress> addresses = new ArrayList<>();
+
+        try
+        {
+            InetAddress candidateAddress = null;
+            // Iterate all NICs (network interface cards)...
+            final Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
+            while ( ifaces.hasMoreElements() )
+            {
+                final NetworkInterface iface = ifaces.nextElement();
+
+                // Skip loopback interfaces
+                if (iface.isLoopback() || !iface.isUp())
+                {
+                    continue;
+                }
+
+                // Iterate all IP addresses assigned to each card...
+                for ( final Enumeration<InetAddress> inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements(); )
+                {
+                    final InetAddress inetAddr = inetAddrs.nextElement();
+                    if ( !inetAddr.isLoopbackAddress() )
+                    {
+                        if (!inetAddr.isLinkLocalAddress())
+                        {
+                            if (inetAddr instanceof Inet6Address) {
+                                // we ignore the site-local attribute for IPv6 because
+                                // it has been deprecated, see https://www.ietf.org/rfc/rfc3879.txt
+                                addresses.add(inetAddr);
+                            } else if (inetAddr instanceof Inet4Address && inetAddr.isSiteLocalAddress()) {
+                                // check site-local
+                                addresses.add(inetAddr);
+                            }
+                        }
+
+                        if ( candidateAddress == null )
+                        {
+                            // Found non-loopback address, but not necessarily site-local.
+                            // Store it as a candidate to be returned if site-local address is not subsequently found...
+                            candidateAddress = inetAddr;
+                            // Note that we don't repeatedly assign non-loopback non-site-local addresses as candidates,
+                            // only the first. For subsequent iterations, candidate will be non-null.
+                        }
+                    }
+                }
+            }
+            if (candidateAddress != null && addresses.isEmpty())
+            {
+                // We did not find a site-local address, but we found some other non-loopback address.
+                // Server might have a non-site-local address assigned to its NIC (or it might be running
+                // IPv6 which deprecates the "site-local" concept).
+                addresses.add(candidateAddress);
+            }
+            // At this point, we did not find a non-loopback address.
+            // Fall back to returning whatever InetAddress.getLocalHost() returns...
+            if (addresses.isEmpty())
+            {
+                final InetAddress jdkSuppliedAddress = InetAddress.getLocalHost();
+                if ( jdkSuppliedAddress == null )
+                {
+                    throw new IllegalStateException( "The JDK InetAddress.getLocalHost() method unexpectedly returned null." );
+                }
+                addresses.add(jdkSuppliedAddress);
+            }
+        }
+        catch (UnknownHostException e )
+        {
+            var throwable = new SocketException("Failed to determine LAN address");
+            throwable.initCause(e);
+            throw throwable;
+        }
+
+        return addresses;
+    }
+
      /**
      * Returns the ip address to be used for the replyto epr
      * CAUTION:
@@ -582,25 +676,13 @@ public class Utils {
      * - Obtain the ip to be used here from the Call API
      *
      * @return Returns String.
-     * @throws java.net.SocketException
       */
     public static String getIpAddress() throws SocketException {
-        Enumeration e = NetworkInterface.getNetworkInterfaces();
-        String address = "127.0.0.1";
-
-        while (e.hasMoreElements()) {
-            NetworkInterface netface = (NetworkInterface) e.nextElement();
-            Enumeration addresses = netface.getInetAddresses();
-
-            while (addresses.hasMoreElements()) {
-                InetAddress ip = (InetAddress) addresses.nextElement();
-                if (!ip.isLoopbackAddress() && isIP(ip.getHostAddress())) {
-                    return ip.getHostAddress();
-                }
-            }
-        }
-
-        return address;
+        //prefer ipv4 for backwards compatibility, we used to only consider ipv4 addresses
+        Function<InetAddress,Integer> preferIpv4 = (i) -> i instanceof Inet4Address ? 1 : 0;
+        return getLocalHostLANAddresses().stream()
+                .max(Comparator.comparing(preferIpv4))
+                .map(InetAddress::getHostAddress).orElse("127.0.0.1");
     }
 
     /**
@@ -637,10 +719,6 @@ public class Utils {
             }
         }
         return null;
-    }
-
-    private static boolean isIP(String hostAddress) {
-        return hostAddress.split("[.]").length == 4;
     }
 
     /**
