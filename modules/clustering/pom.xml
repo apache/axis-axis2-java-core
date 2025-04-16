@@ -125,16 +125,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>maven.test.haltafterfailure</name>
-                            <value>false</value>
-                        </property>
-                        <property>
-                            <name>run.clustering.tests</name>
-                            <value>${run.clustering.tests}</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <maven.test.haltafterfailure>false</maven.test.haltafterfailure>
+                        <run.clustering.tests>${run.clustering.tests}</run.clustering.tests>
+                    </systemPropertyVariables>
                     <excludes>
                         <exclude>**/UpdateStateTest.java</exclude>
                         <exclude>**/ConfigurationManagerTest.java</exclude>

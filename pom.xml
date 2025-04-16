@@ -1373,32 +1373,20 @@
                     <runOrder>alphabetical</runOrder>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <trimStackTrace>false</trimStackTrace>
-                    <systemProperties>
-                        <property>
-                            <name>java.io.tmpdir</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                        <property>
-                            <name>user.home</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+                        <user.home>${project.build.directory}/tmp</user.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <systemProperties>
-                        <property>
-                            <name>java.io.tmpdir</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                        <property>
-                            <name>user.home</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+                        <user.home>${project.build.directory}/tmp</user.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>

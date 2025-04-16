@@ -3346,6 +3346,7 @@ public class AxisService extends AxisDescription {
     /**
      * @deprecated use {@link AxisEndpoint#getEndpointURL()}
      */
+    @Deprecated
     public String getEndpointURL() {
         return endpointURL;
     }
@@ -3353,6 +3354,7 @@ public class AxisService extends AxisDescription {
     /**
      * @deprecated use {@link AxisEndpoint#setEndpointURL(String)}
      */
+    @Deprecated
     public void setEndpointURL(String endpointURL) {
         this.endpointURL = endpointURL;
     }

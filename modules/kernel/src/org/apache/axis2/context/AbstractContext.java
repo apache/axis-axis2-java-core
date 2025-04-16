@@ -95,6 +95,7 @@ public abstract class AbstractContext {
      * @deprecated Use {@link #getPropertyNames()}, {@link #getProperty(String)},
      *             {@link #setProperty(String, Object)} & {@link #removeProperty(String)}instead.
      */
+    @Deprecated
     public Map<String, Object> getProperties() {
         initPropertiesMap();
         return properties;

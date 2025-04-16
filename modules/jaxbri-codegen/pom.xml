@@ -175,7 +175,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <forkMode>once</forkMode>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>

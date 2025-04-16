@@ -259,12 +259,9 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
-                    <systemProperties>
-                        <property>
-                            <name>build.repository</name>
-                            <value>./target/test-classes</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <build.repository>./target/test-classes</build.repository>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
