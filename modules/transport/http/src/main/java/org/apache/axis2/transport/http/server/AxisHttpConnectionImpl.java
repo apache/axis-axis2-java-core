@@ -163,16 +163,18 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
 	}    	
 
         final SocketHolder socketHolder = this.socketHolderRef.getAndSet(null);
-        final Socket socket = socketHolder.getSocket();
-        try {
-            socket.shutdownOutput();
-        } catch (IOException ignore) {
+        if(socketHolder != null) {
+            final Socket socket = socketHolder.getSocket();
+            try {
+                socket.shutdownOutput();
+            } catch (IOException ignore) {
+            }
+            try {
+                socket.shutdownInput();
+            } catch (IOException ignore) {
+            }
+            socket.close();
         }
-        try {
-            socket.shutdownInput();
-        } catch (IOException ignore) {
-        }
-        socket.close();
     }
 
     public boolean isOpen() {
