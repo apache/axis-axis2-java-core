@@ -229,7 +229,8 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         this.inbuffer.clear();
         final int i = this.inbuffer.readLine(headLine, this.in);
         if (i == -1) {
-            throw new IOException("readLine() from SessionInputBufferImpl returned -1 in method receiveRequest()");
+            //throw new IOException("readLine() from SessionInputBufferImpl returned -1 in method receiveRequest()");
+            return null;
         }
 
 	final Header[] headers = AbstractMessageParser.parseHeaders(
