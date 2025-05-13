@@ -151,7 +151,7 @@ public class AxisHttpService {
         try {
             request = conn.receiveRequest();
 	    if (request == null) {
-                LOG.error("AxisHttpService.handleRequest() returning on null request, will close the connection");
+                LOG.info("AxisHttpService.handleRequest() returning on null request, will close the connection");
                 conn.close();
                 return;
             }
