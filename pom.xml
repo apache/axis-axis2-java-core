@@ -500,7 +500,7 @@
         <jaxws.rt.version>4.0.3</jaxws.rt.version>
         <jaxws.api.version>4.0.2</jaxws.api.version>
         <maven-plugin-tools.version>3.15.1</maven-plugin-tools.version>
-        <maven-archetype.version>3.3.1</maven-archetype.version>
+        <maven-archetype.version>3.4.0</maven-archetype.version>
         <activemq.version>6.1.6</activemq.version>
         <surefire.version>3.5.3</surefire.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
