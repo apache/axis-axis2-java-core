@@ -491,7 +491,7 @@
         <spring.version>6.2.6</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xmlbeans.version>3.0.1</xmlbeans.version>
-        <xmlunit.version>2.10.0</xmlunit.version>
+        <xmlunit.version>2.10.1</xmlunit.version>
         <xml_resolver.version>1.2</xml_resolver.version>
         <commons.cli.version>1.9.0</commons.cli.version>
         <!-- The build failing if tests are skipped is very annoying -->
