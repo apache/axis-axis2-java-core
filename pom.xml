@@ -889,7 +889,7 @@
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.jobs</artifactId>
-                <version>3.15.500</version>
+                <version>3.15.600</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
