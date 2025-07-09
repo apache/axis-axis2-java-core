@@ -1330,7 +1330,7 @@
             <plugin>
                 <groupId>com.github.veithen.maven</groupId>
                 <artifactId>hermetic-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.9.0</version>
                 <executions>
                     <execution>
                         <goals>
