@@ -153,6 +153,7 @@ public interface BasicHttpServer {
     public static final String RESPONSE_HTTP_202 = "response.http.202";
     public static final String RESPONSE_HTTP_400 = "response.http.400";
     public static final String RESPONSE_HTTP_500 = "response.http.500";
+    public static final String RESPONSE_HTTP_COOKIE = "response.http.cookie";
 
 
 }

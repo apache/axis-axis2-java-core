@@ -468,30 +468,30 @@
         <xmlschema.version>2.3.1</xmlschema.version>
         <ant.version>1.10.15</ant.version>
         <antlr.version>2.7.7</antlr.version>
-        <aspectj.version>1.9.23</aspectj.version>
+        <aspectj.version>1.9.24</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
-	<commons.fileupload.version>2.0.0-M2</commons.fileupload.version>
+	<commons.fileupload.version>2.0.0-M3</commons.fileupload.version>
         <commons.logging.version>1.3.5</commons.logging.version>
         <fi.version>2.1.1</fi.version>
         <geronimo.spec.annotation.version>1.1.1</geronimo.spec.annotation.version>
         <geronimo.spec.metadata.version>1.1.3</geronimo.spec.metadata.version>
         <geronimo.spec.jaxws.version>1.2</geronimo.spec.jaxws.version>
-        <google.gson.version>2.12.1</google.gson.version>
-        <groovy.version>4.0.26</groovy.version>
+        <google.gson.version>2.13.1</google.gson.version>
+        <groovy.version>4.0.27</groovy.version>
         <httpcore.version>5.3.4</httpcore.version>
-        <httpclient.version>5.4.2</httpclient.version>
+        <httpclient.version>5.5</httpclient.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
-        <jetty.version>12.0.18</jetty.version>
+        <jetty.version>12.0.22</jetty.version>
         <jibx.version>1.4.2</jibx.version>
         <maven.archiver.version>3.6.3</maven.archiver.version>
-        <maven.version>3.9.9</maven.version>
+        <maven.version>3.9.10</maven.version>
         <rhino.version>1.6R7</rhino.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <spring.version>6.2.5</spring.version>
+        <spring.version>6.2.8</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xmlbeans.version>5.3.0</xmlbeans.version>
-        <xmlunit.version>2.10.0</xmlunit.version>
+        <xmlunit.version>2.10.2</xmlunit.version>
         <xml_resolver.version>1.2</xml_resolver.version>
         <commons.cli.version>1.9.0</commons.cli.version>
         <!-- The build failing if tests are skipped is very annoying -->
@@ -500,9 +500,9 @@
         <jaxws.rt.version>4.0.3</jaxws.rt.version>
         <jaxws.api.version>4.0.2</jaxws.api.version>
         <maven-plugin-tools.version>3.15.1</maven-plugin-tools.version>
-        <maven-archetype.version>3.3.1</maven-archetype.version>
+        <maven-archetype.version>3.4.0</maven-archetype.version>
         <activemq.version>6.1.6</activemq.version>
-        <surefire.version>3.5.2</surefire.version>
+        <surefire.version>3.5.3</surefire.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
@@ -693,7 +693,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.16.1</version>
+                <version>5.18.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.xmlschema</groupId>
@@ -764,7 +764,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.18.0</version>
+                <version>2.19.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
@@ -831,7 +831,7 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
-                <version>5.12.1</version>
+                <version>5.13.3</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlbeans</groupId>
@@ -889,42 +889,42 @@
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.jobs</artifactId>
-                <version>3.15.500</version>
+                <version>3.15.600</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.resources</artifactId>
-                <version>3.22.100</version>
+                <version>3.22.200</version>
             </dependency>
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.core.runtime</artifactId>
-                <version>3.33.0</version>
+                <version>3.33.100</version>
             </dependency>
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.equinox.common</artifactId>
-                <version>3.20.0</version>
+                <version>3.20.100</version>
             </dependency>
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.jface</artifactId>
-                <version>3.36.0</version>
+                <version>3.37.0</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.osgi</artifactId>
-                <version>3.23.0</version>
+                <version>3.23.100</version>
             </dependency>
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.swt</artifactId>
-                <version>3.129.0</version>
+                <version>3.130.0</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-                <version>3.129.0</version>
+                <version>3.130.0</version>
             </dependency>
 	    <dependency>
                 <groupId>org.eclipse.platform</groupId>
@@ -981,7 +981,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.4.5-jre</version>
+                <version>33.4.8-jre</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -996,7 +996,7 @@
             <dependency>
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
-                <version>7.1.0</version>
+                <version>7.1.1</version>
             </dependency>
             
             <!-- Jetty is used by some of the unit tests -->
@@ -1079,7 +1079,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>4.1.1</version>
+                    <version>4.2.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.groovy</groupId>
@@ -1108,7 +1108,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -1157,7 +1157,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
@@ -1312,7 +1312,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.13</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -1373,32 +1373,20 @@
                     <runOrder>alphabetical</runOrder>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <trimStackTrace>false</trimStackTrace>
-                    <systemProperties>
-                        <property>
-                            <name>java.io.tmpdir</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                        <property>
-                            <name>user.home</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+                        <user.home>${project.build.directory}/tmp</user.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <systemProperties>
-                        <property>
-                            <name>java.io.tmpdir</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                        <property>
-                            <name>user.home</name>
-                            <value>${project.build.directory}/tmp</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+                        <user.home>${project.build.directory}/tmp</user.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>

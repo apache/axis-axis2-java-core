@@ -155,10 +155,10 @@ public class MessageContext extends AbstractContext
     /**
      * A place to store the current MessageContext
      */
-    public static ThreadLocal<MessageContext> currentMessageContext = new ThreadLocal<MessageContext>();
+    public static ThreadLocal<MessageContext> currentMessageContext = new ThreadLocal<>();
 
     public static MessageContext getCurrentMessageContext() {
-        return (MessageContext) currentMessageContext.get();
+        return currentMessageContext.get();
     }
 
     public static void destroyCurrentMessageContext() {
@@ -655,7 +655,7 @@ public class MessageContext extends AbstractContext
      */
     public void addExecutedPhase(Handler phase) {
         if (executedPhases == null) {
-            executedPhases = new LinkedList<Handler>();
+            executedPhases = new LinkedList<>();
         }
         executedPhases.addFirst(phase);
     }
@@ -679,7 +679,7 @@ public class MessageContext extends AbstractContext
             checkActivateWarning("getExecutedPhases");
         }
         if (executedPhases == null) {
-            executedPhases = new LinkedList<Handler>();
+            executedPhases = new LinkedList<>();
         }
         return executedPhases.iterator();
     }
@@ -692,7 +692,7 @@ public class MessageContext extends AbstractContext
      */
     public void resetExecutedPhases() {
         executedPhasesReset = true;
-        executedPhases = new LinkedList<Handler>();
+        executedPhases = new LinkedList<>();
     }
 
     /**
@@ -1013,8 +1013,9 @@ public class MessageContext extends AbstractContext
      * @return An unmodifiable map containing the combination of all available
      *         properties or an empty map.
      */
+    @Deprecated
     public Map<String, Object> getProperties() {
-        final Map<String, Object> resultMap = new HashMap<String, Object>();
+        final Map<String, Object> resultMap = new HashMap<>();
 
         // My own context hierarchy may not all be present. So look for whatever
         // nearest level is present and add the properties
@@ -1610,7 +1611,7 @@ public class MessageContext extends AbstractContext
         		return axisMessage.getEffectivePolicy();
         } else {
             if (axisService != null){
-                Collection<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
+                Collection<PolicyComponent> policyList = new ArrayList<>();
                 policyList.addAll(axisService.getPolicySubject().getAttachedPolicyComponents());
                 AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
                 policyList.addAll(axisConfiguration.getPolicySubject().getAttachedPolicyComponents());
@@ -1729,6 +1730,7 @@ public class MessageContext extends AbstractContext
      * @return boolean
      * @deprecated The bonus you used to get from this is now built in to SOAPEnvelope.getHeader()
      */
+    @Deprecated
     public boolean isHeaderPresent() {
         // If there's no envelope there can't be a header.
         if (this.envelope == null) {
@@ -1849,9 +1851,9 @@ public class MessageContext extends AbstractContext
      * @param key   The key
      * @return A string key
      */
-    private String generateSelfManagedDataKey(Class clazz, Object key) {
+    private String generateSelfManagedDataKey(Class<?> clazz, Object key) {
         return clazz.getName() + selfManagedDataDelimiter + key.toString() +
-                selfManagedDataDelimiter + Integer.toString(key.hashCode());
+                selfManagedDataDelimiter + key.hashCode();
     }
 
     /**
@@ -1865,9 +1867,9 @@ public class MessageContext extends AbstractContext
      * @param key   The key for this data object
      * @param value The data object
      */
-    public void setSelfManagedData(Class clazz, Object key, Object value) {
+    public void setSelfManagedData(Class<?> clazz, Object key, Object value) {
         if (selfManagedDataMap == null) {
-            selfManagedDataMap = new LinkedHashMap<String, Object>();
+            selfManagedDataMap = new LinkedHashMap<>();
         }
 
         // make sure we have a unique key and a delimiter so we can
@@ -1882,7 +1884,7 @@ public class MessageContext extends AbstractContext
      * @param key   The key for the data
      * @return The data object associated with the key, or NULL if not found
      */
-    public Object getSelfManagedData(Class clazz, Object key) {
+    public Object getSelfManagedData(Class<?> clazz, Object key) {
         if (selfManagedDataMap != null) {
             return selfManagedDataMap.get(generateSelfManagedDataKey(clazz, key));
         }
@@ -1896,7 +1898,7 @@ public class MessageContext extends AbstractContext
      * @param key   The key to look for
      * @return TRUE if the key exists, FALSE otherwise
      */
-    public boolean containsSelfManagedDataKey(Class clazz, Object key) {
+    public boolean containsSelfManagedDataKey(Class<?> clazz, Object key) {
         if (selfManagedDataMap == null) {
             return false;
         }
@@ -1910,7 +1912,7 @@ public class MessageContext extends AbstractContext
      * @param clazz The class of the caller that owns the key-value pair
      * @param key   The key of the object to be removed
      */
-    public void removeSelfManagedData(Class clazz, Object key) {
+    public void removeSelfManagedData(Class<?> clazz, Object key) {
         if (selfManagedDataMap != null) {
             selfManagedDataMap.remove(generateSelfManagedDataKey(clazz, key));
         }
@@ -1926,12 +1928,12 @@ public class MessageContext extends AbstractContext
     private ArrayList<Handler> flattenPhaseListToHandlers(ArrayList<Handler> list, LinkedHashMap<String, Handler> map) {
 
         if (map == null) {
-            map = new LinkedHashMap<String, Handler>();
+            map = new LinkedHashMap<>();
         }
 
         Iterator<Handler> it = list.iterator();
         while (it.hasNext()) {
-            Handler handler = (Handler) it.next();
+            Handler handler = it.next();
 
             String key = null;
             if (handler != null) {
@@ -1952,7 +1954,7 @@ public class MessageContext extends AbstractContext
             Iterator<String> it2 = map.keySet().iterator();
             while (it2.hasNext()) {
                 Object key = it2.next();
-                Handler value = (Handler) map.get(key);
+                Handler value = map.get(key);
                 String name = value.getName();
                 log.trace(getLogIDString() + ":flattenPhaseListToHandlers():  key [" + key +
                         "]    handler name [" + name + "]");
@@ -1960,7 +1962,7 @@ public class MessageContext extends AbstractContext
         }
 
 
-        return new ArrayList<Handler>(map.values());
+        return new ArrayList<>(map.values());
     }
 
 
@@ -1975,12 +1977,12 @@ public class MessageContext extends AbstractContext
     private ArrayList<Handler> flattenHandlerList(List<Handler> list, LinkedHashMap<String, Handler> map) {
 
         if (map == null) {
-            map = new LinkedHashMap<String, Handler>();
+            map = new LinkedHashMap<>();
         }
 
         Iterator<Handler> it = list.iterator();
         while (it.hasNext()) {
-            Handler handler = (Handler) it.next();
+            Handler handler = it.next();
 
             String key = null;
             if (handler != null) {
@@ -2000,7 +2002,7 @@ public class MessageContext extends AbstractContext
             }
         }
 
-        return new ArrayList<Handler>(map.values());
+        return new ArrayList<>(map.values());
     }
 
 
@@ -2076,12 +2078,12 @@ public class MessageContext extends AbstractContext
      * @return ArrayList
      */
     private ArrayList<SelfManagedDataHolder> serializeSelfManagedDataHelper(ArrayList<Handler> handlers) {
-        ArrayList<SelfManagedDataHolder> selfManagedDataHolderList = new ArrayList<SelfManagedDataHolder>();
+        ArrayList<SelfManagedDataHolder> selfManagedDataHolderList = new ArrayList<>();
         Iterator<Handler> it = handlers.iterator();
 
         try {
             while (it.hasNext()) {
-                Handler handler = (Handler) it.next();
+                Handler handler = it.next();
 
                 //if (handler instanceof Phase)
                 //{
@@ -2156,7 +2158,7 @@ public class MessageContext extends AbstractContext
 
         try {
             while ((it.hasNext()) && (handler_toreturn == null)) {
-                Handler handler = (Handler) it.next();
+                Handler handler = it.next();
 
                 if (handler instanceof Phase) {
                     handler_toreturn = deserialize_getHandlerFromExecutionChain(
@@ -3410,7 +3412,7 @@ public class MessageContext extends AbstractContext
             log.trace(getLogIDString() +
                       ": readExternal(): About to read properties, marker is: " + marker);
         }
-        properties = in.readMap(new HashMap());
+        properties = in.readMap(new HashMap<>());
 
 
         //---------------------------------------------------------
@@ -3687,7 +3689,7 @@ public class MessageContext extends AbstractContext
         }
 
         if (executedPhases == null) {
-            executedPhases = new LinkedList<Handler>();
+            executedPhases = new LinkedList<>();
         }
 
 
@@ -3915,7 +3917,7 @@ public class MessageContext extends AbstractContext
         }
 
         if (executedPhases == null) {
-            executedPhases = new LinkedList<Handler>();
+            executedPhases = new LinkedList<>();
         }
 
         //-------------------------------------------------------
@@ -3936,7 +3938,7 @@ public class MessageContext extends AbstractContext
     private ArrayList<Handler> restoreHandlerList(ArrayList<MetaDataEntry> metaDataEntries) {
         AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
 
-        List<Handler> existingHandlers = new ArrayList<Handler>();
+        List<Handler> existingHandlers = new ArrayList<>();
 
         // TODO: I'm using clone for the ArrayList returned from axisConfig object.
         //     Does it do a deep clone of the Handlers held there?  Does it matter?
@@ -3960,11 +3962,11 @@ public class MessageContext extends AbstractContext
 
         existingHandlers = flattenHandlerList(existingHandlers, null);
 
-        ArrayList<Handler> handlerListToReturn = new ArrayList<Handler>();
+        ArrayList<Handler> handlerListToReturn = new ArrayList<>();
 
         for (int i = 0; i < metaDataEntries.size(); i++) {
             Handler handler = (Handler) ActivateUtils
-                    .findHandler(existingHandlers, (MetaDataEntry) metaDataEntries.get(i));
+                    .findHandler(existingHandlers, metaDataEntries.get(i));
 
             if (handler != null) {
                 handlerListToReturn.add(handler);
@@ -3992,7 +3994,7 @@ public class MessageContext extends AbstractContext
 
         // get a list of existing handler/phase objects for the restored objects
 
-        ArrayList<MetaDataEntry> tmpMetaDataList = new ArrayList<MetaDataEntry>(metaDataEntries);
+        ArrayList<MetaDataEntry> tmpMetaDataList = new ArrayList<>(metaDataEntries);
 
         ArrayList<Handler> existingList = restoreHandlerList(tmpMetaDataList);
 
@@ -4002,7 +4004,7 @@ public class MessageContext extends AbstractContext
 
         // set up a list to return
 
-        LinkedList<Handler> returnedList = new LinkedList<Handler>();
+        LinkedList<Handler> returnedList = new LinkedList<>();
 
         if (base != null) {
             returnedList.addAll(base);

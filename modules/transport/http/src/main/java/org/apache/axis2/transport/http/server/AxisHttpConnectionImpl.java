@@ -163,16 +163,18 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
 	}    	
 
         final SocketHolder socketHolder = this.socketHolderRef.getAndSet(null);
-        final Socket socket = socketHolder.getSocket();
-        try {
-            socket.shutdownOutput();
-        } catch (IOException ignore) {
+        if(socketHolder != null) {
+            final Socket socket = socketHolder.getSocket();
+            try {
+                socket.shutdownOutput();
+            } catch (IOException ignore) {
+            }
+            try {
+                socket.shutdownInput();
+            } catch (IOException ignore) {
+            }
+            socket.close();
         }
-        try {
-            socket.shutdownInput();
-        } catch (IOException ignore) {
-        }
-        socket.close();
     }
 
     public boolean isOpen() {
@@ -227,7 +229,8 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         this.inbuffer.clear();
         final int i = this.inbuffer.readLine(headLine, this.in);
         if (i == -1) {
-            throw new IOException("readLine() from SessionInputBufferImpl returned -1 in method receiveRequest()");
+            //throw new IOException("readLine() from SessionInputBufferImpl returned -1 in method receiveRequest()");
+            return null;
         }
 
 	final Header[] headers = AbstractMessageParser.parseHeaders(
