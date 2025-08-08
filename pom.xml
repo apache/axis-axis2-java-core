@@ -486,7 +486,7 @@
         <jibx.version>1.4.2</jibx.version>
         <maven.archiver.version>3.6.4</maven.archiver.version>
         <maven.version>3.9.11</maven.version>
-        <rhino.version>1.6R7</rhino.version>
+        <rhino.version>1.8.0</rhino.version>
         <slf4j.version>2.0.17</slf4j.version>
         <spring.version>6.2.9</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
@@ -954,8 +954,13 @@
                 <version>${intellij.version}</version>
             </dependency>
             <dependency>
-                <groupId>rhino</groupId>
-                <artifactId>js</artifactId>
+                <groupId>org.mozilla</groupId>
+                <artifactId>rhino</artifactId>
+                <version>${rhino.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mozilla</groupId>
+                <artifactId>rhino-xml</artifactId>
                 <version>${rhino.version}</version>
             </dependency>
             <dependency>
