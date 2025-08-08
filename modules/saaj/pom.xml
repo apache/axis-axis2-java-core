@@ -91,9 +91,10 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
-	    <dependency>
+        <dependency>
             <groupId>org.eclipse.jetty.ee9</groupId>
             <artifactId>jetty-ee9-nested</artifactId>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty.toolchain</groupId>
