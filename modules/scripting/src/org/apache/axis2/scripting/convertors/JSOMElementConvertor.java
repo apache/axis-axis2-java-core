@@ -21,7 +21,6 @@ package org.apache.axis2.scripting.convertors;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.xmlbeans.XmlObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -29,42 +28,28 @@ import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Wrapper;
 import org.mozilla.javascript.xml.XMLObject;
 
-import java.io.StringReader;
-
 /**
  * JSObjectConvertor converts between OMElements and JavaScript E4X XML objects
  */
 public class JSOMElementConvertor extends DefaultOMElementConvertor {
-
-    protected Scriptable scope;
-
-    public JSOMElementConvertor() {
-        Context cx = Context.enter();
-        try {
-            this.scope = cx.initStandardObjects();
-        } finally {
-            Context.exit();
-        }
-    }
-
     public Object toScript(OMElement o) {
+        XmlObject xml;
         try {
-            XmlObject xml = XmlObject.Factory.parse(o.getXMLStreamReader());
-            
-            Context cx = Context.enter();
-            try {
-                // Enable E4X support
-                cx.setLanguageVersion(Context.VERSION_1_6);
-                Scriptable tempScope = cx.initStandardObjects();
-                
-                // Wrap the XmlObject directly
-                return cx.getWrapFactory().wrap(cx, tempScope, xml, XmlObject.class);
-                
-            } finally {
-                Context.exit();
-            }
+            xml = XmlObject.Factory.parse(o.getXMLStreamReader());
         } catch (Exception e) {
             throw new RuntimeException("exception getting message XML: " + e);
+        }
+
+        Context cx = Context.enter();
+        try {
+            // Enable E4X support
+            cx.setLanguageVersion(Context.VERSION_1_6);
+            Scriptable tempScope = cx.initStandardObjects();
+
+            // Wrap the XmlObject directly
+            return cx.getWrapFactory().wrap(cx, tempScope, xml, XmlObject.class);
+        } finally {
+            Context.exit();
         }
     }
 
@@ -83,7 +68,7 @@ public class JSOMElementConvertor extends DefaultOMElementConvertor {
                     xmlObject = (XmlObject) unwrapped;
                 }
             }
-            
+
             // If we have an XMLObject but not a wrapped XmlObject, try the old approach
             if (xmlObject == null && o instanceof XMLObject) {
                 // TODO: E4X Bug? Shouldn't need this copy, but without it the outer element gets lost. See Mozilla bugzilla 361722
@@ -105,7 +90,7 @@ public class JSOMElementConvertor extends DefaultOMElementConvertor {
                     .createOMBuilder(new java.io.StringReader(normalizedXML))
                     .getDocumentElement();
             }
-            
+
             if (xmlObject != null) {
                 return OMXMLBuilderFactory
                     .createOMBuilder(xmlObject.newInputStream())
