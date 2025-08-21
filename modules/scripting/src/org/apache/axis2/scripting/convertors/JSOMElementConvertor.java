@@ -87,36 +87,29 @@ public class JSOMElementConvertor extends DefaultOMElementConvertor {
             // If we have an XMLObject but not a wrapped XmlObject, try the old approach
             if (xmlObject == null && o instanceof XMLObject) {
                 // TODO: E4X Bug? Shouldn't need this copy, but without it the outer element gets lost. See Mozilla bugzilla 361722
-                Scriptable jsXML = (Scriptable) ScriptableObject.callMethod((Scriptable) o, "copy", new Object[0]);
-                
+                XMLObject jsXML = (XMLObject) ScriptableObject.callMethod((XMLObject) o, "copy", new Object[0]);
+
+                // get proper XML representation from toXMLString()
+                String xmlString;
                 try {
-                    // Try the old API first (getXmlObject)
-                    Wrapper wrapper = (Wrapper) ScriptableObject.callMethod((XMLObject)jsXML, "getXmlObject", new Object[0]);
-                    xmlObject = (XmlObject)wrapper.unwrap();
-                } catch (Exception e) {
-                    // Fallback for XMLBeans 5.x: use toXMLString() to get proper XML representation
-                    String xmlString = null;
-                    try {
-                        // Try toXMLString() method first
-                        xmlString = (String) ScriptableObject.callMethod((XMLObject)jsXML, "toXMLString", new Object[0]);
-                    } catch (Exception toXMLException) {
-                        // If toXMLString() doesn't work, try toString()
-                        xmlString = ((XMLObject) jsXML).toString();
-                    }
-                    
-                    // Remove extra whitespace to match expected format
-                    String normalizedXML = xmlString.replaceAll(">\\s+<", "><").trim();
-                    OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(
-                        new java.io.StringReader(normalizedXML));
-                    OMElement omElement = builder.getDocumentElement();
-                    return omElement;
+                    // Try toXMLString() method first
+                    xmlString = (String) ScriptableObject.callMethod(jsXML, "toXMLString", new Object[0]);
+                } catch (Exception toXMLException) {
+                    // If toXMLString() doesn't work, try toString()
+                    xmlString = jsXML.toString();
                 }
+
+                // Remove extra whitespace to match expected format
+                String normalizedXML = xmlString.replaceAll(">\\s+<", "><").trim();
+                return OMXMLBuilderFactory
+                    .createOMBuilder(new java.io.StringReader(normalizedXML))
+                    .getDocumentElement();
             }
             
             if (xmlObject != null) {
-                OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(xmlObject.newInputStream());
-                OMElement omElement = builder.getDocumentElement();
-                return omElement;
+                return OMXMLBuilderFactory
+                    .createOMBuilder(xmlObject.newInputStream())
+                    .getDocumentElement();
             } else {
                 throw new RuntimeException("Unable to extract XmlObject from JavaScript object");
             }
@@ -125,5 +118,4 @@ public class JSOMElementConvertor extends DefaultOMElementConvertor {
             throw new RuntimeException("Failed to convert JavaScript XML to OMElement: " + e.getMessage(), e);
         }
     }
-
 }
