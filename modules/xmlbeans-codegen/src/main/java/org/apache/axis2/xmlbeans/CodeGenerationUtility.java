@@ -84,7 +84,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.stream.Stream;
 
 /**
@@ -110,7 +109,7 @@ public class CodeGenerationUtility {
      * @param additionalSchemas
      * @throws RuntimeException
      */
-    public static TypeMapper processSchemas(List schemas,
+    public static TypeMapper processSchemas(List<?> schemas,
                                             Element[] additionalSchemas,
                                             CodeGenConfiguration cgconfig,
                                             String typeSystemName) throws RuntimeException {
@@ -125,8 +124,8 @@ public class CodeGenerationUtility {
             }
 
             SchemaTypeSystem sts;
-            List completeSchemaList = new ArrayList();
-            List topLevelSchemaList = new ArrayList();
+            List<XmlSchema> completeSchemaList = new ArrayList<>();
+            List<SchemaDocument> topLevelSchemaList = new ArrayList<>();
 
             //create the type mapper
             //First try to take the one that is already there
@@ -139,11 +138,11 @@ public class CodeGenerationUtility {
             //xmlbeans specific XMLObject
             mapper.setDefaultMappingName(XmlObject.class.getName());
 
-            Map nameSpacesMap = new HashMap();
-            List axisServices = cgconfig.getAxisServices();
+            Map<String,String> nameSpacesMap = new HashMap<>();
+            List<AxisService> axisServices = cgconfig.getAxisServices();
             AxisService axisService;
-            for (Iterator iter = axisServices.iterator(); iter.hasNext();) {
-                axisService = (AxisService)iter.next();
+            for (Iterator<AxisService> iter = axisServices.iterator(); iter.hasNext();) {
+                axisService = iter.next();
                 nameSpacesMap.putAll(axisService.getNamespaceMap());
             }
 
@@ -167,7 +166,7 @@ public class CodeGenerationUtility {
                 options.setLoadAdditionalNamespaces(
                         nameSpacesMap); //add the namespaces
                 topLevelSchemaList.add(
-                        XmlObject.Factory.parse(
+                        (SchemaDocument) XmlObject.Factory.parse(
                                 getSchemaAsString(schema)
                                 , options));
 
@@ -179,15 +178,15 @@ public class CodeGenerationUtility {
             //make the generated code work efficiently
             for (int i = 0; i < additionalSchemas.length; i++) {
                 completeSchemaList.add(extras.read(additionalSchemas[i]));
-                topLevelSchemaList.add(XmlObject.Factory.parse(
+                topLevelSchemaList.add((SchemaDocument) XmlObject.Factory.parse(
                         additionalSchemas[i]
                         , null));
             }
 
             //compile the type system
             Axis2EntityResolver er = new Axis2EntityResolver();
-            er.setSchemas((XmlSchema[])completeSchemaList
-                    .toArray(new XmlSchema[completeSchemaList.size()]));
+            er.setSchemas(completeSchemaList
+                    .toArray(new XmlSchema[0]));
             er.setBaseUri(cgconfig.getBaseURI());
 
             String xsdConfigFile = (String) cgconfig.getProperties().get(XMLBeansExtension.XSDCONFIG_OPTION_LONG);
@@ -201,13 +200,8 @@ public class CodeGenerationUtility {
             BindingConfig bindConf = new Axis2BindingConfig(cgconfig.getUri2PackageNameMap(),
                     xsdConfigFile, javaFiles, classpath);
 
-            //-Ejavaversion switch to XmlOptions to generate 1.5 compliant code
             XmlOptions xmlOptions	=	new XmlOptions();
             xmlOptions.setEntityResolver(er);
-            //test if javaversion property in CodeGenConfig
-            if(null!=cgconfig.getProperty("javaversion")){
-            	xmlOptions.put(XmlOptions.GENERATE_JAVA_VERSION,cgconfig.getProperty("javaversion"));
-            }
 
             sts = XmlBeans.compileXmlBeans(
                     // set the STS name; defaults to null, which makes the generated class
@@ -246,11 +240,11 @@ public class CodeGenerationUtility {
             if (!cgconfig.isParametersWrapped()) {
                 //figure out the unwrapped operations
                 axisServices = cgconfig.getAxisServices();
-                for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
-                    axisService = (AxisService)servicesIter.next();
-                    for (Iterator operations = axisService.getOperations();
+                for (Iterator<AxisService> servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
+                    axisService = servicesIter.next();
+                    for (Iterator<AxisOperation> operations = axisService.getOperations();
                          operations.hasNext();) {
-                        AxisOperation op = (AxisOperation)operations.next();
+                        AxisOperation op = operations.next();
 
                         if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
                             AxisMessage message = op.getMessage(
@@ -355,16 +349,16 @@ public class CodeGenerationUtility {
      *
      * @param sts
      */
-    private static List findBase64Types(SchemaTypeSystem sts) {
-        List allSeenTypes = new ArrayList();
-        List base64ElementQNamesList = new ArrayList();
+    private static List<QName> findBase64Types(SchemaTypeSystem sts) {
+        List<SchemaType> allSeenTypes = new ArrayList<>();
+        List<QName> base64ElementQNamesList = new ArrayList<>();
         SchemaType outerType;
         //add the document types and global types
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
 
         for (int i = 0; i < allSeenTypes.size(); i++) {
-            SchemaType sType = (SchemaType)allSeenTypes.get(i);
+            SchemaType sType = allSeenTypes.get(i);
 
             if (sType.getContentType() == SchemaType.SIMPLE_CONTENT &&
                     sType.getPrimitiveType() != null) {
@@ -397,17 +391,17 @@ public class CodeGenerationUtility {
      * @param sts
      * @return array list
      */
-    private static List findPlainBase64Types(SchemaTypeSystem sts) {
-        ArrayList allSeenTypes = new ArrayList();
+    private static List<QName> findPlainBase64Types(SchemaTypeSystem sts) {
+        ArrayList<SchemaType> allSeenTypes = new ArrayList<>();
 
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
 
-        ArrayList base64Types = new ArrayList();
+        ArrayList<QName> base64Types = new ArrayList<>();
 
-        for (Iterator iterator = allSeenTypes.iterator(); iterator.hasNext();) {
-            SchemaType stype = (SchemaType)iterator.next();
-            findPlainBase64Types(stype, base64Types, new ArrayList());
+        for (Iterator<SchemaType> iterator = allSeenTypes.iterator(); iterator.hasNext();) {
+            SchemaType stype = iterator.next();
+            findPlainBase64Types(stype, base64Types, new ArrayList<>());
         }
 
         return base64Types;
@@ -418,8 +412,8 @@ public class CodeGenerationUtility {
      * @param base64Types
      */
     private static void findPlainBase64Types(SchemaType stype,
-                                             ArrayList base64Types,
-                                             ArrayList processedTypes) {
+                                             ArrayList<QName> base64Types,
+                                             ArrayList<QName> processedTypes) {
 
         SchemaProperty[] elementProperties = stype.getElementProperties();
         QName name;
@@ -497,6 +491,11 @@ public class CodeGenerationUtility {
             file.createNewFile();
             return new FileWriter(file);
         }
+
+        @Override
+        public Writer createSourceFile(String s, String s1) throws IOException {
+            return createSourceFile(s);
+        }
     }
 
     /**
@@ -504,7 +503,7 @@ public class CodeGenerationUtility {
      *
      * @param schema
      */
-    private static String getSchemaAsString(XmlSchema schema) throws IOException {
+    private static String getSchemaAsString(XmlSchema schema) {
         StringWriter writer = new StringWriter();
         schema.write(writer);
         return writer.toString();
@@ -518,15 +517,15 @@ public class CodeGenerationUtility {
      */
     private static class Axis2BindingConfig extends BindingConfig {
 
-        private Map uri2packageMappings = null;
+        private Map<String, String> uri2packageMappings;
         private BindingConfig bindConf = null;
 
-        public Axis2BindingConfig(Map uri2packageMappings, String xsdConfigfile, File[] javaFiles,
+        public Axis2BindingConfig(Map<String, String> uri2packageMappings, String xsdConfigfile, File[] javaFiles,
                 File[] classpath) {
             this.uri2packageMappings = uri2packageMappings;
             if (this.uri2packageMappings == null) {
                 //make an empty one to avoid nasty surprises
-                this.uri2packageMappings = new HashMap();
+                this.uri2packageMappings = new HashMap<>();
             }
 
             // Do we have an xsdconfig file?
@@ -543,9 +542,9 @@ public class CodeGenerationUtility {
             SchemaTypeLoader loader = XmlBeans
                     .typeLoaderForClassLoader(SchemaDocument.class.getClassLoader());
             XmlOptions options = new XmlOptions();
-            options.put(XmlOptions.LOAD_LINE_NUMBERS);
+            options.setLoadLineNumbers();
             // options.setEntityResolver(entResolver); // useless?
-            Map<String, String> MAP_COMPATIBILITY_CONFIG_URIS = new HashMap<String, String>();
+            Map<String, String> MAP_COMPATIBILITY_CONFIG_URIS = new HashMap<>();
             MAP_COMPATIBILITY_CONFIG_URIS.put("http://www.bea.com/2002/09/xbean/config",
                     "http://xml.apache.org/xmlbeans/2004/02/xbean/config");
             options.setLoadSubstituteNamespaces(MAP_COMPATIBILITY_CONFIG_URIS);
@@ -581,7 +580,7 @@ public class CodeGenerationUtility {
             }
 
             if (uri2packageMappings.containsKey(uri)) {
-                return (String)uri2packageMappings.get(uri);
+                return uri2packageMappings.get(uri);
             } else {
                 return URLProcessor.makePackageName(uri);
             }
@@ -600,14 +599,6 @@ public class CodeGenerationUtility {
                 return bindConf.lookupSuffixForNamespace(uri);
             } else {
                 return super.lookupSuffixForNamespace(uri);
-            }
-        }
-
-        public String lookupJavanameForQName(QName qname) {
-            if (bindConf != null) {
-                return bindConf.lookupJavanameForQName(qname);
-            } else {
-                return super.lookupJavanameForQName(qname);
             }
         }
 
@@ -679,7 +670,7 @@ public class CodeGenerationUtility {
         if (javaFileNames == null) {
             return new File[0];
         }
-        List<File> files = new Vector<File>();
+        List<File> files = new ArrayList<>();
         for (String javaFileName : javaFileNames.split("\\s")) {
             try (Stream<Path> pathStream = Files.walk(new File(javaFileName).toPath(),
                     FileVisitOption.FOLLOW_LINKS)) {
@@ -715,12 +706,12 @@ public class CodeGenerationUtility {
      * @param vec
      * @return schema array
      */
-    private static SchemaDocument.Schema[] convertToSchemaArray(List vec) {
+    private static SchemaDocument.Schema[] convertToSchemaArray(List<SchemaDocument> vec) {
         SchemaDocument[] schemaDocuments =
-                (SchemaDocument[])vec.toArray(new SchemaDocument[vec.size()]);
+                vec.toArray(new SchemaDocument[0]);
         //remove duplicates
-        Vector uniqueSchemas = new Vector(schemaDocuments.length);
-        Vector uniqueSchemaTns = new Vector(schemaDocuments.length);
+        List<SchemaDocument.Schema> uniqueSchemas = new ArrayList<>(schemaDocuments.length);
+        List<String> uniqueSchemaTns = new ArrayList<>(schemaDocuments.length);
         SchemaDocument.Schema s;
         for (int i = 0; i < schemaDocuments.length; i++) {
             s = schemaDocuments[i].getSchema();
@@ -731,9 +722,8 @@ public class CodeGenerationUtility {
                 uniqueSchemas.add(s);
             }
         }
-        return (SchemaDocument.Schema[])
-                uniqueSchemas.toArray(
-                        new SchemaDocument.Schema[uniqueSchemas.size()]);
+        return uniqueSchemas.toArray(
+                new SchemaDocument.Schema[0]);
     }
 
     /** Axis2 specific entity resolver */
@@ -757,7 +747,7 @@ public class CodeGenerationUtility {
             // to avoid this we check whether it is started with http:// or not
             if (!systemId.startsWith("http://")) {
                 StringTokenizer pathElements = new StringTokenizer(systemId, "/");
-                Stack pathElementStack = new Stack();
+                Stack<String> pathElementStack = new Stack<>();
                 while (pathElements.hasMoreTokens()) {
                     String pathElement = pathElements.nextToken();
                     if (".".equals(pathElement)) {
@@ -768,11 +758,11 @@ public class CodeGenerationUtility {
                         pathElementStack.push(pathElement);
                     }
                 }
-                StringBuffer pathBuilder = new StringBuffer();
-                for (Iterator iter = pathElementStack.iterator(); iter.hasNext();) {
-                    pathBuilder.append(File.separator + iter.next());
+                StringBuilder pathBuilder = new StringBuilder();
+                for (Iterator<String> iter = pathElementStack.iterator(); iter.hasNext();) {
+                    pathBuilder.append(File.separator).append(iter.next());
                 }
-                systemId = pathBuilder.toString().substring(1);
+                systemId = pathBuilder.substring(1);
             }
             
 

@@ -21,7 +21,6 @@ package org.apache.axis2.scripting.convertors;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLBuilderFactory;
-import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.xmlbeans.XmlObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -33,18 +32,6 @@ import org.mozilla.javascript.xml.XMLObject;
  * JSObjectConvertor converts between OMElements and JavaScript E4X XML objects
  */
 public class JSOMElementConvertor extends DefaultOMElementConvertor {
-
-    protected Scriptable scope;
-
-    public JSOMElementConvertor() {
-        Context cx = Context.enter();
-        try {
-            this.scope = cx.initStandardObjects();
-        } finally {
-            Context.exit();
-        }
-    }
-
     public Object toScript(OMElement o) {
         XmlObject xml;
         try {
@@ -55,30 +42,65 @@ public class JSOMElementConvertor extends DefaultOMElementConvertor {
 
         Context cx = Context.enter();
         try {
+            // Enable E4X support
+            cx.setLanguageVersion(Context.VERSION_1_6);
+            Scriptable tempScope = cx.initStandardObjects();
 
-            Object wrappedXML = cx.getWrapFactory().wrap(cx, scope, xml, XmlObject.class);
-            Scriptable jsXML = cx.newObject(scope, "XML", new Object[] { wrappedXML });
-
-            return jsXML;
-
+            // Wrap the XmlObject directly
+            return cx.getWrapFactory().wrap(cx, tempScope, xml, XmlObject.class);
         } finally {
             Context.exit();
         }
     }
 
     public OMElement fromScript(Object o) {
-        if (!(o instanceof XMLObject)) {
+        if (!(o instanceof XMLObject) && !(o instanceof Wrapper)) {
             return super.fromScript(o);
         }
 
-        // TODO: E4X Bug? Shouldn't need this copy, but without it the outer element gets lost. See Mozilla bugzilla 361722
-        Scriptable jsXML = (Scriptable) ScriptableObject.callMethod((Scriptable) o, "copy", new Object[0]);
-        Wrapper wrapper = (Wrapper) ScriptableObject.callMethod((XMLObject)jsXML, "getXmlObject", new Object[0]);
-        XmlObject xmlObject = (XmlObject)wrapper.unwrap();
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createOMBuilder(xmlObject.newInputStream());
-        OMElement omElement = builder.getDocumentElement();
+        try {
+            XmlObject xmlObject = null;
+            
+            // Handle wrapped XmlObject
+            if (o instanceof Wrapper) {
+                Object unwrapped = ((Wrapper) o).unwrap();
+                if (unwrapped instanceof XmlObject) {
+                    xmlObject = (XmlObject) unwrapped;
+                }
+            }
 
-        return omElement;
+            // If we have an XMLObject but not a wrapped XmlObject, try the old approach
+            if (xmlObject == null && o instanceof XMLObject) {
+                // TODO: E4X Bug? Shouldn't need this copy, but without it the outer element gets lost. See Mozilla bugzilla 361722
+                XMLObject jsXML = (XMLObject) ScriptableObject.callMethod((XMLObject) o, "copy", new Object[0]);
+
+                // get proper XML representation from toXMLString()
+                String xmlString;
+                try {
+                    // Try toXMLString() method first
+                    xmlString = (String) ScriptableObject.callMethod(jsXML, "toXMLString", new Object[0]);
+                } catch (Exception toXMLException) {
+                    // If toXMLString() doesn't work, try toString()
+                    xmlString = jsXML.toString();
+                }
+
+                // Remove extra whitespace to match expected format
+                String normalizedXML = xmlString.replaceAll(">\\s+<", "><").trim();
+                return OMXMLBuilderFactory
+                    .createOMBuilder(new java.io.StringReader(normalizedXML))
+                    .getDocumentElement();
+            }
+
+            if (xmlObject != null) {
+                return OMXMLBuilderFactory
+                    .createOMBuilder(xmlObject.newInputStream())
+                    .getDocumentElement();
+            } else {
+                throw new RuntimeException("Unable to extract XmlObject from JavaScript object");
+            }
+            
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert JavaScript XML to OMElement: " + e.getMessage(), e);
+        }
     }
-
 }
