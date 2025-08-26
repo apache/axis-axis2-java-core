@@ -43,7 +43,7 @@ jobs:
           maven-java-${{ matrix.java }}-
           maven-
     - name: Set up Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: ${{ matrix.java }}
         distribution: 'zulu'
@@ -66,7 +66,7 @@ jobs:
           maven-site-
           maven-
     - name: Set up Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'zulu'
         java-version: 17
@@ -93,7 +93,7 @@ jobs:
           maven-deploy-
           maven-
     - name: Set up Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: 17
         distribution: 'zulu'
