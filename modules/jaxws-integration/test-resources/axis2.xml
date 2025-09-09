@@ -123,15 +123,6 @@
                          <!--class="org.apache.axis2.builder.MultipartFormDataBuilder"/>-->
     </messageBuilders>
 
-    <!-- ================================================= -->
-    <!-- Target Resolvers -->
-    <!-- ================================================= -->
-    <!-- Uncomment the following and specify the class name for your TargetResolver to add -->
-    <!-- a TargetResolver. TargetResolvers are used to process the To EPR for example to -->
-    <!-- choose a server in a cluster -->
-    <!--<targetResolvers>-->
-    <!--<targetResolver class="" />-->
-    <!--</targetResolvers>-->
 
 
     <!-- ================================================= -->

@@ -20,8 +20,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.clustering.ClusteringAgent;
-import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
@@ -88,15 +86,6 @@ public class AxisServer {
         }
         if (!started) {
 
-            ClusteringAgent clusteringAgent =
-                    configContext.getAxisConfiguration().getClusteringAgent();
-            String avoidInit = ClusteringConstants.Parameters.AVOID_INITIATION;
-            if (clusteringAgent != null &&
-                clusteringAgent.getParameter(avoidInit) != null &&
-                ((String) clusteringAgent.getParameter(avoidInit).getValue()).equalsIgnoreCase("true")) {
-                clusteringAgent.setConfigurationContext(configContext);
-                clusteringAgent.init();
-            }
 
             listenerManager.startSystem(configContext);
             started = true;

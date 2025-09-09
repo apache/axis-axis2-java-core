@@ -137,12 +137,6 @@ public class MessageContextBuilder {
             newmsgCtx.setTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
         }
 
-        // do Target Resolution
-        TargetResolver targetResolver =
-                newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain();
-        if (targetResolver != null) {
-            targetResolver.resolveTarget(newmsgCtx);
-        }
 
         // Determine ReplyTo for response message.
         AxisService axisService = inMessageContext.getAxisService();
@@ -335,12 +329,6 @@ public class MessageContextBuilder {
             faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
         }
 
-        // do Target Resolution
-        TargetResolver targetResolver = faultContext.getConfigurationContext()
-                .getAxisConfiguration().getTargetResolverChain();
-        if (targetResolver != null) {
-            targetResolver.resolveTarget(faultContext);
-        }
 
         // Ensure transport settings match the scheme for the To EPR
         setupCorrectTransportOut(faultContext);

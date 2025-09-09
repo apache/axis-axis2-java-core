@@ -42,7 +42,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.transaction.TransactionConfiguration;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.unknowncontent.UnknownContentBuilder;
-import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
@@ -65,7 +64,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.kernel.MessageFormatter;
-import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.FaultyServiceData;
 import org.apache.axis2.util.JavaUtils;
@@ -161,9 +159,7 @@ public class AxisConfiguration extends AxisDescription {
     //To keep track of whether the system has started or not
     private boolean start;
 
-    private ArrayList<TargetResolver> targetResolvers;
 
-    private ClusteringAgent clusteringAgent;
 
     private AxisConfigurator configurator;
 
@@ -195,7 +191,6 @@ public class AxisConfiguration extends AxisDescription {
         moduleClassLoader = systemClassLoader;
 
         this.phasesinfo = new PhasesInfo();
-        targetResolvers = new ArrayList<TargetResolver>();
     }
 
     public void addMessageReceiver(String mepURL,
@@ -1163,13 +1158,6 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public ClusteringAgent getClusteringAgent() {
-        return clusteringAgent;
-    }
-
-    public void setClusteringAgent(ClusteringAgent clusteringAgent) {
-        this.clusteringAgent = clusteringAgent;
-    }
 
      public TransactionConfiguration getTransactionConfiguration() {
         return transactionConfiguration;
@@ -1262,32 +1250,7 @@ public class AxisConfiguration extends AxisDescription {
         this.start = start;
     }
 
-    /**
-     * getTargetResolverChain returns an instance of
-     * TargetResolver which iterates over the registered
-     * TargetResolvers, calling each one in turn when
-     * resolveTarget is called.
-     *
-     * @return a TargetResolver which iterates over all registered TargetResolvers.
-     */
-    public TargetResolver getTargetResolverChain() {
-        if (targetResolvers.isEmpty()) {
-            return null;
-        }
-        return new TargetResolver() {
-            public void resolveTarget(MessageContext messageContext) {
-                Iterator<TargetResolver> iter = targetResolvers.iterator();
-                while (iter.hasNext()) {
-                    TargetResolver tr = iter.next();
-                    tr.resolveTarget(messageContext);
-                }
-            }
-        };
-    }
 
-    public void addTargetResolver(TargetResolver tr) {
-        targetResolvers.add(tr);
-    }
 
     public void addLocalPolicyAssertion(QName name) {
         this.localPolicyAssertions.add(name);
@@ -1375,9 +1338,6 @@ public class AxisConfiguration extends AxisDescription {
         if (configurator != null) {
             configurator.cleanup();
         }
-        if (clusteringAgent != null) {
-            clusteringAgent.finalize();
-        }
         this.policySupportedModules.clear();
         this.moduleConfigmap.clear();
         this.allEndpoints.clear();
@@ -1385,7 +1345,6 @@ public class AxisConfiguration extends AxisDescription {
         this.allServices.clear();
         this.outPhases.clear();
         this.messageReceivers.clear();
-        this.targetResolvers.clear();
         if (this.engagedModules != null) {
             this.engagedModules.clear();
         }

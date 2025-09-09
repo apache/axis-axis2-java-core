@@ -16,25 +16,3 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.axis2.deployment;
-
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.util.TargetResolver;
-
-public class TestTargetResolver implements TargetResolver {
-
-    public void resolveTarget(MessageContext messageContext) {
-        System.out.println("resolveTarget:" + messageContext.getTo().getAddress());
-        if (messageContext.getTo().getAddress()
-                .equals("http://ws.apache.org/new/anonymous/address")) {
-            messageContext.getTo().setAddress(AddressingConstants.Final.WSA_ANONYMOUS_URL);
-        } else if (messageContext.getTo().getAddress().startsWith("trtest://")) {
-            messageContext.getTo().setAddress(
-                    "local" + messageContext.getTo().getAddress().substring(6));
-        }
-        System.out.println("resolveTarget:" + messageContext.getTo().getAddress());
-    }
-
-}

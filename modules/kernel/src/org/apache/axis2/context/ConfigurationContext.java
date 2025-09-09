@@ -23,10 +23,6 @@ package org.apache.axis2.context;
 import org.apache.axiom.util.UIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.clustering.ClusteringAgent;
-import org.apache.axis2.clustering.ClusteringConstants;
-import org.apache.axis2.clustering.management.NodeManager;
-import org.apache.axis2.clustering.state.StateManager;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -111,39 +107,6 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    /**
-     * Initializes the ClusterManager for this ConfigurationContext
-     *
-     * @throws AxisFault
-     */
-    public void initCluster() throws AxisFault {
-        ClusteringAgent clusteringAgent = axisConfiguration.getClusteringAgent();
-        if (clusteringAgent != null) {
-            StateManager stateManaget = clusteringAgent.getStateManager();
-            if (stateManaget != null) {
-                stateManaget.setConfigurationContext(this);
-            }
-            NodeManager nodeManager = clusteringAgent.getNodeManager();
-            if (nodeManager != null) {
-                nodeManager.setConfigurationContext(this);
-            }
-            if (shouldClusterBeInitiated(clusteringAgent)) {
-                clusteringAgent.setConfigurationContext(this);
-                clusteringAgent.init();
-            }
-        }
-    }
-
-    /**
-     * @param clusteringAgent The ClusterManager implementation
-     * @return true, if the cluster needs to be automatically initialized by the framework; false,
-     *         otherwise
-     */
-    private static boolean shouldClusterBeInitiated(ClusteringAgent clusteringAgent) {
-        Parameter param =
-                clusteringAgent.getParameter(ClusteringConstants.Parameters.AVOID_INITIATION);
-        return !(param != null && JavaUtils.isTrueExplicitly(param.getValue()));
-    }
 
     /**
      * Inform any listeners of a new context being created

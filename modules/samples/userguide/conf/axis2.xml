@@ -187,15 +187,6 @@
     <!--<parameter name="addressingPara">N/A</parameter>-->
     <!--</moduleConfig>-->
 
-    <!-- ================================================= -->
-    <!-- Clustering  -->
-    <!-- ================================================= -->
-    <!-- Configure and uncomment following for preparing Axis2 to a clustered environment -->
-    <!-- 
-    <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager">
-    	<parameter name="param1">value1</parameter>
-    </cluster>
-     -->
      
     <!-- ================================================= -->
     <!-- Phases  -->

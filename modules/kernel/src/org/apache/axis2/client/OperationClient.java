@@ -32,7 +32,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.ClientUtils;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import java.util.Iterator;
@@ -274,12 +273,6 @@ public abstract class OperationClient {
         mc.setOptions(new Options(options));
         mc.setAxisMessage(axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
-        // do Target Resolution
-        TargetResolver targetResolver =
-                configurationContext.getAxisConfiguration().getTargetResolverChain();
-        if (targetResolver != null) {
-            targetResolver.resolveTarget(mc);
-        }
         // if the transport to use for sending is not specified, try to find it
         // from the URL
         TransportOutDescription senderTransport = options.getTransportOut();

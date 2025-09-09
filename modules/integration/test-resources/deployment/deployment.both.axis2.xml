@@ -37,10 +37,6 @@
     <!-- Engage the addressing module -->
     <module ref="addressing"/>
 
-    <!-- Target Resolver for TargetResolverTest -->
-    <targetResolvers>
-    	<targetResolver class="org.apache.axis2.deployment.TestTargetResolver" />
-    </targetResolvers>
 
     <!-- ================================================= -->
     <!-- Transport Ins -->

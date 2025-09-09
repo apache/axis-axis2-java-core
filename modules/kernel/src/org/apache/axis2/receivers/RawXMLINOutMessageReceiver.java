@@ -116,7 +116,6 @@ public class RawXMLINOutMessageReceiver extends AbstractMessageReceiver
         outMsgContext.getOperationContext().addMessageContext(outMsgContext);
 
         invokeBusinessLogic(msgContext, outMsgContext);
-        replicateState(msgContext);
 
         AxisEngine.send(outMsgContext);
     }

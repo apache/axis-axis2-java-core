@@ -49,7 +49,6 @@ import org.apache.axis2.kernel.TransportSender;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.ThreadContextMigrator;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
@@ -128,10 +127,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processTransportReceivers(trs_Reivers);
 
-            // Process TargetResolvers
-            OMElement targetResolvers =
-                    config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
-            processTargetResolvers(axisConfig, targetResolvers);
 
             // Process ThreadContextMigrators
             OMElement threadContextMigrators =
@@ -176,12 +171,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 processDefaultModuleVersions(defaultModuleVerionElement);
             }
 
-            OMElement clusterElement = config_element
-                    .getFirstChildWithName(new QName(TAG_CLUSTER));
-            if (clusterElement != null) {
-                ClusterBuilder clusterBuilder = new ClusterBuilder(axisConfig);
-                clusterBuilder.buildCluster(clusterElement);
-            }
 
             //Add jta transaction  configuration
             OMElement transactionElement = config_element.getFirstChildWithName(new QName(TAG_TRANSACTION));
@@ -288,28 +277,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
-    private void processTargetResolvers(AxisConfiguration axisConfig, OMElement targetResolvers) {
-        if (targetResolvers != null) {
-            Iterator<OMElement> iterator = targetResolvers.getChildrenWithName(new QName(TAG_TARGET_RESOLVER));
-            while (iterator.hasNext()) {
-                OMElement targetResolver = iterator.next();
-                OMAttribute classNameAttribute =
-                        targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
-                String className = classNameAttribute.getAttributeValue();
-                try {
-                    Class classInstance = Loader.loadClass(className);
-                    TargetResolver tr = (TargetResolver) classInstance.newInstance();
-                    axisConfig.addTargetResolver(tr);
-                } catch (Exception e) {
-                    if (log.isTraceEnabled()) {
-                        log.trace(
-                                "processTargetResolvers: Exception thrown initialising TargetResolver: " +
-                                        e.getMessage());
-                    }
-                }
-            }
-        }
-    }
 
     private void processThreadContextMigrators(AxisConfiguration axisConfig, OMElement targetResolvers) {
         if (targetResolvers != null) {

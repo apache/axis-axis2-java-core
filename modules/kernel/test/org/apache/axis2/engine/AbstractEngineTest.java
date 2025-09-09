@@ -46,7 +46,6 @@ public class AbstractEngineTest extends TestCase {
             outMsgContext.getOperationContext().addMessageContext(outMsgContext);
 
             invokeBusinessLogic(msgContext, outMsgContext);
-            replicateState(msgContext);
 
             AxisEngine.send(outMsgContext);
         }

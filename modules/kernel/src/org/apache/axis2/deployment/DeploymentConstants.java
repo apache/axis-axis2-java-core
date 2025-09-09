@@ -70,7 +70,6 @@ public interface DeploymentConstants {
     String TAG_TRANSPORT = "transport";
     String TAG_MEP = "mep";
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
-    String TAG_CLUSTER = "clustering";
     String TAG_TRANSACTION = "transaction";
     String TAG_TRANSACTION_CONFIGURATION_CLASS = "transactionConfigurationClass";
     String TAG_TIMEOUT = "timeout";
@@ -108,11 +107,6 @@ public interface DeploymentConstants {
     String TAG_NAMESPACES = "namespaces";
     String TAG_SERVICE_BUILDER_EXTENSION = "serviceBuilderExtension";
 
-    //ClusterBuilder
-    String TAG_NODE_MANAGER = "nodeManager";
-    String TAG_STATE_MANAGER = "stateManager";
-    String TAG_REPLICATION = "replication";
-    String TAG_DEFAULTS = "defaults";
     String TAG_CONTEXT = "context";
     String TAG_EXCLUDE = "exclude";
     String ATTRIBUTE_CLASS = "class";

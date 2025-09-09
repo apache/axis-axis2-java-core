@@ -21,8 +21,6 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.clustering.ClusteringAgent;
-import org.apache.axis2.clustering.state.Replicator;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.OnDemandLogger;
 import org.apache.axis2.util.Utils;
@@ -44,8 +42,6 @@ public abstract class AbstractContext {
     private static final int DEFAULT_MAP_SIZE = 64;
     private static boolean DEBUG_ENABLED = log.isTraceEnabled();
     private static boolean DEBUG_PROPERTY_SET = false;
-    private boolean isClusteringOn = false;
-    private boolean isClusteringCheckDone = false;
     
     /**
      * Property used to indicate copying of properties is needed by context.
@@ -56,7 +52,6 @@ public abstract class AbstractContext {
 
     protected transient AbstractContext parent;
     protected transient Map<String, Object> properties;
-    private transient Map<String, Object> propertyDifferences;
 
     protected AbstractContext(AbstractContext parent) {
         this.parent = parent;
@@ -128,13 +123,6 @@ public abstract class AbstractContext {
         if (obj!=null) {
             // Assume that a property which is read may be updated.
             // i.e. The object pointed to by 'value' may be modified after it is read
-            if(!isClusteringCheckDone) {
-                isClusteringCheckDone = true;
-                isClusteringOn = needPropertyDifferences();
-            }
-            if(isClusteringOn) {
-                addPropertyDifference(key, obj, false);
-            }
         } else if (parent!=null) {
             obj = parent.getProperty(key);
         } 
@@ -155,22 +143,12 @@ public abstract class AbstractContext {
         if ((obj == null) && (parent != null)) {
             // This is getLocalProperty() don't search the hierarchy.
         } else {
-            if(!isClusteringCheckDone) {
-                isClusteringCheckDone = true;
-                isClusteringOn = needPropertyDifferences();
-            }
-            if(isClusteringOn) {
-                // Assume that a property is which is read may be updated.
-                // i.e. The object pointed to by 'value' may be modified after it is read
-                addPropertyDifference(key, obj, false);
-            }
         }
         return obj;
     }
     
     /**
-     * Retrieves an object given a key. The retrieved property will not be replicated to
-     * other nodes in the clustered scenario.
+     * Retrieves an object given a key.
      *
      * @param key - if not found, will return null
      * @return Returns the property.
@@ -198,56 +176,15 @@ public abstract class AbstractContext {
             } catch (ConcurrentModificationException cme) {
             }
         }
-        if(!isClusteringCheckDone) {
-            isClusteringCheckDone = true;
-            isClusteringOn = needPropertyDifferences();
-        }
-        if(isClusteringOn) {
-            addPropertyDifference(key, value, false);
-        }
         if (DEBUG_ENABLED) {
             debugPropertySet(key, value);
         }
     }
 
-    private void addPropertyDifference(String key, Object value,  boolean isRemoved) {
-        // Narrowed the synchronization so that we only wait
-        // if a property difference is added.
-        synchronized(this) {
-            // Lazizly create propertyDifferences map
-            if (propertyDifferences == null) {
-                propertyDifferences = new HashMap<String, Object>(DEFAULT_MAP_SIZE);
-            }
-            propertyDifferences.put(key, new PropertyDifference(key, value, isRemoved));
-        }
-    }
     
-    /**
-     * @return true if we need to store property differences for this 
-     * context in this scenario.
-     */
-    private boolean needPropertyDifferences() {
-        
-        // Don't store property differences if there are no 
-        // cluster members.
-        
-        ConfigurationContext cc = getRootContext();
-        if (cc == null) {
-            return false;
-        }
-        // Add the property differences only if Context replication is enabled,
-        // and there are members in the cluster
-        ClusteringAgent clusteringAgent = cc.getAxisConfiguration().getClusteringAgent();
-        if (clusteringAgent == null ||
-            clusteringAgent.getStateManager() == null) {
-            return false;
-        }
-        return true;
-    }
 
     /**
      * Store a property in this context.
-     * But these properties should not be replicated when Axis2 is clustered.
      *
      * @param key
      * @param value
@@ -284,20 +221,13 @@ public abstract class AbstractContext {
                     }
                 }
             }
-            if(!isClusteringCheckDone) {
-                isClusteringCheckDone = true;
-                isClusteringOn = needPropertyDifferences();
-            }
-            if(isClusteringOn) {
-                addPropertyDifference(key, value, true);
-            }                           
+                           
         }
     }
 
     /**
      * Remove a property. Only properties at this level will be removed.
      * Properties of the parents cannot be removed using this method.
-     * The removal of the property will not be replicated when Axis2 is clustered.
      *
      * @param key
      */
@@ -313,29 +243,7 @@ public abstract class AbstractContext {
         }
     }
 
-    /**
-     * Get the property differences since the last transmission by the clustering
-     * mechanism
-     *
-     * @return The property differences
-     */
-    public synchronized Map<String, Object> getPropertyDifferences() {
-        if (propertyDifferences == null) {
-            propertyDifferences = new HashMap<String, Object>(DEFAULT_MAP_SIZE);
-        }
-        return propertyDifferences;
-    }
 
-    /**
-     * Once the clustering mechanism transmits the property differences,
-     * it should call this method to avoid retransmitting stuff that has already
-     * been sent.
-     */
-    public synchronized void clearPropertyDifferences() {
-        if (propertyDifferences != null) {
-            propertyDifferences.clear();
-        }
-    }
 
     /**
      * @param context
@@ -438,7 +346,7 @@ public abstract class AbstractContext {
     }
 
     public void flush() throws AxisFault {
-        Replicator.replicate(this);
+        // No-op
     }
 
     public abstract ConfigurationContext getRootContext();

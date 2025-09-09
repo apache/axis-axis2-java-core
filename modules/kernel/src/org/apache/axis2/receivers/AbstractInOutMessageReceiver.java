@@ -38,7 +38,6 @@ public abstract class AbstractInOutMessageReceiver extends AbstractMessageReceiv
         outMsgContext.getOperationContext().addMessageContext(outMsgContext);
 
         invokeBusinessLogic(msgContext, outMsgContext);
-        replicateState(msgContext);
 
         AxisEngine.send(outMsgContext);
     }
