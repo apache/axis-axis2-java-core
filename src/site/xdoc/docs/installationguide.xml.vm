@@ -117,9 +117,7 @@ Download</a> Source Distribution</p>
 <tbody>
 <tr>
 <td>Java Development Kit (JDK)</td>
-<td>1.8 or later (For instructions on setting up the JDK in
-different operating systems, visit <a href=
-"http://java.sun.com/">http://java.sun.com</a>)</td>
+<td>17 or later</td>
 </tr>
 <tr>
 <td>Disk</td>
