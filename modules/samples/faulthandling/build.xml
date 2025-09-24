@@ -81,7 +81,7 @@
 
         <!--First let's compile the classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
-               destdir="${service.target}/classes" srcdir="${service.target}/src">
+               destdir="${service.target}/classes" srcdir="${service.target}/src" includeantruntime="false">
             <classpath>
                 <fileset dir="../../lib">
                     <include name="*.jar"/>
@@ -125,7 +125,7 @@
 
         <!--now compile the stub classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
-               destdir="${client.target}/classes">
+               destdir="${client.target}/classes" includeantruntime="false">
             <src path="${client.target}/src"/>
             <classpath>
                 <fileset dir="../../lib">

@@ -86,7 +86,7 @@
 
 		<mkdir dir="${client.classes.dir}" />
 		<!-- Compile client -->
-		<javac srcdir="${client.dir}/src" destdir="${client.classes.dir}" fork="true">
+		<javac srcdir="${client.dir}/src" destdir="${client.classes.dir}" fork="true" includeantruntime="false">
 			<classpath refid="class.path" />
 		</javac>
     </target>	
@@ -109,7 +109,7 @@
 	</target>
 	<target  name="jar.server">
 		<mkdir dir="${service.dir}/classes" />
-		<javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true" 		destdir="${service.dir}/classes" srcdir="${service.dir}/src">
+		<javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true" destdir="${service.dir}/classes" srcdir="${service.dir}/src"  includeantruntime="false">
 		<classpath refid="class.path"/>
 		</javac>
 

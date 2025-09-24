@@ -45,7 +45,7 @@
 			<classpath location="${compiled.classes.dir}" />
 			<arg line="-ap -o ${wsdl.output.base.dir}/version -d none -s -u -uri test-resources/wsdls/Version.wsdl" />
 		</java>
-		<javac fork="yes" destdir="target/test-classes" debug="on">
+		<javac fork="yes" destdir="target/test-classes" debug="on" includeantruntime="false">
 			<classpath refid="maven.test.classpath" />
 			<classpath location="${compiled.classes.dir}" />
 			<src path="${wsdl.output.base.dir}/version" />

@@ -63,7 +63,7 @@
               tofile="${dest.dir.classes}/META-INF/services.xml"
               overwrite="true"/>
 
-        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**">
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**" includeantruntime="false">
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -83,7 +83,7 @@
               tofile="${dest.dir.classes}/META-INF/services.xml"
               overwrite="true"/>
 
-        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**">
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**" includeantruntime="false">
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -97,7 +97,7 @@
     <target name="run.client" depends="prepare">
         <mkdir dir="${dest.dir}"/>
         <mkdir dir="${dest.dir.classes}"/>
-        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="client/**">
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="client/**" includeantruntime="false">
             <classpath>
                 <fileset dir="../../lib">
                     <include name="*.jar"/>
