@@ -33,7 +33,7 @@
 	<target name="compile">
 		<mkdir dir="${client.classes.dir}" />
 		<!-- Compile client -->
-		<javac srcdir="src" destdir="${client.classes.dir}">
+		<javac srcdir="src" destdir="${client.classes.dir}" includeantruntime="false">
 			<classpath refid="axis.classpath" />
 		</javac>
 		<jar destfile="${build.dir}/yahooRESTSearch.jar">
