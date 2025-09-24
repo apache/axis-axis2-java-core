@@ -35,7 +35,7 @@
     
     <target name="compile">
     		<mkdir dir="${classes.dir}" />
-		<javac srcdir="src" destdir="${classes.dir}">
+		<javac srcdir="src" destdir="${classes.dir}" includeantruntime="false">
                         <exclude name="**/springboot/**/*.java" />
 			<classpath refid="axis.classpath" />
 		</javac>

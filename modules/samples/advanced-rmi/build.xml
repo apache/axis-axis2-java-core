@@ -51,7 +51,7 @@
         <mkdir dir="${deploy_dir}/META-INF"/>
 
         <!-- compiling the classes -->
-        <javac  destdir="${deploy_dir}" srcdir="${src_dir}" debug="on">
+        <javac  destdir="${deploy_dir}" srcdir="${src_dir}" debug="on" includeantruntime="false">
             <exclude name="**/client/*"/>
             <classpath>
                 <fileset dir="${lib_dir}" includes="*.jar"/>
@@ -77,7 +77,7 @@
         <mkdir dir="${dist_dir}"/>
 
         <!-- compiling the classes -->
-        <javac  destdir="${classes_dir}" srcdir="${src_dir}" debug="on">
+        <javac  destdir="${classes_dir}" srcdir="${src_dir}" debug="on" includeantruntime="false">
             <classpath>
                 <fileset dir="${lib_dir}" includes="*.jar"/>
             </classpath>

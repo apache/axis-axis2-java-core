@@ -33,7 +33,7 @@
     
     <target name="compile">
     		<mkdir dir="${classes.dir}" />
-		<javac srcdir="src" destdir="${classes.dir}">
+		<javac srcdir="src" destdir="${classes.dir}" includeantruntime="false">
 			<classpath refid="axis.classpath" />
 		</javac>
 		<jar destfile="build/userguideMex.jar">

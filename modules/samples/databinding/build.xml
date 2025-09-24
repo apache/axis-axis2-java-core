@@ -106,7 +106,7 @@
         <!--First let's compile the classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
                destdir="${service.target}/classes" srcdir="${service.target}/src"
-               classpathref="axis2.classpath">
+               classpathref="axis2.classpath" includeantruntime="false">
         </javac>
 
         <!--aar them up -->
@@ -160,7 +160,8 @@
                srcdir="${client.target}/src"
                excludes="**/StockClient2*.*"
                destdir="${client.target}/classes"
-               classpathref="axis2.classpath">
+               classpathref="axis2.classpath"
+               includeantruntime="false">
         </javac>
 
         <!--jar the compiled stuff-->

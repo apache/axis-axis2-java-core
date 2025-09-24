@@ -196,7 +196,7 @@
                                 <!-- make the dirs -->
                                 <mkdir dir="${wsdl.output.base.dir}" />
                                 <echo>Compiling Service class</echo>
-                                <javac fork="true" destdir="target/test-classes" debug="on" source="${maven.compiler.source}" target="${maven.compiler.target}">
+                                <javac fork="true" destdir="target/test-classes" debug="on" release="${maven.compiler.release}" includeantruntime="false">
                                     <classpath refid="maven.dependency.classpath" />
                                     <classpath location="${compiled.classes.dir}" />
                                     <include name="**/*SimpleAddService.java" />

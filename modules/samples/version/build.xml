@@ -51,7 +51,7 @@
 		
 		<copy file="src/sample/axisversion/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 		
-		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/axisversion/**">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/axisversion/**" includeantruntime="false">
 			<classpath refid="build.class.path" />
 		</javac>
 		
