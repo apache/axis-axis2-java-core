@@ -65,7 +65,7 @@
 
 		<copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 
-		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/addressbook/service/**,sample/addressbook/entry/**">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/addressbook/service/**,sample/addressbook/entry/**" includeantruntime="false">
 			<classpath refid="build.class.path" />
 		</javac>
 
@@ -88,7 +88,7 @@
 	</target>
 
 	<target name="rpc.client.compile">
-		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/addressbook/rpcclient/**,sample/addressbook/entry/**">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/addressbook/rpcclient/**,sample/addressbook/entry/**" includeantruntime="false">
 			<classpath refid="build.class.path" />
 		</javac>
 	</target>
@@ -148,7 +148,7 @@
 	</target>
 
 	<target name="adb.client.compile">
-		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/addressbook/adbclient/**,sample/addressbook/stub/**">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/addressbook/adbclient/**,sample/addressbook/stub/**" includeantruntime="false">
 			<classpath refid="build.class.path" />
 		</javac>
 	</target>
