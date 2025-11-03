@@ -39,6 +39,7 @@ import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.internet.MimePart;
 import jakarta.activation.DataHandler;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.io.IOException;
@@ -400,7 +401,7 @@ public class MailTransportSender extends AbstractTransportSender
         }
 
         // set Date
-        message.setSentDate(new Date());
+        message.setSentDate(Date.from(Instant.now()));
 
 
         // set SOAPAction header

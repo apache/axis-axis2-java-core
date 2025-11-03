@@ -507,7 +507,8 @@
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
         <axis2_version>${project.version}</axis2_version>
         <project.build.outputTimestamp>2025-03-04T22:45:29Z</project.build.outputTimestamp>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
@@ -1276,8 +1277,8 @@
                                     <version>3.6.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <!-- We require a recent Java version for the build, but we enforce compatibility with older versions using Animal Sniffer -->
-                                    <version>11</version>
+                                    <!-- We require Java 17+ for the build, supporting up to Java 21 -->
+                                    <version>[17,22)</version>
                                 </requireJavaVersion>
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
@@ -1311,11 +1312,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <signature>
-                        <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java18</artifactId>
-                        <version>1.0</version>
-                    </signature>
+                    <!-- Skip Animal Sniffer API checking since we're targeting Java 17+ -->
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>

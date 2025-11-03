@@ -43,6 +43,7 @@ import javax.xml.stream.XMLStreamException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -496,12 +497,11 @@ public class MailTransportListener extends AbstractPollingTransportListener<Poll
 
         //Set the Sent date and received date.
         if(message.getSentDate() != null) {
-            Calendar sentDate = Calendar.getInstance();
-            sentDate.setTime(message.getSentDate());
-            msgContext.setProperty(MailConstants.MAIL_SENT_DATE,sentDate);
+            Instant sentDate = message.getSentDate().toInstant();
+            msgContext.setProperty(MailConstants.MAIL_SENT_DATE, sentDate);
         }
 
-        msgContext.setProperty(MailConstants.MAIL_RECEIVED_DATE,Calendar.getInstance());
+        msgContext.setProperty(MailConstants.MAIL_RECEIVED_DATE, Instant.now());
 
         // set the message payload to the message context
         InputStream in = messagePart.getInputStream();

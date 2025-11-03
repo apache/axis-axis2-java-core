@@ -30,6 +30,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Random;
 
@@ -121,8 +122,9 @@ public class JettyServer extends AbstractAxis2Server {
         // Generate certificate
         X500Name dn = new X500Name("cn=localhost,o=Apache");
         BigInteger serial = BigInteger.valueOf(random.nextInt());
-        Date notBefore = new Date();
-        Date notAfter = new Date(notBefore.getTime() + 3600000L);
+        Instant now = Instant.now();
+        Date notBefore = Date.from(now);
+        Date notAfter = Date.from(now.plusSeconds(3600));
         SubjectPublicKeyInfo subPubKeyInfo =  SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
         X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(dn, serial, notBefore, notAfter, dn, subPubKeyInfo);
         X509CertificateHolder certHolder = certBuilder.build(new JcaContentSignerBuilder("SHA1WithRSA").build(privateKey));
