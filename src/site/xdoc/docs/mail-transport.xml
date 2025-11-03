@@ -26,7 +26,7 @@
             <p>The mail transport allows to send and receive messages using MIME compliant mail messages. The transport sender
             transmits outgoing messages using SMTP, while the transport listener connects to one or more mail accounts
             and periodically polls these accounts for new incoming messages. The implementation is based on
-            <a href="http://java.sun.com/products/javamail/">JavaMail</a> and therefore supports any mail store protocol
+            <a href="https://eclipse-ee4j.github.io/mail/">Jakarta Mail</a> (formerly JavaMail) and therefore supports any mail store protocol
             for which a JavaMail provider is available.</p>
         </section>
         <section name="Transport listener">
@@ -44,9 +44,10 @@
             <p>All parameters starting with <tt>mail.</tt> are
             interpreted as JavaMail environment properties. The most relevant are <tt>mail.<em>&lt;protocol&gt;</em>.host</tt>
             and <tt>mail.<em>&lt;protocol&gt;</em>.user</tt>, where <tt><em>&lt;protocol&gt;</em></tt> is typically <tt>pop3</tt>
-            or <tt>imap</tt>. Assuming that Sun's JavaMail implementation is used, the complete list of supported properties for these
-            two protocols can be found <a href="http://java.sun.com/products/javamail/javadocs/com/sun/mail/pop3/package-summary.html">here</a>
-            and <a href="http://java.sun.com/products/javamail/javadocs/com/sun/mail/imap/package-summary.html">here</a>.</p>
+            or <tt>imap</tt>. The complete list of supported properties for these
+            two protocols can be found in the <a href="https://eclipse-ee4j.github.io/mail/docs/api/">Jakarta Mail API documentation</a>
+            (for <a href="https://eclipse-ee4j.github.io/mail/docs/api/com.sun.mail.pop3/com/sun/mail/pop3/package-summary.html">POP3</a>
+            and <a href="https://eclipse-ee4j.github.io/mail/docs/api/com.sun.mail.imap/com/sun/mail/imap/package-summary.html">IMAP</a>).</p>
             <p>In additional to the JavaMail environment properties, the following transport specific service parameters are
             used:</p>
             <table class="bodyTable">

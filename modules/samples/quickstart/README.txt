@@ -1,9 +1,8 @@
 Axis2 Quick Start Guide- Sample 1
 =================================
 
-This sample contains source code for the xdocs/1_1/quickstartguide.html document found in 
-the extracted Axis2 Documents Distribution. For a more detailed description on the 
-source code kindly see this 'Axis2 Quick Start Guide' document.
+This sample contains source code for the Axis2 Quick Start Guide. For a more detailed
+description on the source code, see the Axis2 Quick Start Guide documentation.
 
 Introduction
 ============

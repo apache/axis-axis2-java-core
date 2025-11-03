@@ -65,13 +65,13 @@
                 <p>Please refer to the following documents in WebLogic
                 for more information:</p>
                 <ul>
-                <li><a href=
+                <li><s><a href=
                 "http://e-docs.bea.com/wls/docs81/programming/classloading.html">WebLogic
-                ServerApplication Classloading</a>- For more information on how
+                ServerApplication Classloading</a></s> <em>(BEA docs may be inaccessible since Oracle acquisition)</em>- For more information on how
                 WebLogic's class loader works</li>
-                <li><a href=
+                <li><s><a href=
                 "http://e-docs.bea.com/wls/docs81/webapp/deployment.html">Redeploying
-                a Web Application in Exploded Directory Format</a></li>
+                a Web Application in Exploded Directory Format</a></s> <em>(BEA docs may be inaccessible since Oracle acquisition)</em></li>
                 </ul>
             </subsection>
             <subsection name="Lack of namespacing on serialised items">

@@ -240,18 +240,18 @@ with. To generate your client, execute the following steps:</p>
 <ol>
 <li>Download the latest JiBX package (tested with JiBX v1.1) from
 <a href=
-"http://sourceforge.net/projects/jibx/">http://sourceforge.net/projects/jibx/</a>
+"https://sourceforge.net/projects/jibx/">https://sourceforge.net/projects/jibx/</a>
 . Extract the zip file, and copy the JARs in the lib directory to
 the AXIS2_HOME/lib directory. (Delete the stax-api.jar file; it's
 superseded by the version that comes with Axis2.)</li>
-<li>Download <a href=
+<li>Download <s><a href=
 "http://sourceforge.net/project/showfiles.php?group_id=69358&amp;package_id=122897">
-xsd2jibx version beta2a</a> from SourceForge. Create a directory
+xsd2jibx version beta2a</a></s> <em>(Old SourceForge URL format - see <a href="https://sourceforge.net/projects/jibx/files/">JiBX files</a>)</em> from SourceForge. Create a directory
 called xsd2jibx in your working directory and extract the files
 into it. This utility does not work with the latest release (v1.1)
-of JiBX, so download <a href=
+of JiBX, so download <s><a href=
 "http://sourceforge.net/project/showfiles.php?group_id=69358&amp;package_id=68290">
-jibx-1.0RC1</a> from SourceForge. Extract the files from this
+jibx-1.0RC1</a></s> <em>(Old SourceForge URL format - see <a href="https://sourceforge.net/projects/jibx/files/">JiBX files</a>)</em> from SourceForge. Extract the files from this
 archive and copy the *.jar files in the lib directory into the
 xsd2jibx/lib directory.</li>
 <li>Create a schema based on the data structures of your WSDL file
@@ -298,19 +298,19 @@ to create the actual object. In order to do all that you'll need to
 have the appropriate versions of the JiBX software.</p>
 <p>Download the latest JiBX package (tested with JiBX v1.1) from
 <a href=
-"http://sourceforge.net/projects/jibx/">http://sourceforge.net/projects/jibx/</a>.
+"https://sourceforge.net/projects/jibx/">https://sourceforge.net/projects/jibx/</a>.
 Extract the zip file, and copy the JARs in the lib directory to the
 AXIS2_HOME/lib directory. (Delete the stax-api.jar file; it's
 superseded by the version that comes with Axis2.) These files
 pertain to the main JiBX application.</p>
-<p>Download <a href=
+<p>Download <s><a href=
 "http://sourceforge.net/project/showfiles.php?group_id=69358&amp;package_id=122897">
-xsd2jibx version beta2a</a> from Sourceforge. Create a directory
+xsd2jibx version beta2a</a></s> <em>(Old SourceForge URL format - see <a href="https://sourceforge.net/projects/jibx/files/">JiBX files</a>)</em> from Sourceforge. Create a directory
 called xsd2jibx in your working directory and extract the files
 into it. Unfortunately, this utility does not work with the latest
-release of JiBX, so you will need to download <a href=
+release of JiBX, so you will need to download <s><a href=
 "http://sourceforge.net/project/showfiles.php?group_id=69358&amp;package_id=68290">
-jibx-1.0RC1</a> from Sourceforge. Extract the files from this
+jibx-1.0RC1</a></s> <em>(Old SourceForge URL format - see <a href="https://sourceforge.net/projects/jibx/files/">JiBX files</a>)</em> from Sourceforge. Extract the files from this
 archive and place the *.jar files in the lib directory into the
 xsd2jibx/lib directory. This way, you can use them exclusively with
 the xsd2jibx utility.</p>

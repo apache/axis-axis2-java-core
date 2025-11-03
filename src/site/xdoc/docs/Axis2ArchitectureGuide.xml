@@ -164,7 +164,7 @@ Architecture is built on three specifications- <a href=
 "http://www.w3.org/TR/soap/">SOAP</a> and <a href=
 "http://www.w3.org/Submission/ws-addressing/">WS-Addressing</a>.
 Other specifications like JAX-RPC, <a href=
-"http://java.sun.com/webservices/saaj/index.jsp">SAAJ</a> and
+"https://eclipse-ee4j.github.io/metro-saaj/">SAAJ</a> and
 <a href="http://www.w3.org/Submission/WS-Policy/">WS-Policy</a> are
 layered on top of the Core Architecture.</p>
 <a name="thearchi" id="thearchi"></a>

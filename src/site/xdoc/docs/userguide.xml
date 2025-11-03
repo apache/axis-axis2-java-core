@@ -343,25 +343,7 @@ axis2.xml file.</p>
 <p>Axis2 also provides a third distribution, the <a href="../download.cgi">
 source distribution</a>, which enables you to generate this .war
 file yourself.</p>
-<a id="docs" name="docs"></a>
-<h2>Axis2 Documentation Distribution Directory Hierarchy</h2>
-<p>The Documents distribution includes all Axis2 documentation
-including the xdcos and javadocs. It has the following
-structure:</p>
-<p><b>Code Listing 3: Axis2 Documents Distribution</b></p>
-<pre>
-docs
-      javadocs
-      xdocs
-
-LICENSE.txt
-README.txt
-release-notes.html
-</pre>
-<p>The javadocs directory includes all the standard <a href=
-"../api/index.html">API documentation</a> for the Axis2
-API, with other documentation (like this document) in the xdocs
-directory.</p>
+<!-- Documents Distribution section removed as obsolete -->
 <a name="clients" id="clients"></a>
 <h2>Axis2 and Clients</h2>
 <p>Now that explains how Axis2 behaves as part of a Web

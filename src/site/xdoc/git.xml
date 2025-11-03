@@ -106,10 +106,10 @@
                         <tt>generate-resources</tt> phases, but fails to locate them if they
                         are generated during the <tt>generate-test-sources</tt> and
                         <tt>generate-test-resources</tt> phases. This is due to a limitation in Maven 2 (see
-                        <a href="http://jira.codehaus.org/browse/MECLIPSE-37">MECLIPSE-37</a>
+                        <s><a href="http://jira.codehaus.org/browse/MECLIPSE-37">MECLIPSE-37</a></s> <em>(Codehaus JIRA is no longer accessible)</em>
                         for more information). Executing the <tt>eclipse:eclipse</tt> goal after
                         the <tt>process-test-resources</tt> phase is also not enough because of
-                        <a href="http://jira.codehaus.org/browse/MDEP-259">MDEP-259</a>. The
+                        <s><a href="http://jira.codehaus.org/browse/MDEP-259">MDEP-259</a></s> <em>(Codehaus JIRA is no longer accessible)</em>. The
                         best is to execute it after the <tt>install</tt> phase. The <tt>skipTests</tt>
                         property can be used to skip the execution of the unit tests (<tt>maven.test.skip</tt>
                         is not appropriate here because it also skips some of the goals configured

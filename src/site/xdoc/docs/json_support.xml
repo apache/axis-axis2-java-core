@@ -212,7 +212,7 @@ HTTP/1.1</code>
                 <code>JSONBadgerfishOMBuilder</code> convert incoming messages from JSON to XML and
                 the two message formatters <code>JSONMessageFormatter</code> and <code>JSONBadgerfishMessageFormatter</code>
                 convert outgoing messages from XML to JSON. Axis2 doesn't implement its own JSON parser and serializer, and
-                instead relies on <a href="http://jettison.codehaus.org/">Jettison</a> to do the JSON&lt;->XML conversions.</p>
+                instead relies on <s><a href="http://jettison.codehaus.org/">Jettison</a></s> <em>(Codehaus hosting no longer accessible - project moved to <a href="https://github.com/jettison-json/jettison">GitHub</a>)</em> to do the JSON&lt;->XML conversions.</p>
                 <p>On the server side the XML for an incoming
                 message is typically converted to Java objects by a databinding (such as ADB or JAX-WS)
                 before the invocation of the service implementation. In the same way, the Java object returned by the

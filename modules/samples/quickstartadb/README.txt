@@ -1,9 +1,8 @@
 Axis2 Quick Start Guide- Sample 2 (ADB)
 ======================================
 
-This sample contains source code for the site/docs/quickstartguide.html document found in 
-the extracted Axis2 Documents Distribution. For a more detailed description on the 
-source code kindly see this 'Axis2 Quick Start Guide' document.
+This sample contains source code for the Axis2 Quick Start Guide. For a more detailed
+description on the source code, see the Axis2 Quick Start Guide documentation.
 
 Introduction
 ============

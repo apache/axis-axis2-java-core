@@ -1,9 +1,8 @@
 Axis2 User's Guide Sample
 =========================
 
-This sample contains the source code relevant to xdocs/1_1/adv-userguide.html, 
-more specifically to xdocs/1_1/dii.html and xmlbased-server.html which are sections 
-of the Axis2 Advanced User's Guide found in the Documents Distribution.
+This sample contains the source code relevant to the Axis2 Advanced User's Guide,
+more specifically the DII (Dynamic Invocation Interface) and XML-based server sections.
 
 The sample explains how to write a Web service and Web service client with 
 Apache Axis2 using XML based client APIs (Axis2's Primary APIs).
@@ -76,9 +75,9 @@ Type the following ant commands from Axis2_HOME/samples/userguide to run the cli
    This invokes MyService through a one-way client
 
  
-You can find more information on the above clients in Axis2 users guide, RESTFul Web services support, 
-TCP Transport documents found in the Documents Distribution's xdocs directory. Also, you may find it 
-useful to try out the above services and clients while going through these documents.
+You can find more information on the above clients in the Axis2 User's Guide, RESTful Web services support,
+and TCP Transport documentation. You may find it useful to try out the above services and clients while
+going through the project documentation.
 
 Note
 ==============

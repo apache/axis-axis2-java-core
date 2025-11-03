@@ -225,9 +225,9 @@ handler runs.</p>
 &lt;order phase="loggingPhase" /&gt;
 &lt;/handler&gt;
 </pre>
-<p>To learn more about Phase rules, check out the article <a href=
+<p>To learn more about Phase rules, check out the article <s><a href=
 "http://www.developer.com/java/web/article.php/3529321"
->Axis2 Execution Framework</a></p>
+>Axis2 Execution Framework</a></s> <em>(Developer.com may be inaccessible)</em></p>
 <a name="Step_4:_Modify_the_&quot;axis2_xml&quot;"></a>
 <h4>Step 4: Modify the "axis2.xml"</h4>
 <p>In this handler, the "loggingPhase", is defined by the module

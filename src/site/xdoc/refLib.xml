@@ -68,20 +68,20 @@ Java API for XML-based RPC (JAX-RPC)</a></p>
 "http://www.w3.org/TR/2005/REC-soap12-mtom-20050125/">SOAP Message
 Transmission Optimization Mechanism</a></p>
 <p><b>Other Resources</b></p>
-<p><b><a href="http://java.sun.com/docs/books/jls/index.html">The
+<p><b><a href="https://docs.oracle.com/javase/specs/">The
 Java Language Specification</a></b><br />
 Written by the creators of the Java Programming Language, this
 online book is considered by many to be the bible for programming
-in Java. A must read.</p>
+in Java. A must read. <em>Note: OpenJDK documentation available at <a href="https://openjdk.org/groups/compiler/doc/">OpenJDK Compiler Group</a></em></p>
 <p><b><a href=
-"http://java.sun.com/products/jdk/javadoc/index.html">Javadoc</a></b><br />
+"https://docs.oracle.com/en/java/javase/17/docs/specs/man/javadoc.html">Javadoc</a></b><br />
 
 Javadoc is the automatic software documentation generator used by
 Java, since it was first released. All code written for this
-project must be documented using Javadoc conventions.</p>
-<p><b><a href=
+project must be documented using Javadoc conventions. <em>Available in all OpenJDK distributions.</em></p>
+<p><b><s><a href=
 "http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">The
-Java Code Conventions</a></b><br />
+Java Code Conventions</a></s></b> <em>(Sun link no longer accessible - see <a href="https://google.github.io/styleguide/javaguide.html">Google Java Style Guide</a> for modern conventions)</em><br />
 This Sun document specifies the de-facto standard way of formatting
 Java code. All code written for this project must follow these
 conventions.</p>

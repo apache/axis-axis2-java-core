@@ -1,8 +1,7 @@
 POJO Web Services using Apache Axis2- Sample 1
 =============================================
-This sample contains source code for the xdocs/1_1/pojoguide.html document found in 
-the extracted Axis2 Documents Distribution. For a more detailed description on the 
-source code kindly see this 'POJO Web Services using Apache Axis2' document.
+This sample contains source code for the POJO Web Services guide. For a more detailed
+description on the source code, see the 'POJO Web Services using Apache Axis2' documentation.
 
 The above mentioned document shows you how to take a simple POJO (Plain Old Java 
 Object), and deploy it on Apache Tomcat as a Web service in the exploded directory 
