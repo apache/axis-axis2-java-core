@@ -50,7 +50,7 @@ shift
 goto loop
 
 :security
-set JAVA_OPTS=%JAVA_OPTS% -Djava.security.manager -Djava.security.policy=%AXIS2_HOME%\conf\axis2.policy -Daxis2.home=%AXIS2_HOME%
+set JAVA_OPTS=%JAVA_OPTS% -Daxis2.home=%AXIS2_HOME%
 shift
 goto loop
 

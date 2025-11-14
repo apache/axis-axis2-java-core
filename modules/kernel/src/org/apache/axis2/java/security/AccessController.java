@@ -35,7 +35,7 @@ import java.security.PrivilegedExceptionAction;
  * accessing system resources (ie, read/write files, opening ports, and etc).
  * <p/>
  * This class provides a consistent security model across Java versions by
- * always using doPrivileged(), ensuring proper privilege elevation regardless
+ * always using doPrivileged(), if it is available, ensuring proper privilege elevation regardless
  * of SecurityManager presence (which was deprecated in Java 17 and removed in Java 21).
  * <p/>
  * Note: This utility should be used properly, otherwise might introduce
@@ -56,14 +56,13 @@ import java.security.PrivilegedExceptionAction;
  * }
  * </code>
  */
-
-
 public class AccessController {
+    private static final boolean SUPPORTS_SECURITY_MANAGER = Runtime.version().feature() < 24;
 
     /**
      * Performs the specified <code>PrivilegedAction</code> with privileges
      * enabled. This method always uses doPrivileged for security consistency
-     * across Java versions.
+     * across Java versions, if it is available.
      * <p/>
      * If the action's <code>run</code> method throws an (unchecked) exception,
      * it will propagate through this method.
@@ -74,7 +73,11 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedExceptionAction)
      */
     public static <T> T doPrivileged(PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            return (action.run());
+        } else {
+            return java.security.AccessController.doPrivileged(action);
+        }
     }
 
 
@@ -97,7 +100,11 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
      */
     public static <T> T doPrivileged(PrivilegedAction<T> action, AccessControlContext context) {
-        return java.security.AccessController.doPrivileged(action, context);
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            return action.run();
+        } else {
+            return java.security.AccessController.doPrivileged(action, context);
+        }
     }
 
     /**
@@ -117,7 +124,17 @@ public class AccessController {
      */
     public static <T> T doPrivileged(PrivilegedExceptionAction<T> action)
             throws PrivilegedActionException {
-        return java.security.AccessController.doPrivileged(action);
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            try {
+                return action.run();
+            } catch (java.lang.RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new PrivilegedActionException(e);
+            }
+        } else {
+            return java.security.AccessController.doPrivileged(action);
+        }
     }
 
 
@@ -146,7 +163,18 @@ public class AccessController {
     public static <T> T doPrivileged(PrivilegedExceptionAction<T> action,
                                       AccessControlContext context)
             throws PrivilegedActionException {
-        return java.security.AccessController.doPrivileged(action, context);
+
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            try {
+                return action.run();
+            } catch (java.lang.RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new PrivilegedActionException(e);
+            }
+        } else {
+            return java.security.AccessController.doPrivileged(action, context);
+        }
     }
 
     /**
@@ -174,7 +202,9 @@ public class AccessController {
      *                                is not permitted, based on the current security policy.
      */
     public static void checkPermission(Permission perm) throws AccessControlException {
-        java.security.AccessController.checkPermission(perm);
+        if (SUPPORTS_SECURITY_MANAGER) {
+            java.security.AccessController.checkPermission(perm);
+        }
     }
 
     /**
