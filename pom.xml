@@ -1308,18 +1308,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.github.veithen.maven</groupId>
-                <artifactId>hermetic-maven-plugin</artifactId>
-                <version>0.9.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate-policy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.github.veithen.alta</groupId>
                 <artifactId>alta-maven-plugin</artifactId>
                 <version>0.8.1</version>
