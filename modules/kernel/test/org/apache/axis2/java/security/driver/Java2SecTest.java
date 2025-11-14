@@ -38,6 +38,8 @@ import java.security.Permission;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import static org.junit.Assume.assumeTrue;
+
 /**
  * Java2SecTest demonstrates the usages of AccessController class for privileged operations.
  *
@@ -67,6 +69,12 @@ public class Java2SecTest extends TestCase {
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getDefault());
         System.out.println("Current time => " + sdf.format(cal.getTime()) + "\n");
+    }
+
+    @Override
+    public void setUp() throws Exception {
+        // Security Manager was removed after that
+        assumeTrue(Runtime.version().feature() < 24);
     }
 
     // Constructor
