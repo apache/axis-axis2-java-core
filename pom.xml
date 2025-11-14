@@ -508,6 +508,7 @@
         <axis2_version>${project.version}</axis2_version>
         <project.build.outputTimestamp>2025-03-04T22:45:29Z</project.build.outputTimestamp>
         <maven.compiler.release>17</maven.compiler.release>
+        <jacoco.version>0.8.14</jacoco.version>
     </properties>
 
     <dependencyManagement>
@@ -1040,6 +1041,11 @@
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <version>1.18.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jacoco</groupId>
+                <artifactId>org.jacoco.report</artifactId>
+                <version>${jacoco.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
