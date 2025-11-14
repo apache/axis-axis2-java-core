@@ -1268,8 +1268,8 @@
                                     <version>3.6.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <!-- We require Java 17+ for the build, supporting up to Java 21 -->
-                                    <version>[17,22)</version>
+                                    <!-- We require Java 17+ for the build, supporting up to Java 25 -->
+                                    <version>[17,26)</version>
                                 </requireJavaVersion>
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
