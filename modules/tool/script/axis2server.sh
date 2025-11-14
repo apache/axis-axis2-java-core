@@ -40,7 +40,7 @@ while [ $# -ge 1 ]; do
             shift
         ;;
         -security)
-            JAVA_OPTS="$JAVA_OPTS -Djava.security.manager -Djava.security.policy=$AXIS2_HOME/conf/axis2.policy -Daxis2.home=$AXIS2_HOME"
+            JAVA_OPTS="$JAVA_OPTS -Daxis2.home=$AXIS2_HOME"
             shift
         ;;
         -h)
