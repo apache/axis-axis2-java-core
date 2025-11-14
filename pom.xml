@@ -505,6 +505,8 @@
         <axis2_version>${project.version}</axis2_version>
         <project.build.outputTimestamp>2025-03-04T22:45:29Z</project.build.outputTimestamp>
         <maven.compiler.release>17</maven.compiler.release>
+        <jacoco.version>0.8.14</jacoco.version>
+        <asm.version>9.9</asm.version>
     </properties>
 
     <dependencyManagement>
@@ -1292,7 +1294,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
+                <version>0.8.14</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -1368,6 +1370,33 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.report</artifactId>
+                        <version>${jacoco.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.core</artifactId>
+                        <version>${jacoco.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-commons</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-tree</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin><!-- Always build source JARs -->
                 <artifactId>maven-source-plugin</artifactId>
