@@ -28,15 +28,13 @@ import java.security.PrivilegedExceptionAction;
 
 /**
  * This utility wrapper class is created to support AXIS2 runs
- * inside of Java security environments. Due to the access control
- * checking algorithm, for Java security to function properly,
+ * inside of Java 2 Security environment. Due to the access control
+ * checking algorithm, for Java 2 Security to function properly,
  * <code>doPrivileged()</code>
  * is required in cases where there is application code on the stack frame
- * accessing system resources (ie, read/write files, opening ports, and etc).
- * <p/>
- * This class provides a consistent security model across Java versions by
- * always using doPrivileged(), ensuring proper privilege elevation regardless
- * of SecurityManager presence (which was deprecated in Java 17 and removed in Java 21).
+ * accessing the system resources (ie, read/write files, opening ports, and etc).
+ * This class also improve performance no matther Security Manager is being enabled
+ * or not.
  * <p/>
  * Note: This utility should be used properly, otherwise might introduce
  * security holes.
@@ -59,11 +57,11 @@ import java.security.PrivilegedExceptionAction;
 
 
 public class AccessController {
+    private static final boolean SUPPORTS_SECURITY_MANAGER = Runtime.version().feature() < 24;
 
     /**
      * Performs the specified <code>PrivilegedAction</code> with privileges
-     * enabled. This method always uses doPrivileged for security consistency
-     * across Java versions.
+     * enabled if a security manager is present.
      * <p/>
      * If the action's <code>run</code> method throws an (unchecked) exception,
      * it will propagate through this method.
@@ -74,7 +72,11 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedExceptionAction)
      */
     public static <T> T doPrivileged(PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            return (action.run());
+        } else {
+            return java.security.AccessController.doPrivileged(action);
+        }
     }
 
 
@@ -83,7 +85,9 @@ public class AccessController {
      * enabled and restricted by the specified <code>AccessControlContext</code>.
      * The action is performed with the intersection of the permissions
      * possessed by the caller's protection domain, and those possessed
-     * by the domains represented by the specified <code>AccessControlContext</code>.
+     * by the domains represented by the specified
+     * <code>AccessControlContext</code> if a security manager is present.
+     * <p/>
      * <p/>
      * If the action's <code>run</code> method throws an (unchecked) exception,
      * it will propagate through this method.
@@ -97,12 +101,16 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
      */
     public static <T> T doPrivileged(PrivilegedAction<T> action, AccessControlContext context) {
-        return java.security.AccessController.doPrivileged(action, context);
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            return action.run();
+        } else {
+            return java.security.AccessController.doPrivileged(action, context);
+        }
     }
 
     /**
      * Performs the specified <code>PrivilegedExceptionAction</code> with
-     * privileges enabled. The action is performed with <i>all</i> of the
+     * privileges enabled.  The action is performed with <i>all</i> of the
      * permissions possessed by the caller's protection domain.
      * <p/>
      * If the action's <code>run</code> method throws an <i>unchecked</i>
@@ -110,22 +118,32 @@ public class AccessController {
      *
      * @param action the action to be performed.
      * @return the value returned by the action's <code>run</code> method.
-     * @throws PrivilegedActionException the specified action's
+     * @throws PrivilgedActionException the specified action's
      *                                  <code>run</code> method threw a <i>checked</i> exception.
      * @see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
      * @see #doPrivileged(PrivilegedAction)
      */
     public static <T> T doPrivileged(PrivilegedExceptionAction<T> action)
             throws PrivilegedActionException {
-        return java.security.AccessController.doPrivileged(action);
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            try {
+                return action.run();
+            } catch (java.lang.RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new PrivilegedActionException(e);
+            }
+        } else {
+            return java.security.AccessController.doPrivileged(action);
+        }
     }
 
 
     /**
      * Performs the specified <code>PrivilegedExceptionAction</code> with
      * privileges enabled and restricted by the specified
-     * <code>AccessControlContext</code>. The action is performed with the
-     * intersection of the permissions possessed by the caller's
+     * <code>AccessControlContext</code>.  The action is performed with the
+     * intersection of the the permissions possessed by the caller's
      * protection domain, and those possessed by the domains represented by the
      * specified <code>AccessControlContext</code>.
      * <p/>
@@ -146,7 +164,18 @@ public class AccessController {
     public static <T> T doPrivileged(PrivilegedExceptionAction<T> action,
                                       AccessControlContext context)
             throws PrivilegedActionException {
-        return java.security.AccessController.doPrivileged(action, context);
+
+        if (!SUPPORTS_SECURITY_MANAGER) {
+            try {
+                return action.run();
+            } catch (java.lang.RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new PrivilegedActionException(e);
+            }
+        } else {
+            return java.security.AccessController.doPrivileged(action, context);
+        }
     }
 
     /**
@@ -174,7 +203,9 @@ public class AccessController {
      *                                is not permitted, based on the current security policy.
      */
     public static void checkPermission(Permission perm) throws AccessControlException {
-        java.security.AccessController.checkPermission(perm);
+        if (SUPPORTS_SECURITY_MANAGER) {
+            java.security.AccessController.checkPermission(perm);
+        }
     }
 
     /**
