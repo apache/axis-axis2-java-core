@@ -28,7 +28,7 @@ import jakarta.xml.ws.WebServiceProvider;
 import jakarta.xml.ws.WebServiceContext;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.http.HTTPBinding;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Map;
 
 /**
