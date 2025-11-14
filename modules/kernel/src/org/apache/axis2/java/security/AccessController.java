@@ -28,8 +28,8 @@ import java.security.PrivilegedExceptionAction;
 
 /**
  * This utility wrapper class is created to support AXIS2 runs
- * inside of Java 2 Security environment. Due to the access control
- * checking algorithm, for Java 2 Security to function properly,
+ * inside of Java security environments. Due to the access control
+ * checking algorithm, for Java security to function properly,
  * <code>doPrivileged()</code>
  * is required in cases where there is application code on the stack frame
  * accessing system resources (ie, read/write files, opening ports, and etc).
