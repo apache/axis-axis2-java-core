@@ -480,7 +480,7 @@
         <httpcore.version>5.3.4</httpcore.version>
         <httpclient.version>5.5.1</httpclient.version>
         <intellij.version>5.0</intellij.version>
-        <jaxbri.version>4.0.3</jaxbri.version>
+        <jaxbri.version>4.0.6</jaxbri.version>
         <jetty.version>12.1.1</jetty.version>
         <jibx.version>1.4.5</jibx.version>
         <maven.archiver.version>3.6.5</maven.archiver.version>
