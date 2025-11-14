@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;

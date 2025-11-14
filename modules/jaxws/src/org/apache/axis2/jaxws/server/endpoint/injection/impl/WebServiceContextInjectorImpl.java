@@ -27,7 +27,7 @@ import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjecto
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.xml.ws.WebServiceContext;
 import jakarta.xml.ws.handler.MessageContext;
 import java.lang.annotation.Annotation;

@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.sample.dynamic;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;

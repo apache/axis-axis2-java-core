@@ -21,9 +21,9 @@ package org.apache.axis2.jaxws.injection;
 
 import org.apache.axis2.jaxws.unitTest.TestLogger;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 import jakarta.xml.ws.WebServiceContext;
 
 public class ResourceInjectionTestImpl1 {

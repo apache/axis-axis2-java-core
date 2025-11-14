@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.calculator;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 public class CalculatorServer{
 

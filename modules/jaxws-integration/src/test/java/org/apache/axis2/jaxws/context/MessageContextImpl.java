@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.context;
 
 import org.apache.axis2.jaxws.context.sei.MessageContext;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.WebServiceContext;

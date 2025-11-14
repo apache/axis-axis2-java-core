@@ -27,9 +27,9 @@ import org.test.polymorphicfaults.ComplexFault;
 import org.test.polymorphicfaults.DerivedFault1;
 import org.test.polymorphicfaults.DerivedFault2;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
 import jakarta.xml.soap.Detail;

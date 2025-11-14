@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.addnumbers;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.WebServiceContext;
 import jakarta.xml.ws.handler.MessageContext;
