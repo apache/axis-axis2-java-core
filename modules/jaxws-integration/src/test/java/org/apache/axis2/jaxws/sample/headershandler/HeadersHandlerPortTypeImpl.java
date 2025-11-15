@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.sample.headershandler;
 
 import java.util.concurrent.Future;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.jws.HandlerChain;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.AsyncHandler;

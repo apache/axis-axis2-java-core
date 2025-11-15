@@ -1,11 +1,9 @@
 package org.apache.axis2.jaxws.addressbook;
 
 import javax.xml.namespace.QName;
-import jakarta.xml.ws.BindingProvider;
+
 import jakarta.xml.ws.Dispatch;
 import jakarta.xml.ws.Service;
-
-import java.util.Map;
 
 /**
  * Simple JAX-WS Dispatch client for the address book service implementation.

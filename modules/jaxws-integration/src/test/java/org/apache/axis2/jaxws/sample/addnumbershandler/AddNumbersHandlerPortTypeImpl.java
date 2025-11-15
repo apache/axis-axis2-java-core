@@ -24,7 +24,7 @@ import org.test.addnumbershandler.AddNumbersHandlerFault;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.jws.HandlerChain;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.AsyncHandler;

@@ -54,8 +54,6 @@
 		<include>org.apache.axis2:axis2-adb:jar</include>
 		<include>org.apache.axis2:axis2-adb-codegen:jar</include>
 		<include>org.apache.axis2:axis2-java2wsdl:jar</include>
-		<include>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</include>
-		<include>org.apache.geronimo.specs:geronimo-activation_1.1_spec:jar</include>
 		<include>wsdl4j:wsdl4j:jar</include>
             </includes>
         </dependencySet>

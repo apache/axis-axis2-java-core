@@ -23,9 +23,9 @@ import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionPortType;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 import jakarta.jws.WebService;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.EndpointReference;

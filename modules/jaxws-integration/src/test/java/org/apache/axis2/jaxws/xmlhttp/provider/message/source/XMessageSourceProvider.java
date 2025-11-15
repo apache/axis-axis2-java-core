@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.xmlhttp.provider.message.source;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import jakarta.xml.ws.BindingType;
