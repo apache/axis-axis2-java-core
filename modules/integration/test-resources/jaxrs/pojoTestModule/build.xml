@@ -32,7 +32,7 @@
 
     <target name="compile" depends="init" unless="pojo.uptodate">
         <mkdir dir="${pojo.dir}"/>
-        <javac fork="true" destdir="${pojo.dir}" debug="on" source="${maven.compiler.source}" target="${maven.compiler.target}">
+        <javac fork="true" destdir="${pojo.dir}" debug="on" release="${maven.compiler.release}" includeantruntime="false">
             <classpath refid="axis.test.classpath"/>
             <src path="${src}"/>
         </javac>

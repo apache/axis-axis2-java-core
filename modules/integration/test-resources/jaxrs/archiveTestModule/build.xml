@@ -36,7 +36,7 @@
 
     <target name="compile" depends="init" unless="jars.uptodate">
         <mkdir dir="${build.classes}"/>
-        <javac fork="true" destdir="${build.classes}" debug="on" source="${maven.compiler.source}" target="${maven.compiler.target}">
+        <javac fork="true" destdir="${build.classes}" debug="on" release="${maven.compiler.release}" includeantruntime="false">
             <classpath refid="axis.test.classpath"/>
             <src path="${src}"/>
         </javac>
