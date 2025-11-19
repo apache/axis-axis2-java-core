@@ -191,7 +191,7 @@ options.setProperty("MAX_CONCURRENT_STREAMS", 20);
 <p>The H2TransportSender provides three processing modes optimized for different payload sizes:</p>
 
 <ul>
-  <li><strong>Standard Processing</strong> (&amp;lt;10MB): Regular HTTP/2 features</li>
+  <li><strong>Standard Processing</strong> (0MB-10MB): Regular HTTP/2 features</li>
   <li><strong>Multiplexing Mode</strong> (10-50MB): Enhanced concurrent processing</li>
   <li><strong>Streaming Mode</strong> (50MB+): Memory-efficient streaming with chunked processing</li>
 </ul>
@@ -621,7 +621,7 @@ httpAsyncClient.start();
 <p>For SOAP services using HTTP/2 transport:</p>
 
 <ul>
-  <li><strong>Small SOAP Messages (&amp;lt;1MB):</strong> 5-15% latency improvement due to connection multiplexing</li>
+  <li><strong>Small SOAP Messages (0MB-1MB):</strong> 5-15% latency improvement due to connection multiplexing</li>
   <li><strong>Medium SOAP Messages (1-10MB):</strong> 10-20% improvement from header compression</li>
   <li><strong>Large SOAP Messages (10MB+):</strong> 15-25% improvement from streaming, but still much slower than equivalent JSON</li>
   <li><strong>Concurrent SOAP Calls:</strong> 20-40% improvement from stream multiplexing</li>

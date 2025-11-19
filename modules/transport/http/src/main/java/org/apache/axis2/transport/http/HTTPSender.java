@@ -96,10 +96,14 @@ public abstract class HTTPSender {
                 this.httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
                 // chunked is not possible with HTTP/1.0
                 this.chunked = false;
+            } else if (HTTPConstants.HEADER_PROTOCOL_20.equals(version)) {
+                this.httpVersion = HTTPConstants.HEADER_PROTOCOL_20;
+                // HTTP/2.0 supports multiplexing, enable chunked
+                this.chunked = true;
             } else {
                 throw new AxisFault(
                         "Parameter " + HTTPConstants.PROTOCOL_VERSION
-                                + " Can have values only HTTP/1.0 or HTTP/1.1");
+                                + " Can have values only HTTP/1.0, HTTP/1.1, or HTTP/2.0");
             }
         }
     }       

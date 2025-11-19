@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.transport.h2;
 
-import static com.google.common.truth.Truth.assertAbout;
-import static org.apache.axiom.truth.xml.XMLTruth.xml;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,14 +36,12 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.NamedValue;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender;
 

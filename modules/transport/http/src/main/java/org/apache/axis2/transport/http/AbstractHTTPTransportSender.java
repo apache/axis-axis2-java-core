@@ -87,7 +87,8 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
         setHTTPClientVersion(confContext);
         
         // <parameter name="PROTOCOL">HTTP/1.0</parameter> or
-        // <parameter name="PROTOCOL">HTTP/1.1</parameter> is
+        // <parameter name="PROTOCOL">HTTP/1.1</parameter> or
+        // <parameter name="PROTOCOL">HTTP/2.0</parameter> is
         // checked
         Parameter version = transportOut
                 .getParameter(HTTPConstants.PROTOCOL_VERSION);
@@ -106,10 +107,15 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
             } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version
                     .getValue())) {
                 defaultHttpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+            } else if (HTTPConstants.HEADER_PROTOCOL_20.equals(version
+                    .getValue())) {
+                defaultHttpVersion = HTTPConstants.HEADER_PROTOCOL_20;
+                // HTTP/2.0 supports multiplexing, so enable chunked by default
+                defaultChunked = true;
             } else {
                 throw new AxisFault("Parameter "
                         + HTTPConstants.PROTOCOL_VERSION
-                        + " Can have values only HTTP/1.0 or HTTP/1.1");
+                        + " Can have values only HTTP/1.0, HTTP/1.1, or HTTP/2.0");
             }
         }
 

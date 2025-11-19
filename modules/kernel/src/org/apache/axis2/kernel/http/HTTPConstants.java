@@ -228,6 +228,11 @@ public class HTTPConstants {
     public static final String HEADER_PROTOCOL_10 = "HTTP/1.0";
 
     /**
+     * Field HEADER_PROTOCOL_20
+     */
+    public static final String HEADER_PROTOCOL_20 = "HTTP/2.0";
+
+    /**
      * Field HEADER_PRAGMA
      */
     public static final String HEADER_PRAGMA = "Pragma";
