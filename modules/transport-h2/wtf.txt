@@ -1,0 +1,78 @@
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.apache.axis2:axis2-transport-h2[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding Apache Axis2 - HTTP/2 Transport 2.0.1-SNAPSHOT[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32menforcer:3.6.1:enforce[m [1m(enforce-maven-version)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Rule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32menforcer:3.6.1:enforce[m [1m(enforce-java-version)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32menforcer:3.6.1:enforce[m [1m(default)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Rule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[[1;34mINFO[m] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[[1;34mINFO[m] Rule 2: org.apache.maven.enforcer.rules.RequireNoRepositories passed
+[[1;34mINFO[m] Rule 3: org.apache.maven.enforcer.rules.dependency.BannedDependencies passed
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mjacoco:0.8.13:prepare-agent[m [1m(prepare-agent)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] argLine set to -javaagent:/home/robert/.m2/repository/org/jacoco/org.jacoco.agent/0.8.13/org.jacoco.agent-0.8.13-runtime.jar=destfile=/home/robert/repos/axis-axis2-java-core/modules/transport-h2/target/jacoco.exec,includes=org.apache.axis2.*
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32malta:0.8.1:generate-properties[m [1m(byte-buddy-agent)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mgplus:4.2.1:execute[m [1m(initialize)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Using plugin classloader, includes GMavenPlus and project classpath.
+[[1;34mINFO[m] Using Groovy 5.0.2 to perform execute.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32meclipse-settings:0.3.0:apply[m [1m(default)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mremote-resources:3.3.0:process[m [1m(process-resource-bundles)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Preparing remote bundle org.apache.apache.resources:apache-jar-resource-bundle:1.7
+[[1;34mINFO[m] Copying 3 resources from 1 bundle.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mremote-resources:3.3.0:process[m [1m(default)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Preparing remote bundle org.apache.axis2:axis2-resource-bundle:2.0.1-SNAPSHOT
+[[1;34mINFO[m] Copying 2 resources from 1 bundle.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] skip non existing resourceDirectory /home/robert/repos/axis-axis2-java-core/modules/transport-h2/src/main/resources
+[[1;34mINFO[m] Copying 3 resources from target/maven-shared-archive-resources to target/classes
+[[1;34mINFO[m] Copying 3 resources from target/maven-shared-archive-resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.14.1:compile[m [1m(default-compile)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mhermetic:0.9.0:generate-policy[m [1m(default)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] argLine set to -javaagent:/home/robert/.m2/repository/org/jacoco/org.jacoco.agent/0.8.13/org.jacoco.agent-0.8.13-runtime.jar=destfile=/home/robert/repos/axis-axis2-java-core/modules/transport-h2/target/jacoco.exec,includes=org.apache.axis2.* -Xbootclasspath/a:/home/robert/.m2/repository/com/github/veithen/hermetic-security-manager/1.3.0/hermetic-security-manager-1.3.0.jar -Djava.security.manager=com.github.veithen.hermetic.HermeticSecurityManager -Djava.security.policy==/home/robert/repos/axis-axis2-java-core/modules/transport-h2/target/test.policy
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:testResources[m [1m(default-testResources)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/test/resources to target/test-classes
+[[1;34mINFO[m] Copying 3 resources from target/maven-shared-archive-resources to target/test-classes
+[[1;34mINFO[m] Copying 3 resources from target/maven-shared-archive-resources to target/test-classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.14.1:testCompile[m [1m(default-testCompile)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32msurefire:3.5.4:test[m [1m(default-test)[m @ [36maxis2-transport-h2[0;1m ---[m
+[[1;34mINFO[m] Using auto detected provider org.apache.maven.surefire.junit4.JUnit4Provider
+[[1;34mINFO[m] 
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m]  T E S T S
+[[1;34mINFO[m] -------------------------------------------------------
+WARNING: A command line option has enabled the Security Manager
+WARNING: The Security Manager is deprecated and will be removed in a future release
+[[1;34mINFO[m] Running org.apache.axis2.transport.h2.[1mH2PerformanceBenchmarkTest[m
+[[1;34mINFO[m] [1;32mTests run: [0;1;32m6[m, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.342 s -- in org.apache.axis2.transport.h2.[1mH2PerformanceBenchmarkTest[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] Results:
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1;32mTests run: 6, Failures: 0, Errors: 0, Skipped: 0[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  5.936 s
+[[1;34mINFO[m] Finished at: 2025-11-18T11:59:49-10:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m

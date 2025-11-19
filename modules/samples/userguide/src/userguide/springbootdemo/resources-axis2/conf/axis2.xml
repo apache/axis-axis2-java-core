@@ -230,6 +230,23 @@
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
 
+    <!-- HTTP/2 Transport for Enterprise Big Data Processing -->
+    <transportSender name="h2"
+                     class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender">
+        <parameter name="PROTOCOL">HTTP/2.0</parameter>
+        <parameter name="maxConcurrentStreams">100</parameter>
+        <parameter name="initialWindowSize">65536</parameter>
+        <parameter name="serverPushEnabled">false</parameter>
+        <parameter name="connectionTimeout">30000</parameter>
+        <parameter name="responseTimeout">300000</parameter>
+        <parameter name="streamingBufferSize">65536</parameter>
+        <parameter name="memoryPressureThreshold">0.8</parameter>
+        <!-- Enterprise Big Data Configuration -->
+        <parameter name="enableStreamingOptimization">true</parameter>
+        <parameter name="enableMemoryOptimization">true</parameter>
+        <parameter name="largePayloadThreshold">52428800</parameter> <!-- 50MB -->
+    </transportSender>
+
     <!-- Please enable this if you need the java transport -->
     <!-- <transportSender name="java"
                      class="org.apache.axis2.transport.java.JavaTransportSender"/> -->

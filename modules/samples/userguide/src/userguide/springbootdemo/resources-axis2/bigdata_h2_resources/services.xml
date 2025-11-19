@@ -1,0 +1,101 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<serviceGroup>
+    <!-- HTTP/2 Big Data Service for Enterprise JSON Processing -->
+    <service name="BigDataH2Service" scope="application">
+        <description>
+            Enterprise Big Data Processing Service with HTTP/2 Transport Optimization
+
+            This service demonstrates HTTP/2 transport capabilities for large JSON datasets:
+            - Support for 50MB+ JSON payloads with streaming optimization
+            - Connection multiplexing for concurrent request processing
+            - Memory-efficient processing within 2GB heap constraints
+            - Performance monitoring and optimization metrics
+
+            Transport Features:
+            - HTTP/2 streaming for large datasets (50MB+)
+            - Connection multiplexing for medium datasets (10-50MB)
+            - Standard HTTP/2 processing for small datasets (&lt;10MB)
+            - Memory pressure handling and adaptive flow control
+
+            Security Features:
+            - OWASP ESAPI input validation
+            - HTTPS-only endpoint enforcement
+            - Enterprise security compliance
+        </description>
+
+        <!-- Service Implementation -->
+        <parameter name="ServiceClass">userguide.springboot.webservices.BigDataH2Service</parameter>
+        <parameter name="ServiceObjectSupplier">org.apache.axis2.spring.SpringAppContextAwareObjectSupplier</parameter>
+        <parameter name="SpringBeanName">bigDataH2Service</parameter>
+
+        <!-- HTTP/2 Transport Configuration -->
+        <parameter name="preferredTransport">h2</parameter>
+        <parameter name="enableHTTP2">true</parameter>
+        <parameter name="enableStreaming">true</parameter>
+        <parameter name="enableMemoryOptimization">true</parameter>
+
+        <!-- Large Payload Configuration -->
+        <parameter name="maxPayloadSize">104857600</parameter> <!-- 100MB -->
+        <parameter name="streamingThreshold">52428800</parameter> <!-- 50MB -->
+        <parameter name="connectionTimeout">30000</parameter>
+        <parameter name="responseTimeout">300000</parameter> <!-- 5 minutes -->
+
+        <!-- JSON Processing Configuration -->
+        <parameter name="enableJSONOnly">true</parameter>
+        <parameter name="disableSOAP">true</parameter>
+
+        <!-- Performance Monitoring -->
+        <parameter name="enablePerformanceMetrics">true</parameter>
+        <parameter name="logProcessingTime">true</parameter>
+
+        <!-- Service Operations -->
+        <operation name="processBigDataSet">
+            <description>
+                Process large JSON datasets using HTTP/2 optimization features.
+                Automatically selects optimal processing mode based on dataset size:
+                - Streaming for 50MB+ datasets
+                - Multiplexing for 10-50MB datasets
+                - Standard for &lt;10MB datasets
+            </description>
+
+            <!-- HTTP/2 Operation Configuration -->
+            <parameter name="enableHTTP2Streaming">true</parameter>
+            <parameter name="memoryOptimization">true</parameter>
+            <parameter name="concurrentStreams">5</parameter>
+
+            <!-- Input/Output Message Configuration -->
+            <messageReceiver class="org.apache.axis2.json.JSONMessageReceiver"/>
+
+            <!-- Operation-level timeout for large datasets -->
+            <parameter name="operationTimeout">300000</parameter> <!-- 5 minutes -->
+        </operation>
+
+        <!-- Error Handling Configuration -->
+        <parameter name="enableDetailedFaults">true</parameter>
+        <parameter name="faultDetailLevel">full</parameter>
+
+        <!-- Security Configuration -->
+        <parameter name="enableSecurity">true</parameter>
+        <parameter name="requireHTTPS">true</parameter>
+        <parameter name="validateInput">true</parameter>
+
+    </service>
+</serviceGroup>

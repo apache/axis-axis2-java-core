@@ -178,6 +178,18 @@
 		<artifactId>axis2-transport-http</artifactId>
 		<version>2.0.0-SNAPSHOT</version>
 	</dependency>
+	<!-- HTTP/2 Transport for Enterprise Big Data Processing -->
+	<dependency>
+		<groupId>org.apache.axis2</groupId>
+		<artifactId>axis2-transport-h2</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+	</dependency>
+	<!-- HTTP/2 Dependencies -->
+	<dependency>
+		<groupId>org.apache.httpcomponents.core5</groupId>
+		<artifactId>httpcore5-h2</artifactId>
+		<version>5.3.3</version>
+	</dependency>
 	<dependency>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-transport-local</artifactId>
@@ -345,6 +357,9 @@
                                 <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/testws.aar">
                                     <metainf file="resources-axis2/test_service_resources/services.xml"/>
                                 </jar>
+                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/BigDataH2Service.aar">
+                                    <metainf file="resources-axis2/bigdata_h2_resources/services.xml"/>
+                                </jar>
                                 <copy todir="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/conf">
                                     <fileset dir="resources-axis2/conf">
                                         <include name="axis2.xml"/>
@@ -356,6 +371,9 @@
                                 </jar>
                                 <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/testws.aar">
                                     <metainf file="resources-axis2/test_service_resources/services.xml"/>
+                                </jar>
+                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/BigDataH2Service.aar">
+                                    <metainf file="resources-axis2/bigdata_h2_resources/services.xml"/>
                                 </jar>
                                 <copy todir="${project.build.directory}/exploded/WEB-INF/conf">
                                     <fileset dir="resources-axis2/conf">
