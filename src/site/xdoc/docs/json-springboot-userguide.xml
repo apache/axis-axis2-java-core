@@ -73,7 +73,9 @@ prefix the subject of the mail with [Axis2].</p>
 
 <p>Axis2 2.0 introduces a complete HTTP/2 transport implementation designed for enterprise
 big data processing requirements. The HTTP/2 transport provides significant performance
-improvements over HTTP/1.1, especially for large JSON payloads and concurrent requests.</p>
+improvements over HTTP/1.1, especially for large JSON payloads and concurrent requests.
+For comprehensive HTTP/2 configuration details and advanced features, see the
+<a href="http2-transport-additions.html">HTTP/2 Transport documentation</a>.</p>
 
 <h3>Key HTTP/2 Benefits</h3>
 
