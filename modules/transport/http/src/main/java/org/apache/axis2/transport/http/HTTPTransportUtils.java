@@ -169,7 +169,26 @@ public class HTTPTransportUtils {
             throws AxisFault {
         int soapVersion = VERSION_UNKNOWN;
         try {
-            soapVersion = initializeMessageContext(msgContext, soapActionHeader, requestURI, contentType);
+            // Early JSON-only mode check to avoid Axiom loading
+            AxisConfiguration axisConfig = msgContext.getConfigurationContext().getAxisConfiguration();
+            String enableJSONOnly = (String) axisConfig.getParameterValue(Constants.Configuration.ENABLE_JSON_ONLY);
+            if (enableJSONOnly != null && enableJSONOnly.equalsIgnoreCase("true")) {
+                if (contentType == null || contentType.isEmpty() || !isJSONRequest(contentType)) {
+                    // Handle JSON-only error without initializing MessageContext (avoids Axiom loading)
+                    throw new AxisFault("JSON-only mode enabled but content-type is not application/json: " + contentType);
+                }
+                // For JSON requests in JSON-only mode, use simplified initialization
+                msgContext.setServerSide(true);
+                msgContext.setTo(new EndpointReference(requestURI));
+                msgContext.setDoingREST(true);
+                // Skip BuilderUtil.getCharSetEncoding() call that triggers Axiom loading
+                String charSetEnc = getCharSetEncodingSimple(contentType);
+                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+                soapVersion = VERSION_SOAP11;  // Default for REST/JSON
+            } else {
+                // Normal path with full Axiom support
+                soapVersion = initializeMessageContext(msgContext, soapActionHeader, requestURI, contentType);
+            }
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
             InputStream is = handleGZip(msgContext, in);
@@ -211,8 +230,27 @@ public class HTTPTransportUtils {
             throws AxisFault {
         int soapVersion = VERSION_UNKNOWN;
         try {
-            soapVersion = initializeMessageContext(msgContext, soapActionHeader,
-                    requestURI, contentType);
+            // Early JSON-only mode check to avoid Axiom loading
+            AxisConfiguration axisConfig = msgContext.getConfigurationContext().getAxisConfiguration();
+            String enableJSONOnly = (String) axisConfig.getParameterValue(Constants.Configuration.ENABLE_JSON_ONLY);
+            if (enableJSONOnly != null && enableJSONOnly.equalsIgnoreCase("true")) {
+                if (contentType == null || contentType.isEmpty() || !isJSONRequest(contentType)) {
+                    // Handle JSON-only error without initializing MessageContext (avoids Axiom loading)
+                    throw new AxisFault("JSON-only mode enabled but content-type is not application/json: " + contentType);
+                }
+                // For JSON requests in JSON-only mode, use simplified initialization
+                msgContext.setServerSide(true);
+                msgContext.setTo(new EndpointReference(requestURI));
+                msgContext.setDoingREST(true);
+                // Skip BuilderUtil.getCharSetEncoding() call that triggers Axiom loading
+                String charSetEnc = getCharSetEncodingSimple(contentType);
+                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+                soapVersion = VERSION_SOAP11;  // Default for REST/JSON
+            } else {
+                // Normal path with full Axiom support
+                soapVersion = initializeMessageContext(msgContext, soapActionHeader,
+                        requestURI, contentType);
+            }
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
             msgContext.setEnvelope(
@@ -422,5 +460,27 @@ public class HTTPTransportUtils {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Simple charset encoding extraction that avoids Axiom dependencies.
+     * Used in JSON-only mode to prevent loading XML-oriented libraries.
+     *
+     * @param contentType HTTP content type header
+     * @return charset encoding or default UTF-8
+     */
+    private static String getCharSetEncodingSimple(String contentType) {
+        if (contentType == null) {
+            return MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+        int index = contentType.indexOf("charset=");
+        if (index != -1) {
+            String encoding = contentType.substring(index + 8);
+            if (encoding.indexOf(';') != -1) {
+                encoding = encoding.substring(0, encoding.indexOf(';'));
+            }
+            return encoding.trim();
+        }
+        return MessageContext.DEFAULT_CHAR_SET_ENCODING;
     }
 }

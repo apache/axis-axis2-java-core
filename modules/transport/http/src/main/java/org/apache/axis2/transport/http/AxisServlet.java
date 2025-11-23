@@ -614,6 +614,12 @@ public class AxisServlet extends HttpServlet {
             disableREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
         }
 
+        // Check if JSON-only mode is enabled
+        parameter = axisConfiguration.getParameter(Constants.Configuration.ENABLE_JSON_ONLY);
+        if (parameter != null) {
+            enableJSONOnly = JavaUtils.isTrueExplicitly(parameter.getValue());
+        }
+
         // Should we close the reader(s)
         parameter = axisConfiguration.getParameter("axis2.close.reader");
         if (parameter != null) {
