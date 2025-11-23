@@ -370,7 +370,7 @@ public class AxisServlet extends HttpServlet {
      * @throws IOException
      */
     protected void showJSONOnlyErrorMessage(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.println("{ \"status\": \"error\",\"message\":\"content-type of application/json is mandatory\"}");
         writer.flush();
@@ -409,6 +409,35 @@ public class AxisServlet extends HttpServlet {
     void processAxisFault(MessageContext msgContext, HttpServletResponse res,
                           OutputStream out, AxisFault e) {
         try {
+            // Check for JSON-only mode to provide clean JSON error response
+            if (enableJSONOnly) {
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setContentType("application/json");
+                try {
+                    // Handle common error cases with specific messages, fallback to generic for uncommon errors
+                    String errorMessage;
+                    if (e.getMessage() != null && e.getMessage().contains("Service not found")) {
+                        errorMessage = "Service not found";
+                    } else if (e.getMessage() != null && e.getMessage().contains("Invalid JSON")) {
+                        errorMessage = "Invalid JSON message format";
+                    } else {
+                        // Generic message for any uncommon/unexpected exceptions from JSONMessageHandler
+                        errorMessage = "Bad Request";
+                    }
+                    String jsonError = "{\"error\":\"" + errorMessage + "\"}";
+                    res.getWriter().write(jsonError);
+                    return;
+                } catch (IOException ioEx) {
+                    log.error("Error writing JSON error response", ioEx);
+                    // Fallback to minimal response if even the generic JSON write fails
+                    try {
+                        res.getWriter().write("{\"error\":\"Request failed\"}");
+                    } catch (IOException fallbackEx) {
+                        log.error("Failed to write fallback JSON error response", fallbackEx);
+                    }
+                }
+            }
+
             // If the fault is not going along the back channel we should be 202ing
             if (AddressingHelper.isFaultRedirected(msgContext)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);

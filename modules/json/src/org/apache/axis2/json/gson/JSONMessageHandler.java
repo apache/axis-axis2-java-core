@@ -94,7 +94,12 @@ public class JSONMessageHandler extends AbstractHandler {
                 }
             }
         } else {
-            String enableJSONOnly = (String)  msgContext.getAxisService().getParameterValue("enableJSONOnly");
+            AxisService axisService = msgContext.getAxisService();
+            if (axisService == null) {
+                log.error("AxisService is null in MessageContext, cannot process JSON request");
+                throw new AxisFault("Bad Request: Service not found");
+            }
+            String enableJSONOnly = (String) axisService.getParameterValue("enableJSONOnly");
             if (enableJSONOnly !=null && enableJSONOnly.equalsIgnoreCase("true")) {
                 log.debug("On enableJSONOnly=true Axis operation is null on JSON request, message hasn't been dispatched to an operation, proceeding on JSON message name discovery and AxisOperation mapping");
                 try{
@@ -109,15 +114,16 @@ public class JSONMessageHandler extends AbstractHandler {
                             String messageName=jsonReader.nextName();     // get message name from input json stream
                             if (messageName == null) {
                                 log.error("JSONMessageHandler can't find messageName: " +messageName);
-                                throw new IOException("Bad Request");
+                                throw new AxisFault("Bad Request: Invalid JSON message format");
                             } else {
                                 log.debug("JSONMessageHandler found messageName: " +messageName);
                                 msgContext.setProperty("jsonMessageName", messageName);
                             }
                         }
 	            }
-                } catch(Exception e){
-                   log.error("JSONMessageHandler error: " +e.getMessage());
+                } catch(Exception ex){
+                   log.error("JSONMessageHandler error: " +ex.getMessage(), ex);
+                   throw new AxisFault(ex.getMessage());
                 }
             } else {
                 log.debug("On enableJSONOnly=false Axis operation is null, ignore it");
