@@ -173,7 +173,7 @@
     <!-- ================================================= -->
     <transportReceiver name="http"
                        class="org.apache.axis2.transport.http.SimpleHTTPServer">
-        <!-- <parameter name="port">9090</parameter> Port dynamically allocated by test framework -->
+        <parameter name="port">0</parameter> <!-- Dynamic port allocation -->
         <!-- Here is the complete list of supported parameters (see example settings further below):
             port: the port to listen on (default 6060)
             hostname:  if non-null, url prefix used in reply-to endpoint references                                 (default null)
