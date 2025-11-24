@@ -41,6 +41,7 @@ import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.kernel.http.HTTPConstants;
@@ -506,6 +507,18 @@ public class TransportUtils {
     public static void deleteAttachments(MessageContext msgContext) {
         if (log.isDebugEnabled()) {
             log.debug("Entering deleteAttachments()");
+        }
+
+        // Check if enableJSONOnly is true - if so, skip attachment cleanup to avoid loading Axiom
+        AxisService axisService = msgContext.getAxisService();
+        if (axisService != null) {
+            String enableJSONOnly = (String) axisService.getParameterValue("enableJSONOnly");
+            if (enableJSONOnly != null && enableJSONOnly.equalsIgnoreCase("true")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Skipping deleteAttachments() due to enableJSONOnly=true");
+                }
+                return;
+            }
         }
 
         Attachments attachments = msgContext.getAttachmentMap();
