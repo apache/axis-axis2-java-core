@@ -247,8 +247,10 @@ public class AxisServlet extends HttpServlet {
                     throw new ServletException(e2);
                 }
             } finally {
-                closeStaxBuilder(msgContext);
-                TransportUtils.deleteAttachments(msgContext);
+                if (!enableJSONOnly) {
+                    closeStaxBuilder(msgContext);
+                    TransportUtils.deleteAttachments(msgContext);
+                }
             }
         } else {
             if (!disableREST) {

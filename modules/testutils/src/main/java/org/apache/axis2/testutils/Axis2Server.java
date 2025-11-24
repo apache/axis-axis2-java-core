@@ -73,8 +73,17 @@ public class Axis2Server extends AbstractAxis2Server {
     @Override
     protected void stopServer() {
         System.out.println("[Axis2Server] stopServer() invoked, setting port to -1");
+        if (server != null) {
+            server.stop();
+            server = null;
+
+            // Add small delay to ensure port is fully released before next test
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
         port = -1;
-        server.stop();
-        server = null;
     }
 }

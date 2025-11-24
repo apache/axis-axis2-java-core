@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 public class AsyncClient {
 
-    private static final int max_isasleep_check = 30;
+    private static final int max_isasleep_check = 60;
     
     /**
      * Auxiliary method used for doiing isAsleep checks. Will perform isAsleep
