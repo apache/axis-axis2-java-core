@@ -77,7 +77,7 @@
 		<copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 		<copy file="src/applicationContext.xml" tofile="${dest.dir.classes}/applicationContext.xml" overwrite="true" />
 
-		<javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**">
+		<javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**" includeantruntime="false">
 			<classpath refid="build.class.path" />
 		</javac>
 
@@ -92,7 +92,7 @@
 	</target>
 
 	<target name="rpc.client.compile" depends="prepare">
-		<javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="client/**">
+		<javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="client/**" includeantruntime="false">
 			<classpath refid="build.class.path" />
 		</javac>
 	</target>

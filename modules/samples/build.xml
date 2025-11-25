@@ -86,7 +86,7 @@
     </target>
 
     <target name="compile" depends="clean,createDir">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false">
             <classpath refid="classpath.library"/>
         </javac>
         <jar destfile="${lib.dir}/${ant.project.name}-all.jar">

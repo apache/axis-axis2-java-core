@@ -496,7 +496,7 @@
         <m2Repository>'${settings.localRepository}'</m2Repository>
         <jaxws.rt.version>4.0.3</jaxws.rt.version>
         <jaxws.api.version>4.0.2</jaxws.api.version>
-        <maven-plugin-tools.version>3.15.1</maven-plugin-tools.version>
+        <maven-plugin-tools.version>3.15.2</maven-plugin-tools.version>
         <maven-archetype.version>3.4.0</maven-archetype.version>
         <activemq.version>6.1.7</activemq.version>
         <surefire.version>3.5.4</surefire.version>
@@ -505,8 +505,9 @@
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
         <axis2_version>${project.version}</axis2_version>
         <project.build.outputTimestamp>2025-03-04T22:45:29Z</project.build.outputTimestamp>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <jacoco.version>0.8.14</jacoco.version>
+        <asm.version>9.9</asm.version>
     </properties>
 
     <dependencyManagement>
@@ -1030,6 +1031,11 @@
                 <artifactId>jakarta.annotation-api</artifactId>
                 <version>3.0.0</version>
             </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.18.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1270,8 +1276,8 @@
                                     <version>3.6.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <!-- We require Java 17+ for the build, supporting up to Java 21 -->
-                                    <version>[17,22)</version>
+                                    <!-- We require Java 17+ for the build, supporting up to Java 25 -->
+                                    <version>[17,26)</version>
                                 </requireJavaVersion>
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
@@ -1292,27 +1298,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.24</version>
-                <executions>
-                    <execution>
-                        <id>check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- Skip Animal Sniffer API checking since we're targeting Java 17+ -->
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
+                <version>0.8.14</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -1324,18 +1312,6 @@
                                 <include>org.apache.axis2.*</include>
                             </includes>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.veithen.maven</groupId>
-                <artifactId>hermetic-maven-plugin</artifactId>
-                <version>0.9.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate-policy</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -1400,6 +1376,33 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.report</artifactId>
+                        <version>${jacoco.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.core</artifactId>
+                        <version>${jacoco.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-commons</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-tree</artifactId>
+                        <version>${asm.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin><!-- Always build source JARs -->
                 <artifactId>maven-source-plugin</artifactId>
