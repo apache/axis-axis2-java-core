@@ -158,7 +158,6 @@ public class TransportUtilsJSONOnlyTest extends TestCase {
 
         // Simulate JAX-WS service invocation scenario
         messageContext.setAxisService(axisService);
-        messageContext.setServiceName(axisService.getName());
 
         // Set properties that would be typical for a JSON service request
         messageContext.setProperty("CONTENT_TYPE", "application/json");
