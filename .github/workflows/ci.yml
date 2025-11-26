@@ -52,6 +52,9 @@ jobs:
       run: mvn -B -e -Papache-release -Dgpg.skip=true -Dmaven.compiler.release=${{ matrix.java }} verify
     - name: Remove Snapshots
       run: find ~/.m2/repository -name '*-SNAPSHOT' -a -type d -print0 | xargs -0 rm -rf
+    - name: Publish Test Report
+      uses: ScaCap/action-surefire-report@v1.9.1
+      if: always()
   site:
     name: Site
     runs-on: ubuntu-24.04
