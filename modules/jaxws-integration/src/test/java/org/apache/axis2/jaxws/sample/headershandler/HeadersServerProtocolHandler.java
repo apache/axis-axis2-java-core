@@ -77,10 +77,15 @@ public class HeadersServerProtocolHandler implements
         	// this is the second server outbound handler hit
             Map<QName, List<String>> requestHeaders = (Map<QName, List<String>>)messagecontext.get(Constants.JAXWS_OUTBOUND_SOAP_HEADERS);
             
-            // if the message object contains "33", it means we reversed directions in the "next inbound" server handler
+            // if the message contains the sum 43 (10+33), it means we reversed directions in the "next inbound" server handler
             // For testing purposes, we add a header here that would have been added by the previous handler in the flow.
+            //
+            // FIXED INTERMITTENT TEST FAILURE: Previously used unreliable contains("33") check on SOAP body string
+            // representation, which could match XML structure/namespaces causing false positives. Now use precise
+            // equality check for the expected result sum (10+33=43) to avoid intermittent failures.
             try {
-                if (messagecontext.getMessage().getSOAPBody().getChildElements().next().toString().contains("33")) {
+                String soapBodyText = messagecontext.getMessage().getSOAPBody().getTextContent();
+                if (soapBodyText != null && soapBodyText.trim().equals("43")) {
                     String acoh1 = TestHeaders.createHeaderXMLString(TestHeaders.ACOH1_HEADER_QNAME, TestHeaders.CONTENT_SMALL1);
                     List<String> acoh1list = new ArrayList<String>();
                     acoh1list.add(acoh1);

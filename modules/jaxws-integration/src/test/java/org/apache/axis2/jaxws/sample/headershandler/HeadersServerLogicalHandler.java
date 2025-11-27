@@ -129,17 +129,24 @@ public class HeadersServerLogicalHandler implements
         	
         	LogicalMessage msg = messagecontext.getMessage();
         	String st = getStringFromSourcePayload(msg.getPayload());
-        	String txt = String.valueOf(Integer.valueOf(getFirstArg(st)) - 1);
+        	int firstArg = Integer.valueOf(getFirstArg(st));
+        	// FIXED INTERMITTENT TEST FAILURE: Extract second parameter value to check precisely
+        	int secondArg = Integer.valueOf(getSecondArg(st));
+
+        	String txt = String.valueOf(firstArg - 1);
         	st = replaceFirstArg(st, txt);
         	msg.setPayload(new StreamSource(new StringBufferInputStream(st)));
-        	
+
         	tracker.removedHeader(acoh4);
         	requestHeaders.remove(TestHeaders.ACOH4_HEADER_QNAME);
 
-        	if (st.contains("66")) {
+        	// FIXED INTERMITTENT TEST FAILURE: Previously used unreliable st.contains("66")/st.contains("33")
+        	// checks on entire XML payload string, which could match XML structure/namespaces causing false positives.
+        	// Now check the actual parsed parameter values to avoid intermittent failures.
+        	if (secondArg == 66) {
         	    // test flow reversal and handleFault method ability to access/set headers
         	    throw new ProtocolException("I don't like 66");
-        	} else if (st.contains("33")) {
+        	} else if (secondArg == 33) {
         	    // test flow reversal, without handleFault flow
         	    return false;
         	}
@@ -152,6 +159,22 @@ public class HeadersServerLogicalHandler implements
         StringTokenizer st = new StringTokenizer(payloadString, ">");
         st.nextToken(); // skip first token.
         st.nextToken(); // skip second
+        String tempString = st.nextToken();
+        String returnString = new StringTokenizer(tempString, "<").nextToken();
+        return returnString;
+    }
+
+    /**
+     * Extract the second argument from the XML payload string.
+     * Added to fix intermittent test failure - enables precise parameter value checking
+     * instead of unreliable substring matching on entire XML payload.
+     */
+    private static String getSecondArg(String payloadString) {
+        StringTokenizer st = new StringTokenizer(payloadString, ">");
+        st.nextToken(); // skip first token.
+        st.nextToken(); // skip second
+        st.nextToken(); // skip third (first arg)
+        st.nextToken(); // skip fourth
         String tempString = st.nextToken();
         String returnString = new StringTokenizer(tempString, "<").nextToken();
         return returnString;
