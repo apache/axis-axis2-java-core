@@ -1220,7 +1220,7 @@
                 <plugin>
                     <groupId>com.github.veithen.maven</groupId>
                     <artifactId>resolver-proxy-maven-plugin</artifactId>
-                    <version>0.5.0</version>
+                    <version>0.5.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-invoker-plugin</artifactId>
