@@ -1,0 +1,389 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=""/>
+  <title>Axis2/Java HTTP/2 Integration Guide</title>
+</head>
+
+<body lang="en">
+
+<h1>Axis2/Java HTTP/2 Integration Guide</h1>
+
+<div style="background-color: #f0f8ff; border: 1px solid #0066cc; padding: 10px; margin: 10px 0;">
+<strong>🏢 WildFly Users:</strong> If you're using <strong>WildFly application server</strong>, please refer to the
+<a href="wildfly-http2-integration-guide.html">WildFly + Axis2 HTTP/2 Integration Guide</a> for optimized
+configuration that provides enhanced performance through cooperative integration with Undertow.
+</div>
+
+<h2>Overview</h2>
+
+<p>This document provides a comprehensive staged migration plan for implementing <strong>dual-protocol HTTP/2 support</strong>
+in Apache Axis2/Java using Apache HttpComponents 5.x. The architecture supports <strong>both HTTP/1.1 and HTTP/2 independently</strong>,
+allowing selection of either protocol but not both simultaneously. This approach is specifically designed for enterprise
+applications that process large JSON payloads (50MB+) within memory-constrained environments (2GB heap).</p>
+
+<h2>Architecture Strategy: Dual-Protocol Design</h2>
+
+<h3>Core Design Principle</h3>
+
+<p><strong>Independent Protocol Implementations</strong>: HTTP/1.1 and HTTP/2 are implemented as separate, independent transport modules to ensure:</p>
+<ul>
+  <li><strong>Clean Separation</strong>: No shared code paths that could introduce compatibility issues</li>
+  <li><strong>Protocol Selection</strong>: Runtime choice between HTTP/1.1 or HTTP/2 (not simultaneous)</li>
+  <li><strong>Risk Mitigation</strong>: HTTP/1.1 remains completely unchanged as fallback</li>
+  <li><strong>Future Maintenance</strong>: Each protocol can evolve independently</li>
+</ul>
+
+<h3>Proposed Module Structure</h3>
+
+<pre>
+modules/
+├── transport/
+│   └── http/          # Existing HTTP/1.1 implementation (unchanged)
+│       ├── src/main/java/org/apache/axis2/transport/http/
+│       │   ├── impl/httpclient5/     # Current HttpClient 5.x HTTP/1.1
+│       │   ├── server/               # HTTP/1.1 server components
+│       │   └── *.java               # Core HTTP/1.1 transport classes
+│       └── src/test/java/           # HTTP/1.1 tests
+│
+└── transport-h2/      # Independent HTTP/2 module (new)
+    ├── pom.xml         # Independent Maven module
+    ├── src/main/java/org/apache/axis2/transport/h2/
+    │   ├── impl/httpclient5/     # HTTP/2-specific HttpClient 5.x async
+    │   ├── server/               # HTTP/2 server components
+    │   └── *.java               # HTTP/2 transport classes
+    └── src/test/java/           # HTTP/2-specific tests
+</pre>
+
+<h3>Package Mapping Strategy</h3>
+
+<p><strong>HTTP/1.1 Packages (Unchanged)</strong>:</p>
+<ul>
+  <li><code>org.apache.axis2.transport.http.*</code></li>
+  <li><code>org.apache.axis2.transport.http.impl.httpclient5.*</code></li>
+  <li><code>org.apache.axis2.transport.http.server.*</code></li>
+</ul>
+
+<p><strong>HTTP/2 Packages (New Independent Module)</strong>:</p>
+<ul>
+  <li><code>org.apache.axis2.transport.h2.*</code></li>
+  <li><code>org.apache.axis2.transport.h2.impl.httpclient5.*</code></li>
+  <li><code>org.apache.axis2.transport.h2.server.*</code></li>
+</ul>
+
+<h3>Protocol Selection Configuration</h3>
+
+<p><strong>Axis2 Configuration (axis2.xml)</strong>:</p>
+<pre>
+&lt;!-- HTTP/1.1 Transport (Default) --&gt;
+&lt;transportSender name="http" class="org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender"&gt;
+    &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
+&lt;/transportSender&gt;
+
+&lt;!-- HTTP/2 Transport (Independent Module) --&gt;
+&lt;transportSender name="h2" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender"&gt;
+    &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
+    &lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;
+    &lt;parameter name="initialWindowSize"&gt;32768&lt;/parameter&gt;
+&lt;/transportSender&gt;
+</pre>
+
+<p><strong>Runtime Protocol Selection</strong>:</p>
+<pre>
+// Application chooses protocol at service configuration
+MessageContext msgContext = new MessageContext();
+msgContext.setProperty(Constants.Configuration.TRANSPORT_NAME, "h2");    // HTTP/2
+// msgContext.setProperty(Constants.Configuration.TRANSPORT_NAME, "http"); // HTTP/1.1
+</pre>
+
+<p><strong>Deployment Modes</strong>:</p>
+<ol>
+  <li><strong>HTTP/1.1 Only</strong>: Deploy only the existing <code>transport/http</code> module</li>
+  <li><strong>HTTP/2 Only</strong>: Deploy only the new <code>transport-h2</code> module</li>
+  <li><strong>Dual Support</strong>: Deploy both modules, select per service/operation</li>
+</ol>
+
+<h2>Implementation Benefits</h2>
+
+<h3>Advantages ✅</h3>
+
+<h4>1. Risk Mitigation</h4>
+<ul>
+  <li><strong>Zero Impact on HTTP/1.1</strong>: Existing implementation remains completely unchanged</li>
+  <li><strong>Independent Development</strong>: HTTP/2 features can be developed without affecting stable HTTP/1.1</li>
+  <li><strong>Easy Rollback</strong>: Can disable HTTP/2 module if issues arise</li>
+  <li><strong>Gradual Migration</strong>: Services can migrate to HTTP/2 individually</li>
+</ul>
+
+<h4>2. Clean Architecture</h4>
+<ul>
+  <li><strong>Clear Separation</strong>: No conditional logic mixing HTTP/1.1 and HTTP/2 code paths</li>
+  <li><strong>Dedicated Optimization</strong>: Each protocol can be optimized independently</li>
+  <li><strong>Maintainability</strong>: Future changes to one protocol don't affect the other</li>
+  <li><strong>Testing Isolation</strong>: Separate test suites prevent cross-protocol issues</li>
+</ul>
+
+<h4>3. Deployment Flexibility</h4>
+<ul>
+  <li><strong>Protocol Choice</strong>: Applications can choose optimal protocol per use case</li>
+  <li><strong>Performance Testing</strong>: Easy A/B testing between protocols</li>
+  <li><strong>Incremental Adoption</strong>: Organizations can adopt HTTP/2 at their own pace</li>
+  <li><strong>Backward Compatibility</strong>: Legacy systems continue using HTTP/1.1 seamlessly</li>
+</ul>
+
+<h3>Disadvantages ⚠️</h3>
+
+<h4>1. Code Duplication</h4>
+<ul>
+  <li><strong>File Count</strong>: ~56 Java files duplicated (2x maintenance burden)</li>
+  <li><strong>Bug Fixes</strong>: Security fixes need to be applied to both modules</li>
+  <li><strong>Feature Parity</strong>: New features may need implementation in both protocols</li>
+</ul>
+
+<h4>2. JAR Size Impact</h4>
+<ul>
+  <li><strong>Binary Size</strong>: ~40-50% increase in transport module size</li>
+  <li><strong>Memory Footprint</strong>: Both protocol implementations loaded (even if only one used)</li>
+  <li><strong>Deployment Overhead</strong>: Larger WAR/EAR files</li>
+</ul>
+
+<h2>HTTP/2 Configuration Guide</h2>
+
+<h3>Basic HTTP/2 Transport Configuration</h3>
+
+<p><strong>1. Enable HTTP/2 Transport in axis2.xml:</strong></p>
+<pre>
+&lt;!-- Add HTTP/2 transport sender alongside existing HTTP/1.1 --&gt;
+&lt;transportSender name="h2" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender"&gt;
+    &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
+    &lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;
+    &lt;parameter name="initialWindowSize"&gt;65536&lt;/parameter&gt;
+    &lt;parameter name="serverPushEnabled"&gt;false&lt;/parameter&gt;
+    &lt;parameter name="connectionTimeout"&gt;30000&lt;/parameter&gt;
+&lt;/transportSender&gt;
+</pre>
+
+<p><strong>2. Service-Level HTTP/2 Configuration:</strong></p>
+<pre>
+// Enable HTTP/2 for specific service operations
+ServiceClient client = new ServiceClient();
+client.getOptions().setProperty(Constants.Configuration.TRANSPORT_NAME, "h2");
+client.getOptions().setTo(new EndpointReference("https://example.com/service"));
+</pre>
+
+<p><strong>3. Large Payload Optimization:</strong></p>
+<pre>
+// Configure for big data processing (50MB+ JSON)
+MessageContext msgContext = new MessageContext();
+msgContext.setProperty("HTTP2_STREAMING_ENABLED", true);
+msgContext.setProperty("HTTP2_MEMORY_OPTIMIZATION", true);
+msgContext.setProperty("FLOW_CONTROL_WINDOW_SIZE", 2097152); // 2MB
+</pre>
+
+<h3>Performance Tuning Parameters</h3>
+
+<p><strong>Memory-Constrained Environments (2GB Heap):</strong></p>
+<pre>
+&lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;     &lt;!-- vs default 1000 --&gt;
+&lt;parameter name="maxConnectionsTotal"&gt;50&lt;/parameter&gt;       &lt;!-- vs default 100 --&gt;
+&lt;parameter name="maxConnectionsPerRoute"&gt;10&lt;/parameter&gt;    &lt;!-- vs default 20 --&gt;
+&lt;parameter name="connectionKeepAliveTime"&gt;300000&lt;/parameter&gt; &lt;!-- 5 minutes --&gt;
+</pre>
+
+<p><strong>Enterprise Big Data Processing:</strong></p>
+<pre>
+&lt;parameter name="initialWindowSize"&gt;65536&lt;/parameter&gt;      &lt;!-- 64KB for large payloads --&gt;
+&lt;parameter name="streamingBufferSize"&gt;65536&lt;/parameter&gt;    &lt;!-- 64KB chunks --&gt;
+&lt;parameter name="responseTimeout"&gt;300000&lt;/parameter&gt;       &lt;!-- 5 minutes for 50MB+ --&gt;
+&lt;parameter name="memoryPressureThreshold"&gt;0.8&lt;/parameter&gt;  &lt;!-- 80% of heap --&gt;
+</pre>
+
+<h2>Performance Expectations</h2>
+
+<h3>Quantified Benefits</h3>
+
+<table border="1">
+<tr><th>Metric</th><th>HTTP/1.1 Baseline</th><th>HTTP/2 Target</th><th>Improvement</th></tr>
+<tr><td>Request Latency</td><td>500ms</td><td>350ms</td><td>30% reduction</td></tr>
+<tr><td>JSON Processing (50MB)</td><td>12s</td><td>7.2s</td><td>40% improvement</td></tr>
+<tr><td>Memory Usage</td><td>1.8GB peak</td><td>1.4GB peak</td><td>20% reduction</td></tr>
+<tr><td>Concurrent Connections</td><td>50</td><td>10 (multiplexed)</td><td>80% reduction</td></tr>
+<tr><td>Connection Setup Time</td><td>100ms</td><td>20ms</td><td>80% reduction</td></tr>
+</table>
+
+<h3>Memory Optimization Strategy</h3>
+
+<ol>
+  <li><strong>Connection Pooling</strong>:
+    <ul>
+      <li>HTTP/1.1: 50 connections × 2MB = 100MB overhead</li>
+      <li>HTTP/2: 10 connections × 1MB = 10MB overhead</li>
+      <li><strong>Savings: 90MB memory</strong></li>
+    </ul>
+  </li>
+  <li><strong>Request Queuing</strong>:
+    <ul>
+      <li>HTTP/1.1: Per-connection queuing</li>
+      <li>HTTP/2: Stream-based queuing with backpressure</li>
+      <li><strong>Result: Better memory predictability</strong></li>
+    </ul>
+  </li>
+  <li><strong>JSON Streaming</strong>:
+    <ul>
+      <li>HTTP/1.1: Full payload buffering (50MB × 4 concurrent = 200MB)</li>
+      <li>HTTP/2: Streaming with 8MB buffers (8MB × 4 = 32MB)</li>
+      <li><strong>Savings: 168MB memory</strong></li>
+    </ul>
+  </li>
+</ol>
+
+<h2>Migration Strategy</h2>
+
+<h3>Phase 1: Parallel Deployment</h3>
+<ol>
+  <li>Deploy both HTTP/1.1 and HTTP/2 transports</li>
+  <li>Test HTTP/2 with non-critical services first</li>
+  <li>Monitor performance and memory usage</li>
+</ol>
+
+<h3>Phase 2: Gradual Migration</h3>
+<ol>
+  <li>Migrate high-volume services to HTTP/2</li>
+  <li>Focus on services with large JSON payloads (10MB+)</li>
+  <li>Measure performance improvements</li>
+</ol>
+
+<h3>Phase 3: Full Migration</h3>
+<ol>
+  <li>Migrate remaining services to HTTP/2</li>
+  <li>Consider deprecating HTTP/1.1 transport</li>
+  <li>Optimize HTTP/2 configuration based on usage patterns</li>
+</ol>
+
+<h2>Security Considerations</h2>
+
+<h3>HTTPS-Only Enforcement</h3>
+<ul>
+  <li>HTTP/2 transport <strong>requires HTTPS</strong> (RFC 7540 compliance)</li>
+  <li>HTTP URLs will be rejected with clear error messages</li>
+  <li>Ensure SSL certificates are properly configured</li>
+</ul>
+
+<h3>TLS Configuration</h3>
+<pre>
+&lt;parameter name="supportedProtocols"&gt;TLSv1.2,TLSv1.3&lt;/parameter&gt;
+&lt;parameter name="supportedCipherSuites"&gt;TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256&lt;/parameter&gt;
+&lt;parameter name="enableALPN"&gt;true&lt;/parameter&gt; &lt;!-- Required for HTTP/2 --&gt;
+</pre>
+
+<h2>Monitoring and Metrics</h2>
+
+<h3>Key Performance Indicators</h3>
+<ul>
+  <li>Request latency (target: 30% reduction vs HTTP/1.1)</li>
+  <li>JSON processing time (target: 40% improvement for 50MB payloads)</li>
+  <li>Memory usage (target: 20% reduction in peak usage)</li>
+  <li>Connection efficiency (target: 80% fewer connections via multiplexing)</li>
+</ul>
+
+<h3>JVM Monitoring Parameters</h3>
+<pre>
+-XX:+UseZGC                           # Low-latency garbage collector
+-XX:MaxDirectMemorySize=512m          # Direct memory for HTTP/2 buffers
+-Daxis2.http2.enabled=true           # Enable HTTP/2 transport
+-Daxis2.http2.streaming.enabled=true # Enable streaming for large payloads
+</pre>
+
+<h2>Testing Strategy</h2>
+
+<h3>Primary Focus: JSON Web Services Testing (90% Effort)</h3>
+
+<p>Since HTTP/2 transport is <strong>primarily designed for JSON-based web services</strong>, testing strategy prioritizes JSON over SOAP.</p>
+
+<h4>Phase 1: Core HTTP/2 Transport Tests</h4>
+<ul>
+  <li>HTTPS-Only Validation: Ensure HTTP URLs rejected with clear error messages</li>
+  <li>Async Client Creation: Verify HTTP/2 client configuration and connection pooling</li>
+  <li>Request Interface Compliance: All Request interface methods work correctly</li>
+  <li>Entity Conversion: AxisRequestEntity → HTTP/2 SimpleHttpRequest conversion</li>
+  <li>Error Handling: Proper AxisFault generation for HTTP/2 specific issues</li>
+</ul>
+
+<h4>Phase 2: HTTP/2 + JSON Integration Tests</h4>
+<ul>
+  <li>Large JSON Payload Tests (50MB+): Core business requirement</li>
+  <li>JSON-RPC over HTTP/2: Verify HTTP/2 multiplexing benefits</li>
+  <li>Performance Benchmarks: HTTP/1.1 vs HTTP/2 comparison</li>
+  <li>Memory Constraint Testing: Operation within 2GB heap limits</li>
+</ul>
+
+<h4>Phase 3: HTTP/2 Specific Feature Tests</h4>
+<ul>
+  <li>Connection Multiplexing: Test concurrent requests over single HTTP/2 connection</li>
+  <li>Security Enforcement: Verify HTTP URLs rejected properly</li>
+  <li>Flow Control: Large payload streaming optimization</li>
+</ul>
+
+<h3>Secondary Focus: SOAP Compatibility Tests (10% Effort - Optional)</h3>
+
+<p><strong>Limited Business Case Analysis</strong>:</p>
+
+<table border="1">
+<tr><th>Factor</th><th>Assessment</th><th>Rationale</th></tr>
+<tr><td><strong>Market Reality</strong></td><td>SOAP usage declining</td><td>New services predominantly use REST/JSON APIs</td></tr>
+<tr><td><strong>Legacy Focus</strong></td><td>Most SOAP on HTTP/1.1</td><td>SOAP organizations slow to adopt new protocols</td></tr>
+<tr><td><strong>Technical Benefits</strong></td><td>Marginal for SOAP</td><td>SOAP/XML verbose - limited HTTP/2 binary efficiency gains</td></tr>
+<tr><td><strong>Testing ROI</strong></td><td>Low value/high effort</td><td>Limited adoption likelihood</td></tr>
+</table>
+
+<h2>Success Criteria</h2>
+
+<h3>Overall Project Success</h3>
+<ul>
+  <li>✅ <strong>Performance</strong>: 30% latency reduction, 40% JSON processing improvement</li>
+  <li>✅ <strong>Memory</strong>: 20% reduction in peak memory usage</li>
+  <li>✅ <strong>Stability</strong>: No regression in existing functionality</li>
+  <li>✅ <strong>Scalability</strong>: Support for 100+ concurrent streams</li>
+  <li>✅ <strong>Production</strong>: Successful deployment with modern JVM and garbage collection</li>
+</ul>
+
+<h2>Summary</h2>
+
+<p>The independent transport-h2 module approach provides <strong>optimal balance</strong> between performance improvements and deployment safety for Axis2.
+This dual-protocol architecture allows organizations to:</p>
+
+<ul>
+  <li><strong>Evaluate HTTP/2 benefits</strong> without risk to existing HTTP/1.1 services</li>
+  <li><strong>Migrate incrementally</strong> at their own pace</li>
+  <li><strong>Optimize performance</strong> for large JSON payload processing</li>
+  <li><strong>Maintain compatibility</strong> across diverse deployment environments</li>
+</ul>
+
+<div style="background-color: #f0f8ff; border: 1px solid #0066cc; padding: 10px; margin: 10px 0;">
+<strong>🏢 WildFly Users:</strong> Don't forget to check the
+<a href="wildfly-http2-integration-guide.html">WildFly + Axis2 HTTP/2 Integration Guide</a> for enhanced
+performance through cooperative integration with Undertow HTTP/2 infrastructure.
+</div>
+
+</body>
+</html>

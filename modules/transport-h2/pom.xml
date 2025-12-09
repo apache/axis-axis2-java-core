@@ -85,6 +85,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-legacy</artifactId>
             <scope>test</scope>
@@ -111,13 +116,50 @@
             <artifactId>axiom-impl</artifactId>
         </dependency>
 
-        <!-- HTTP/2 testing infrastructure - simplified without Jetty dependencies -->
+        <!-- JSON processing dependencies -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-json</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
+
+        <!-- Moshi JSON library (Apache 2.0 Licensed) -->
+        <dependency>
+            <groupId>com.squareup.moshi</groupId>
+            <artifactId>moshi</artifactId>
+            <version>1.15.0</version>
+        </dependency>
+
+        <!-- Okio - Moshi dependency (Apache 2.0 Licensed) -->
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>3.6.0</version>
+        </dependency>
+
+        <!-- Undertow for HTTP/2 server integration (Apache 2.0 Licensed) -->
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-core</artifactId>
+            <version>2.3.10.Final</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-servlet</artifactId>
+            <version>2.3.10.Final</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- XNIO for async I/O (Apache 2.0 Licensed) -->
+        <dependency>
+            <groupId>org.jboss.xnio</groupId>
+            <artifactId>xnio-api</artifactId>
+            <version>3.8.8.Final</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- HTTP/2 testing infrastructure - simplified without Jetty dependencies -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-testutils</artifactId>
