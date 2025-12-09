@@ -153,11 +153,11 @@ if (detector.isWildFlyEnvironmentAvailable()) {
 String detectedJsonLibrary = detectConfiguredJsonLibrary(configContext);
 
 if (detectedJsonLibrary != null) {
-    if ("MOSHI".equals(detectedJsonLibrary) && moshiProcessing) {
+    if ("MOSHI".equals(detectedJsonLibrary) &amp;&amp; moshiProcessing) {
         configContext.setProperty("HTTP2_MOSHI_JSON_PROCESSING_ENABLED", true);
         configContext.setProperty("JSON_LIBRARY_PREFERENCE", "MOSHI");
         log.info("Detected Moshi JSON configuration - enabled HTTP/2 optimization for Moshi");
-    } else if ("GSON".equals(detectedJsonLibrary) && gsonProcessing) {
+    } else if ("GSON".equals(detectedJsonLibrary) &amp;&amp; gsonProcessing) {
         configContext.setProperty("HTTP2_GSON_JSON_PROCESSING_ENABLED", true);
         configContext.setProperty("JSON_LIBRARY_PREFERENCE", "GSON");
         log.info("Detected Gson JSON configuration - enabled HTTP/2 optimization for Gson");
