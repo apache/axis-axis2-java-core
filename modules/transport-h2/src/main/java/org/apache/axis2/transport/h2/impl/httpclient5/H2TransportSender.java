@@ -27,9 +27,10 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.builder.Builder;
-import org.apache.axis2.description.AxisConfiguration;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.kernel.http.HTTPConstants;
@@ -543,10 +544,10 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
             java.util.List<Phase> inFlowPhases = axisConfig.getInFlowPhases();
             for (Phase phase : inFlowPhases) {
                 if ("Transport".equals(phase.getName())) {
-                    java.util.List<HandlerDescription> handlers = phase.getHandlers();
-                    for (HandlerDescription handler : handlers) {
+                    java.util.List<Handler> handlers = phase.getHandlers();
+                    for (Handler handler : handlers) {
                         if ("JSONMessageHandler".equals(handler.getName())) {
-                            String handlerClass = handler.getClassName();
+                            String handlerClass = handler.getHandlerDesc().getClassName();
                             if (handlerClass.contains(".json.moshi.")) {
                                 log.debug("Detected Moshi JSONMessageHandler: " + handlerClass);
                                 return "MOSHI";
