@@ -22,7 +22,7 @@
 	<parent>
 		<artifactId>dynamic-client</artifactId>
 		<groupId>org.apache.axis2.examples</groupId>
-		<version>1.7.0-SNAPSHOT</version>
+		<version>1.8.0</version>
 	</parent>
 	<groupId>org.apache.axis2.examples</groupId>
 	<artifactId>server</artifactId>
