@@ -125,6 +125,26 @@ public class UndertowAxis2BufferIntegration {
                 }
             }
 
+            // If no direct XNIO Worker found, try to extract from WebSocketDeploymentInfo
+            if (worker == null) {
+                log.info("WildFly HTTP/2 Integration: Attempting to extract XNIO Worker from WebSocketDeploymentInfo...");
+                Object wsInfo = servletContext.getAttribute("io.undertow.websockets.jsr.WebSocketDeploymentInfo");
+                if (wsInfo != null) {
+                    try {
+                        // Use reflection to access WebSocketDeploymentInfo.getWorker()
+                        java.lang.reflect.Method getWorkerMethod = wsInfo.getClass().getMethod("getWorker");
+                        Object extractedWorker = getWorkerMethod.invoke(wsInfo);
+                        if (extractedWorker instanceof XnioWorker) {
+                            worker = (XnioWorker) extractedWorker;
+                            discovery.append("Extracted XnioWorker from WebSocketDeploymentInfo, ");
+                            log.info("  *** XNIO Worker EXTRACTED from WebSocketDeploymentInfo: " + extractedWorker.getClass().getName());
+                        }
+                    } catch (Exception e) {
+                        log.info("  Failed to extract XNIO Worker from WebSocketDeploymentInfo: " + e.getMessage());
+                    }
+                }
+            }
+
             // Search for Buffer Pool with detailed logging
             log.info("WildFly HTTP/2 Integration: Searching for Buffer Pool in servlet context...");
             for (String name : poolNames) {
@@ -142,6 +162,58 @@ public class UndertowAxis2BufferIntegration {
                     } catch (ClassCastException e) {
                         log.info("  Found Pool at '" + name + "' but not ByteBuffer pool: " + e.getMessage());
                         // Not a ByteBuffer pool, continue searching
+                    }
+                }
+            }
+
+            // If no direct Buffer Pool found, try to extract from XNIO Worker
+            if (pool == null && worker != null) {
+                log.info("WildFly HTTP/2 Integration: Attempting to extract Buffer Pool from XNIO Worker...");
+                try {
+                    // Use reflection to access XnioWorker.getBufferPool()
+                    java.lang.reflect.Method getBufferPoolMethod = worker.getClass().getMethod("getBufferPool");
+                    Object extractedPool = getBufferPoolMethod.invoke(worker);
+                    if (extractedPool instanceof Pool) {
+                        @SuppressWarnings("unchecked")
+                        Pool<ByteBuffer> bufferPool = (Pool<ByteBuffer>) extractedPool;
+                        pool = bufferPool;
+                        discovery.append("Extracted BufferPool from XnioWorker, ");
+                        log.info("  *** Buffer Pool EXTRACTED from XnioWorker: " + extractedPool.getClass().getName());
+                    }
+                } catch (Exception e) {
+                    log.info("  Failed to extract Buffer Pool from XNIO Worker: " + e.getMessage());
+                }
+            }
+
+            // If still no Buffer Pool found, try to extract from ServerWebSocketContainer
+            if (pool == null) {
+                log.info("WildFly HTTP/2 Integration: Attempting to extract Buffer Pool from ServerWebSocketContainer...");
+                Object wsContainer = servletContext.getAttribute("jakarta.websocket.server.ServerContainer");
+                if (wsContainer != null) {
+                    try {
+                        // Try to access underlying Undertow components through ServerWebSocketContainer
+                        java.lang.reflect.Method getWorkerMethod = wsContainer.getClass().getMethod("getXnioWorker");
+                        Object containerWorker = getWorkerMethod.invoke(wsContainer);
+                        if (containerWorker instanceof XnioWorker) {
+                            XnioWorker xnioWorker = (XnioWorker) containerWorker;
+                            if (worker == null) {
+                                worker = xnioWorker;
+                                discovery.append("Extracted XnioWorker from ServerWebSocketContainer, ");
+                                log.info("  *** XNIO Worker EXTRACTED from ServerWebSocketContainer: " + containerWorker.getClass().getName());
+                            }
+                            // Try to get buffer pool from this worker
+                            java.lang.reflect.Method getBufferPoolMethod = xnioWorker.getClass().getMethod("getBufferPool");
+                            Object extractedPool = getBufferPoolMethod.invoke(xnioWorker);
+                            if (extractedPool instanceof Pool) {
+                                @SuppressWarnings("unchecked")
+                                Pool<ByteBuffer> bufferPool = (Pool<ByteBuffer>) extractedPool;
+                                pool = bufferPool;
+                                discovery.append("Extracted BufferPool from ServerWebSocketContainer XnioWorker, ");
+                                log.info("  *** Buffer Pool EXTRACTED from ServerWebSocketContainer XnioWorker: " + extractedPool.getClass().getName());
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.info("  Failed to extract components from ServerWebSocketContainer: " + e.getMessage());
                     }
                 }
             }
