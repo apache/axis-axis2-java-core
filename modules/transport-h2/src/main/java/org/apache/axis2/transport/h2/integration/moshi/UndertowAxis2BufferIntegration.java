@@ -84,9 +84,11 @@ public class UndertowAxis2BufferIntegration {
         final String discoveryLog;
 
         WildFlyResourceCache(ServletContext servletContext) {
+            log.info("WildFly HTTP/2 Integration: CONSTRUCTOR START - Beginning resource discovery");
             StringBuilder discovery = new StringBuilder("WildFly resource discovery: ");
             XnioWorker worker = null;
             Pool<ByteBuffer> pool = null;
+            log.info("WildFly HTTP/2 Integration: Variables initialized, proceeding to search");
 
             // Try multiple possible WildFly attribute names (test-compatible first)
             String[] workerNames = {
@@ -111,6 +113,7 @@ public class UndertowAxis2BufferIntegration {
                 "wildfly.undertow.buffer.pool"     // WildFly 32 specific
             };
 
+            log.info("WildFly HTTP/2 Integration: Arrays initialized successfully, starting searches");
             // Search for XNIO Worker with detailed logging
             log.info("WildFly HTTP/2 Integration: Searching for XNIO Worker in servlet context...");
             for (String name : workerNames) {
