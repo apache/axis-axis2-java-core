@@ -93,37 +93,54 @@ public class UndertowAxis2BufferIntegration {
                 "io.undertow.servlet.XnioWorker",   // Test compatibility - current expected name
                 "io.undertow.xnio.worker",          // Alternative WildFly name
                 "org.wildfly.undertow.worker",      // WildFly-specific name
-                "undertow.xnio.worker"              // Generic name
+                "undertow.xnio.worker",             // Generic name
+                "io.undertow.XnioWorker",           // Capitalized version
+                "org.xnio.XnioWorker",              // Direct XNIO
+                "undertow.worker",                  // Simple name
+                "wildfly.undertow.xnio.worker"     // WildFly 32 specific
             };
 
             String[] poolNames = {
                 "io.undertow.servlet.BufferPool",   // Test compatibility - current expected name
                 "io.undertow.buffer-pool",          // Alternative WildFly name
                 "org.wildfly.undertow.buffer.pool", // WildFly-specific name
-                "undertow.buffer.pool"              // Generic name
+                "undertow.buffer.pool",             // Generic name
+                "io.undertow.BufferPool",           // Capitalized version
+                "org.xnio.Pool",                    // Direct XNIO
+                "undertow.pool",                    // Simple name
+                "wildfly.undertow.buffer.pool"     // WildFly 32 specific
             };
 
-            // Search for XNIO Worker
+            // Search for XNIO Worker with detailed logging
+            log.info("WildFly HTTP/2 Integration: Searching for XNIO Worker in servlet context...");
             for (String name : workerNames) {
                 Object attr = servletContext.getAttribute(name);
+                log.info("  Checking attribute '" + name + "': " +
+                        (attr != null ? attr.getClass().getName() + " (found)" : "null (not found)"));
                 if (attr instanceof XnioWorker) {
                     worker = (XnioWorker) attr;
                     discovery.append("Found XnioWorker at '").append(name).append("', ");
+                    log.info("  *** XNIO Worker FOUND at '" + name + "': " + attr.getClass().getName());
                     break;
                 }
             }
 
-            // Search for Buffer Pool
+            // Search for Buffer Pool with detailed logging
+            log.info("WildFly HTTP/2 Integration: Searching for Buffer Pool in servlet context...");
             for (String name : poolNames) {
                 Object attr = servletContext.getAttribute(name);
+                log.info("  Checking attribute '" + name + "': " +
+                        (attr != null ? attr.getClass().getName() + " (found)" : "null (not found)"));
                 if (attr instanceof Pool) {
                     try {
                         @SuppressWarnings("unchecked")
                         Pool<ByteBuffer> bufferPool = (Pool<ByteBuffer>) attr;
                         pool = bufferPool;
                         discovery.append("Found BufferPool at '").append(name).append("', ");
+                        log.info("  *** Buffer Pool FOUND at '" + name + "': " + attr.getClass().getName());
                         break;
                     } catch (ClassCastException e) {
+                        log.info("  Found Pool at '" + name + "' but not ByteBuffer pool: " + e.getMessage());
                         // Not a ByteBuffer pool, continue searching
                     }
                 }
@@ -134,39 +151,57 @@ public class UndertowAxis2BufferIntegration {
             this.integrationAvailable = (worker != null && pool != null);
             this.discoveryLog = discovery.toString();
 
-            // Log discovery results once
+            // Always log discovery results and enumerate attributes for debugging
             if (integrationAvailable) {
-                log.info("WildFly integration available: " + discoveryLog);
+                log.info("WildFly HTTP/2 integration AVAILABLE: " + discoveryLog +
+                        "Worker found: " + (worker != null ? worker.getClass().getName() : "null") +
+                        ", Pool found: " + (pool != null ? pool.getClass().getName() : "null"));
             } else {
-                log.debug("WildFly integration not available: " + discoveryLog +
-                         "Worker=" + (worker != null) + ", Pool=" + (pool != null));
+                log.warn("WildFly HTTP/2 integration NOT AVAILABLE: " + discoveryLog +
+                        "Worker=" + (worker != null) + ", Pool=" + (pool != null) + " - Enumerating all servlet context attributes...");
 
-                // Debug: enumerate all servlet context attributes to help discover correct names
-                if (log.isDebugEnabled()) {
-                    enumerateServletContextAttributes(servletContext);
-                }
+                // Always enumerate servlet context attributes when integration fails to help debug
+                enumerateServletContextAttributes(servletContext);
             }
         }
 
         /**
          * Debug helper: enumerate all servlet context attributes to discover WildFly's actual attribute names.
-         * Only called when debug logging is enabled and integration fails.
+         * Always called to help debug integration issues in production.
          */
         private void enumerateServletContextAttributes(ServletContext servletContext) {
             try {
                 java.util.Enumeration<String> attributeNames = servletContext.getAttributeNames();
-                StringBuilder allAttrs = new StringBuilder("All servlet context attributes: ");
+                StringBuilder allAttrs = new StringBuilder("WildFly ServletContext attribute discovery:\n");
 
+                int count = 0;
                 while (attributeNames.hasMoreElements()) {
                     String name = attributeNames.nextElement();
                     Object value = servletContext.getAttribute(name);
-                    String className = (value != null) ? value.getClass().getSimpleName() : "null";
-                    allAttrs.append(name).append("=").append(className).append(", ");
+                    String className = (value != null) ? value.getClass().getName() : "null";
+                    String simpleClassName = (value != null) ? value.getClass().getSimpleName() : "null";
+
+                    allAttrs.append("  [").append(++count).append("] '").append(name).append("' = ")
+                           .append(simpleClassName).append(" (").append(className).append(")\n");
+
+                    // Log detailed info for potentially relevant attributes
+                    if (name.toLowerCase().contains("undertow") ||
+                        name.toLowerCase().contains("xnio") ||
+                        name.toLowerCase().contains("buffer") ||
+                        name.toLowerCase().contains("worker") ||
+                        (value != null && (value.getClass().getName().contains("xnio") ||
+                                          value.getClass().getName().contains("undertow") ||
+                                          value.getClass().getName().contains("Buffer") ||
+                                          value.getClass().getName().contains("Worker")))) {
+                        allAttrs.append("    *** POTENTIALLY RELEVANT: ").append(name).append(" -> ").append(className).append("\n");
+                    }
                 }
 
-                log.debug(allAttrs.toString());
+                // Always log this information - it's critical for debugging
+                log.warn("WildFly HTTP/2 Integration Debug - " + allAttrs.toString());
+
             } catch (Exception e) {
-                log.debug("Failed to enumerate servlet context attributes: " + e.getMessage());
+                log.error("Failed to enumerate servlet context attributes for WildFly integration debug: " + e.getMessage(), e);
             }
         }
     }
