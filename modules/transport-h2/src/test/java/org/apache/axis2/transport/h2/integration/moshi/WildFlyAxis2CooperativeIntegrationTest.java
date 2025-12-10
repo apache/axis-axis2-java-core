@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.xnio.Pool;
 import org.xnio.XnioWorker;
 
 import io.undertow.server.HttpServerExchange;
@@ -79,6 +80,9 @@ public class WildFlyAxis2CooperativeIntegrationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
+
+        // Clear static cache to ensure test isolation
+        UndertowAxis2BufferIntegration.clearCache();
 
         // Mock WildFly buffer pool (key integration point)
         mockBufferPool = createMockBufferPool();
@@ -310,10 +314,20 @@ public class WildFlyAxis2CooperativeIntegrationTest {
      */
     @Test
     public void testWildFlyIntegrationFallback() {
+        // Clear cache to ensure this test has clean state
+        UndertowAxis2BufferIntegration.clearCache();
+
         // Test integration without WildFly components
         ServletContext limitedContext = mock(ServletContext.class);
+        // Mock all possible attribute names to return null
         when(limitedContext.getAttribute("io.undertow.servlet.XnioWorker")).thenReturn(null);
         when(limitedContext.getAttribute("io.undertow.servlet.BufferPool")).thenReturn(null);
+        when(limitedContext.getAttribute("io.undertow.xnio.worker")).thenReturn(null);
+        when(limitedContext.getAttribute("io.undertow.buffer-pool")).thenReturn(null);
+        when(limitedContext.getAttribute("org.wildfly.undertow.worker")).thenReturn(null);
+        when(limitedContext.getAttribute("org.wildfly.undertow.buffer.pool")).thenReturn(null);
+        when(limitedContext.getAttribute("undertow.xnio.worker")).thenReturn(null);
+        when(limitedContext.getAttribute("undertow.buffer.pool")).thenReturn(null);
 
         UndertowAxis2BufferIntegration limitedIntegration = new UndertowAxis2BufferIntegration(limitedContext);
 
@@ -331,23 +345,11 @@ public class WildFlyAxis2CooperativeIntegrationTest {
 
     // Helper methods
 
+    @SuppressWarnings("unchecked")
     private Pool<ByteBuffer> createMockBufferPool() {
-        return new Pool<ByteBuffer>() {
-            @Override
-            public ByteBuffer allocate() {
-                return ByteBuffer.allocate(8192); // 8KB buffer
-            }
-
-            @Override
-            public void free(ByteBuffer item) {
-                // Mock implementation
-            }
-
-            @Override
-            public int getAllocatedObjectCount() {
-                return 10; // Mock active buffers
-            }
-        };
+        Pool<ByteBuffer> pool = mock(Pool.class);
+        // Mock the pool - using Mockito to avoid XNIO interface complexity in tests
+        return pool;
     }
 
     private String generateLargeJsonPayload(int sizeBytes) {

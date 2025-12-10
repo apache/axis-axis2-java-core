@@ -40,6 +40,7 @@ import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
 import org.apache.hc.core5.http2.HttpVersionPolicy;
 import org.apache.hc.core5.http2.config.H2Config;
+import org.xnio.Pool;
 import org.xnio.XnioWorker;
 
 import com.squareup.moshi.JsonReader;
@@ -47,14 +48,6 @@ import com.squareup.moshi.JsonReader;
 import okio.BufferedSource;
 import okio.Okio;
 
-/**
- * Simple Pool interface for buffer management compatibility.
- */
-interface Pool<T> {
-    T allocate();
-    void free(T item);
-    int getAllocatedObjectCount();
-}
 
 /**
  * Moshi-specific Axis2 integration with Undertow shared buffer pools using Axis2 architecture patterns.
@@ -75,24 +68,161 @@ public class UndertowAxis2BufferIntegration {
     private static final Log log = LogFactory.getLog(UndertowAxis2BufferIntegration.class);
 
     /**
-     * Initialize Moshi-specific integration with Undertow servlet context.
-     *
-     * @param servletContext The servlet context providing access to Undertow's XNIO worker and buffer pool
+     * Cached WildFly integration singleton - initialized once, reused across all HTTP requests.
+     * This ensures zero performance overhead in high-volume enterprise applications.
+     */
+    private static volatile WildFlyResourceCache wildflyCache = null;
+    private static final Object initLock = new Object();
+
+    /**
+     * Cached WildFly resources discovered once during first servlet context access.
+     */
+    private static class WildFlyResourceCache {
+        final XnioWorker xnioWorker;
+        final Pool<ByteBuffer> sharedBufferPool;
+        final boolean integrationAvailable;
+        final String discoveryLog;
+
+        WildFlyResourceCache(ServletContext servletContext) {
+            StringBuilder discovery = new StringBuilder("WildFly resource discovery: ");
+            XnioWorker worker = null;
+            Pool<ByteBuffer> pool = null;
+
+            // Try multiple possible WildFly attribute names (test-compatible first)
+            String[] workerNames = {
+                "io.undertow.servlet.XnioWorker",   // Test compatibility - current expected name
+                "io.undertow.xnio.worker",          // Alternative WildFly name
+                "org.wildfly.undertow.worker",      // WildFly-specific name
+                "undertow.xnio.worker"              // Generic name
+            };
+
+            String[] poolNames = {
+                "io.undertow.servlet.BufferPool",   // Test compatibility - current expected name
+                "io.undertow.buffer-pool",          // Alternative WildFly name
+                "org.wildfly.undertow.buffer.pool", // WildFly-specific name
+                "undertow.buffer.pool"              // Generic name
+            };
+
+            // Search for XNIO Worker
+            for (String name : workerNames) {
+                Object attr = servletContext.getAttribute(name);
+                if (attr instanceof XnioWorker) {
+                    worker = (XnioWorker) attr;
+                    discovery.append("Found XnioWorker at '").append(name).append("', ");
+                    break;
+                }
+            }
+
+            // Search for Buffer Pool
+            for (String name : poolNames) {
+                Object attr = servletContext.getAttribute(name);
+                if (attr instanceof Pool) {
+                    try {
+                        @SuppressWarnings("unchecked")
+                        Pool<ByteBuffer> bufferPool = (Pool<ByteBuffer>) attr;
+                        pool = bufferPool;
+                        discovery.append("Found BufferPool at '").append(name).append("', ");
+                        break;
+                    } catch (ClassCastException e) {
+                        // Not a ByteBuffer pool, continue searching
+                    }
+                }
+            }
+
+            this.xnioWorker = worker;
+            this.sharedBufferPool = pool;
+            this.integrationAvailable = (worker != null && pool != null);
+            this.discoveryLog = discovery.toString();
+
+            // Log discovery results once
+            if (integrationAvailable) {
+                log.info("WildFly integration available: " + discoveryLog);
+            } else {
+                log.debug("WildFly integration not available: " + discoveryLog +
+                         "Worker=" + (worker != null) + ", Pool=" + (pool != null));
+
+                // Debug: enumerate all servlet context attributes to help discover correct names
+                if (log.isDebugEnabled()) {
+                    enumerateServletContextAttributes(servletContext);
+                }
+            }
+        }
+
+        /**
+         * Debug helper: enumerate all servlet context attributes to discover WildFly's actual attribute names.
+         * Only called when debug logging is enabled and integration fails.
+         */
+        private void enumerateServletContextAttributes(ServletContext servletContext) {
+            try {
+                java.util.Enumeration<String> attributeNames = servletContext.getAttributeNames();
+                StringBuilder allAttrs = new StringBuilder("All servlet context attributes: ");
+
+                while (attributeNames.hasMoreElements()) {
+                    String name = attributeNames.nextElement();
+                    Object value = servletContext.getAttribute(name);
+                    String className = (value != null) ? value.getClass().getSimpleName() : "null";
+                    allAttrs.append(name).append("=").append(className).append(", ");
+                }
+
+                log.debug(allAttrs.toString());
+            } catch (Exception e) {
+                log.debug("Failed to enumerate servlet context attributes: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Check if WildFly integration is available for this instance.
+     * @return true if both XNIO worker and buffer pool are available for this instance
+     */
+    public boolean isIntegrationAvailable() {
+        return xnioWorker != null && sharedBufferPool != null;
+    }
+
+    /**
+     * Get integration discovery information for monitoring/debugging.
+     * @return discovery log string, or null if not yet discovered
+     */
+    public static String getDiscoveryInfo() {
+        WildFlyResourceCache cache = wildflyCache;
+        return cache != null ? cache.discoveryLog : "Not yet initialized";
+    }
+
+    /**
+     * Clear the static cache - useful for testing environments.
+     * Package-private for use in test classes.
+     */
+    static void clearCache() {
+        wildflyCache = null;
+    }
+
+    /**
+     * Initialize Moshi-specific integration with cached WildFly resources.
+     * First call discovers and caches resources, subsequent calls reuse cached values.
+     * @param servletContext The servlet context (used only for first-time discovery)
      */
     public UndertowAxis2BufferIntegration(ServletContext servletContext) {
-        // Access Undertow's XNIO worker and buffer pool
-        this.xnioWorker = (XnioWorker) servletContext
-            .getAttribute("io.undertow.servlet.XnioWorker");
-        this.sharedBufferPool = (Pool<ByteBuffer>) servletContext
-            .getAttribute("io.undertow.servlet.BufferPool");
-
-        if (xnioWorker == null) {
-            log.warn("XNIO Worker not found in servlet context - Undertow integration may be limited");
+        // Lazy initialization with double-checked locking for thread safety
+        if (wildflyCache == null) {
+            synchronized (initLock) {
+                if (wildflyCache == null) {
+                    wildflyCache = new WildFlyResourceCache(servletContext);
+                }
+            }
         }
-        if (sharedBufferPool == null) {
-            log.warn("Shared buffer pool not found in servlet context - using default buffer management");
-        } else {
-            log.info("Successfully integrated Moshi-based Axis2 with Undertow shared buffer pool");
+
+        // Use cached resources (zero lookup overhead after first initialization)
+        this.xnioWorker = wildflyCache.xnioWorker;
+        this.sharedBufferPool = wildflyCache.sharedBufferPool;
+
+        // Emit warnings only if this is a fresh discovery attempt
+        if (!wildflyCache.integrationAvailable) {
+            if (xnioWorker == null) {
+                log.warn("XNIO Worker not found in servlet context - Undertow integration may be limited");
+            }
+            if (sharedBufferPool == null) {
+                log.warn("Shared buffer pool not found in servlet context - using default buffer management");
+            }
         }
     }
 
@@ -148,7 +278,7 @@ public class UndertowAxis2BufferIntegration {
             private int getSharedBufferSize() {
                 if (sharedBufferPool != null) {
                     // Align with Undertow's buffer configuration and Axis2's needs
-                    return sharedBufferPool.getAllocatedObjectCount() > 0 ? 4096 : 2048;
+                    return 4096; // Use 4KB buffers when shared pool is available
                 } else {
                     // Fallback to default Axis2 buffer size optimized for Moshi
                     return 65536; // 64KB default for large JSON payloads
@@ -215,8 +345,7 @@ public class UndertowAxis2BufferIntegration {
             // Create BufferedSource with shared buffer pool awareness for Moshi optimization
             // Note: Okio uses its own buffer management, but we coordinate with shared pool metrics
             if (sharedBufferPool != null && log.isDebugEnabled()) {
-                log.debug("Creating Moshi-optimized BufferedSource with shared buffer pool awareness - " +
-                         "allocated buffers: " + sharedBufferPool.getAllocatedObjectCount());
+                log.debug("Creating Moshi-optimized BufferedSource with shared buffer pool awareness");
             }
             return Okio.buffer(Okio.source(inputStream));
         }
@@ -240,14 +369,6 @@ public class UndertowAxis2BufferIntegration {
         return sharedBufferPool;
     }
 
-    /**
-     * Check if Undertow integration is fully available.
-     *
-     * @return true if both XNIO worker and buffer pool are available
-     */
-    public boolean isIntegrationAvailable() {
-        return xnioWorker != null && sharedBufferPool != null;
-    }
 
     /**
      * Get integration status for monitoring and debugging.
@@ -261,7 +382,7 @@ public class UndertowAxis2BufferIntegration {
         if (isIntegrationAvailable()) {
             status.append("FULL - XNIO Worker and Buffer Pool available");
             if (sharedBufferPool != null) {
-                status.append(", Allocated Buffers: ").append(sharedBufferPool.getAllocatedObjectCount());
+                status.append(", Buffer Pool: available");
             }
         } else if (xnioWorker != null) {
             status.append("PARTIAL - XNIO Worker available, Buffer Pool missing");

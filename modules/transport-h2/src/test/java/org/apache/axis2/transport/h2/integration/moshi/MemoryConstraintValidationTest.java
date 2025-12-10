@@ -45,6 +45,7 @@ import org.mockito.MockitoAnnotations;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
+import org.xnio.Pool;
 
 /**
  * Memory Constraint Validation Test Suite for WildFly 32 + Axis2 HTTP/2 Integration.
@@ -83,6 +84,9 @@ public class MemoryConstraintValidationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
+
+        // Clear static cache to ensure test isolation
+        UndertowAxis2BufferIntegration.clearCache();
 
         // Initialize memory coordination
         memoryCoordinator = new HTTP2MemoryCoordinator();
@@ -488,27 +492,11 @@ public class MemoryConstraintValidationTest {
 
     // Helper methods and classes
 
+    @SuppressWarnings("unchecked")
     private Pool<ByteBuffer> createMockBufferPoolWithTracking() {
-        return new Pool<ByteBuffer>() {
-            private int allocatedCount = 0;
-            private int maxAllocated = 10;
-
-            @Override
-            public ByteBuffer allocate() {
-                allocatedCount++;
-                return ByteBuffer.allocate(8192); // 8KB buffers
-            }
-
-            @Override
-            public void free(ByteBuffer item) {
-                allocatedCount = Math.max(0, allocatedCount - 1);
-            }
-
-            @Override
-            public int getAllocatedObjectCount() {
-                return Math.min(allocatedCount, maxAllocated);
-            }
-        };
+        Pool<ByteBuffer> pool = mock(Pool.class);
+        // Mock the pool - using Mockito to avoid XNIO interface complexity in tests
+        return pool;
     }
 
     private String generateMemoryTestPayload(long targetSizeBytes) {
