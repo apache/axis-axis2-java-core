@@ -129,7 +129,7 @@ public class WildFlyAxis2CooperativeIntegrationTest {
     @Test
     public void testWildFlyXnioWorkerIntegration() {
         // Verify WildFly XNIO worker is properly accessed
-        XnioWorker worker = bufferIntegration.getXnioWorker();
+        Object worker = bufferIntegration.getXnioWorker();
         assertNotNull("Should successfully integrate with WildFly XNIO worker", worker);
         assertEquals("Should use WildFly's XNIO worker instance", mockXnioWorker, worker);
 
@@ -146,7 +146,7 @@ public class WildFlyAxis2CooperativeIntegrationTest {
         assertTrue("Integration should be available with WildFly components",
                    bufferIntegration.isIntegrationAvailable());
 
-        Pool<ByteBuffer> sharedPool = bufferIntegration.getSharedBufferPool();
+        Object sharedPool = bufferIntegration.getSharedBufferPool();
         assertNotNull("Should access WildFly's shared buffer pool", sharedPool);
 
         String status = bufferIntegration.getIntegrationStatus();
