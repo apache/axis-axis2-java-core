@@ -127,7 +127,7 @@
         <dependency>
             <groupId>com.squareup.moshi</groupId>
             <artifactId>moshi</artifactId>
-            <version>1.15.0</version>
+            <version>1.15.2</version>
         </dependency>
 
         <!-- Okio - Moshi dependency (Apache 2.0 Licensed) -->
