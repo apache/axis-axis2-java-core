@@ -134,7 +134,7 @@
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>3.6.0</version>
+            <version>3.16.4</version>
         </dependency>
 
         <!-- Undertow for HTTP/2 server integration (Apache 2.0 Licensed) -->
