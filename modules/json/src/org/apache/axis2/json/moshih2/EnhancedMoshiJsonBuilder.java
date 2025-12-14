@@ -29,6 +29,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.moshi.MoshiXMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -313,14 +314,12 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             jsonReader = JsonReader.of(source);
             jsonReader.setLenient(true);
 
-            // Create enhanced MoshiXMLStreamReader with field-specific optimizations
-            EnhancedMoshiXMLStreamReader enhancedStreamReader = new EnhancedMoshiXMLStreamReader(
-                jsonReader, strategy, requestId, metrics
-            );
+            // Create MoshiXMLStreamReader with enhanced processing context
+            MoshiXMLStreamReader streamReader = new MoshiXMLStreamReader(jsonReader);
 
             // Set enhanced properties in message context
-            messageContext.setProperty(JsonConstant.MOSHI_XML_STREAM_READER, enhancedStreamReader);
-            messageContext.setProperty("ENHANCED_MOSHI_H2_READER", enhancedStreamReader);
+            messageContext.setProperty(JsonConstant.MOSHI_XML_STREAM_READER, streamReader);
+            messageContext.setProperty("ENHANCED_MOSHI_H2_READER", streamReader);
             messageContext.setProperty("PROCESSING_STRATEGY", strategy);
 
             if (log.isDebugEnabled()) {
