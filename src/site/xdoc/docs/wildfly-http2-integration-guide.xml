@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -16,16 +17,14 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+   <properties>
+       <title>WildFly + Axis2 HTTP/2 Integration - what works, what didn't, and lessons learned</title>
+   </properties>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="content-type" content=""/>
-  <title>WildFly + Axis2 HTTP/2 Integration - what works, what didn't, and lessons learned</title>
-</head>
-
-<body lang="en">
+    <body>
 
 <h1>WildFly + Axis2 HTTP/2 Integration - Failed Attempts and Lessons Learned</h1>
 
@@ -362,7 +361,7 @@ curl -k --http2 --location 'https://localhost:8443/services/YourService' \
 # - No class loader conflicts
 </pre>
 
-<h2>Buffer Size Configuration Analysis & Potential Clashes</h2>
+<h2>Buffer Size Configuration Analysis &amp; Potential Clashes</h2>
 
 <p><strong>⚠️ CRITICAL ANALYSIS</strong>: While the configurations are coordinated, there are potential efficiency issues and clashes that need attention:</p>
 
@@ -821,5 +820,6 @@ public class EnhancedMoshiJsonBuilder {
 
 <p><strong>For the Axis2 Community</strong>: This demonstrates how architectural analysis of failed integration attempts can reveal the correct optimization approach. The WildFly integration research identified the real architectural mismatch (mandatory <a href="json_support_gson.xml">dummy SOAP envelope</a>) and provided the async processing patterns that made Enhanced Moshi H2 possible, delivering superior JSON performance improvements through architectural alignment rather than integration complexity.</p>
 
-</body>
-</html>
+
+    </body>
+</document>

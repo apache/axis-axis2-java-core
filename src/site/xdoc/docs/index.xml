@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -16,21 +17,24 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+   <properties>
+       <title>Apache Axis2 Documentation Index</title>
+   </properties>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta name="generator" content=
-"HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
-<title></title>
-</head>
-<frameset cols="260,*" border="1" frameborder="yes" framespacing=
-"0" margin="0">
-<frame name="leftFrame" src="toc.html" noresize="noresize"
-scrolling="yes" />
-<frame name="mainFrame" src="contents.html" />
-<noframes>
-<body>
-</body>
-</noframes>
-</frameset>
-</html>
+    <body>
+        <h1>Apache Axis2 Documentation</h1>
+
+        <p>Welcome to the Apache Axis2 documentation. Please use the navigation menu to browse the available documentation topics.</p>
+
+        <h2>Key Documentation Topics</h2>
+        <ul>
+            <li><a href="contents.html">Contents</a> - Main documentation contents</li>
+            <li><a href="toc.html">Table of Contents</a> - Detailed table of contents</li>
+            <li><a href="json_support_gson.xml">JSON Support</a> - JSON processing with GSON and Moshi</li>
+            <li><a href="wildfly-http2-integration-guide.xml">WildFly HTTP/2 Integration Guide</a> - HTTP/2 integration lessons learned</li>
+        </ul>
+    </body>
+</document>
