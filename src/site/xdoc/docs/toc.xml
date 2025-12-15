@@ -93,20 +93,22 @@ Guide</a></li>
 <ul>
 <li>18.1 <a href="http-transport.html">HTTP
 Transport sender</a></li>
-<li>18.2 <a href="http2-transport-additions.html">HTTP/2
+<li>18.2 <a href="axis2-http2-simplified-example.html">HTTP/2
+Simplified Configuration</a></li>
+<li>18.3 <a href="http2-transport-additions.html">HTTP/2
 Transport</a></li>
-<li>18.3 <a href="http2-integration-guide.html">HTTP/2
+<li>18.4 <a href="http2-integration-guide.html">HTTP/2
 Integration Guide</a></li>
-<li>18.4 <a href="wildfly-http2-integration-guide.html">WildFly HTTP/2
+<li>18.5 <a href="wildfly-http2-integration-guide.html">WildFly HTTP/2
 Integration Guide</a></li>
-<li>18.5 <a href="servlet-transport.html">HTTP
+<li>18.6 <a href="servlet-transport.html">HTTP
 servlet transport</a></li>
-<li>18.6 <a href="jms-transport.html">JMS Transport</a></li>
-<li>18.7 <a href="tcp-transport.html">TCP Transport</a></li>
-<li>18.8 <a href="mail-transport.html">Mail Transport</a></li>
-<li>18.9 <a href="udp-transport.html">UDP Transport</a></li>
-<li>18.10 <a href="xmpp-transport.html">XMPP Transport</a></li>
-<li>18.11 <a href="transport_howto.html">Custom
+<li>18.7 <a href="jms-transport.html">JMS Transport</a></li>
+<li>18.8 <a href="tcp-transport.html">TCP Transport</a></li>
+<li>18.9 <a href="mail-transport.html">Mail Transport</a></li>
+<li>18.10 <a href="udp-transport.html">UDP Transport</a></li>
+<li>18.11 <a href="xmpp-transport.html">XMPP Transport</a></li>
+<li>18.12 <a href="transport_howto.html">Custom
 Transport</a></li>
 </ul>
 </li>

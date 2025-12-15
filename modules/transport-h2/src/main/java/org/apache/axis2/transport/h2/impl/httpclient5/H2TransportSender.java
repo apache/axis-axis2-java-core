@@ -66,13 +66,46 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
 
     private static final Log log = LogFactory.getLog(H2TransportSender.class);
 
-    // HTTP/2 configuration constants (optimized for enterprise requirements)
-    private static final int MAX_CONCURRENT_STREAMS = 100;  // Memory-constrained: 100 vs default 1000
-    private static final int INITIAL_WINDOW_SIZE = 65536;   // 64KB - optimized for 50MB+ JSON
-    private static final int MAX_CONN_TOTAL = 50;          // Memory constraint: 50 vs default 100
-    private static final int MAX_CONN_PER_ROUTE = 10;      // Route-specific limit
-    private static final boolean SERVER_PUSH_ENABLED = false; // Server push disabled for web services
-    private static final long LARGE_PAYLOAD_THRESHOLD = 50 * 1024 * 1024; // 50MB threshold
+    // HTTP/2 configuration defaults (can be overridden in axis2.xml)
+    private static final int DEFAULT_MAX_CONCURRENT_STREAMS = 100;  // Memory-constrained: 100 vs default 1000
+    private static final int DEFAULT_INITIAL_WINDOW_SIZE = 65536;   // 64KB - optimized for 50MB+ JSON
+    private static final int DEFAULT_MAX_CONN_TOTAL = 50;          // Memory constraint: 50 vs default 100
+    private static final int DEFAULT_MAX_CONN_PER_ROUTE = 10;      // Route-specific limit
+    private static final boolean DEFAULT_SERVER_PUSH_ENABLED = false; // Server push disabled for web services
+    private static final long DEFAULT_CONNECTION_KEEP_ALIVE_TIME = 300000; // 5 minutes
+    private static final int DEFAULT_CONNECTION_TIMEOUT = 30000;   // 30 seconds
+    private static final int DEFAULT_RESPONSE_TIMEOUT = 300000;    // 5 minutes
+    private static final int DEFAULT_STREAMING_BUFFER_SIZE = 65536; // 64KB
+    private static final double DEFAULT_MEMORY_PRESSURE_THRESHOLD = 0.8; // 80% of heap
+    private static final boolean DEFAULT_ENABLE_HTTP2_OPTIMIZATION = true;
+    private static final boolean DEFAULT_ADAPTIVE_CONFIGURATION = true;
+    private static final boolean DEFAULT_COMPRESSION_OPTIMIZATION = true;
+    private static final boolean DEFAULT_PREDICTIVE_STREAM_MANAGEMENT = true;
+    private static final boolean DEFAULT_ENABLE_ALPN = true;
+    private static final String DEFAULT_SUPPORTED_PROTOCOLS = "TLSv1.2,TLSv1.3";
+    private static final String DEFAULT_SUPPORTED_CIPHER_SUITES = "TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256";
+
+    // Payload size thresholds for adaptive configuration
+    private static final long LARGE_PAYLOAD_THRESHOLD = 10 * 1024 * 1024; // 10MB threshold for large payloads
+
+    // Runtime configuration values (loaded from axis2.xml or defaults)
+    private int maxConcurrentStreams = DEFAULT_MAX_CONCURRENT_STREAMS;
+    private int initialWindowSize = DEFAULT_INITIAL_WINDOW_SIZE;
+    private int maxConnTotal = DEFAULT_MAX_CONN_TOTAL;
+    private int maxConnPerRoute = DEFAULT_MAX_CONN_PER_ROUTE;
+    private boolean serverPushEnabled = DEFAULT_SERVER_PUSH_ENABLED;
+    private long connectionKeepAliveTime = DEFAULT_CONNECTION_KEEP_ALIVE_TIME;
+    private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    private int responseTimeout = DEFAULT_RESPONSE_TIMEOUT;
+    private int streamingBufferSize = DEFAULT_STREAMING_BUFFER_SIZE;
+    private double memoryPressureThreshold = DEFAULT_MEMORY_PRESSURE_THRESHOLD;
+    private boolean enableHTTP2Optimization = DEFAULT_ENABLE_HTTP2_OPTIMIZATION;
+    private boolean adaptiveConfiguration = DEFAULT_ADAPTIVE_CONFIGURATION;
+    private boolean compressionOptimization = DEFAULT_COMPRESSION_OPTIMIZATION;
+    private boolean predictiveStreamManagement = DEFAULT_PREDICTIVE_STREAM_MANAGEMENT;
+    private boolean enableALPN = DEFAULT_ENABLE_ALPN;
+    private String supportedProtocols = DEFAULT_SUPPORTED_PROTOCOLS;
+    private String supportedCipherSuites = DEFAULT_SUPPORTED_CIPHER_SUITES;
 
     // HTTP/2 client instance (cached for connection reuse)
     private CloseableHttpAsyncClient http2Client;
@@ -115,6 +148,9 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
         // Initialize parent class
         super.init(configContext, transportOut);
 
+        // Load configuration parameters from axis2.xml (with sensible defaults)
+        loadConfigurationParameters(transportOut);
+
         // Initialize Phase 1 Enhancement components
         this.progressiveFlowControl = new ProgressiveFlowControl();
         this.adaptiveBufferManager = new AdaptiveBufferManager();
@@ -131,16 +167,151 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
         // Initialize HTTP/2 client with configuration
         try {
             this.http2Client = createHTTP2Client();
-            log.info("HTTP/2 transport sender initialized with Phase 1 & 2 optimizations + P1 Production Features: " +
-                    "adaptive configuration, progressive flow control, intelligent buffering, " +
-                    "compression optimization, predictive stream management, " +
-                    "HTTP/1.1 fallback, ALPN negotiation, enhanced error handling, timeout management");
+            log.info("HTTP/2 transport sender initialized with configuration: " +
+                    "maxConcurrentStreams=" + maxConcurrentStreams +
+                    ", initialWindowSize=" + initialWindowSize +
+                    ", maxConnTotal=" + maxConnTotal +
+                    ", serverPushEnabled=" + serverPushEnabled +
+                    ", adaptiveConfiguration=" + adaptiveConfiguration);
         } catch (Exception e) {
             throw new AxisFault("Failed to initialize HTTP/2 client", e);
         }
 
         // Set HTTP/2 client version
         setHTTPClientVersion(configContext);
+    }
+
+    /**
+     * Load configuration parameters from axis2.xml with sensible defaults.
+     * This method eliminates the need for extensive parameter configuration in axis2.xml
+     * by providing production-ready defaults for all HTTP/2 and Moshi H2 parameters.
+     */
+    private void loadConfigurationParameters(TransportOutDescription transportOut) {
+        log.info("Loading HTTP/2 configuration parameters from axis2.xml (with intelligent defaults)");
+
+        // HTTP/2 Core Configuration
+        maxConcurrentStreams = getIntParameter(transportOut, "maxConcurrentStreams", DEFAULT_MAX_CONCURRENT_STREAMS);
+        initialWindowSize = getIntParameter(transportOut, "initialWindowSize", DEFAULT_INITIAL_WINDOW_SIZE);
+        maxConnTotal = getIntParameter(transportOut, "maxConnectionsTotal", DEFAULT_MAX_CONN_TOTAL);
+        maxConnPerRoute = getIntParameter(transportOut, "maxConnectionsPerRoute", DEFAULT_MAX_CONN_PER_ROUTE);
+        serverPushEnabled = getBooleanParameter(transportOut, "serverPushEnabled", DEFAULT_SERVER_PUSH_ENABLED);
+
+        // HTTP/2 Connection Management
+        connectionKeepAliveTime = getLongParameter(transportOut, "connectionKeepAliveTime", DEFAULT_CONNECTION_KEEP_ALIVE_TIME);
+        connectionTimeout = getIntParameter(transportOut, "connectionTimeout", DEFAULT_CONNECTION_TIMEOUT);
+        responseTimeout = getIntParameter(transportOut, "responseTimeout", DEFAULT_RESPONSE_TIMEOUT);
+
+        // HTTP/2 Performance Optimization
+        streamingBufferSize = getIntParameter(transportOut, "streamingBufferSize", DEFAULT_STREAMING_BUFFER_SIZE);
+        memoryPressureThreshold = getDoubleParameter(transportOut, "memoryPressureThreshold", DEFAULT_MEMORY_PRESSURE_THRESHOLD);
+        enableHTTP2Optimization = getBooleanParameter(transportOut, "enableHTTP2Optimization", DEFAULT_ENABLE_HTTP2_OPTIMIZATION);
+        adaptiveConfiguration = getBooleanParameter(transportOut, "adaptiveConfiguration", DEFAULT_ADAPTIVE_CONFIGURATION);
+        compressionOptimization = getBooleanParameter(transportOut, "compressionOptimization", DEFAULT_COMPRESSION_OPTIMIZATION);
+        predictiveStreamManagement = getBooleanParameter(transportOut, "predictiveStreamManagement", DEFAULT_PREDICTIVE_STREAM_MANAGEMENT);
+
+        // TLS/ALPN Configuration
+        enableALPN = getBooleanParameter(transportOut, "enableALPN", DEFAULT_ENABLE_ALPN);
+        supportedProtocols = getStringParameter(transportOut, "supportedProtocols", DEFAULT_SUPPORTED_PROTOCOLS);
+        supportedCipherSuites = getStringParameter(transportOut, "supportedCipherSuites", DEFAULT_SUPPORTED_CIPHER_SUITES);
+
+        log.info("HTTP/2 configuration loaded successfully - " +
+                "maxConcurrentStreams=" + maxConcurrentStreams +
+                " (default: " + DEFAULT_MAX_CONCURRENT_STREAMS + "), " +
+                "initialWindowSize=" + initialWindowSize +
+                " (default: " + DEFAULT_INITIAL_WINDOW_SIZE + "), " +
+                "adaptiveConfiguration=" + adaptiveConfiguration +
+                " (default: " + DEFAULT_ADAPTIVE_CONFIGURATION + ")");
+    }
+
+    /**
+     * Helper method to get integer parameter from transport configuration.
+     */
+    private int getIntParameter(TransportOutDescription transportOut, String paramName, int defaultValue) {
+        try {
+            Object param = transportOut.getParameter(paramName);
+            if (param != null) {
+                if (param instanceof Integer) {
+                    return (Integer) param;
+                } else {
+                    return Integer.parseInt(param.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse integer parameter '" + paramName + "', using default: " + defaultValue, e);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Helper method to get boolean parameter from transport configuration.
+     */
+    private boolean getBooleanParameter(TransportOutDescription transportOut, String paramName, boolean defaultValue) {
+        try {
+            Object param = transportOut.getParameter(paramName);
+            if (param != null) {
+                if (param instanceof Boolean) {
+                    return (Boolean) param;
+                } else {
+                    return Boolean.parseBoolean(param.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse boolean parameter '" + paramName + "', using default: " + defaultValue, e);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Helper method to get long parameter from transport configuration.
+     */
+    private long getLongParameter(TransportOutDescription transportOut, String paramName, long defaultValue) {
+        try {
+            Object param = transportOut.getParameter(paramName);
+            if (param != null) {
+                if (param instanceof Long) {
+                    return (Long) param;
+                } else {
+                    return Long.parseLong(param.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse long parameter '" + paramName + "', using default: " + defaultValue, e);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Helper method to get double parameter from transport configuration.
+     */
+    private double getDoubleParameter(TransportOutDescription transportOut, String paramName, double defaultValue) {
+        try {
+            Object param = transportOut.getParameter(paramName);
+            if (param != null) {
+                if (param instanceof Double) {
+                    return (Double) param;
+                } else {
+                    return Double.parseDouble(param.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse double parameter '" + paramName + "', using default: " + defaultValue, e);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Helper method to get string parameter from transport configuration.
+     */
+    private String getStringParameter(TransportOutDescription transportOut, String paramName, String defaultValue) {
+        try {
+            Object param = transportOut.getParameter(paramName);
+            if (param != null) {
+                return param.toString();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse string parameter '" + paramName + "', using default: " + defaultValue, e);
+        }
+        return defaultValue;
     }
 
     @Override
@@ -249,8 +420,8 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
         // Start the client for async operations
         client.start();
 
-        log.info("HTTP/2 client created - Max streams: " + MAX_CONCURRENT_STREAMS +
-                ", Initial window: " + INITIAL_WINDOW_SIZE + ", Push enabled: " + SERVER_PUSH_ENABLED);
+        log.info("HTTP/2 client created - Max streams: " + maxConcurrentStreams +
+                ", Initial window: " + initialWindowSize + ", Push enabled: " + serverPushEnabled);
 
         return client;
     }
@@ -260,8 +431,8 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
      */
     private PoolingAsyncClientConnectionManager createConnectionManager() {
         return PoolingAsyncClientConnectionManagerBuilder.create()
-            .setMaxConnTotal(MAX_CONN_TOTAL)      // Memory constraint: 50 vs default 100
-            .setMaxConnPerRoute(MAX_CONN_PER_ROUTE)   // Route-specific limit
+            .setMaxConnTotal(maxConnTotal)      // Memory constraint: configurable vs default 100
+            .setMaxConnPerRoute(maxConnPerRoute)   // Route-specific limit
             .build();
     }
 

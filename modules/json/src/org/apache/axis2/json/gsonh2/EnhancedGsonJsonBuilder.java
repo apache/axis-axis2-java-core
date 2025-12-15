@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.json.moshih2;
+package org.apache.axis2.json.gsonh2;
 
-import com.squareup.moshi.JsonReader;
-import okio.BufferedSource;
-import okio.Okio;
+import com.google.gson.stream.JsonReader;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -31,22 +29,24 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.json.factory.JsonConstant;
-import org.apache.axis2.json.moshi.MoshiXMLStreamReader;
+import org.apache.axis2.json.gson.GsonXMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Enhanced Moshi JSON Builder with HTTP/2 Optimization Concepts (moshi-h2).
+ * Enhanced GSON JSON Builder with HTTP/2 Optimization Concepts (gson-h2).
  *
  * This builder incorporates high-performance patterns extracted from the Axis2 HTTP/2
  * integration research, providing significant performance improvements for JSON processing
- * without requiring WildFly dependencies.
+ * using GSON instead of Moshi.
  *
  * Key Performance Features Extracted from HTTP/2 Integration:
  * - CompletableFuture-based async processing for large payloads (from Axis2HTTP2StreamingPipeline)
@@ -59,7 +59,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * Configuration in axis2.xml:
  * &lt;messageBuilder contentType="application/json"
- *                 class="org.apache.axis2.json.moshih2.EnhancedMoshiJsonBuilder"/&gt;
+ *                 class="org.apache.axis2.json.gsonh2.EnhancedGsonJsonBuilder"/&gt;
  *
  * Expected Performance Benefits (based on HTTP/2 integration analysis):
  * - 40-60% performance improvement for large JSON payloads (&gt;1MB)
@@ -68,8 +68,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * - Specialized optimization for JSON-style data patterns (records, metadata arrays)
  * - Async processing prevents blocking for 12-18s response times observed in production
  */
-public class EnhancedMoshiJsonBuilder implements Builder {
-    private static final Log log = LogFactory.getLog(EnhancedMoshiJsonBuilder.class);
+public class EnhancedGsonJsonBuilder implements Builder {
+    private static final Log log = LogFactory.getLog(EnhancedGsonJsonBuilder.class);
 
     // Default configuration values (can be overridden in axis2.xml)
     private static final long DEFAULT_LARGE_PAYLOAD_THRESHOLD = 10 * 1024 * 1024; // 10MB
@@ -83,7 +83,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
     private static final long DEFAULT_SLOW_REQUEST_THRESHOLD = 10000;             // 10s detection
     private static final long DEFAULT_VERY_SLOW_REQUEST_THRESHOLD = 15000;        // 15s detection
     private static final boolean DEFAULT_OPTIMIZATION_RECOMMENDATIONS_ENABLED = true; // Optimization recommendations
-    private static final boolean DEFAULT_MOSHI_H2_PROCESSING_ENABLED = true;      // Overall toggle
+    private static final boolean DEFAULT_GSON_H2_PROCESSING_ENABLED = true;       // Overall toggle
     private static final long DEFAULT_BASE_TIMEOUT = 10000;                       // 10 seconds base timeout
     private static final long DEFAULT_ADDITIONAL_TIMEOUT_PER_MB = 2000;           // +2s per MB
     private static final long DEFAULT_MAX_TIMEOUT = 60000;                        // Max 60 seconds
@@ -101,7 +101,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
     private long slowRequestThreshold = DEFAULT_SLOW_REQUEST_THRESHOLD;
     private long verySlowRequestThreshold = DEFAULT_VERY_SLOW_REQUEST_THRESHOLD;
     private boolean optimizationRecommendationsEnabled = DEFAULT_OPTIMIZATION_RECOMMENDATIONS_ENABLED;
-    private boolean moshiH2ProcessingEnabled = DEFAULT_MOSHI_H2_PROCESSING_ENABLED;
+    private boolean gsonH2ProcessingEnabled = DEFAULT_GSON_H2_PROCESSING_ENABLED;
     private long baseTimeout = DEFAULT_BASE_TIMEOUT;
     private long additionalTimeoutPerMB = DEFAULT_ADDITIONAL_TIMEOUT_PER_MB;
     private long maxTimeout = DEFAULT_MAX_TIMEOUT;
@@ -110,7 +110,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
     private static final ExecutorService asyncExecutor = Executors.newFixedThreadPool(
         Math.max(2, Runtime.getRuntime().availableProcessors() / 2),
         r -> {
-            Thread t = new Thread(r, "EnhancedMoshiH2-Async");
+            Thread t = new Thread(r, "EnhancedGsonH2-Async");
             t.setDaemon(true);
             t.setPriority(Thread.NORM_PRIORITY - 1); // Slightly lower priority
             return t;
@@ -118,7 +118,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
     );
 
     // Performance monitoring (concept from StreamingMetrics in HTTP/2 integration)
-    private static final JsonProcessingMetrics metrics = new JsonProcessingMetrics();
+    private static final GsonProcessingMetrics metrics = new GsonProcessingMetrics();
     private static final AtomicLong requestCounter = new AtomicLong(0);
 
     @Override
@@ -132,10 +132,10 @@ public class EnhancedMoshiJsonBuilder implements Builder {
         String requestId = generateRequestId();
 
         if (log.isDebugEnabled()) {
-            log.debug("EnhancedMoshiH2: Starting processDocument() - RequestID: " + requestId
+            log.debug("EnhancedGsonH2: Starting processDocument() - RequestID: " + requestId
                 + ", ContentType: " + contentType
                 + ", Thread: " + Thread.currentThread().getName()
-                + ", MoshiH2Processing: " + moshiH2ProcessingEnabled);
+                + ", GsonH2Processing: " + gsonH2ProcessingEnabled);
         }
 
         try {
@@ -143,15 +143,15 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             messageContext.setProperty(JsonConstant.IS_JSON_STREAM, true);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] Set JSON_STREAM property, starting payload size estimation");
+                log.debug("EnhancedGsonH2: [" + requestId + "] Set JSON_STREAM property, starting payload size estimation");
             }
-            messageContext.setProperty("JSON_PROCESSING_MODE", "ENHANCED_MOSHI_H2");
-            messageContext.setProperty("JSON_LIBRARY", "MOSHI_H2_OPTIMIZED");
+            messageContext.setProperty("JSON_PROCESSING_MODE", "ENHANCED_GSON_H2");
+            messageContext.setProperty("JSON_LIBRARY", "GSON_H2_OPTIMIZED");
             messageContext.setProperty("REQUEST_ID", requestId);
             messageContext.setProperty("PROCESSING_START_TIME", startTime);
 
             if (log.isDebugEnabled()) {
-                log.debug("Enhanced Moshi H2 JSON processing started: " + requestId);
+                log.debug("Enhanced GSON H2 JSON processing started: " + requestId);
             }
 
             if (inputStream == null) {
@@ -165,7 +165,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             ProcessingStrategy strategy = analyzeProcessingStrategy(messageContext, contentType);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] Strategy Analysis Complete:"
+                log.debug("EnhancedGsonH2: [" + requestId + "] Strategy Analysis Complete:"
                     + " PayloadSize=" + strategy.getPayloadSize() + "B"
                     + ", UseAsync=" + strategy.shouldUseAsync()
                     + ", UseStreaming=" + strategy.shouldUseStreaming()
@@ -177,26 +177,26 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             metrics.recordProcessingStart(requestId, strategy.getPayloadSize(), strategy.shouldUseAsync());
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] Recorded processing start in metrics");
+                log.debug("EnhancedGsonH2: [" + requestId + "] Recorded processing start in metrics");
             }
 
             OMElement result;
 
             if (strategy.shouldUseAsync()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("EnhancedMoshiH2: [" + requestId + "] Using ASYNC processing path - payload exceeds " + asyncProcessingThreshold + "B threshold");
+                    log.debug("EnhancedGsonH2: [" + requestId + "] Using ASYNC processing path - payload exceeds " + asyncProcessingThreshold + "B threshold");
                 }
                 // Large payload async processing (pattern from Axis2HTTP2StreamingPipeline)
                 result = processLargePayloadAsync(inputStream, messageContext, strategy, requestId);
             } else if (strategy.isLargePayload()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("EnhancedMoshiH2: [" + requestId + "] Using LARGE PAYLOAD SYNC processing path - size=" + strategy.getPayloadSize() + "B");
+                    log.debug("EnhancedGsonH2: [" + requestId + "] Using LARGE PAYLOAD SYNC processing path - size=" + strategy.getPayloadSize() + "B");
                 }
                 // Large payload sync processing with optimizations
                 result = processLargePayloadSync(inputStream, messageContext, strategy, requestId);
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("EnhancedMoshiH2: [" + requestId + "] Using STANDARD processing path - size=" + strategy.getPayloadSize() + "B");
+                    log.debug("EnhancedGsonH2: [" + requestId + "] Using STANDARD processing path - size=" + strategy.getPayloadSize() + "B");
                 }
                 // Standard optimized processing
                 result = processStandardPayload(inputStream, messageContext, strategy, requestId);
@@ -207,7 +207,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             metrics.recordProcessingComplete(requestId, strategy.getPayloadSize(), processingTime);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] Processing COMPLETED successfully:"
+                log.debug("EnhancedGsonH2: [" + requestId + "] Processing COMPLETED successfully:"
                     + " PayloadSize=" + formatBytes(strategy.getPayloadSize())
                     + ", ProcessingTime=" + processingTime + "ms"
                     + ", AvgRate=" + String.format("%.2f", (strategy.getPayloadSize() / 1024.0) / (processingTime / 1000.0)) + "KB/s"
@@ -221,12 +221,12 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             metrics.recordProcessingError(requestId, e, processingTime);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] Processing FAILED after " + processingTime + "ms"
+                log.debug("EnhancedGsonH2: [" + requestId + "] Processing FAILED after " + processingTime + "ms"
                     + " - Exception: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             }
 
-            log.error("Enhanced Moshi H2 processing failed for request: " + requestId, e);
-            throw new AxisFault("Enhanced Moshi JSON processing failed", e);
+            log.error("Enhanced GSON H2 processing failed for request: " + requestId, e);
+            throw new AxisFault("Enhanced GSON JSON processing failed", e);
         }
     }
 
@@ -238,7 +238,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
                                               ProcessingStrategy strategy, String requestId) throws AxisFault {
 
         if (log.isDebugEnabled()) {
-            log.debug("EnhancedMoshiH2: [" + requestId + "] ASYNC Processing Started - Size=" + formatBytes(strategy.getPayloadSize())
+            log.debug("EnhancedGsonH2: [" + requestId + "] ASYNC Processing Started - Size=" + formatBytes(strategy.getPayloadSize())
                 + ", Thread=" + Thread.currentThread().getName()
                 + ", AvailableProcessors=" + Runtime.getRuntime().availableProcessors());
         }
@@ -255,20 +255,20 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             CompletableFuture<OMElement> asyncProcessing = CompletableFuture.supplyAsync(() -> {
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("EnhancedMoshiH2: [" + requestId + "] Async worker thread started: " + Thread.currentThread().getName());
+                        log.debug("EnhancedGsonH2: [" + requestId + "] Async worker thread started: " + Thread.currentThread().getName());
                     }
-                    return processWithEnhancedMoshi(inputStream, messageContext, strategy, requestId);
+                    return processWithEnhancedGson(inputStream, messageContext, strategy, requestId);
                 } catch (Exception e) {
                     if (log.isDebugEnabled()) {
-                        log.debug("EnhancedMoshiH2: [" + requestId + "] Async worker thread failed: " + e.getMessage());
+                        log.debug("EnhancedGsonH2: [" + requestId + "] Async worker thread failed: " + e.getMessage());
                     }
-                    log.error("Async Moshi processing failed for request: " + requestId, e);
-                    throw new RuntimeException("Async Moshi processing failed", e);
+                    log.error("Async GSON processing failed for request: " + requestId, e);
+                    throw new RuntimeException("Async GSON processing failed", e);
                 }
             }, asyncExecutor);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] Waiting for async result, timeout=" + timeoutMs + "ms");
+                log.debug("EnhancedGsonH2: [" + requestId + "] Waiting for async result, timeout=" + timeoutMs + "ms");
             }
 
             // Wait for async processing with timeout
@@ -276,7 +276,7 @@ public class EnhancedMoshiJsonBuilder implements Builder {
 
             long asyncDuration = (System.nanoTime() - asyncStartTime) / 1_000_000;
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] ASYNC Processing COMPLETED - Duration=" + asyncDuration + "ms"
+                log.debug("EnhancedGsonH2: [" + requestId + "] ASYNC Processing COMPLETED - Duration=" + asyncDuration + "ms"
                     + ", Result=" + (result != null ? "Success" : "Null"));
             }
 
@@ -285,16 +285,16 @@ public class EnhancedMoshiJsonBuilder implements Builder {
 
         } catch (java.util.concurrent.TimeoutException e) {
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] ASYNC TIMEOUT after " + timeoutMs + "ms - falling back to sync processing");
+                log.debug("EnhancedGsonH2: [" + requestId + "] ASYNC TIMEOUT after " + timeoutMs + "ms - falling back to sync processing");
             }
             log.warn("Async processing timed out for request: " + requestId + ", falling back to sync");
-            return processWithEnhancedMoshi(inputStream, messageContext, strategy, requestId);
+            return processWithEnhancedGson(inputStream, messageContext, strategy, requestId);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2: [" + requestId + "] ASYNC SETUP FAILED: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+                log.debug("EnhancedGsonH2: [" + requestId + "] ASYNC SETUP FAILED: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             }
             log.error("Async processing setup failed for request: " + requestId, e);
-            return processWithEnhancedMoshi(inputStream, messageContext, strategy, requestId);
+            return processWithEnhancedGson(inputStream, messageContext, strategy, requestId);
         }
     }
 
@@ -309,11 +309,11 @@ public class EnhancedMoshiJsonBuilder implements Builder {
 
         // Apply memory optimization for very large payloads (pattern from HTTP/2 integration)
         if (strategy.getPayloadSize() > memoryOptimizationThreshold) {
-            log.debug("Monitoring memory pressure for very large payload: " + requestId);
+            log.debug("Applying memory optimization for very large payload: " + requestId);
             monitorMemoryPressure();
         }
 
-        return processWithEnhancedMoshi(inputStream, messageContext, strategy, requestId);
+        return processWithEnhancedGson(inputStream, messageContext, strategy, requestId);
     }
 
     /**
@@ -327,13 +327,13 @@ public class EnhancedMoshiJsonBuilder implements Builder {
                      " (" + formatBytes(strategy.getPayloadSize()) + ")");
         }
 
-        return processWithEnhancedMoshi(inputStream, messageContext, strategy, requestId);
+        return processWithEnhancedGson(inputStream, messageContext, strategy, requestId);
     }
 
     /**
-     * Core enhanced Moshi processing with field-specific optimizations.
+     * Core enhanced GSON processing with field-specific optimizations.
      */
-    private OMElement processWithEnhancedMoshi(InputStream inputStream, MessageContext messageContext,
+    private OMElement processWithEnhancedGson(InputStream inputStream, MessageContext messageContext,
                                              ProcessingStrategy strategy, String requestId) throws AxisFault {
 
         JsonReader jsonReader;
@@ -341,62 +341,63 @@ public class EnhancedMoshiJsonBuilder implements Builder {
         try {
             // Configure character encoding with optimization (from HTTP/2 integration analysis)
             String charSetEncoding = (String) messageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-            if (charSetEncoding != null && !charSetEncoding.contains("UTF-8")) {
-                log.warn("Enhanced Moshi H2 detected non-UTF-8 encoding: " + charSetEncoding +
-                         " for request: " + requestId + " - Moshi JsonReader uses JsonUtf8Reader internally");
+            if (charSetEncoding == null) {
+                charSetEncoding = "UTF-8";
             }
 
-            // Create buffered source with size-based optimization
-            BufferedSource source = Okio.buffer(Okio.source(inputStream));
-            jsonReader = JsonReader.of(source);
+            if (log.isDebugEnabled()) {
+                log.debug("EnhancedGsonH2: [" + requestId + "] Using character encoding: " + charSetEncoding);
+            }
+
+            // Create JsonReader with enhanced configuration
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, charSetEncoding);
+            jsonReader = new JsonReader(inputStreamReader);
             jsonReader.setLenient(true);
 
-            // Create MoshiXMLStreamReader with enhanced processing context
-            MoshiXMLStreamReader streamReader = new MoshiXMLStreamReader(jsonReader);
+            // Create GsonXMLStreamReader with enhanced processing context
+            GsonXMLStreamReader streamReader = new GsonXMLStreamReader(jsonReader);
 
             // Set enhanced properties in message context
-            messageContext.setProperty(JsonConstant.MOSHI_XML_STREAM_READER, streamReader);
-            messageContext.setProperty("ENHANCED_MOSHI_H2_READER", streamReader);
+            messageContext.setProperty(JsonConstant.GSON_XML_STREAM_READER, streamReader);
+            messageContext.setProperty("ENHANCED_GSON_H2_READER", streamReader);
             messageContext.setProperty("PROCESSING_STRATEGY", strategy);
 
             if (log.isDebugEnabled()) {
-                log.debug("Enhanced Moshi H2 stream reader created for request: " + requestId +
+                log.debug("Enhanced GSON H2 stream reader created for request: " + requestId +
                          " (strategy: " + strategy.getStrategyType() + ")");
             }
 
+        } catch (UnsupportedEncodingException e) {
+            log.error("Enhanced GSON H2 processing setup failed for request: " + requestId, e);
+            throw new AxisFault("Enhanced GSON H2 processing setup failed", e);
         } catch (Exception e) {
-            log.error("Enhanced Moshi H2 processing setup failed for request: " + requestId, e);
-            throw new AxisFault("Enhanced Moshi H2 processing setup failed", e);
+            log.error("Enhanced GSON H2 processing setup failed for request: " + requestId, e);
+            throw new AxisFault("Enhanced GSON H2 processing setup failed", e);
         }
 
         // Return default SOAP envelope (standard Axis2 pattern)
         return createDefaultEnvelope();
     }
 
-    /**
-     * Analyze and determine the optimal processing strategy (extracted from HTTP/2 integration).
-     */
+    // Include all the helper methods from the Moshi version with appropriate adaptations
     private ProcessingStrategy analyzeProcessingStrategy(MessageContext messageContext, String contentType) {
         if (log.isDebugEnabled()) {
-            log.debug("EnhancedMoshiH2: Starting strategy analysis - ContentType=" + contentType);
+            log.debug("EnhancedGsonH2: Starting strategy analysis - ContentType=" + contentType);
         }
 
-        // Estimate payload size from various sources
         long payloadSize = estimatePayloadSize(messageContext);
 
         if (log.isDebugEnabled()) {
-            log.debug("EnhancedMoshiH2: Payload size estimated: " + formatBytes(payloadSize)
+            log.debug("EnhancedGsonH2: Payload size estimated: " + formatBytes(payloadSize)
                 + " (Thresholds: Async=" + formatBytes(asyncProcessingThreshold)
                 + ", Large=" + formatBytes(largePayloadThreshold)
                 + ", Memory=" + formatBytes(memoryOptimizationThreshold) + ")");
         }
 
-        // Determine processing characteristics based on HTTP/2 integration thresholds
         boolean isLargePayload = payloadSize > largePayloadThreshold;
         boolean useAsyncProcessing = payloadSize > asyncProcessingThreshold;
         boolean useStreaming = payloadSize > streamingThreshold;
 
-        // Create processing strategy
         ProcessingStrategy strategy = new ProcessingStrategy(
             payloadSize,
             isLargePayload,
@@ -411,9 +412,6 @@ public class EnhancedMoshiJsonBuilder implements Builder {
         return strategy;
     }
 
-    /**
-     * Estimate payload size from message context and headers (pattern from HTTP/2 integration).
-     */
     private long estimatePayloadSize(MessageContext messageContext) {
         // Try Content-Length from message context
         Object contentLength = messageContext.getProperty("Content-Length");
@@ -440,24 +438,14 @@ public class EnhancedMoshiJsonBuilder implements Builder {
             }
         }
 
-        // Default estimation for unknown sizes (conservative approach)
         return streamingThreshold; // Assume moderate size to avoid blocking
     }
 
-    /**
-     * Calculate processing timeout based on payload size (prevents infinite blocking).
-     */
     private long calculateProcessingTimeout(long payloadSize) {
-        // Base timeout + additional time for large payloads (learned from 12-18s production times)
         long additionalTimeout = Math.max(0, (payloadSize - asyncProcessingThreshold) / (1024 * 1024) * additionalTimeoutPerMB);
-        return Math.min(baseTimeout + additionalTimeout, maxTimeout); // Configurable max timeout
+        return Math.min(baseTimeout + additionalTimeout, maxTimeout);
     }
 
-    /**
-     * Load configuration parameters from axis2.xml with intelligent defaults.
-     * This method eliminates the need for extensive parameter configuration in axis2.xml
-     * by providing production-ready defaults for all Moshi H2 parameters.
-     */
     private synchronized void loadConfiguration(MessageContext messageContext) {
         if (configurationLoaded) {
             return; // Double-check locking
@@ -465,30 +453,30 @@ public class EnhancedMoshiJsonBuilder implements Builder {
 
         try {
             AxisConfiguration axisConfig = messageContext.getConfigurationContext().getAxisConfiguration();
-            log.info("Loading Enhanced Moshi H2 configuration parameters from axis2.xml (with intelligent defaults)");
+            log.info("Loading Enhanced GSON H2 configuration parameters from axis2.xml (with intelligent defaults)");
 
-            // Load Moshi H2 configuration parameters
-            moshiH2ProcessingEnabled = getBooleanParameter(axisConfig, "enableMoshiH2Processing", DEFAULT_MOSHI_H2_PROCESSING_ENABLED);
-            asyncProcessingThreshold = getLongParameter(axisConfig, "moshiAsyncProcessingThreshold", DEFAULT_ASYNC_PROCESSING_THRESHOLD);
-            largePayloadThreshold = getLongParameter(axisConfig, "moshiLargePayloadThreshold", DEFAULT_LARGE_PAYLOAD_THRESHOLD);
-            memoryOptimizationThreshold = getLongParameter(axisConfig, "moshiMemoryOptimizationThreshold", DEFAULT_MEMORY_OPTIMIZATION_THRESHOLD);
-            streamingBufferSize = getIntParameter(axisConfig, "moshiStreamingBufferSize", DEFAULT_STREAMING_BUFFER_SIZE);
-            fieldOptimizationsEnabled = getBooleanParameter(axisConfig, "moshiFieldOptimizationsEnabled", DEFAULT_FIELD_OPTIMIZATIONS_ENABLED);
-            performanceMetricsEnabled = getBooleanParameter(axisConfig, "moshiPerformanceMetricsEnabled", DEFAULT_PERFORMANCE_METRICS_ENABLED);
-            gcHintsEnabled = getBooleanParameter(axisConfig, "moshiGarbageCollectionHintsEnabled", DEFAULT_GC_HINTS_ENABLED);
-            slowRequestThreshold = getLongParameter(axisConfig, "moshiSlowRequestDetectionThreshold", DEFAULT_SLOW_REQUEST_THRESHOLD);
-            verySlowRequestThreshold = getLongParameter(axisConfig, "moshiVerySlowRequestThreshold", DEFAULT_VERY_SLOW_REQUEST_THRESHOLD);
-            optimizationRecommendationsEnabled = getBooleanParameter(axisConfig, "moshiOptimizationRecommendationsEnabled", DEFAULT_OPTIMIZATION_RECOMMENDATIONS_ENABLED);
+            // Load GSON H2 configuration parameters
+            gsonH2ProcessingEnabled = getBooleanParameter(axisConfig, "enableGsonH2Processing", DEFAULT_GSON_H2_PROCESSING_ENABLED);
+            asyncProcessingThreshold = getLongParameter(axisConfig, "gsonAsyncProcessingThreshold", DEFAULT_ASYNC_PROCESSING_THRESHOLD);
+            largePayloadThreshold = getLongParameter(axisConfig, "gsonLargePayloadThreshold", DEFAULT_LARGE_PAYLOAD_THRESHOLD);
+            memoryOptimizationThreshold = getLongParameter(axisConfig, "gsonMemoryOptimizationThreshold", DEFAULT_MEMORY_OPTIMIZATION_THRESHOLD);
+            streamingBufferSize = getIntParameter(axisConfig, "gsonStreamingBufferSize", DEFAULT_STREAMING_BUFFER_SIZE);
+            fieldOptimizationsEnabled = getBooleanParameter(axisConfig, "gsonFieldOptimizationsEnabled", DEFAULT_FIELD_OPTIMIZATIONS_ENABLED);
+            performanceMetricsEnabled = getBooleanParameter(axisConfig, "gsonPerformanceMetricsEnabled", DEFAULT_PERFORMANCE_METRICS_ENABLED);
+            gcHintsEnabled = getBooleanParameter(axisConfig, "gsonGarbageCollectionHintsEnabled", DEFAULT_GC_HINTS_ENABLED);
+            slowRequestThreshold = getLongParameter(axisConfig, "gsonSlowRequestDetectionThreshold", DEFAULT_SLOW_REQUEST_THRESHOLD);
+            verySlowRequestThreshold = getLongParameter(axisConfig, "gsonVerySlowRequestThreshold", DEFAULT_VERY_SLOW_REQUEST_THRESHOLD);
+            optimizationRecommendationsEnabled = getBooleanParameter(axisConfig, "gsonOptimizationRecommendationsEnabled", DEFAULT_OPTIMIZATION_RECOMMENDATIONS_ENABLED);
 
             // Calculate derived values
-            streamingThreshold = Math.min(streamingBufferSize * 8, DEFAULT_STREAMING_THRESHOLD); // 8x buffer size or default
+            streamingThreshold = Math.min(streamingBufferSize * 8, DEFAULT_STREAMING_THRESHOLD);
             baseTimeout = Math.max(slowRequestThreshold, DEFAULT_BASE_TIMEOUT);
             maxTimeout = Math.max(verySlowRequestThreshold * 4, DEFAULT_MAX_TIMEOUT);
 
             configurationLoaded = true;
 
-            log.info("Enhanced Moshi H2 configuration loaded successfully - " +
-                    "enabled=" + moshiH2ProcessingEnabled +
+            log.info("Enhanced GSON H2 configuration loaded successfully - " +
+                    "enabled=" + gsonH2ProcessingEnabled +
                     ", asyncThreshold=" + formatBytes(asyncProcessingThreshold) +
                     " (default: " + formatBytes(DEFAULT_ASYNC_PROCESSING_THRESHOLD) + "), " +
                     "largePayloadThreshold=" + formatBytes(largePayloadThreshold) +
@@ -501,14 +489,11 @@ public class EnhancedMoshiJsonBuilder implements Builder {
                     " (default: " + DEFAULT_FIELD_OPTIMIZATIONS_ENABLED + ")");
 
         } catch (Exception e) {
-            log.warn("Failed to load Enhanced Moshi H2 configuration, using defaults", e);
+            log.warn("Failed to load Enhanced GSON H2 configuration, using defaults", e);
             configurationLoaded = true; // Prevent infinite retry
         }
     }
 
-    /**
-     * Helper method to get boolean parameter from axis configuration.
-     */
     private boolean getBooleanParameter(AxisConfiguration axisConfig, String paramName, boolean defaultValue) {
         try {
             Parameter param = axisConfig.getParameter(paramName);
@@ -521,9 +506,6 @@ public class EnhancedMoshiJsonBuilder implements Builder {
         return defaultValue;
     }
 
-    /**
-     * Helper method to get long parameter from axis configuration.
-     */
     private long getLongParameter(AxisConfiguration axisConfig, String paramName, long defaultValue) {
         try {
             Parameter param = axisConfig.getParameter(paramName);
@@ -536,9 +518,6 @@ public class EnhancedMoshiJsonBuilder implements Builder {
         return defaultValue;
     }
 
-    /**
-     * Helper method to get int parameter from axis configuration.
-     */
     private int getIntParameter(AxisConfiguration axisConfig, String paramName, int defaultValue) {
         try {
             Parameter param = axisConfig.getParameter(paramName);
@@ -551,47 +530,34 @@ public class EnhancedMoshiJsonBuilder implements Builder {
         return defaultValue;
     }
 
-    /**
-     * Generate unique request ID for tracking (pattern from HTTP/2 integration).
-     */
     private String generateRequestId() {
-        return "emh2-" + System.currentTimeMillis() + "-" + requestCounter.incrementAndGet();
+        return "egh2-" + System.currentTimeMillis() + "-" + requestCounter.incrementAndGet();
     }
 
-    /**
-     * Memory management monitoring for large payloads.
-     * Note: Removed System.gc() call - libraries should not interfere with application GC strategy.
-     */
     private void monitorMemoryPressure() {
+        Runtime runtime = Runtime.getRuntime();
+        long totalMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+        long usedMemory = totalMemory - freeMemory;
+        double memoryUsagePercentage = (double) usedMemory / totalMemory * 100;
+
         if (log.isDebugEnabled()) {
-            Runtime runtime = Runtime.getRuntime();
-            long totalMemory = runtime.totalMemory();
-            long freeMemory = runtime.freeMemory();
-            long usedMemory = totalMemory - freeMemory;
-            double memoryUsage = (double) usedMemory / totalMemory * 100;
+            log.debug("Memory pressure monitoring - Used: " + formatBytes(usedMemory)
+                + " (" + String.format("%.1f%%", memoryUsagePercentage) + "), Free: " + formatBytes(freeMemory)
+                + ", Total: " + formatBytes(totalMemory));
+        }
 
-            log.debug("Memory pressure monitoring during large payload processing: "
-                + String.format("%.1f%% used (%s / %s)", memoryUsage,
-                formatBytes(usedMemory), formatBytes(totalMemory)));
-
-            if (memoryUsage > 85.0) {
-                log.warn("High memory pressure detected (" + String.format("%.1f", memoryUsage) + "% used) during JSON processing. " +
-                        "Consider increasing heap size or reducing payload size.");
-            }
+        if (memoryUsagePercentage > 80) {
+            log.warn("High memory usage detected during large payload processing: " + String.format("%.1f%%", memoryUsagePercentage)
+                + " (" + formatBytes(usedMemory) + "/" + formatBytes(totalMemory) + "). Consider monitoring application memory usage.");
         }
     }
 
-    /**
-     * Create default SOAP envelope.
-     */
     private OMElement createDefaultEnvelope() {
         SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         return soapFactory.getDefaultEnvelope();
     }
 
-    /**
-     * Format byte count for human-readable logging.
-     */
     private String formatBytes(long bytes) {
         if (bytes >= 1024L * 1024 * 1024) {
             return String.format("%.2fGB", bytes / (1024.0 * 1024.0 * 1024.0));
@@ -604,27 +570,19 @@ public class EnhancedMoshiJsonBuilder implements Builder {
         }
     }
 
-    /**
-     * Get processing statistics for monitoring (API from HTTP/2 integration).
-     */
-    public static JsonProcessingMetrics.Statistics getProcessingStatistics() {
+    // Static API methods for monitoring
+    public static GsonProcessingMetrics.Statistics getProcessingStatistics() {
         return metrics.getStatistics();
     }
 
-    /**
-     * Get optimization recommendations based on processing history.
-     */
     public static String getOptimizationRecommendations() {
         return metrics.getOptimizationRecommendations();
     }
 
-    /**
-     * Reset processing statistics.
-     */
     public static void resetStatistics() {
         metrics.resetStatistics();
         requestCounter.set(0);
-        log.info("Enhanced Moshi H2 JSON Builder statistics reset");
+        log.info("Enhanced GSON H2 JSON Builder statistics reset");
     }
 
     /**

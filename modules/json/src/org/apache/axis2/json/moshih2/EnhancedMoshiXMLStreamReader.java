@@ -27,6 +27,7 @@ import org.apache.axis2.json.factory.JsonConstant;
 import org.apache.axis2.json.factory.JsonObject;
 import org.apache.axis2.json.factory.XmlNode;
 import org.apache.axis2.json.factory.XmlNodeGenerator;
+import org.apache.axis2.json.moshi.MoshiXMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -60,36 +61,25 @@ import java.util.Stack;
  * - Memory management with garbage collection hints (from suggestGC())
  * - Performance metrics collection for field-level optimization analysis
  * - Intelligent streaming configuration based on payload characteristics
- * - RAPI-style data pattern optimizations (records, metadata, amounts)
+ * - JSON-style data pattern optimizations (records, metadata, amounts)
  * - Number field optimization with BigDecimal for monetary values
  *
  * This implementation maintains compatibility with the standard XMLStreamReader interface
  * while providing enhanced performance for JSON processing scenarios identified in the
  * HTTP/2 integration analysis.
  */
-public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
+public class EnhancedMoshiXMLStreamReader extends MoshiXMLStreamReader {
     private static final Log log = LogFactory.getLog(EnhancedMoshiXMLStreamReader.class);
 
-    // Core components from standard MoshiXMLStreamReader
-    private JsonReader jsonReader;
+    // Enhanced components (parent class already has getJsonReader(), configContext, etc.)
     private JsonState state = JsonState.StartState;
     private JsonReader.Token tokenType;
     private String localName;
     private String value;
     private boolean isProcessed;
-    private ConfigurationContext configContext;
-    private QName elementQname;
-    private XmlNode mainXmlNode;
-    private List<XmlSchema> xmlSchemaList;
-    private Queue<JsonObject> queue = new LinkedList<JsonObject>();
-    private Queue<JsonObject> attribute_queue = new LinkedList<JsonObject>();
-    private List<Attribute> attributes;
-    private XmlNodeGenerator xmlNodeGenerator;
-    private Stack<JsonObject> stackObj = new Stack<JsonObject>();
-    private Stack<JsonObject> miniStack = new Stack<JsonObject>();
-    private JsonObject topNestedArrayObj = null;
-    private Stack<JsonObject> processedJsonObject = new Stack<JsonObject>();
-    private String namespace;
+    // Parent class already has: elementQname, mainXmlNode, xmlSchemaList, queue,
+    // attribute_queue, attributes, xmlNodeGenerator, stackObj, miniStack,
+    // topNestedArrayObj, processedJsonObject, namespace - so we don't redeclare them
 
     // Enhanced processing components (from HTTP/2 integration)
     private final EnhancedMoshiJsonBuilder.ProcessingStrategy processingStrategy;
@@ -115,7 +105,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
                                        EnhancedMoshiJsonBuilder.ProcessingStrategy strategy,
                                        String requestId,
                                        JsonProcessingMetrics metrics) {
-        this.jsonReader = jsonReader;
+        super(jsonReader);
         this.processingStrategy = strategy;
         this.requestId = requestId;
         this.metrics = metrics;
@@ -131,7 +121,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
      * Standard constructor for backward compatibility.
      */
     public EnhancedMoshiXMLStreamReader(JsonReader jsonReader) {
-        this.jsonReader = jsonReader;
+        super(jsonReader);
         this.processingStrategy = null;
         this.requestId = "legacy-" + System.currentTimeMillis();
         this.metrics = null;
@@ -144,25 +134,13 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
     public EnhancedMoshiXMLStreamReader(JsonReader jsonReader, QName elementQname,
                                        List<XmlSchema> xmlSchemaList,
                                        ConfigurationContext configContext) throws AxisFault {
-        this.jsonReader = jsonReader;
+        super(jsonReader, elementQname, xmlSchemaList, configContext);
         this.processingStrategy = null;
         this.requestId = "schema-" + System.currentTimeMillis();
         this.metrics = null;
         this.startProcessingTime = System.nanoTime();
-        initXmlStreamReader(elementQname, xmlSchemaList, configContext);
     }
 
-    /**
-     * Initialize XML stream reader with schema support.
-     */
-    private void initXmlStreamReader(QName elementQname, List<XmlSchema> xmlSchemaList,
-                                   ConfigurationContext configContext) throws AxisFault {
-        this.elementQname = elementQname;
-        this.xmlSchemaList = xmlSchemaList;
-        this.configContext = configContext;
-        this.xmlNodeGenerator = new XmlNodeGenerator(xmlSchemaList, elementQname);
-        this.mainXmlNode = xmlNodeGenerator.getMainXmlNode();
-    }
 
     /**
      * Enhanced field processing with optimizations extracted from HTTP/2 integration.
@@ -186,12 +164,12 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
                     break;
 
                 case BOOLEAN:
-                    result = String.valueOf(jsonReader.nextBoolean());
+                    result = String.valueOf(getJsonReader().nextBoolean());
                     optimizationType = "BOOLEAN";
                     break;
 
                 case NULL:
-                    jsonReader.nextNull();
+                    getJsonReader().nextNull();
                     result = null;
                     optimizationType = "NULL";
                     break;
@@ -225,7 +203,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
 
             // Memory management (from HTTP/2 integration)
             if (processedFieldCount % GC_SUGGESTION_INTERVAL == 0) {
-                suggestGarbageCollectionIfNeeded();
+                monitorMemoryPressureIfNeeded();
             }
 
             return result;
@@ -240,7 +218,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
      * Optimized string field processing (pattern from HTTP/2 integration).
      */
     private String processStringFieldOptimized(String fieldName) throws IOException {
-        String stringValue = jsonReader.nextString();
+        String stringValue = getJsonReader().nextString();
 
         // Apply string-specific optimizations based on field patterns
         if (isDateField(fieldName)) {
@@ -264,7 +242,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
         // Apply number-specific optimizations based on field patterns (from HTTP/2 integration)
         if (isMonetaryField(fieldName)) {
             // Use BigDecimal for monetary values (pattern from HTTP/2 integration)
-            String numberStr = jsonReader.nextString();
+            String numberStr = getJsonReader().nextString();
             try {
                 BigDecimal monetaryValue = new BigDecimal(numberStr);
                 recordFieldOptimization(fieldName, "MONETARY_BIGDECIMAL", 0);
@@ -275,12 +253,12 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
             }
         } else if (isIdField(fieldName)) {
             // ID fields are typically long integers (pattern from HTTP/2 integration)
-            long idValue = jsonReader.nextLong();
+            long idValue = getJsonReader().nextLong();
             recordFieldOptimization(fieldName, "ID_LONG", 0);
             return String.valueOf(idValue);
         } else {
             // Default to double for numeric values
-            double numericValue = jsonReader.nextDouble();
+            double numericValue = getJsonReader().nextDouble();
             return String.valueOf(numericValue);
         }
     }
@@ -293,10 +271,10 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
         int arraySize = 0;
         StringBuilder arrayContent = new StringBuilder("[");
 
-        jsonReader.beginArray();
+        getJsonReader().beginArray();
         boolean firstItem = true;
 
-        while (jsonReader.hasNext()) {
+        while (getJsonReader().hasNext()) {
             if (!firstItem) {
                 arrayContent.append(",");
             }
@@ -308,7 +286,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
                 arrayContent.append(itemValue);
             } else {
                 // Standard array item processing
-                JsonReader.Token itemToken = jsonReader.peek();
+                JsonReader.Token itemToken = getJsonReader().peek();
                 String itemValue = processFieldWithOptimization(fieldName + "[" + arraySize + "]", itemToken);
                 arrayContent.append(itemValue != null ? "\"" + itemValue + "\"" : "null");
             }
@@ -322,7 +300,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
 
             // Memory management for very large arrays
             if (arraySize % GC_SUGGESTION_INTERVAL == 0) {
-                suggestGarbageCollectionIfNeeded();
+                monitorMemoryPressureIfNeeded();
 
                 if (log.isDebugEnabled()) {
                     log.debug("Processed " + arraySize + " array items for field: " + fieldName + " (request: " + requestId + ")");
@@ -330,7 +308,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
             }
         }
 
-        jsonReader.endArray();
+        getJsonReader().endArray();
         arrayContent.append("]");
 
         // Record array processing metrics (concept from HTTP/2 integration)
@@ -360,30 +338,30 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
             return processMetadataRecordOptimized(itemIndex);
         } else {
             // Default processing for unknown large array types
-            JsonReader.Token itemToken = jsonReader.peek();
+            JsonReader.Token itemToken = getJsonReader().peek();
             return processFieldStandard(itemToken);
         }
     }
 
     /**
-     * Process data records with optimized parsing for RAPI patterns (from HTTP/2 integration).
+     * Process data records with optimized parsing for JSON patterns (from HTTP/2 integration).
      */
     private String processDataRecordOptimized(int recordIndex) throws IOException {
         StringBuilder record = new StringBuilder("{");
         boolean firstField = true;
 
-        jsonReader.beginObject();
-        while (jsonReader.hasNext()) {
+        getJsonReader().beginObject();
+        while (getJsonReader().hasNext()) {
             if (!firstField) {
                 record.append(",");
             }
             firstField = false;
 
-            String key = jsonReader.nextName();
+            String key = getJsonReader().nextName();
             String value = parseOptimizedValue(key);
             record.append("\"").append(key).append("\":").append(value);
         }
-        jsonReader.endObject();
+        getJsonReader().endObject();
         record.append("}");
 
         return record.toString();
@@ -401,20 +379,20 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
      * Parse values with optimization based on known field patterns (from HTTP/2 parseOptimizedValue()).
      */
     private String parseOptimizedValue(String key) throws IOException {
-        JsonReader.Token token = jsonReader.peek();
+        JsonReader.Token token = getJsonReader().peek();
 
         // Optimize parsing based on known field patterns (from HTTP/2 integration)
         if (isIdField(key)) {
             if (token == JsonReader.Token.STRING) {
-                return "\"" + jsonReader.nextString() + "\"";
+                return "\"" + getJsonReader().nextString() + "\"";
             } else if (token == JsonReader.Token.NUMBER) {
-                return String.valueOf(jsonReader.nextLong());
+                return String.valueOf(getJsonReader().nextLong());
             }
         } else if (isDateTimeField(key)) {
-            return "\"" + jsonReader.nextString() + "\""; // Let higher level handle date parsing
+            return "\"" + getJsonReader().nextString() + "\""; // Let higher level handle date parsing
         } else if (isMonetaryField(key)) {
             if (token == JsonReader.Token.STRING) {
-                String strValue = jsonReader.nextString();
+                String strValue = getJsonReader().nextString();
                 try {
                     new BigDecimal(strValue); // Validate BigDecimal format
                     return "\"" + strValue + "\"";
@@ -422,7 +400,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
                     return "\"" + strValue + "\"";
                 }
             } else if (token == JsonReader.Token.NUMBER) {
-                return String.valueOf(jsonReader.nextDouble());
+                return String.valueOf(getJsonReader().nextDouble());
             }
         }
 
@@ -437,19 +415,19 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
         StringBuilder object = new StringBuilder("{");
         boolean firstField = true;
 
-        jsonReader.beginObject();
-        while (jsonReader.hasNext()) {
+        getJsonReader().beginObject();
+        while (getJsonReader().hasNext()) {
             if (!firstField) {
                 object.append(",");
             }
             firstField = false;
 
-            String key = jsonReader.nextName();
-            JsonReader.Token valueToken = jsonReader.peek();
+            String key = getJsonReader().nextName();
+            JsonReader.Token valueToken = getJsonReader().peek();
             String value = processFieldWithOptimization(key, valueToken);
             object.append("\"").append(key).append("\":").append(value != null ? "\"" + value + "\"" : "null");
         }
-        jsonReader.endObject();
+        getJsonReader().endObject();
         object.append("}");
 
         return object.toString();
@@ -461,16 +439,16 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
     private String processFieldStandard(JsonReader.Token tokenType) throws IOException {
         switch (tokenType) {
             case STRING:
-                return jsonReader.nextString();
+                return getJsonReader().nextString();
             case NUMBER:
-                return String.valueOf(jsonReader.nextDouble());
+                return String.valueOf(getJsonReader().nextDouble());
             case BOOLEAN:
-                return String.valueOf(jsonReader.nextBoolean());
+                return String.valueOf(getJsonReader().nextBoolean());
             case NULL:
-                jsonReader.nextNull();
+                getJsonReader().nextNull();
                 return null;
             default:
-                jsonReader.skipValue();
+                getJsonReader().skipValue();
                 return null;
         }
     }
@@ -533,12 +511,23 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
         }
     }
 
-    private void suggestGarbageCollectionIfNeeded() {
+    private void monitorMemoryPressureIfNeeded() {
         if (processingStrategy != null && processingStrategy.isLargePayload()) {
             if (log.isDebugEnabled()) {
-                log.debug("Suggesting garbage collection for Enhanced Moshi H2 large payload processing: " + requestId);
+                Runtime runtime = Runtime.getRuntime();
+                long totalMemory = runtime.totalMemory();
+                long freeMemory = runtime.freeMemory();
+                long usedMemory = totalMemory - freeMemory;
+                double memoryUsage = (double) usedMemory / totalMemory * 100;
+
+                log.debug("Memory pressure monitoring for Enhanced Moshi H2 large payload processing: " + requestId
+                    + " - " + String.format("%.1f%% used", memoryUsage));
+
+                if (memoryUsage > 85.0) {
+                    log.warn("High memory pressure detected (" + String.format("%.1f", memoryUsage) + "% used) during large JSON processing. " +
+                            "Consider increasing heap size or reducing payload size.");
+                }
             }
-            System.gc();
         }
     }
 
@@ -651,7 +640,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
     @Override
     public void close() throws XMLStreamException {
         try {
-            jsonReader.close();
+            getJsonReader().close();
         } catch (IOException e) {
             throw new XMLStreamException("Failed to close JsonReader", e);
         }
@@ -659,7 +648,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
 
     @Override
     public String getNamespaceURI(String prefix) {
-        return namespace;
+        return super.getNamespaceURI();
     }
 
     @Override
@@ -689,7 +678,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
 
     @Override
     public int getAttributeCount() {
-        return attributes != null ? attributes.size() : 0;
+        return super.getAttributeCount();
     }
 
     @Override
@@ -704,7 +693,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
 
     @Override
     public String getAttributeLocalName(int index) {
-        return attributes != null && index < attributes.size() ? attributes.get(index).getLocalName() : null;
+        return super.getAttributeLocalName(index);
     }
 
     @Override
@@ -719,7 +708,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
 
     @Override
     public String getAttributeValue(int index) {
-        return attributes != null && index < attributes.size() ? attributes.get(index).getValue() : null;
+        return super.getAttributeValue(index);
     }
 
     @Override
@@ -809,7 +798,7 @@ public class EnhancedMoshiXMLStreamReader implements XMLStreamReader {
 
     @Override
     public String getNamespaceURI() {
-        return namespace;
+        return super.getNamespaceURI();
     }
 
     @Override

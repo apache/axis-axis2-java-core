@@ -15,14 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.json.moshih2;
+package org.apache.axis2.json.gsonh2;
 
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.JsonWriter;
-import com.squareup.moshi.Moshi;
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter;
-import okio.BufferedSink;
-import okio.Okio;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonWriter;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -31,8 +28,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.json.factory.JsonConstant;
-import org.apache.axis2.json.moshi.JsonHtmlEncoder;
-import org.apache.axis2.json.moshi.MoshiXMLStreamWriter;
+import org.apache.axis2.json.gson.JsonHtmlEncoder;
+import org.apache.axis2.json.gson.GsonXMLStreamWriter;
 import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -43,6 +40,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
@@ -54,11 +53,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Enhanced Moshi JSON Formatter with HTTP/2 Optimization Concepts.
+ * Enhanced GSON JSON Formatter with HTTP/2 Optimization Concepts.
  *
  * This formatter incorporates high-performance patterns extracted from the Axis2 HTTP/2
  * integration research, providing significant performance improvements for JSON output
- * generation without requiring WildFly dependencies.
+ * generation using GSON instead of Moshi.
  *
  * Key Features Extracted from HTTP/2 Integration:
  * - Async response generation for large payloads (from generateAxis2StreamingResponse())
@@ -71,7 +70,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * Configuration in axis2.xml:
  * &lt;messageFormatter contentType="application/json"
- *                   class="org.apache.axis2.json.moshih2.EnhancedMoshiJsonFormatter"/&gt;
+ *                   class="org.apache.axis2.json.gsonh2.EnhancedGsonJsonFormatter"/&gt;
  *
  * Expected Performance Benefits (based on HTTP/2 integration analysis):
  * - 30-50% performance improvement for large JSON responses (&gt;1MB)
@@ -80,8 +79,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * - Specialized optimization for JSON-style response patterns
  * - Prevents blocking behavior during large response generation
  */
-public class EnhancedMoshiJsonFormatter implements MessageFormatter {
-    private static final Log log = LogFactory.getLog(EnhancedMoshiJsonFormatter.class);
+public class EnhancedGsonJsonFormatter implements MessageFormatter {
+    private static final Log log = LogFactory.getLog(EnhancedGsonJsonFormatter.class);
 
     // Performance thresholds based on HTTP/2 integration research
     private static final long LARGE_RESPONSE_THRESHOLD = 5 * 1024 * 1024;  // 5MB
@@ -93,7 +92,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
     private static final ExecutorService asyncResponseExecutor = Executors.newFixedThreadPool(
         Math.max(2, Runtime.getRuntime().availableProcessors() / 4),
         r -> {
-            Thread t = new Thread(r, "EnhancedMoshiH2-Response");
+            Thread t = new Thread(r, "EnhancedGsonH2-Response");
             t.setDaemon(true);
             t.setPriority(Thread.NORM_PRIORITY);
             return t;
@@ -101,7 +100,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
     );
 
     // Response generation metrics (concept from HTTP/2 StreamingMetrics)
-    private static final JsonProcessingMetrics responseMetrics = new JsonProcessingMetrics();
+    private static final GsonProcessingMetrics responseMetrics = new GsonProcessingMetrics();
     private static final AtomicLong responseCounter = new AtomicLong(0);
 
     @Override
@@ -110,26 +109,26 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         String responseId = generateResponseId();
 
         if (log.isDebugEnabled()) {
-            log.debug("EnhancedMoshiH2Formatter: Starting writeTo() - ResponseID: " + responseId
+            log.debug("EnhancedGsonH2Formatter: Starting writeTo() - ResponseID: " + responseId
                 + ", Preserve: " + preserve
                 + ", Thread: " + Thread.currentThread().getName());
         }
 
         try {
             // Enhanced response generation properties (extracted from HTTP/2 integration patterns)
-            outMsgCtxt.setProperty("JSON_RESPONSE_MODE", "ENHANCED_MOSHI_H2");
+            outMsgCtxt.setProperty("JSON_RESPONSE_MODE", "ENHANCED_GSON_H2");
             outMsgCtxt.setProperty("RESPONSE_ID", responseId);
             outMsgCtxt.setProperty("RESPONSE_START_TIME", startTime);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Set response properties, starting strategy analysis");
+                log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Set response properties, starting strategy analysis");
             }
 
             // Analyze response generation strategy
             ResponseGenerationStrategy strategy = analyzeResponseStrategy(outMsgCtxt, omOutputFormat);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Strategy Analysis Complete:"
+                log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Strategy Analysis Complete:"
                     + " EstimatedSize=" + formatBytes(strategy.getEstimatedSize())
                     + ", UseAsync=" + strategy.shouldUseAsync()
                     + ", IsLarge=" + strategy.isLargeResponse()
@@ -140,13 +139,13 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             responseMetrics.recordProcessingStart(responseId, strategy.getEstimatedSize(), strategy.shouldUseAsync());
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Recorded in response metrics");
+                log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Recorded in response metrics");
             }
 
             // Apply memory optimization for large responses (concept from HTTP/2 integration)
             if (strategy.isLargeResponse()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Large response detected - suggesting GC optimization");
+                    log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Large response detected - monitoring memory pressure");
                 }
                 monitorMemoryPressureForResponse();
             }
@@ -154,17 +153,17 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             // Generate response with appropriate strategy
             if (strategy.shouldUseAsync()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Using ASYNC response generation - size exceeds " + ASYNC_RESPONSE_THRESHOLD + "B");
+                    log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Using ASYNC response generation - size exceeds " + ASYNC_RESPONSE_THRESHOLD + "B");
                 }
                 generateResponseAsync(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
             } else if (strategy.isLargeResponse()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Using LARGE RESPONSE OPTIMIZED generation - size=" + formatBytes(strategy.getEstimatedSize()));
+                    log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Using LARGE RESPONSE OPTIMIZED generation - size=" + formatBytes(strategy.getEstimatedSize()));
                 }
                 generateLargeResponseOptimized(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Using STANDARD response generation - size=" + formatBytes(strategy.getEstimatedSize()));
+                    log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Using STANDARD response generation - size=" + formatBytes(strategy.getEstimatedSize()));
                 }
                 generateStandardResponse(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
             }
@@ -174,7 +173,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             responseMetrics.recordProcessingComplete(responseId, strategy.getEstimatedSize(), processingTime);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Response generation COMPLETED successfully:"
+                log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Response generation COMPLETED successfully:"
                     + " EstimatedSize=" + formatBytes(strategy.getEstimatedSize())
                     + ", ProcessingTime=" + processingTime + "ms"
                     + ", AvgRate=" + String.format("%.2f", (strategy.getEstimatedSize() / 1024.0) / (processingTime / 1000.0)) + "KB/s");
@@ -185,11 +184,11 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             responseMetrics.recordProcessingError(responseId, e, processingTime);
 
             if (log.isDebugEnabled()) {
-                log.debug("EnhancedMoshiH2Formatter: [" + responseId + "] Response generation FAILED after " + processingTime + "ms"
+                log.debug("EnhancedGsonH2Formatter: [" + responseId + "] Response generation FAILED after " + processingTime + "ms"
                     + " - Exception: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             }
 
-            log.error("Enhanced Moshi H2 response generation failed for: " + responseId, e);
+            log.error("Enhanced GSON H2 response generation failed for: " + responseId, e);
             throw AxisFault.makeFault(e);
         }
     }
@@ -208,7 +207,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             // Create CompletableFuture for async response generation
             CompletableFuture<Void> asyncGeneration = CompletableFuture.runAsync(() -> {
                 try {
-                    generateWithEnhancedMoshi(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
+                    generateWithEnhancedGson(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
                 } catch (Exception e) {
                     log.error("Async response generation failed for: " + responseId, e);
                     throw new RuntimeException("Async response generation failed", e);
@@ -225,10 +224,10 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
 
         } catch (java.util.concurrent.TimeoutException e) {
             log.warn("Async response generation timed out for: " + responseId + ", falling back to sync");
-            generateWithEnhancedMoshi(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
+            generateWithEnhancedGson(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
         } catch (Exception e) {
             log.error("Async response generation setup failed for: " + responseId, e);
-            generateWithEnhancedMoshi(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
+            generateWithEnhancedGson(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
         }
     }
 
@@ -248,7 +247,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             monitorMemoryPressureForResponse();
         }
 
-        generateWithEnhancedMoshi(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
+        generateWithEnhancedGson(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
     }
 
     /**
@@ -263,13 +262,13 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
                      " (estimated: " + formatBytes(strategy.getEstimatedSize()) + ")");
         }
 
-        generateWithEnhancedMoshi(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
+        generateWithEnhancedGson(outMsgCtxt, omOutputFormat, outputStream, preserve, strategy, responseId);
     }
 
     /**
-     * Core enhanced Moshi response generation with optimizations.
+     * Core enhanced GSON response generation with optimizations.
      */
-    private void generateWithEnhancedMoshi(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat,
+    private void generateWithEnhancedGson(MessageContext outMsgCtxt, OMOutputFormat omOutputFormat,
                                           OutputStream outputStream, boolean preserve,
                                           ResponseGenerationStrategy strategy, String responseId) throws AxisFault {
 
@@ -277,17 +276,19 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         JsonWriter jsonWriter;
 
         try {
-            // Create optimized Moshi instance with enhanced adapters
-            Moshi moshi = new Moshi.Builder()
-                .add(String.class, new JsonHtmlEncoder())
-                .add(Date.class, new Rfc3339DateJsonAdapter())
-                .build();
-            JsonAdapter<Object> adapter = moshi.adapter(Object.class);
+            // Create optimized GSON instance with enhanced configuration
+            Gson gson = new GsonBuilder()
+                .registerTypeAdapter(String.class, new JsonHtmlEncoder())
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                .create();
 
-            // Create buffered sink with optimization (concept from HTTP/2 integration)
-            BufferedSink sink = Okio.buffer(Okio.sink(outputStream));
+            // Create JsonWriter with character encoding
+            if (charSetEncoding == null) {
+                charSetEncoding = "UTF-8";
+            }
 
-            jsonWriter = JsonWriter.of(sink);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, charSetEncoding);
+            jsonWriter = new JsonWriter(outputStreamWriter);
 
             // Configure JsonWriter for performance (patterns from HTTP/2 integration)
             if (strategy.shouldUseStreaming()) {
@@ -304,13 +305,17 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
                 generateElementResponseOptimized(outMsgCtxt, omOutputFormat, jsonWriter, preserve, strategy, responseId);
             } else {
                 // Enhanced object processing with type optimization
-                generateObjectResponseOptimized(outMsgCtxt, adapter, jsonWriter, retObj, strategy, responseId);
+                generateObjectResponseOptimized(outMsgCtxt, gson, jsonWriter, retObj, strategy, responseId);
             }
 
-            log.debug("Enhanced Moshi H2 response generation method completed for: " + responseId);
+            log.debug("Enhanced GSON H2 response generation method completed for: " + responseId);
 
+        } catch (UnsupportedEncodingException e) {
+            String msg = "Enhanced GSON H2 response generation encoding failed for: " + responseId;
+            log.error(msg, e);
+            throw AxisFault.makeFault(e);
         } catch (Exception e) {
-            String msg = "Enhanced Moshi H2 response generation failed for: " + responseId;
+            String msg = "Enhanced GSON H2 response generation failed for: " + responseId;
             log.error(msg, e);
             throw AxisFault.makeFault(e);
         }
@@ -365,8 +370,8 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
 
         ArrayList<XmlSchema> schemas = outMsgCtxt.getAxisService().getSchema();
 
-        // Create enhanced MoshiXMLStreamWriter with optimization strategy
-        EnhancedMoshiXMLStreamWriter xmlsw = new EnhancedMoshiXMLStreamWriter(
+        // Create enhanced GsonXMLStreamWriter with optimization strategy
+        EnhancedGsonXMLStreamWriter xmlsw = new EnhancedGsonXMLStreamWriter(
             jsonWriter, elementQname, schemas, outMsgCtxt.getConfigurationContext(), strategy, responseId
         );
 
@@ -383,7 +388,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
     /**
      * Enhanced object response generation with type optimization.
      */
-    private void generateObjectResponseOptimized(MessageContext outMsgCtxt, JsonAdapter<Object> adapter,
+    private void generateObjectResponseOptimized(MessageContext outMsgCtxt, Gson gson,
                                                 JsonWriter jsonWriter, Object retObj,
                                                 ResponseGenerationStrategy strategy, String responseId) throws IOException {
 
@@ -395,13 +400,14 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
 
         // For large responses, apply streaming patterns (concept from HTTP/2 integration)
         if (strategy.isLargeResponse() && retObj instanceof java.util.Collection) {
-            generateCollectionResponseOptimized((java.util.Collection<?>) retObj, adapter, jsonWriter, strategy, responseId);
+            generateCollectionResponseOptimized((java.util.Collection<?>) retObj, gson, jsonWriter, strategy, responseId);
         } else {
-            adapter.toJson(jsonWriter, retObj);
+            gson.toJson(retObj, retObj.getClass(), jsonWriter);
         }
 
         jsonWriter.endObject();
         jsonWriter.flush();
+        jsonWriter.close();
 
         // Record object response metrics
         if (responseMetrics != null) {
@@ -412,7 +418,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
     /**
      * Generate large collection responses with streaming optimization (pattern from HTTP/2 integration).
      */
-    private void generateCollectionResponseOptimized(java.util.Collection<?> collection, JsonAdapter<Object> adapter,
+    private void generateCollectionResponseOptimized(java.util.Collection<?> collection, Gson gson,
                                                     JsonWriter jsonWriter, ResponseGenerationStrategy strategy,
                                                     String responseId) throws IOException {
 
@@ -420,7 +426,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         int itemCount = 0;
 
         for (Object item : collection) {
-            adapter.toJson(jsonWriter, item);
+            gson.toJson(item, item.getClass(), jsonWriter);
             itemCount++;
 
             // Apply flow control for large collections (pattern from HTTP/2 integration)
@@ -493,7 +499,6 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         }
 
         // For XML element responses, estimate based on envelope size
-	// Shouldn't happen even with Exceptions, when in enableJSONOnly-true mode
         if (outMsgCtxt.getEnvelope() != null) {
             // Conservative estimation
             return 2048L; // 2KB default for XML responses
@@ -516,29 +521,28 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
      * Generate unique response ID for tracking.
      */
     private String generateResponseId() {
-        return "emh2-resp-" + System.currentTimeMillis() + "-" + responseCounter.incrementAndGet();
+        return "egh2-resp-" + System.currentTimeMillis() + "-" + responseCounter.incrementAndGet();
     }
 
     /**
-     * Memory pressure monitoring for large responses.
-     * Note: Removed System.gc() call - libraries should not interfere with application GC strategy.
+     * Memory monitoring for large responses (pattern from HTTP/2 integration).
      */
     private void monitorMemoryPressureForResponse() {
+        Runtime runtime = Runtime.getRuntime();
+        long totalMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+        long usedMemory = totalMemory - freeMemory;
+        double memoryUsagePercentage = (double) usedMemory / totalMemory * 100;
+
         if (log.isDebugEnabled()) {
-            Runtime runtime = Runtime.getRuntime();
-            long totalMemory = runtime.totalMemory();
-            long freeMemory = runtime.freeMemory();
-            long usedMemory = totalMemory - freeMemory;
-            double memoryUsage = (double) usedMemory / totalMemory * 100;
+            log.debug("Memory pressure monitoring for Enhanced GSON H2 response generation - Used: " + formatBytes(usedMemory)
+                + " (" + String.format("%.1f%%", memoryUsagePercentage) + "), Free: " + formatBytes(freeMemory)
+                + ", Total: " + formatBytes(totalMemory));
+        }
 
-            log.debug("Memory pressure monitoring during large response generation: "
-                + String.format("%.1f%% used (%s / %s)", memoryUsage,
-                formatBytes(usedMemory), formatBytes(totalMemory)));
-
-            if (memoryUsage > 85.0) {
-                log.warn("High memory pressure detected (" + String.format("%.1f", memoryUsage) + "% used) during JSON response generation. " +
-                        "Consider increasing heap size or reducing response size.");
-            }
+        if (memoryUsagePercentage > 80) {
+            log.warn("High memory usage detected during large response generation: " + String.format("%.1f%%", memoryUsagePercentage)
+                + " (" + formatBytes(usedMemory) + "/" + formatBytes(totalMemory) + "). Consider monitoring application memory usage.");
         }
     }
 
@@ -577,7 +581,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
     /**
      * Get response generation statistics for monitoring.
      */
-    public static JsonProcessingMetrics.Statistics getResponseStatistics() {
+    public static GsonProcessingMetrics.Statistics getResponseStatistics() {
         return responseMetrics.getStatistics();
     }
 
@@ -594,7 +598,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
     public static void resetStatistics() {
         responseMetrics.resetStatistics();
         responseCounter.set(0);
-        log.info("Enhanced Moshi H2 JSON Formatter statistics reset");
+        log.info("Enhanced GSON H2 JSON Formatter statistics reset");
     }
 
     /**
@@ -646,7 +650,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
     }
 
     /**
-     * Enhanced MoshiXMLStreamWriter with HTTP/2 streaming optimizations and performance monitoring.
+     * Enhanced GsonXMLStreamWriter with HTTP/2 streaming optimizations and performance monitoring.
      *
      * Key enhancements:
      * - Adaptive buffering based on payload size
@@ -655,8 +659,8 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
      * - Large payload streaming with flow control
      * - Debug logging for verification
      */
-    private static class EnhancedMoshiXMLStreamWriter extends MoshiXMLStreamWriter {
-        private static final Log enhancedLog = LogFactory.getLog(EnhancedMoshiXMLStreamWriter.class);
+    private static class EnhancedGsonXMLStreamWriter extends GsonXMLStreamWriter {
+        private static final Log enhancedLog = LogFactory.getLog(EnhancedGsonXMLStreamWriter.class);
 
         private final ResponseGenerationStrategy strategy;
         private final String responseId;
@@ -672,7 +676,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         private boolean memoryOptimized = false;
         private long lastGcHint = 0;
 
-        public EnhancedMoshiXMLStreamWriter(JsonWriter jsonWriter, QName elementQname, ArrayList<XmlSchema> schemas,
+        public EnhancedGsonXMLStreamWriter(JsonWriter jsonWriter, QName elementQname, ArrayList<XmlSchema> schemas,
                                           ConfigurationContext configurationContext, ResponseGenerationStrategy strategy,
                                           String responseId) {
             super(jsonWriter, elementQname, schemas, configurationContext);
@@ -681,7 +685,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             this.startTime = System.nanoTime();
 
             if (enhancedLog.isDebugEnabled()) {
-                enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] Created with strategy="
+                enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] Created with strategy="
                     + strategy.getStrategyType() + ", EstimatedSize=" + formatBytesLocal(strategy.getEstimatedSize()));
             }
         }
@@ -689,7 +693,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         @Override
         public void writeStartElement(String localName) throws XMLStreamException {
             if (enhancedLog.isDebugEnabled() && elementsWritten < 10) {
-                enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] writeStartElement: " + localName
+                enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] writeStartElement: " + localName
                     + " (element #" + elementsWritten + ")");
             }
 
@@ -715,7 +719,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         public void writeCharacters(String text) throws XMLStreamException {
             if (enhancedLog.isDebugEnabled() && writeOperations < 5) {
                 String displayText = text.length() > 50 ? text.substring(0, 50) + "..." : text;
-                enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] writeCharacters: '" + displayText
+                enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] writeCharacters: '" + displayText
                     + "' (length=" + text.length() + ")");
             }
 
@@ -734,7 +738,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         @Override
         public void writeEndElement() throws XMLStreamException {
             if (enhancedLog.isDebugEnabled() && elementsWritten <= 10) {
-                enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] writeEndElement (element #" + elementsWritten + ")");
+                enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] writeEndElement (element #" + elementsWritten + ")");
             }
 
             // Call parent implementation
@@ -753,7 +757,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             long processingTime = (System.nanoTime() - startTime) / 1_000_000;
 
             if (enhancedLog.isDebugEnabled()) {
-                enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] writeEndDocument() - Processing COMPLETE:"
+                enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] writeEndDocument() - Processing COMPLETE:"
                     + " ElementsWritten=" + elementsWritten
                     + ", WriteOperations=" + writeOperations
                     + ", EstimatedBytes=" + formatBytesLocal(bytesEstimate)
@@ -768,7 +772,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             } catch (Exception e) {
                 // Ignore metrics recording errors
                 if (enhancedLog.isDebugEnabled()) {
-                    enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] Failed to record metrics: " + e.getMessage());
+                    enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] Failed to record metrics: " + e.getMessage());
                 }
             }
 
@@ -779,7 +783,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         @Override
         public void flush() throws XMLStreamException {
             if (enhancedLog.isDebugEnabled()) {
-                enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] flush() called - BytesEstimate=" + formatBytesLocal(bytesEstimate));
+                enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] flush() called - BytesEstimate=" + formatBytesLocal(bytesEstimate));
             }
 
             // Call parent implementation
@@ -807,8 +811,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         }
 
         /**
-         * Monitor memory pressure during large response processing.
-         * Note: Removed System.gc() call - libraries should not interfere with application GC strategy.
+         * Monitor memory pressure for large responses.
          */
         private void monitorMemoryForLargeResponse() {
             long currentTime = System.nanoTime();
@@ -819,21 +822,22 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
                 long totalMemory = runtime.totalMemory();
                 long freeMemory = runtime.freeMemory();
                 long usedMemory = totalMemory - freeMemory;
-                double memoryUsage = (double) usedMemory / totalMemory * 100;
+                double memoryUsagePercentage = (double) usedMemory / totalMemory * 100;
 
                 if (enhancedLog.isDebugEnabled()) {
-                    enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] Memory monitoring: "
-                        + String.format("%.1f%% used (%s / %s)", memoryUsage,
-                        formatBytesLocal(usedMemory), formatBytesLocal(totalMemory)));
+                    enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] Memory monitoring - Used: "
+                        + formatBytesLocal(usedMemory) + " (" + String.format("%.1f%%", memoryUsagePercentage)
+                        + "), Free: " + formatBytesLocal(freeMemory) + ", Total: " + formatBytesLocal(totalMemory));
                 }
 
-                if (memoryUsage > 85.0) {
-                    enhancedLog.warn("High memory pressure detected (" + String.format("%.1f", memoryUsage) + "% used) in XML stream writer. " +
-                            "Consider increasing heap size.");
+                if (memoryUsagePercentage > 80) {
+                    enhancedLog.warn("EnhancedGsonXMLStreamWriter: [" + responseId + "] High memory usage detected: "
+                        + String.format("%.1f%%", memoryUsagePercentage) + " (" + formatBytesLocal(usedMemory)
+                        + "/" + formatBytesLocal(totalMemory) + "). Consider monitoring application memory usage.");
                 }
 
                 lastGcHint = currentTime;
-                memoryOptimized = true; // Keep this flag to indicate memory monitoring occurred
+                memoryOptimized = true;
             }
         }
 
@@ -866,7 +870,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
         private void performAdaptiveFlush() {
             try {
                 if (enhancedLog.isDebugEnabled()) {
-                    enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] Performing adaptive flush"
+                    enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] Performing adaptive flush"
                         + " - WriteOps=" + writeOperations + ", EstimatedBytes=" + formatBytesLocal(bytesEstimate));
                 }
 
@@ -879,7 +883,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
             } catch (XMLStreamException e) {
                 // Log flush errors but continue processing
                 if (enhancedLog.isDebugEnabled()) {
-                    enhancedLog.debug("EnhancedMoshiXMLStreamWriter: [" + responseId + "] Adaptive flush failed: " + e.getMessage());
+                    enhancedLog.debug("EnhancedGsonXMLStreamWriter: [" + responseId + "] Adaptive flush failed: " + e.getMessage());
                 }
             }
         }
@@ -897,7 +901,7 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
          */
         public String getStatistics() {
             long processingTime = (System.nanoTime() - startTime) / 1_000_000;
-            return String.format("EnhancedMoshiXMLStreamWriter[%s]: Elements=%d, Ops=%d, Bytes=%s, Time=%dms, MemOpt=%s",
+            return String.format("EnhancedGsonXMLStreamWriter[%s]: Elements=%d, Ops=%d, Bytes=%s, Time=%dms, MemOpt=%s",
                 responseId, elementsWritten, writeOperations, formatBytesLocal(bytesEstimate), processingTime, memoryOptimized);
         }
 
