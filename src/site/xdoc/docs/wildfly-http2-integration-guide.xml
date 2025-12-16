@@ -39,6 +39,8 @@
 &lt;/transportSender&gt;
 </pre>
 
+</div>
+
 <h2>WildFly Server-Level HTTP/2 Configuration (RECOMMENDED)</h2>
 
 <div style="background-color: #e8f5e8; border: 1px solid #4CAF50; padding: 10px; margin: 10px 0;">
