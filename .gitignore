@@ -1,6 +1,7 @@
 .project
 .classpath
 .settings
+.claude
 target
 /modules/tool/axis2-eclipse-codegen-plugin/META-INF
 /modules/tool/axis2-eclipse-codegen-plugin/lib
