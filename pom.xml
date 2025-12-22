@@ -508,7 +508,7 @@
         <project.build.outputTimestamp>2025-03-04T22:45:29Z</project.build.outputTimestamp>
         <maven.compiler.release>17</maven.compiler.release>
         <jacoco.version>0.8.14</jacoco.version>
-        <asm.version>9.9</asm.version>
+        <asm.version>9.9.1</asm.version>
     </properties>
 
     <dependencyManagement>
