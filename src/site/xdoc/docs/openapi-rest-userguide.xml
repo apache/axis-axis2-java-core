@@ -45,7 +45,7 @@ interactive <a href="https://swagger.io/tools/swagger-ui/">Swagger UI</a> docume
 (Spring Boot, Express.js, etc.) while maintaining API compatibility for frontend applications
 such as Excel Add-ins, React apps, and TypeScript clients.</p>
 
-<p><strong>New in Axis2 2.0:</strong> Complete OpenAPI 3.0.1 integration with automatic specification
+<p><strong>New in Axis2 2.0.1:</strong> Complete OpenAPI 3.0.1 integration with automatic specification
 generation, Swagger UI support, and flexible generation modes (AUTOMATIC/STATIC/HYBRID) designed
 for real-world enterprise usage patterns.</p>
 
@@ -135,6 +135,8 @@ distribution</a>.</p>
 
 <p>The sample provides a complete financial services API demonstrating authentication,
 data management, and calculation services with full OpenAPI 3.0.1 documentation.</p>
+
+<p><strong>Testing the Sample:</strong> The swagger-server sample includes comprehensive unit tests for all service components and models. To run the tests, navigate to the sample directory and execute <code>mvn test</code>. The test suite covers authentication flows, data validation, JSON serialization/deserialization, and service method functionality. Individual test classes can be found in <code>src/test/java/org/apache/axis2/samples/swagger</code> and provide excellent examples of how to test REST services with custom authentication patterns and complex data models.</p>
 
 <h2>Creating OpenAPI REST Services</h2>
 

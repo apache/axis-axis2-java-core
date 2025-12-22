@@ -160,6 +160,12 @@ supports the creation of Web Services using JavaScript Object Notation, with <a 
 build POJO based services that receive and return JSON.</p>
 </li>
 <li>
+<p style="margin-bottom: 0in"><strong>OpenAPI support</strong> - Axis2
+supports automatic generation of <a href=
+"https://spec.openapis.org/oas/latest.html">OpenAPI 3.0</a> specifications for REST and JSON services, with integrated <a href=
+"https://swagger.io/tools/swagger-ui/">Swagger UI</a> for interactive API documentation and testing, enabling modern API development workflows.</p>
+</li>
+<li>
 <p style="margin-bottom: 0in"><strong>Composition and
 Extensibility</strong> - Modules and phases improve support for
 composability and extensibility. Modules support composability and

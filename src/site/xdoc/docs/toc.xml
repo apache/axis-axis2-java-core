@@ -54,7 +54,7 @@ Guide</a></li>
 Guide</a></li>
 <li><a href="adv-userguide.html">Advanced User's
 Guide</a></li>
-<li><strong><a href="openapi-rest-userguide.html">OpenAPI REST Services Guide</a></strong>
+<li><a href="openapi-rest-userguide.html">OpenAPI REST Services Guide</a>
 <ul>
 <li>7.1 <a href="openapi-rest-userguide.html#Introduction">Getting Started with OpenAPI</a></li>
 <li>7.2 <a href="openapi-rest-userguide.html#OpenAPI_Integration_Features">OpenAPI Integration Features</a></li>
