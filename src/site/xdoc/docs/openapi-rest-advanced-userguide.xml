@@ -1,0 +1,1472 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content=""/>
+  <title>Apache Axis2 OpenAPI Advanced Enterprise User Guide</title>
+</head>
+
+<body dir="ltr" lang="en-US">
+<a name="_Toc96697850" id="_Toc96697850"></a>
+
+<h1 align="center">Apache Axis2 OpenAPI Advanced Enterprise User Guide</h1>
+
+<p><strong>Enterprise-Grade OpenAPI Integration</strong> - This advanced guide demonstrates the comprehensive
+OpenAPI capabilities introduced in Axis2 2.0.1, featuring enterprise-ready configuration management,
+modern authentication patterns including Bearer tokens and OAuth2, advanced security schemes, and
+sophisticated customization options. Perfect for building modern REST APIs that meet enterprise
+requirements for security, scalability, and developer experience.</p>
+
+<p><strong>New in Axis2 2.0.1:</strong> Complete enterprise-grade OpenAPI system with 40+ configuration
+options, multi-source configuration loading (properties files, system properties, environment variables),
+comprehensive security scheme integration (OAuth2, API Key, Bearer, Basic Auth), advanced SwaggerUI
+customization with 20+ options, OpenAPI customizer interface for post-processing, intelligent resource
+filtering, and performance optimizations.</p>
+
+<p>This guide focuses on modern enterprise patterns including Bearer token authentication, OAuth2
+integration, microservices architectures, cloud-native deployments, and developer-first API design
+principles. All examples use contemporary security and architectural patterns.</p>
+
+<p>For legacy system integration patterns, see the <a href="openapi-rest-userguide.html">Basic OpenAPI User Guide</a>.</p>
+
+<a name="Introduction"></a>
+
+<h2>Introduction - Enterprise OpenAPI Architecture</h2>
+
+<p>Axis2's OpenAPI integration represents a complete enterprise-grade solution for REST API development,
+documentation, and management. Unlike basic API documentation tools, this system provides:</p>
+
+<ul>
+<li><strong>Configuration-Driven Architecture:</strong> 40+ configurable properties with multi-source loading</li>
+<li><strong>Enterprise Security:</strong> OAuth2, JWT Bearer tokens, API keys, and custom authentication schemes</li>
+<li><strong>Developer Experience:</strong> Advanced SwaggerUI with 20+ customization options</li>
+<li><strong>Extensibility:</strong> OpenAPI customizer interface for post-processing and enhancements</li>
+<li><strong>Performance:</strong> Intelligent caching, resource filtering, and optimization</li>
+<li><strong>Cloud-Native:</strong> Environment variable support, container-ready configuration</li>
+</ul>
+
+<p>This guide assumes familiarity with modern REST API design, OAuth2/JWT authentication, and
+enterprise development patterns. All examples follow contemporary security and architectural practices.</p>
+
+<h2>Enterprise Configuration System</h2>
+
+<p>The Axis2 OpenAPI module provides a sophisticated configuration system supporting multiple
+sources and precedence levels, designed for enterprise deployment scenarios.</p>
+
+<h3>Configuration Sources and Precedence</h3>
+
+<p>Configuration is loaded from multiple sources in the following precedence order (highest to lowest):</p>
+
+<ol>
+<li><strong>System Properties</strong> - JVM system properties (highest precedence)</li>
+<li><strong>Environment Variables</strong> - OS environment variables</li>
+<li><strong>Properties Files</strong> - Classpath properties files</li>
+<li><strong>Module Parameters</strong> - axis2.xml module configuration</li>
+<li><strong>Default Values</strong> - Built-in defaults (lowest precedence)</li>
+</ol>
+
+<h3>Properties File Configuration</h3>
+
+<p>Create <code>openapi.properties</code> in your classpath for comprehensive configuration:</p>
+
+<pre>
+# API Information
+openapi.title=Financial Services API
+openapi.description=Enterprise financial services with comprehensive security
+openapi.version=2.1.0
+openapi.contact.name=API Team
+openapi.contact.email=api-team@company.com
+openapi.contact.url=https://company.com/api-docs
+openapi.license.name=Commercial License
+openapi.license.url=https://company.com/license
+openapi.termsOfServiceUrl=https://company.com/terms
+
+# Security Configuration
+openapi.security.oauth2.enabled=true
+openapi.security.oauth2.authorizationUrl=https://auth.company.com/oauth2/authorize
+openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
+openapi.security.oauth2.scopes=read:markets,write:trades,admin:users
+openapi.security.apikey.enabled=true
+openapi.security.apikey.name=X-API-Key
+openapi.security.apikey.location=header
+
+# Resource Filtering
+openapi.readAllResources=false
+openapi.resourcePackages=com.company.api.v2,com.company.services
+openapi.resourceClasses=com.company.api.AuthController,com.company.api.TradeController
+openapi.ignoredRoutes=/internal/.*,/health,/metrics
+
+# Swagger UI Configuration
+openapi.swaggerUi.enabled=true
+openapi.swaggerUi.version=4.18.0
+openapi.swaggerUi.deepLinking=true
+openapi.swaggerUi.docExpansion=none
+openapi.swaggerUi.filter=true
+openapi.swaggerUi.customCss=/assets/custom-swagger.css
+openapi.swaggerUi.customJs=/assets/custom-swagger.js
+
+# Performance and Behavior
+openapi.prettyPrint=false
+openapi.useContextBasedConfig=true
+openapi.scanKnownConfigLocations=true
+</pre>
+
+<h3>Environment Variable Configuration</h3>
+
+<p>All properties can be overridden with environment variables for cloud deployments:</p>
+
+<pre>
+# Docker/Kubernetes environment variables
+OPENAPI_TITLE="Production Financial API"
+OPENAPI_SECURITY_OAUTH2_ENABLED=true
+OPENAPI_SECURITY_OAUTH2_TOKEN_URL=https://prod-auth.company.com/oauth2/token
+OPENAPI_SWAGGER_UI_ENABLED=false  # Disable UI in production
+OPENAPI_RESOURCE_PACKAGES=com.company.api.prod
+</pre>
+
+<h3>System Properties Configuration</h3>
+
+<p>Override any setting with JVM system properties:</p>
+
+<pre>
+java -Dopenapi.title="Development API" \
+     -Dopenapi.security.oauth2.enabled=false \
+     -Dopenapi.swaggerUi.enabled=true \
+     -jar your-application.jar
+</pre>
+
+<h2>Modern Authentication Patterns</h2>
+
+<p>The OpenAPI system supports modern authentication patterns including OAuth2, JWT Bearer tokens,
+and API keys with comprehensive security scheme integration.</p>
+
+<h3>Bearer Token Authentication (JWT)</h3>
+
+<p>Modern REST APIs use Bearer token authentication. Configure JWT Bearer tokens:</p>
+
+<pre>
+# properties configuration
+openapi.security.bearer.enabled=true
+openapi.security.bearer.format=JWT
+openapi.security.bearer.description=JWT Bearer token authentication
+</pre>
+
+<p>Service implementation with Bearer authentication:</p>
+
+<pre>
+@Path("/api/v2")
+@Api(value = "Financial Services API v2")
+public class FinancialServicesController {
+
+    @POST
+    @Path("/trades")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+        value = "Create new trade",
+        notes = "Create a new trade with Bearer token authentication",
+        authorizations = @Authorization(value = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(code = 201, message = "Trade created successfully"),
+        @ApiResponse(code = 401, message = "Unauthorized - invalid token"),
+        @ApiResponse(code = 403, message = "Forbidden - insufficient permissions")
+    })
+    public TradeResponse createTrade(
+            @HeaderParam("Authorization") String bearerToken,
+            @ApiParam("Trade details") @Valid TradeRequest request) {
+
+        // Extract JWT token from Bearer header
+        String jwt = extractJwtFromBearerHeader(bearerToken);
+
+        // Validate JWT and extract user claims
+        JwtClaims claims = jwtValidator.validateToken(jwt);
+        UserContext userContext = UserContext.fromJwtClaims(claims);
+
+        // Business logic with authenticated user context
+        Trade trade = tradeService.createTrade(request, userContext);
+
+        return TradeResponse.from(trade);
+    }
+
+    private String extractJwtFromBearerHeader(String bearerToken) {
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            throw new UnauthorizedException("Invalid Bearer token format");
+        }
+        return bearerToken.substring(7);
+    }
+}
+</pre>
+
+<p>Client usage with Bearer tokens:</p>
+
+<pre>
+# Login to get JWT token
+curl -X POST https://api.company.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"user@company.com","password":"secure123"}'
+
+# Response:
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "scope": "read:trades write:trades"
+}
+
+# Use JWT token for API calls
+curl -X POST https://api.company.com/api/v2/trades \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbol": "AAPL",
+    "quantity": 100,
+    "side": "BUY",
+    "orderType": "MARKET"
+  }'
+</pre>
+
+<h3>OAuth2 Integration</h3>
+
+<p>Complete OAuth2 flow configuration for enterprise security:</p>
+
+<pre>
+# OAuth2 configuration
+openapi.security.oauth2.enabled=true
+openapi.security.oauth2.authorizationUrl=https://auth.company.com/oauth2/authorize
+openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
+openapi.security.oauth2.refreshUrl=https://auth.company.com/oauth2/refresh
+openapi.security.oauth2.scopes=read:markets,write:trades,admin:users,read:reports
+</pre>
+
+<p>OAuth2 service implementation:</p>
+
+<pre>
+@Path("/api/v2/reports")
+@Api(value = "Financial Reports API")
+public class ReportsController {
+
+    @GET
+    @Path("/portfolio/{portfolioId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+        value = "Get portfolio report",
+        notes = "Requires 'read:reports' scope",
+        authorizations = @Authorization(
+            value = "oauth2",
+            scopes = @AuthorizationScope(scope = "read:reports", description = "Read access to reports")
+        )
+    )
+    public PortfolioReport getPortfolioReport(
+            @HeaderParam("Authorization") String bearerToken,
+            @PathParam("portfolioId") @ApiParam("Portfolio identifier") String portfolioId) {
+
+        // Validate OAuth2 token and scopes
+        OAuth2TokenInfo tokenInfo = oauth2Validator.validateToken(bearerToken);
+        if (!tokenInfo.hasScope("read:reports")) {
+            throw new ForbiddenException("Insufficient scope for reports access");
+        }
+
+        return reportsService.generatePortfolioReport(portfolioId, tokenInfo.getUserId());
+    }
+}
+</pre>
+
+<h3>API Key Authentication</h3>
+
+<p>Enterprise API key management with flexible header configuration:</p>
+
+<pre>
+# API Key configuration
+openapi.security.apikey.enabled=true
+openapi.security.apikey.name=X-API-Key
+openapi.security.apikey.location=header
+openapi.security.apikey.description=Enterprise API key for programmatic access
+</pre>
+
+<p>Service with API key authentication:</p>
+
+<pre>
+@Path("/api/v2/market-data")
+@Api(value = "Market Data API")
+public class MarketDataController {
+
+    @GET
+    @Path("/quotes/{symbol}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+        value = "Get real-time quote",
+        notes = "Requires valid API key",
+        authorizations = @Authorization(value = "apiKeyAuth")
+    )
+    public QuoteResponse getQuote(
+            @HeaderParam("X-API-Key") @ApiParam("API Key") String apiKey,
+            @PathParam("symbol") @ApiParam("Stock symbol") String symbol) {
+
+        // Validate API key and get associated permissions
+        ApiKeyInfo keyInfo = apiKeyService.validateKey(apiKey);
+        if (!keyInfo.hasMarketDataAccess()) {
+            throw new ForbiddenException("API key does not have market data access");
+        }
+
+        Quote quote = marketDataService.getRealTimeQuote(symbol);
+        return QuoteResponse.from(quote);
+    }
+}
+</pre>
+
+<h2>Advanced Security Scheme Configuration</h2>
+
+<p>The OpenAPI system supports multiple simultaneous security schemes with sophisticated configuration options.</p>
+
+<h3>Multi-Security Scheme Setup</h3>
+
+<p>Configure multiple authentication methods for different API endpoints:</p>
+
+<pre>
+# Multiple security schemes configuration
+openapi.security.bearer.enabled=true
+openapi.security.bearer.format=JWT
+openapi.security.bearer.description=JWT Bearer tokens for user authentication
+
+openapi.security.apikey.enabled=true
+openapi.security.apikey.name=X-API-Key
+openapi.security.apikey.location=header
+openapi.security.apikey.description=API keys for service-to-service communication
+
+openapi.security.oauth2.enabled=true
+openapi.security.oauth2.authorizationUrl=https://auth.company.com/oauth2/authorize
+openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
+openapi.security.oauth2.scopes=read:data,write:data,admin:system
+
+openapi.security.basic.enabled=false  # Disable basic auth for security
+</pre>
+
+<h3>Programmatic Security Configuration</h3>
+
+<p>Advanced security setup using the OpenApiCustomizer interface:</p>
+
+<pre>
+@Component
+public class SecuritySchemeCustomizer implements OpenApiCustomizer {
+
+    @Override
+    public void customize(OpenAPI openAPI) {
+        // Add OAuth2 security scheme with detailed flow configuration
+        SecurityScheme oauth2 = new SecurityScheme()
+            .type(SecurityScheme.Type.OAUTH2)
+            .description("OAuth2 authentication with PKCE support")
+            .flows(new OAuthFlows()
+                .authorizationCode(new OAuthFlow()
+                    .authorizationUrl("https://auth.company.com/oauth2/authorize")
+                    .tokenUrl("https://auth.company.com/oauth2/token")
+                    .refreshUrl("https://auth.company.com/oauth2/refresh")
+                    .scopes(createOAuth2Scopes())
+                )
+            );
+
+        // Add JWT Bearer token scheme
+        SecurityScheme bearerAuth = new SecurityScheme()
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT")
+            .description("JWT Bearer token authentication");
+
+        // Add enterprise API key scheme
+        SecurityScheme apiKeyAuth = new SecurityScheme()
+            .type(SecurityScheme.Type.APIKEY)
+            .name("X-API-Key")
+            .in(SecurityScheme.In.HEADER)
+            .description("Enterprise API key for service authentication");
+
+        // Register all security schemes
+        openAPI.getComponents()
+            .addSecuritySchemes("oauth2", oauth2)
+            .addSecuritySchemes("bearerAuth", bearerAuth)
+            .addSecuritySchemes("apiKeyAuth", apiKeyAuth);
+
+        // Add global security requirements
+        openAPI.addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+               .addSecurityItem(new SecurityRequirement().addList("apiKeyAuth"))
+               .addSecurityItem(new SecurityRequirement().addList("oauth2"));
+    }
+
+    private Scopes createOAuth2Scopes() {
+        return new Scopes()
+            .addString("read:markets", "Read access to market data")
+            .addString("write:trades", "Execute trades and orders")
+            .addString("read:portfolio", "Read portfolio information")
+            .addString("write:portfolio", "Modify portfolio settings")
+            .addString("admin:users", "Administrative access to user management")
+            .addString("admin:system", "System administration privileges");
+    }
+
+    @Override
+    public int getPriority() {
+        return 100; // High priority for security configuration
+    }
+}
+</pre>
+
+<h2>Advanced SwaggerUI Customization</h2>
+
+<p>The OpenAPI system provides extensive SwaggerUI customization capabilities for enterprise branding and functionality.</p>
+
+<h3>Complete SwaggerUI Configuration</h3>
+
+<pre>
+# Complete SwaggerUI customization
+openapi.swaggerUi.enabled=true
+openapi.swaggerUi.version=4.18.0
+
+# UI Behavior Configuration
+openapi.swaggerUi.deepLinking=true
+openapi.swaggerUi.docExpansion=none
+openapi.swaggerUi.filter=true
+openapi.swaggerUi.displayOperationId=true
+openapi.swaggerUi.displayRequestDuration=true
+openapi.swaggerUi.defaultModelsExpandDepth=2
+openapi.swaggerUi.defaultModelExpandDepth=2
+openapi.swaggerUi.maxDisplayedTags=20
+
+# Request/Response Configuration
+openapi.swaggerUi.showRequestHeaders=true
+openapi.swaggerUi.showResponseHeaders=true
+openapi.swaggerUi.supportedSubmitMethods=get,post,put,delete,patch
+openapi.swaggerUi.validatorUrl=https://validator.company.com/validator
+
+# OAuth2 Configuration for SwaggerUI
+openapi.swaggerUi.oauth2RedirectUrl=https://api.company.com/swagger-ui/oauth2-redirect.html
+openapi.swaggerUi.oauth2ClientId=swagger-ui-client
+openapi.swaggerUi.oauth2ClientSecret=swagger-ui-secret
+openapi.swaggerUi.oauth2Realm=company-api
+openapi.swaggerUi.oauth2AppName=Financial Services API
+
+# Custom Styling
+openapi.swaggerUi.customCss=/assets/corporate-swagger-theme.css
+openapi.swaggerUi.customJs=/assets/swagger-enhancements.js
+</pre>
+
+<h3>Corporate Branding with Custom CSS</h3>
+
+<p>Create corporate-themed SwaggerUI with custom CSS (<code>/assets/corporate-swagger-theme.css</code>):</p>
+
+<pre>
+/* Corporate theme for SwaggerUI */
+.swagger-ui .topbar {
+    background-color: #1e3a8a;
+    border-bottom: 3px solid #3b82f6;
+}
+
+.swagger-ui .topbar .download-url-wrapper .select-label {
+    color: #ffffff;
+}
+
+.swagger-ui .info .title {
+    color: #1e3a8a;
+    font-size: 2.5em;
+    font-weight: 600;
+}
+
+.swagger-ui .info .description {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+/* Corporate header styling */
+.corporate-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.corporate-header h1 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.corporate-header p {
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+    font-size: 1.1em;
+}
+
+/* Enhanced operation styling */
+.swagger-ui .opblock.opblock-post {
+    border-color: #059669;
+    background: rgba(5, 150, 105, 0.1);
+}
+
+.swagger-ui .opblock.opblock-get {
+    border-color: #0284c7;
+    background: rgba(2, 132, 199, 0.1);
+}
+
+.swagger-ui .opblock.opblock-put {
+    border-color: #ea580c;
+    background: rgba(234, 88, 12, 0.1);
+}
+
+.swagger-ui .opblock.opblock-delete {
+    border-color: #dc2626;
+    background: rgba(220, 38, 38, 0.1);
+}
+
+/* Security badge styling */
+.swagger-ui .auth-wrapper .authorize {
+    background: #059669;
+    border-color: #059669;
+}
+
+.swagger-ui .auth-wrapper .authorize:hover {
+    background: #047857;
+    border-color: #047857;
+}
+
+/* Enhanced model styling */
+.swagger-ui .model-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.swagger-ui .model .model-title {
+    color: #1e3a8a;
+    font-weight: 600;
+}
+</pre>
+
+<h3>Custom JavaScript Enhancements</h3>
+
+<p>Add advanced functionality with custom JavaScript (<code>/assets/swagger-enhancements.js</code>):</p>
+
+<pre>
+// Corporate SwaggerUI enhancements
+window.addEventListener('load', function() {
+    // Add corporate header
+    const infoSection = document.querySelector('.swagger-ui .info');
+    if (infoSection) {
+        const corporateHeader = document.createElement('div');
+        corporateHeader.className = 'corporate-header';
+        corporateHeader.innerHTML = `
+            <h1>Financial Services API</h1>
+            <p>Enterprise-grade financial services with comprehensive security and monitoring</p>
+            <div class="api-status">
+                <span class="status-badge status-healthy">Production Ready</span>
+                <span class="version-badge">v2.1.0</span>
+            </div>
+        `;
+        infoSection.parentNode.insertBefore(corporateHeader, infoSection);
+    }
+
+    // Add authentication helper
+    const authorizeButton = document.querySelector('.btn.authorize');
+    if (authorizeButton) {
+        authorizeButton.addEventListener('click', function() {
+            console.log('Authentication dialog opened');
+            // Add custom authentication logic here
+        });
+    }
+
+    // Enhanced error handling
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+        return originalFetch.apply(this, args)
+            .then(response => {
+                if (response.status === 401) {
+                    showAuthenticationError();
+                } else if (response.status >= 500) {
+                    showServerError();
+                }
+                return response;
+            })
+            .catch(error => {
+                showNetworkError(error);
+                throw error;
+            });
+    };
+
+    // Add helpful tooltips
+    addCustomTooltips();
+
+    // Initialize performance monitoring
+    initializePerformanceMonitoring();
+});
+
+function showAuthenticationError() {
+    const notification = document.createElement('div');
+    notification.className = 'auth-error-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <strong>Authentication Required</strong>
+            <p>Please authenticate using the Authorize button above</p>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+}
+
+function showServerError() {
+    console.warn('Server error detected - check API status');
+}
+
+function showNetworkError(error) {
+    console.error('Network error:', error);
+}
+
+function addCustomTooltips() {
+    // Add tooltips to enhance user experience
+    const operations = document.querySelectorAll('.opblock');
+    operations.forEach(op => {
+        const method = op.querySelector('.opblock-summary-method');
+        if (method) {
+            method.title = 'Click to expand operation details';
+        }
+    });
+}
+
+function initializePerformanceMonitoring() {
+    // Monitor API response times
+    const observer = new PerformanceObserver((list) => {
+        list.getEntries().forEach((entry) => {
+            if (entry.name.includes('/api/')) {
+                console.log(`API Call: ${entry.name} - ${entry.duration.toFixed(2)}ms`);
+            }
+        });
+    });
+    observer.observe({entryTypes: ['navigation', 'resource']});
+}
+</pre>
+
+<h2>OpenAPI Customizer Interface</h2>
+
+<p>The OpenApiCustomizer interface provides powerful post-processing capabilities for advanced OpenAPI specification enhancement.</p>
+
+<h3>Advanced Customizer Implementation</h3>
+
+<pre>
+@Component
+@Order(100) // High priority
+public class EnterpriseOpenApiCustomizer implements OpenApiCustomizer {
+
+    private final ApiDocumentationService documentationService;
+    private final SecurityConfigurationService securityService;
+
+    @Override
+    public void customize(OpenAPI openAPI) {
+        // Enhanced API information
+        enhanceApiInformation(openAPI);
+
+        // Add enterprise security schemes
+        configureEnterpriseSecuritySchemes(openAPI);
+
+        // Add custom extensions
+        addCustomExtensions(openAPI);
+
+        // Configure advanced servers
+        configureServers(openAPI);
+
+        // Add comprehensive examples
+        addComprehensiveExamples(openAPI);
+
+        // Configure enterprise tags
+        configureEnterpriseTags(openAPI);
+    }
+
+    private void enhanceApiInformation(OpenAPI openAPI) {
+        Info info = openAPI.getInfo();
+
+        // Add comprehensive contact information
+        info.contact(new Contact()
+            .name("API Development Team")
+            .email("api-team@company.com")
+            .url("https://company.com/api-support")
+            .extensions(Map.of("x-team-slack", "#api-support"))
+        );
+
+        // Add detailed license information
+        info.license(new License()
+            .name("Commercial License")
+            .url("https://company.com/api-license")
+            .extensions(Map.of(
+                "x-license-type", "commercial",
+                "x-support-level", "enterprise"
+            ))
+        );
+
+        // Add enterprise extensions
+        info.addExtension("x-api-category", "financial-services");
+        info.addExtension("x-compliance", Arrays.asList("SOC2", "PCI-DSS", "ISO27001"));
+        info.addExtension("x-rate-limits", Map.of(
+            "requests-per-minute", 1000,
+            "burst-requests", 100
+        ));
+    }
+
+    private void configureEnterpriseSecuritySchemes(OpenAPI openAPI) {
+        Components components = openAPI.getComponents();
+
+        // OAuth2 with multiple flows
+        SecurityScheme oauth2 = new SecurityScheme()
+            .type(SecurityScheme.Type.OAUTH2)
+            .description("OAuth2 with PKCE support")
+            .flows(new OAuthFlows()
+                .authorizationCode(createAuthorizationCodeFlow())
+                .clientCredentials(createClientCredentialsFlow())
+            );
+
+        // JWT Bearer with detailed configuration
+        SecurityScheme jwtBearer = new SecurityScheme()
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT")
+            .description("JWT Bearer tokens with RS256 signing")
+            .addExtension("x-token-issuer", "https://auth.company.com")
+            .addExtension("x-token-audience", "financial-api")
+            .addExtension("x-token-expiry", "1h");
+
+        // Enterprise API key
+        SecurityScheme enterpriseApiKey = new SecurityScheme()
+            .type(SecurityScheme.Type.APIKEY)
+            .name("X-API-Key")
+            .in(SecurityScheme.In.HEADER)
+            .description("Enterprise API key with role-based permissions")
+            .addExtension("x-key-rotation", "monthly")
+            .addExtension("x-permissions-model", "rbac");
+
+        components.addSecuritySchemes("oauth2", oauth2)
+                  .addSecuritySchemes("jwtBearer", jwtBearer)
+                  .addSecuritySchemes("enterpriseApiKey", enterpriseApiKey);
+    }
+
+    private OAuthFlow createAuthorizationCodeFlow() {
+        return new OAuthFlow()
+            .authorizationUrl("https://auth.company.com/oauth2/authorize")
+            .tokenUrl("https://auth.company.com/oauth2/token")
+            .refreshUrl("https://auth.company.com/oauth2/refresh")
+            .scopes(createDetailedScopes())
+            .addExtension("x-pkce-required", true)
+            .addExtension("x-token-lifetime", "1h")
+            .addExtension("x-refresh-token-lifetime", "30d");
+    }
+
+    private OAuthFlow createClientCredentialsFlow() {
+        return new OAuthFlow()
+            .tokenUrl("https://auth.company.com/oauth2/token")
+            .scopes(createServiceScopes())
+            .addExtension("x-client-authentication", "client_secret_jwt")
+            .addExtension("x-token-lifetime", "1h");
+    }
+
+    private Scopes createDetailedScopes() {
+        return new Scopes()
+            .addString("read:profile", "Read user profile information")
+            .addString("read:accounts", "Read account information and balances")
+            .addString("read:transactions", "Read transaction history")
+            .addString("write:trades", "Execute trades and manage orders")
+            .addString("read:market-data", "Access real-time market data")
+            .addString("write:portfolio", "Modify portfolio allocations")
+            .addString("admin:users", "Manage user accounts and permissions")
+            .addString("admin:system", "System administration privileges");
+    }
+
+    private void addCustomExtensions(OpenAPI openAPI) {
+        // Add enterprise-specific extensions
+        openAPI.addExtension("x-api-governance", Map.of(
+            "owner", "financial-services-team",
+            "lifecycle-stage", "production",
+            "sla-tier", "gold"
+        ));
+
+        openAPI.addExtension("x-monitoring", Map.of(
+            "health-check", "/health",
+            "metrics", "/metrics",
+            "traces", "distributed-tracing-enabled"
+        ));
+
+        openAPI.addExtension("x-documentation", Map.of(
+            "guides", "https://docs.company.com/api/guides",
+            "tutorials", "https://docs.company.com/api/tutorials",
+            "changelog", "https://docs.company.com/api/changelog"
+        ));
+    }
+
+    private void configureServers(OpenAPI openAPI) {
+        openAPI.servers(Arrays.asList(
+            new Server()
+                .url("https://api.company.com")
+                .description("Production environment")
+                .addExtension("x-environment", "production")
+                .addExtension("x-region", "us-east-1"),
+            new Server()
+                .url("https://staging-api.company.com")
+                .description("Staging environment")
+                .addExtension("x-environment", "staging")
+                .addExtension("x-region", "us-east-1"),
+            new Server()
+                .url("https://dev-api.company.com")
+                .description("Development environment")
+                .addExtension("x-environment", "development")
+                .addExtension("x-region", "us-west-2")
+        ));
+    }
+
+    @Override
+    public int getPriority() {
+        return 100;
+    }
+
+    @Override
+    public boolean shouldApply(OpenAPI openAPI) {
+        // Only apply to production and staging environments
+        String environment = System.getProperty("deployment.environment", "development");
+        return Arrays.asList("production", "staging").contains(environment);
+    }
+}
+</pre>
+
+<h2>Resource Management and Filtering</h2>
+
+<p>Advanced resource filtering and management capabilities for large-scale enterprise APIs.</p>
+
+<h3>Intelligent Resource Discovery</h3>
+
+<pre>
+# Resource filtering configuration
+openapi.readAllResources=false
+
+# Package-based filtering
+openapi.resourcePackages=com.company.api.v2,com.company.services.financial,com.company.auth
+
+# Class-based filtering
+openapi.resourceClasses=com.company.api.TradesController,com.company.api.PortfolioController
+
+# Route exclusion patterns
+openapi.ignoredRoutes=/internal/.*,/admin/.*,/health,/metrics,/actuator/.*
+
+# Custom resource scanner
+openapi.scannerClass=com.company.config.CustomResourceScanner
+</pre>
+
+<h3>Custom Resource Scanner</h3>
+
+<pre>
+@Component
+public class CustomResourceScanner implements ResourceScanner {
+
+    @Override
+    public Set&lt;Class&lt;?&gt;&gt; scanForResources() {
+        Set&lt;Class&lt;?&gt;&gt; resources = new HashSet&lt;&gt;();
+
+        // Scan for annotated controllers
+        resources.addAll(scanForAnnotatedControllers());
+
+        // Scan for service interfaces
+        resources.addAll(scanForServiceInterfaces());
+
+        // Apply business rules for inclusion
+        return resources.stream()
+            .filter(this::shouldIncludeResource)
+            .collect(Collectors.toSet());
+    }
+
+    private Set&lt;Class&lt;?&gt;&gt; scanForAnnotatedControllers() {
+        // Custom logic for finding REST controllers
+        return ClasspathScanner.scan("com.company.api")
+            .filter(clazz -> clazz.isAnnotationPresent(Path.class))
+            .filter(clazz -> clazz.isAnnotationPresent(Api.class))
+            .collect(Collectors.toSet());
+    }
+
+    private boolean shouldIncludeResource(Class&lt;?&gt; resource) {
+        // Business logic for resource inclusion
+        if (resource.isAnnotationPresent(InternalApi.class)) {
+            return false; // Exclude internal APIs
+        }
+
+        if (resource.isAnnotationPresent(DeprecatedApi.class)) {
+            DeprecatedApi deprecation = resource.getAnnotation(DeprecatedApi.class);
+            return !deprecation.excludeFromDocs(); // Include unless explicitly excluded
+        }
+
+        // Include by default
+        return true;
+    }
+}
+</pre>
+
+<h2>Enterprise Integration Examples</h2>
+
+<p>Complete examples demonstrating modern enterprise patterns with comprehensive security and functionality.</p>
+
+<h3>Financial Trading API with Bearer Authentication</h3>
+
+<pre>
+@Path("/api/v2/trading")
+@Api(value = "Trading API", description = "Enterprise trading services with comprehensive security")
+@Component
+public class TradingController {
+
+    @Autowired
+    private TradingService tradingService;
+
+    @Autowired
+    private JwtTokenValidator tokenValidator;
+
+    @POST
+    @Path("/orders")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+        value = "Place trading order",
+        notes = "Execute trading order with comprehensive validation and risk checks",
+        response = OrderResponse.class,
+        authorizations = @Authorization(value = "jwtBearer")
+    )
+    @ApiResponses({
+        @ApiResponse(code = 201, message = "Order placed successfully",
+                    response = OrderResponse.class),
+        @ApiResponse(code = 400, message = "Invalid order parameters",
+                    response = ErrorResponse.class),
+        @ApiResponse(code = 401, message = "Authentication required",
+                    response = ErrorResponse.class),
+        @ApiResponse(code = 403, message = "Insufficient trading permissions",
+                    response = ErrorResponse.class),
+        @ApiResponse(code =429, message = "Rate limit exceeded",
+                    response = ErrorResponse.class)
+    })
+    public Response placeOrder(
+            @HeaderParam("Authorization") @ApiParam("Bearer JWT token") String bearerToken,
+            @ApiParam("Order details") @Valid OrderRequest orderRequest,
+            @Context HttpServletRequest request) {
+
+        try {
+            // Extract and validate JWT token
+            String jwt = extractJwtToken(bearerToken);
+            JwtClaims claims = tokenValidator.validateToken(jwt);
+
+            // Create user context with permissions
+            UserContext userContext = UserContext.builder()
+                .userId(claims.getSubject())
+                .email(claims.getStringClaim("email"))
+                .permissions(extractPermissions(claims))
+                .sessionId(claims.getJwtId())
+                .build();
+
+            // Validate trading permissions
+            validateTradingPermissions(userContext, orderRequest);
+
+            // Execute order with risk management
+            OrderResult result = tradingService.placeOrder(orderRequest, userContext);
+
+            // Build comprehensive response
+            OrderResponse response = OrderResponse.builder()
+                .orderId(result.getOrderId())
+                .status(result.getStatus())
+                .executionPrice(result.getExecutionPrice())
+                .executionTime(result.getExecutionTime())
+                .commission(result.getCommission())
+                .estimatedSettlement(result.getEstimatedSettlement())
+                .riskMetrics(result.getRiskMetrics())
+                .build();
+
+            return Response
+                .status(Response.Status.CREATED)
+                .entity(response)
+                .header("X-Order-Id", result.getOrderId())
+                .header("X-Request-Id", generateRequestId())
+                .build();
+
+        } catch (InvalidTokenException e) {
+            return createErrorResponse(Response.Status.UNAUTHORIZED, "INVALID_TOKEN", e.getMessage());
+        } catch (InsufficientPermissionsException e) {
+            return createErrorResponse(Response.Status.FORBIDDEN, "INSUFFICIENT_PERMISSIONS", e.getMessage());
+        } catch (OrderValidationException e) {
+            return createErrorResponse(Response.Status.BAD_REQUEST, "INVALID_ORDER", e.getMessage());
+        } catch (RiskLimitExceededException e) {
+            return createErrorResponse(Response.Status.BAD_REQUEST, "RISK_LIMIT_EXCEEDED", e.getMessage());
+        }
+    }
+
+    @GET
+    @Path("/orders/{orderId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+        value = "Get order status",
+        notes = "Retrieve detailed order information and execution status",
+        response = OrderStatusResponse.class,
+        authorizations = @Authorization(value = "jwtBearer")
+    )
+    public Response getOrderStatus(
+            @HeaderParam("Authorization") String bearerToken,
+            @PathParam("orderId") @ApiParam("Order identifier") String orderId) {
+
+        String jwt = extractJwtToken(bearerToken);
+        JwtClaims claims = tokenValidator.validateToken(jwt);
+        UserContext userContext = createUserContext(claims);
+
+        OrderStatus status = tradingService.getOrderStatus(orderId, userContext);
+        OrderStatusResponse response = OrderStatusResponse.from(status);
+
+        return Response.ok(response)
+            .header("Cache-Control", "no-cache")
+            .header("X-Request-Id", generateRequestId())
+            .build();
+    }
+
+    private String extractJwtToken(String bearerToken) {
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            throw new InvalidTokenException("Invalid Bearer token format");
+        }
+        return bearerToken.substring(7);
+    }
+
+    private Set&lt;String&gt; extractPermissions(JwtClaims claims) {
+        try {
+            return new HashSet&lt;&gt;(claims.getStringListClaim("permissions"));
+        } catch (Exception e) {
+            return Collections.emptySet();
+        }
+    }
+
+    private void validateTradingPermissions(UserContext userContext, OrderRequest orderRequest) {
+        if (!userContext.hasPermission("trade:execute")) {
+            throw new InsufficientPermissionsException("Trading permission required");
+        }
+
+        if (orderRequest.getOrderValue() > 100000 &amp;&amp; !userContext.hasPermission("trade:large_orders")) {
+            throw new InsufficientPermissionsException("Large order permission required");
+        }
+    }
+
+    private Response createErrorResponse(Response.Status status, String errorCode, String message) {
+        ErrorResponse error = ErrorResponse.builder()
+            .errorCode(errorCode)
+            .message(message)
+            .timestamp(Instant.now())
+            .requestId(generateRequestId())
+            .build();
+
+        return Response.status(status)
+            .entity(error)
+            .header("X-Request-Id", error.getRequestId())
+            .build();
+    }
+
+    private String generateRequestId() {
+        return UUID.randomUUID().toString();
+    }
+}
+</pre>
+
+<h3>Modern Request/Response Models</h3>
+
+<pre>
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(description = "Trading order request with comprehensive validation")
+public class OrderRequest {
+
+    @NotNull(message = "Symbol is required")
+    @Pattern(regexp = "[A-Z]{1,5}", message = "Invalid symbol format")
+    @ApiModelProperty(value = "Stock symbol", required = true, example = "AAPL")
+    private String symbol;
+
+    @NotNull(message = "Order side is required")
+    @ApiModelProperty(value = "Order side", required = true, allowableValues = "BUY,SELL")
+    private OrderSide side;
+
+    @NotNull(message = "Quantity is required")
+    @DecimalMin(value = "0.01", message = "Quantity must be positive")
+    @ApiModelProperty(value = "Order quantity", required = true, example = "100")
+    private BigDecimal quantity;
+
+    @NotNull(message = "Order type is required")
+    @ApiModelProperty(value = "Order type", required = true, allowableValues = "MARKET,LIMIT,STOP,STOP_LIMIT")
+    private OrderType orderType;
+
+    @ApiModelProperty(value = "Limit price (required for LIMIT and STOP_LIMIT orders)", example = "150.50")
+    private BigDecimal limitPrice;
+
+    @ApiModelProperty(value = "Stop price (required for STOP and STOP_LIMIT orders)", example = "145.00")
+    private BigDecimal stopPrice;
+
+    @NotNull(message = "Time in force is required")
+    @ApiModelProperty(value = "Time in force", required = true, allowableValues = "DAY,GTC,IOC,FOK")
+    private TimeInForce timeInForce;
+
+    @ApiModelProperty(value = "Client order ID for tracking", example = "CLIENT-ORDER-123")
+    private String clientOrderId;
+
+    @Valid
+    @ApiModelProperty(value = "Additional order parameters")
+    private OrderParameters parameters;
+
+    // Constructors, getters, setters, builder pattern
+}
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(description = "Trading order response with execution details")
+public class OrderResponse {
+
+    @ApiModelProperty(value = "Unique order identifier", example = "ORD-12345678")
+    private String orderId;
+
+    @ApiModelProperty(value = "Current order status", allowableValues = "PENDING,FILLED,PARTIALLY_FILLED,CANCELLED,REJECTED")
+    private OrderStatus status;
+
+    @ApiModelProperty(value = "Order submission timestamp", example = "2023-12-21T15:30:00Z")
+    private Instant submissionTime;
+
+    @ApiModelProperty(value = "Execution price (if filled)", example = "150.25")
+    private BigDecimal executionPrice;
+
+    @ApiModelProperty(value = "Filled quantity", example = "100")
+    private BigDecimal filledQuantity;
+
+    @ApiModelProperty(value = "Remaining quantity", example = "0")
+    private BigDecimal remainingQuantity;
+
+    @ApiModelProperty(value = "Commission charged", example = "0.99")
+    private BigDecimal commission;
+
+    @ApiModelProperty(value = "Estimated settlement date", example = "2023-12-23")
+    private LocalDate estimatedSettlement;
+
+    @Valid
+    @ApiModelProperty(value = "Risk metrics for this order")
+    private RiskMetrics riskMetrics;
+
+    @ApiModelProperty(value = "Execution venue", example = "NASDAQ")
+    private String venue;
+
+    // Constructors, getters, setters, builder pattern
+}
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(description = "Risk metrics and compliance information")
+public class RiskMetrics {
+
+    @ApiModelProperty(value = "Position delta after execution", example = "0.15")
+    private BigDecimal positionDelta;
+
+    @ApiModelProperty(value = "Portfolio value at risk", example = "25000.00")
+    private BigDecimal valueAtRisk;
+
+    @ApiModelProperty(value = "Regulatory compliance status")
+    private ComplianceStatus complianceStatus;
+
+    @ApiModelProperty(value = "Risk limit utilization percentage", example = "45.5")
+    private BigDecimal riskUtilization;
+
+    // Additional risk metrics...
+}
+</pre>
+
+<h2>Performance and Monitoring</h2>
+
+<p>Enterprise-grade performance optimization and monitoring capabilities for production deployments.</p>
+
+<h3>Performance Configuration</h3>
+
+<pre>
+# Performance optimization settings
+openapi.performance.caching.enabled=true
+openapi.performance.caching.spec.ttl=300  # 5 minutes
+openapi.performance.caching.ui.ttl=3600   # 1 hour
+
+# Memory management
+openapi.performance.streaming.enabled=true
+openapi.performance.streaming.threshold=1048576  # 1MB
+
+# Response compression
+openapi.performance.compression.enabled=true
+openapi.performance.compression.minSize=1024
+
+# Connection pooling
+openapi.performance.http.maxConnections=200
+openapi.performance.http.connectionTimeout=5000
+openapi.performance.http.readTimeout=30000
+</pre>
+
+<h3>Monitoring and Observability</h3>
+
+<pre>
+@Component
+public class OpenApiMetricsCollector {
+
+    private final MeterRegistry meterRegistry;
+    private final Timer specGenerationTimer;
+    private final Counter apiCallCounter;
+    private final Gauge activeConnectionsGauge;
+
+    public OpenApiMetricsCollector(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        this.specGenerationTimer = Timer.builder("openapi.spec.generation.time")
+            .description("Time taken to generate OpenAPI specification")
+            .register(meterRegistry);
+
+        this.apiCallCounter = Counter.builder("openapi.api.calls")
+            .description("Total API calls processed")
+            .register(meterRegistry);
+
+        this.activeConnectionsGauge = Gauge.builder("openapi.connections.active")
+            .description("Active connections to OpenAPI endpoints")
+            .register(meterRegistry, this, OpenApiMetricsCollector::getActiveConnections);
+    }
+
+    public void recordSpecGeneration(Duration duration) {
+        specGenerationTimer.record(duration);
+    }
+
+    public void recordApiCall(String endpoint, String method, int statusCode) {
+        apiCallCounter.increment(
+            Tags.of(
+                "endpoint", endpoint,
+                "method", method,
+                "status", String.valueOf(statusCode)
+            )
+        );
+    }
+
+    private double getActiveConnections() {
+        // Implementation to get active connections
+        return 0.0;
+    }
+}
+
+@Component
+public class OpenApiHealthIndicator implements HealthIndicator {
+
+    private final OpenApiSpecGenerator specGenerator;
+    private final SwaggerUIHandler uiHandler;
+
+    @Override
+    public Health health() {
+        try {
+            // Check OpenAPI spec generation
+            long startTime = System.currentTimeMillis();
+            specGenerator.generateOpenApiSpec(null);
+            long specGenTime = System.currentTimeMillis() - startTime;
+
+            // Check SwaggerUI availability
+            boolean uiAvailable = uiHandler.getConfiguration().isSupportSwaggerUi();
+
+            return Health.up()
+                .withDetail("specGenerationTime", specGenTime + "ms")
+                .withDetail("swaggerUiEnabled", uiAvailable)
+                .withDetail("version", "2.0.1")
+                .withDetail("configurationSource", getConfigurationSource())
+                .build();
+
+        } catch (Exception e) {
+            return Health.down()
+                .withDetail("error", e.getMessage())
+                .withException(e)
+                .build();
+        }
+    }
+
+    private String getConfigurationSource() {
+        // Determine primary configuration source
+        return "properties-file";
+    }
+}
+</pre>
+
+<h2>Cloud-Native Deployment</h2>
+
+<p>Configuration and deployment patterns for cloud-native and containerized environments.</p>
+
+<h3>Docker Configuration</h3>
+
+<pre>
+# Dockerfile
+FROM openjdk:17-jre-slim
+
+# Environment variables for OpenAPI configuration
+ENV OPENAPI_TITLE="Financial Services API"
+ENV OPENAPI_SECURITY_OAUTH2_ENABLED=true
+ENV OPENAPI_SWAGGER_UI_ENABLED=false
+ENV OPENAPI_RESOURCE_PACKAGES=com.company.api.v2
+
+# Copy application
+COPY target/financial-api.war /opt/axis2/webapps/
+COPY config/openapi-production.properties /opt/axis2/conf/
+
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
+</pre>
+
+<h3>Kubernetes Configuration</h3>
+
+<pre>
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openapi-config
+data:
+  openapi.properties: |
+    openapi.title=Financial Services API
+    openapi.version=2.1.0
+    openapi.security.oauth2.enabled=true
+    openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
+    openapi.swaggerUi.enabled=false
+    openapi.performance.caching.enabled=true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: financial-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: financial-api
+  template:
+    metadata:
+      labels:
+        app: financial-api
+    spec:
+      containers:
+      - name: api
+        image: company/financial-api:2.1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: OPENAPI_TITLE
+          value: "Production Financial API"
+        - name: OPENAPI_SECURITY_OAUTH2_TOKEN_URL
+          valueFrom:
+            secretKeyRef:
+              name: oauth2-config
+              key: token-url
+        volumeMounts:
+        - name: openapi-config
+          mountPath: /opt/axis2/conf/openapi.properties
+          subPath: openapi.properties
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /openapi.json
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: openapi-config
+        configMap:
+          name: openapi-config
+</pre>
+
+<h2>Enterprise Security Best Practices</h2>
+
+<p>Comprehensive security guidelines for production OpenAPI deployments.</p>
+
+<h3>Production Security Checklist</h3>
+
+<ul>
+<li><strong>✓ JWT Token Validation:</strong> Implement proper JWT signature verification and expiration checking</li>
+<li><strong>✓ OAuth2 PKCE:</strong> Enforce PKCE for public clients and authorization code flows</li>
+<li><strong>✓ CORS Configuration:</strong> Restrict CORS origins to known domains in production</li>
+<li><strong>✓ Rate Limiting:</strong> Implement rate limiting per API key/user to prevent abuse</li>
+<li><strong>✓ Input Validation:</strong> Validate all request parameters against OpenAPI schemas</li>
+<li><strong>✓ HTTPS Only:</strong> Enforce HTTPS for all API endpoints and disable HTTP</li>
+<li><strong>✓ Security Headers:</strong> Include security headers (HSTS, CSP, X-Frame-Options)</li>
+<li><strong>✓ API Key Rotation:</strong> Implement regular API key rotation policies</li>
+<li><strong>✓ Audit Logging:</strong> Log all API access and authentication events</li>
+<li><strong>✓ SwaggerUI Security:</strong> Disable SwaggerUI in production or restrict access</li>
+</ul>
+
+<h3>Security Configuration Example</h3>
+
+<pre>
+# Production security configuration
+openapi.security.enforceHttps=true
+openapi.security.hsts.enabled=true
+openapi.security.hsts.maxAge=31536000
+openapi.security.csp.enabled=true
+openapi.security.csp.policy=default-src 'self'; script-src 'self' 'unsafe-inline'
+
+# Disable SwaggerUI in production
+openapi.swaggerUi.enabled=false
+
+# Restrict CORS to known origins
+openapi.cors.allowedOrigins=https://app.company.com,https://mobile.company.com
+openapi.cors.allowCredentials=true
+openapi.cors.maxAge=3600
+
+# Rate limiting
+openapi.rateLimiting.enabled=true
+openapi.rateLimiting.requestsPerMinute=100
+openapi.rateLimiting.burstLimit=20
+
+# Audit logging
+openapi.audit.enabled=true
+openapi.audit.logFormat=JSON
+openapi.audit.includeRequestBody=false
+openapi.audit.includeResponseBody=false
+</pre>
+
+<h2>Troubleshooting and Advanced Topics</h2>
+
+<p>Common issues and advanced configuration scenarios for enterprise deployments.</p>
+
+<h3>Common Configuration Issues</h3>
+
+<ul>
+<li><strong>Configuration Precedence:</strong> System properties override environment variables override properties files</li>
+<li><strong>Security Scheme Validation:</strong> Ensure OAuth2 endpoints are accessible and properly configured</li>
+<li><strong>Resource Filtering:</strong> Verify package names and class paths are correct</li>
+<li><strong>Memory Usage:</strong> Monitor memory usage with large OpenAPI specifications</li>
+<li><strong>Performance:</strong> Enable caching for frequently accessed specifications</li>
+</ul>
+
+<h3>Advanced Debugging</h3>
+
+<pre>
+# Enable debug logging
+logging.level.org.apache.axis2.openapi=DEBUG
+
+# JVM debugging options
+-Dopenapi.debug=true
+-Dopenapi.performance.monitoring=true
+-Dopenapi.configuration.trace=true
+</pre>
+
+<p>For comprehensive support and advanced enterprise deployment scenarios, contact the Apache Axis2
+development team or consult the <a href="openapi-rest-userguide.html">Basic OpenAPI User Guide</a>
+for fundamental concepts.</p>
+
+<p>This advanced guide demonstrates the full enterprise capabilities of Axis2's OpenAPI integration.
+The system provides the flexibility and power needed for modern enterprise API development while
+maintaining the reliability and performance expected in production environments.</p>
+
+</body>
+</html>

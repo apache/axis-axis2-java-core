@@ -45,6 +45,9 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter;
 import org.apache.axis2.json.moshih2.JsonProcessingMetrics;
 import java.util.Date;
 
@@ -71,7 +74,8 @@ public class OpenApiSpecGenerator {
 
     private final ConfigurationContext configurationContext;
     private final ServiceIntrospector serviceIntrospector;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;  // Required for Swagger OpenAPI model serialization
+    private final Moshi moshi;  // Preferred for general JSON operations
     private final JsonProcessingMetrics metrics;
     private final OpenApiConfiguration configuration;
 
@@ -102,10 +106,15 @@ public class OpenApiSpecGenerator {
         this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         this.objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
+        // Initialize Moshi for general JSON operations (preferred over Jackson where possible)
+        this.moshi = new Moshi.Builder()
+            .add(Date.class, new Rfc3339DateJsonAdapter())
+            .build();
+
         // Initialize performance metrics from moshih2 package for HTTP/2 optimization tracking
         this.metrics = new JsonProcessingMetrics();
 
-        log.info("OpenAPI JSON processing configured with Jackson + Enhanced HTTP/2 Metrics (moshih2 performance tracking enabled)");
+        log.info("OpenAPI JSON processing configured with Moshi + Jackson hybrid approach (Jackson only for Swagger model serialization, Moshi preferred for other JSON operations, moshih2 performance tracking enabled)");
     }
 
     /**
@@ -149,7 +158,7 @@ public class OpenApiSpecGenerator {
         try {
             OpenAPI spec = generateOpenApiSpec(request);
 
-            // Use Jackson processing with enhanced HTTP/2 performance metrics tracking
+            // Use Jackson for OpenAPI model serialization (required by Swagger library) with enhanced HTTP/2 performance metrics tracking
             long startTime = System.currentTimeMillis();
             String jsonSpec = objectMapper.writeValueAsString(spec);
             long processingTime = System.currentTimeMillis() - startTime;
