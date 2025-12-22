@@ -443,22 +443,6 @@ export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.authenticate
 export CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.coyote.http2.Http2Protocol.jmxMetrics=true"
 </pre>
 
-<h3>Tomcat vs WildFly Performance Comparison</h3>
-
-<p>Real-world performance comparison between Tomcat 11 and WildFly 32 for OpenAPI + HTTP/2:</p>
-
-<table border="1">
-<tr><th>Performance Metric</th><th>Tomcat 11 + HTTP/2</th><th>WildFly 32 + HTTP/2</th><th>Improvement</th></tr>
-<tr><td><strong>OpenAPI Spec Generation (5MB)</strong></td><td>1.4s</td><td>1.8s</td><td>22% faster</td></tr>
-<tr><td><strong>Swagger UI Load Time</strong></td><td>2.1s</td><td>2.8s</td><td>25% faster</td></tr>
-<tr><td><strong>Large JSON Response (50MB)</strong></td><td>4.2s</td><td>5.2s</td><td>19% faster</td></tr>
-<tr><td><strong>Concurrent Streams (200 streams)</strong></td><td>6.8s</td><td>9.1s</td><td>25% faster</td></tr>
-<tr><td><strong>Memory Usage (baseline)</strong></td><td>480MB heap</td><td>720MB heap</td><td>33% less memory</td></tr>
-<tr><td><strong>Connection Count</strong></td><td>8-12 connections</td><td>12-18 connections</td><td>25% fewer</td></tr>
-<tr><td><strong>Cold Start Time</strong></td><td>3.2s</td><td>8.7s</td><td>63% faster startup</td></tr>
-<tr><td><strong>Configuration Time</strong></td><td>2-3 minutes</td><td>15-20 minutes</td><td>83% faster setup</td></tr>
-</table>
-
 <h3>Advanced Tomcat HTTP/2 Optimizations</h3>
 
 <p>Advanced configuration patterns specific to Tomcat for maximum performance:</p>
@@ -626,36 +610,6 @@ openapi.security.oauth2.scopes=read:api,write:api,admin:api
 openapi.security.http2.connectionReuse=true          # Reuse authenticated connections
 openapi.security.http2.tlsSessionCache=300          # 5-minute TLS session cache
 openapi.security.http2.alpnNegotiation=true         # Secure protocol negotiation
-</pre>
-
-<h3>API Rate Limiting with HTTP/2</h3>
-
-<p>HTTP/2 flow control provides natural rate limiting capabilities:</p>
-
-<pre>
-// HTTP/2 aware rate limiting
-@Component
-public class Http2RateLimitingInterceptor implements HandlerInterceptor {
-
-    @Override
-    public boolean preHandle(HttpServletRequest request,
-                           HttpServletResponse response,
-                           Object handler) throws Exception {
-
-        if (isHttp2Request(request)) {
-            // HTTP/2 flow control provides built-in backpressure
-            return handleHttp2RateLimit(request, response);
-        } else {
-            // Traditional HTTP/1.1 rate limiting
-            return handleHttp1RateLimit(request, response);
-        }
-    }
-
-    private boolean isHttp2Request(HttpServletRequest request) {
-        return "HTTP/2.0".equals(request.getProtocol()) ||
-               "2.0".equals(request.getHeader("X-HTTP-Version"));
-    }
-}
 </pre>
 
 <h2>Monitoring and Observability</h2>
