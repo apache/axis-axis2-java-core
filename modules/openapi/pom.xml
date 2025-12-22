@@ -18,10 +18,7 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -32,8 +29,9 @@
     </parent>
 
     <artifactId>axis2-openapi</artifactId>
-    <name>Apache Axis2 - OpenAPI Integration Module</name>
     <packaging>jar</packaging>
+
+    <name>Apache Axis2 - OpenAPI Integration Module</name>
     <description>
         OpenAPI/Swagger integration module for Apache Axis2, providing automatic API documentation
         generation and Swagger UI support for REST services.
@@ -69,18 +67,18 @@
             <version>2.2.26</version>
         </dependency>
 
-        <!-- JSON Processing -->
-        <dependency>
-            <groupId>com.squareup.moshi</groupId>
-            <artifactId>moshi</artifactId>
-            <version>1.15.0</version>
-        </dependency>
-
         <!-- Jackson for OpenAPI model serialization (required by swagger-core) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
+        </dependency>
+
+        <!-- Axis2 JSON module for enhanced moshih2 performance metrics -->
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-json</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Jakarta Servlet API -->

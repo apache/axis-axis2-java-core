@@ -39,15 +39,30 @@ import java.util.Map;
  *
  * This class analyzes deployed Axis2 services, their operations, parameters,
  * and REST configurations to provide structured metadata for OpenAPI spec generation.
+ * Enhanced in v2.0.1 with configuration-aware introspection.
  */
 public class ServiceIntrospector {
 
     private static final Log log = LogFactory.getLog(ServiceIntrospector.class);
 
     private final ConfigurationContext configurationContext;
+    private final OpenApiConfiguration configuration;
 
+    /**
+     * Constructor with default configuration.
+     */
     public ServiceIntrospector(ConfigurationContext configContext) {
+        this(configContext, new OpenApiConfiguration());
+    }
+
+    /**
+     * Constructor with custom configuration.
+     */
+    public ServiceIntrospector(ConfigurationContext configContext, OpenApiConfiguration config) {
         this.configurationContext = configContext;
+        this.configuration = config != null ? config : new OpenApiConfiguration();
+
+        log.debug("ServiceIntrospector initialized with configuration: " + this.configuration);
     }
 
     /**
@@ -264,5 +279,21 @@ public class ServiceIntrospector {
 
         public Map<String, String> getParameters() { return parameters; }
         public void setParameters(Map<String, String> parameters) { this.parameters = parameters; }
+    }
+
+    // ========== Getters for Configuration Access ==========
+
+    /**
+     * Get the current configuration.
+     */
+    public OpenApiConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Get the configuration context.
+     */
+    public ConfigurationContext getConfigurationContext() {
+        return configurationContext;
     }
 }

@@ -77,6 +77,11 @@ improvements over HTTP/1.1, especially for large JSON payloads and concurrent re
 For comprehensive HTTP/2 configuration details and advanced features, see the
 <a href="http2-transport-additions.html">HTTP/2 Transport documentation</a>.</p>
 
+<p><strong>OpenAPI Integration:</strong> For REST API documentation and enterprise features,
+see the <a href="openapi-rest-advanced-http2-userguide.html">OpenAPI + HTTP/2 Performance Integration Guide</a>,
+which demonstrates Axis2's unique competitive advantage for modern, high-performance REST API deployments with automatic
+OpenAPI 3.0.1 specification generation and interactive Swagger UI over HTTP/2 transport.</p>
+
 <h3>Key HTTP/2 Benefits</h3>
 
 <ul>
@@ -184,8 +189,23 @@ The intent of this guide is to show a place that the JWT and JWE standards can b
 implemented.
 </p>
 <p>
-Axis2 JSON support is via POJO Objects. LoginRequest and LoginResponse are coded in the LoginService as the names would indicate. A flag in the suupplied axis2.xml file, enableJSONOnly, 
+Axis2 JSON support is via POJO Objects. LoginRequest and LoginResponse are coded in the LoginService as the names would indicate. A flag in the supplied axis2.xml file, enableJSONOnly,
 disables Axis2 functionality not required for JSON and sets up the server to expect JSON.
+
+<h3>Security Benefits of enableJSONOnly</h3>
+
+<p>The <strong>enableJSONOnly</strong> parameter provides significant security hardening by enforcing strict JSON-only processing:</p>
+
+<ul>
+<li><strong>Content-Type Enforcement:</strong> Rejects requests without <code>"Content-Type: application/json"</code> header, preventing content-type confusion attacks</li>
+<li><strong>Protocol Restriction:</strong> Disables SOAP, XML, and other message formats that could introduce XXE (XML External Entity) vulnerabilities</li>
+<li><strong>Attack Surface Reduction:</strong> Eliminates unused Axis2 functionality, reducing potential security vulnerabilities in XML parsing and SOAP processing</li>
+<li><strong>Input Validation:</strong> Ensures only well-formed JSON payloads are accepted, preventing malformed request attacks</li>
+<li><strong>Request Filtering:</strong> Blocks non-JSON requests at the transport level, providing an additional security barrier</li>
+</ul>
+
+<p><strong>Security Best Practice:</strong> When combined with HTTPS-only enforcement (required for HTTP/2),
+enableJSONOnly creates a secure, hardened API endpoint that accepts only authenticated JSON requests over encrypted connections.</p>
 </p>
 <p>
 Also provided is a test service, TestwsService. It includes two POJO Objects as would

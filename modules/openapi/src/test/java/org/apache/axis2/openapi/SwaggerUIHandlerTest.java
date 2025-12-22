@@ -91,7 +91,7 @@ public class SwaggerUIHandlerTest extends TestCase {
 
         // Verify HTML structure
         assertTrue("Should be valid HTML document", html.contains("<!DOCTYPE html>"));
-        assertTrue("Should have page title", html.contains("Apache Axis2 - API Documentation"));
+        assertTrue("Should have page title", html.contains("Apache Axis2 REST API - API Documentation"));
         assertTrue("Should include Swagger UI CSS", html.contains("swagger-ui.css"));
         assertTrue("Should include Swagger UI JS", html.contains("swagger-ui-bundle.js"));
 
@@ -118,7 +118,7 @@ public class SwaggerUIHandlerTest extends TestCase {
         // Verify CORS headers
         assertEquals("CORS origin header should be set", "*", mockResponse.getHeader("Access-Control-Allow-Origin"));
         assertEquals("CORS methods header should be set", "GET, OPTIONS", mockResponse.getHeader("Access-Control-Allow-Methods"));
-        assertEquals("CORS headers should be set", "Content-Type", mockResponse.getHeader("Access-Control-Allow-Headers"));
+        assertEquals("CORS headers should be set", "Content-Type, Authorization", mockResponse.getHeader("Access-Control-Allow-Headers"));
 
         String json = mockResponse.getWriterContent();
         assertNotNull("JSON should be generated", json);
@@ -141,7 +141,7 @@ public class SwaggerUIHandlerTest extends TestCase {
         // Verify CORS headers
         assertEquals("CORS origin header should be set", "*", mockResponse.getHeader("Access-Control-Allow-Origin"));
         assertEquals("CORS methods header should be set", "GET, OPTIONS", mockResponse.getHeader("Access-Control-Allow-Methods"));
-        assertEquals("CORS headers should be set", "Content-Type", mockResponse.getHeader("Access-Control-Allow-Headers"));
+        assertEquals("CORS headers should be set", "Content-Type, Authorization", mockResponse.getHeader("Access-Control-Allow-Headers"));
 
         String yaml = mockResponse.getWriterContent();
         assertNotNull("YAML should be generated", yaml);
@@ -211,15 +211,15 @@ public class SwaggerUIHandlerTest extends TestCase {
         String html = mockResponse.getWriterContent();
 
         // Verify custom header
-        assertTrue("Should have custom header", html.contains("Apache Axis2 REST API Documentation"));
-        assertTrue("Should have description", html.contains("Interactive OpenAPI documentation"));
+        assertTrue("Should have custom header", html.contains("Apache Axis2 REST API"));
+        assertTrue("Should have description", html.contains("Auto-generated OpenAPI documentation"));
 
         // Verify custom styling
-        assertTrue("Should include custom CSS", html.contains(".header"));
+        assertTrue("Should include custom CSS", html.contains(".axis2-header"));
         assertTrue("Should hide default topbar", html.contains(".swagger-ui .topbar"));
 
         // Verify Swagger UI configuration
-        assertTrue("Should enable try-it-out", html.contains("tryItOutEnabled: true"));
+        assertTrue("Should enable try-it-out", html.contains("supportedSubmitMethods"));
         assertTrue("Should use standalone layout", html.contains("StandaloneLayout"));
         assertTrue("Should enable deep linking", html.contains("deepLinking: true"));
     }
@@ -254,7 +254,7 @@ public class SwaggerUIHandlerTest extends TestCase {
         // Scenario 3: Financial calculation service testing
         // The UI should support interactive API testing
         assertTrue("Should support interactive API testing",
-                html.contains("tryItOutEnabled") || html.contains("swagger-ui"));
+                html.contains("supportedSubmitMethods") || html.contains("swagger-ui"));
     }
 
     /**

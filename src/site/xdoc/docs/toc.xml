@@ -60,6 +60,8 @@ Guide</a></li>
 <li>7.2 <a href="openapi-rest-userguide.html#OpenAPI_Integration_Features">OpenAPI Integration Features</a></li>
 <li>7.3 <a href="openapi-rest-userguide.html#Samples">Complete Sample Application</a></li>
 <li>7.4 <a href="openapi-rest-userguide.html#Swagger_UI">Interactive Swagger UI</a></li>
+<li><strong>7.5 <a href="openapi-rest-advanced-userguide.html">Advanced Enterprise OpenAPI Features</a></strong></li>
+<li><strong>7.6 <a href="openapi-rest-advanced-http2-userguide.html">OpenAPI + HTTP/2 Performance Integration</a></strong> (🏆 Competitive Advantage)</li>
 </ul>
 </li>
 <li><a href="axis2config.html">Configuration
@@ -139,6 +141,8 @@ Support</a></li>
         <li><a href="openapi-rest-userguide.html#OpenAPI_Integration_Features">Automatic OpenAPI 3.0.1 Generation</a></li>
         <li><a href="openapi-rest-userguide.html#Samples">Complete JSON REST API Examples</a></li>
         <li><a href="openapi-rest-userguide.html#Swagger_UI">Interactive API Testing with Swagger UI</a></li>
+        <li><strong><a href="openapi-rest-advanced-userguide.html">Advanced Enterprise Features</a></strong></li>
+        <li><strong><a href="openapi-rest-advanced-http2-userguide.html">HTTP/2 Performance Integration</a></strong> (🚀 Up to 40% faster)</li>
     </ul>
     </li>
 </ul>

@@ -149,6 +149,8 @@ using an example</li>
 Axis2</a> - This guide explains how to use an EJB provider in Axis2
 using an example</li>
 <li><a href="clustering-guide.html">Clustering Guide</a> - This guide will show how you can leverage clustering support to improve Scalability, Failover and High Availability of your Web Services</li>
+<li><a href="tomcat-http2-integration-guide.html">Apache Tomcat 11 + HTTP/2 Integration Guide</a> - Production-ready configuration guide for deploying Axis2 with HTTP/2 support on Apache Tomcat 11, featuring enhanced JSON processing and superior performance compared to WildFly</li>
+<li><a href="wildfly-http2-integration-guide.html">WildFly + HTTP/2 Integration Guide</a> - Lessons learned from HTTP/2 integration attempts with WildFly, architectural insights, and the evolution to Enhanced Moshi H2 optimization</li>
 
 </ul>
 

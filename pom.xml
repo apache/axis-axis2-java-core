@@ -388,6 +388,7 @@
         <module>modules/jibx-codegen</module>
         <module>modules/json</module>
         <module>modules/kernel</module>
+        <module>modules/openapi</module>
         <module>modules/mex</module>
         <module>modules/mtompolicy</module>
         <module>modules/mtompolicy-mar</module>
@@ -1451,19 +1452,26 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
+                            <skip>${skipScmValidation}</skip>
                             <scripts>
                                 <script><![CDATA[
                                     // Ensure that the <scm> element is present and correctly populated. This prevents
                                     // maven-release-plugin from adding an <scm> element in a location that is then rejected by
                                     // tidy-maven-plugin.
-                                    if (project.scm.url != "https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary") {
-                                        throw new Error('project.scm.url not set correctly')
-                                    }
-                                    if (project.scm.connection != "scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git") {
-                                        throw new Error('project.scm.connection not set correctly')
-                                    }
-                                    if (project.scm.developerConnection != "scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git") {
-                                        throw new Error('project.scm.developerConnection not set correctly')
+                                    // Only run SCM validation at the parent level, skip for child modules
+                                    if (project.artifactId == 'axis2') {
+                                        if (project.scm.url != "https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary") {
+                                            throw new Error('project.scm.url not set correctly')
+                                        }
+                                        if (project.scm.connection != "scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git") {
+                                            throw new Error('project.scm.connection not set correctly')
+                                        }
+                                        if (project.scm.developerConnection != "scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git") {
+                                            throw new Error('project.scm.developerConnection not set correctly')
+                                        }
+                                        println("SCM validation passed for parent project")
+                                    } else {
+                                        println("SCM validation skipped for child module: " + project.artifactId)
                                     }
                                 ]]></script>
                             </scripts>

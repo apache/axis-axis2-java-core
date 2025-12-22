@@ -51,7 +51,9 @@ for real-world enterprise usage patterns.</p>
 
 <p>More documentation about Axis2 REST support can be found in the <a href="
 json_support_gson.html">Pure JSON Support documentation</a> and <a href="
-json_gson_user_guide.html">JSON User Guide</a>
+json_gson_user_guide.html">JSON User Guide</a>. For modern enterprise features including
+Bearer authentication, advanced security schemes, and comprehensive configuration options, see the
+<a href="openapi-rest-advanced-userguide.html">OpenAPI Advanced User Guide</a>.
 </p>
 
 <a name="Introduction"></a>
