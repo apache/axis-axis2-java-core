@@ -476,7 +476,7 @@
         <google.gson.version>2.13.2</google.gson.version>
         <groovy.version>5.0.3</groovy.version>
         <httpcore.version>5.3.6</httpcore.version>
-        <httpclient.version>5.5.1</httpclient.version>
+        <httpclient.version>5.6</httpclient.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>12.1.5</jetty.version>
