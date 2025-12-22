@@ -1,0 +1,628 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content=""/>
+  <title>Apache Axis2 OpenAPI REST Services User's Guide</title>
+</head>
+
+<body dir="ltr" lang="en-US">
+<a name="_Toc96697849" id="_Toc96697849"></a>
+
+<h1 align="center">Apache Axis2 OpenAPI REST Services User's Guide</h1>
+
+<p><strong>What is OpenAPI?</strong> OpenAPI (formerly known as Swagger) is an industry-standard specification for describing REST APIs. It provides a machine-readable format that precisely defines your API endpoints, request/response schemas, authentication methods, and error handling. Think of it as a contract that documents exactly how your REST API behaves, enabling automatic client code generation, interactive testing, and comprehensive documentation that stays in sync with your actual implementation.</p>
+
+<p><strong>Why use OpenAPI?</strong> For developers, OpenAPI eliminates the tedious manual work of writing and maintaining API documentation, reduces integration errors through precise specifications, and enables powerful tooling ecosystems. Your frontend developers get auto-generated TypeScript clients, your QA teams get interactive testing interfaces via Swagger UI, and your DevOps teams can generate monitoring configurations automatically. Most importantly, OpenAPI specifications serve as the single source of truth for your API, preventing the documentation drift that plagues many projects.</p>
+
+<p>This guide demonstrates how to create OpenAPI 3.0.1 documented REST services with Apache Axis2,
+providing a drop-in replacement solution for existing REST backends. It includes comprehensive
+examples for financial services, data management systems, and enterprise applications with
+<a href="https://swagger.io/specification/">OpenAPI specification</a> support and
+interactive <a href="https://swagger.io/tools/swagger-ui/">Swagger UI</a> documentation!
+</p>
+
+<p>The guide shows how to build REST services that can seamlessly replace existing backends
+(Spring Boot, Express.js, etc.) while maintaining API compatibility for frontend applications
+such as Excel Add-ins, React apps, and TypeScript clients.</p>
+
+<p><strong>New in Axis2 2.0:</strong> Complete OpenAPI 3.0.1 integration with automatic specification
+generation, Swagger UI support, and flexible generation modes (AUTOMATIC/STATIC/HYBRID) designed
+for real-world enterprise usage patterns.</p>
+
+<p>More documentation about Axis2 REST support can be found in the <a href="
+json_support_gson.html">Pure JSON Support documentation</a> and <a href="
+json_gson_user_guide.html">JSON User Guide</a>
+</p>
+
+<a name="Introduction"></a>
+
+<h2>Introduction</h2>
+
+<p>This user guide is written based on the Axis2 Standard Binary
+Distribution. The Standard Binary Distribution can be directly <a
+href="../download.cgi">downloaded</a> or built using
+the Source Distribution. If
+you choose the latter, then the <a href="installationguide.html">Installation
+Guide</a> will instruct you on how to build Axis2 Standard Binary
+Distribution using the source.</p>
+
+<p>The source code for this guide provides a complete sample application demonstrating
+OpenAPI REST services with financial data management capabilities, including authentication,
+data processing, and Excel integration patterns.</p>
+
+<p>Please note that Axis2 is an open-source effort. If you feel the code
+could use some new features or fixes, please get involved and lend us a hand!
+The Axis developer community welcomes your participation.</p>
+
+<p>Let us know what you think! Send your feedback to "<a
+href="mailto:java-user@axis.apache.org?subject=[Axis2]">java-user@axis.apache.org</a>".
+(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.) Kindly
+prefix the subject of the mail with [Axis2].</p>
+
+<h2>OpenAPI Integration Features</h2>
+
+<p>Axis2 2.0 provides comprehensive OpenAPI 3.0.1 integration designed for enterprise
+REST services and drop-in backend replacement scenarios. The OpenAPI module offers
+flexible generation modes to balance automatic documentation with real-world usage patterns.</p>
+
+<h3>Key OpenAPI Features</h3>
+
+<ul>
+<li><strong>Multiple Generation Modes:</strong> AUTOMATIC (service introspection), STATIC (manual schemas),
+and HYBRID (base generation with static overrides)</li>
+<li><strong>Interactive Documentation:</strong> Built-in Swagger UI at /swagger-ui endpoint for
+API testing and exploration</li>
+<li><strong>Standard Endpoints:</strong> OpenAPI specifications served at /openapi.json and /openapi.yaml</li>
+<li><strong>CORS Support:</strong> Enabled by default for browser-based testing and frontend integration</li>
+<li><strong>Service Discovery:</strong> Automatic detection of REST-enabled Axis2 services</li>
+<li><strong>Drop-in Compatibility:</strong> Designed to replace existing REST backends without frontend changes</li>
+</ul>
+
+<h3>OpenAPI Generation Modes</h3>
+
+<p>The OpenAPI module automatically selects the optimal documentation generation approach:</p>
+
+<ul>
+<li><strong>AUTOMATIC Mode:</strong> Generate complete OpenAPI specs from Axis2 service metadata
+and annotations - ideal for new services</li>
+<li><strong>STATIC Mode:</strong> Use manually crafted OpenAPI schema files for precise API contracts
+- perfect for existing API specifications</li>
+<li><strong>HYBRID Mode:</strong> Combine automatic base generation with static schema enhancements
+- balances automation with customization for complex enterprise requirements</li>
+</ul>
+
+<h3>Drop-in Backend Replacement</h3>
+
+<p>The Axis2 OpenAPI integration is specifically designed for backend replacement scenarios:</p>
+
+<ul>
+<li><strong>API Compatibility:</strong> Maintain existing endpoint paths, request/response formats</li>
+<li><strong>Authentication Patterns:</strong> Support for custom headers (bigdataToken, apiKey) and Bearer tokens</li>
+<li><strong>Frontend Support:</strong> Compatible with TypeScript clients, Excel Add-ins, React apps</li>
+<li><strong>Migration Path:</strong> Gradual service-by-service replacement without breaking changes</li>
+</ul>
+
+<h2>Getting Started</h2>
+
+<p>This user guide explains how to write and deploy OpenAPI-documented REST services using Axis2,
+and how to replace existing backends while maintaining frontend compatibility.
+</p>
+
+<p>All the sample code mentioned in this guide is located in
+the <b>"modules/samples/swagger-server"</b> directory of <a
+href="../download.cgi">Axis2 standard binary
+distribution</a>.</p>
+
+<p>The sample provides a complete financial services API demonstrating authentication,
+data management, and calculation services with full OpenAPI 3.0.1 documentation.</p>
+
+<h2>Creating OpenAPI REST Services</h2>
+
+<p>The guide demonstrates how to create secure, OpenAPI-documented REST services using
+real-world patterns commonly found in financial services and data management applications.</p>
+
+<h3>Sample Services Overview</h3>
+
+<p>The swagger-server sample provides three comprehensive services demonstrating
+different aspects of enterprise REST API development:</p>
+
+<ul>
+<li><strong>AuthenticationService:</strong> Login/authentication with custom token generation</li>
+<li><strong>DataManagementService:</strong> Market data processing and financial calculation services</li>
+<li><strong>ExcelIntegrationService:</strong> Excel Add-in specific endpoints and metadata</li>
+</ul>
+
+<h3>Authentication Service - Custom Token Patterns</h3>
+
+<p>The AuthenticationService demonstrates custom authentication patterns compatible with
+existing frontend applications:</p>
+
+<pre>
+@Path("/bigdataservice")
+@Api(value = "Authentication API")
+public class AuthenticationService {
+
+    @POST
+    @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "User authentication",
+                  notes = "Authenticate user and return access token")
+    public LoginResponse login(LoginRequest request) {
+        // Token generation and validation logic
+        // Compatible with existing frontend patterns
+    }
+}
+</pre>
+
+<p><strong>Drop-in Compatibility:</strong> The service maintains existing request/response formats
+and custom header patterns (bigdataToken instead of standard Authorization) to ensure
+frontend applications continue working without modifications.</p>
+
+<h3>Data Management Service - Financial Services API</h3>
+
+<p>The DataManagementService showcases enterprise data processing patterns:</p>
+
+<pre>
+@Path("/bigdataservice")
+@Api(value = "Data Management API")
+public class DataManagementService {
+
+    @POST
+    @Path("/marketSummary")
+    @ApiOperation(value = "Get market summary data",
+                  notes = "Retrieve market performance and allocation data")
+    public MarketSummaryResponse getMarketSummary(
+            @ApiParam("Request parameters") MarketSummaryRequest request,
+            @HeaderParam("bigdataToken") String token) {
+        // Market data processing logic
+    }
+
+    @POST
+    @Path("/financialCalculation")
+    @ApiOperation(value = "Perform financial calculations")
+    public FinancialCalculationResponse calculateFinancials(
+            FinancialCalculationRequest request,
+            @HeaderParam("bigdataToken") String token) {
+        // Financial calculation logic
+    }
+}
+</pre>
+
+<h3>Request/Response Models with Moshi</h3>
+
+<p>Axis2 uses Moshi for JSON processing, providing clean, efficient serialization:</p>
+
+<pre>
+public class LoginRequest {
+    @Json(name = "email")
+    private String email;
+
+    @Json(name = "credentials")
+    private String credentials;
+
+    // Getters and setters
+}
+
+public class LoginResponse {
+    @Json(name = "data")
+    private LoginData data;
+
+    @Json(name = "errorMessage")
+    private String errorMessage;
+
+    // Compatible with existing frontend expectations
+}
+</pre>
+
+<h2>OpenAPI Module Configuration</h2>
+
+<p>To enable OpenAPI documentation and Swagger UI, configure the OpenAPI module in your axis2.xml:</p>
+
+<pre>
+&lt;module ref="openapi" /&gt;
+
+&lt;!-- OpenAPI Module Configuration --&gt;
+&lt;parameter name="openapi.generationMode"&gt;HYBRID&lt;/parameter&gt;
+&lt;parameter name="openapi.staticSchemaPath"&gt;openapi-schema.json&lt;/parameter&gt;
+&lt;parameter name="openapi.enableSwaggerUI"&gt;true&lt;/parameter&gt;
+&lt;parameter name="openapi.swaggerUIPath"&gt;/swagger-ui&lt;/parameter&gt;
+&lt;parameter name="openapi.enableCORS"&gt;true&lt;/parameter&gt;
+</pre>
+
+<h3>OpenAPI Configuration Parameters</h3>
+
+<ul>
+<li><strong>generationMode:</strong> AUTOMATIC (introspection), STATIC (schema files), or HYBRID (combined)</li>
+<li><strong>staticSchemaPath:</strong> Path to static OpenAPI schema file (for STATIC/HYBRID modes)</li>
+<li><strong>enableSwaggerUI:</strong> Enable interactive Swagger UI (default: true)</li>
+<li><strong>swaggerUIPath:</strong> Swagger UI endpoint path (default: /swagger-ui)</li>
+<li><strong>enableCORS:</strong> Enable CORS headers for browser access (default: true)</li>
+<li><strong>apiTitle:</strong> API title in OpenAPI spec (default: "Apache Axis2 REST API")</li>
+<li><strong>apiVersion:</strong> API version (default: "1.0.0")</li>
+</ul>
+
+<h3>Static Schema Integration</h3>
+
+<p>For drop-in replacement scenarios, use STATIC or HYBRID mode with existing OpenAPI schemas:</p>
+
+<pre>
+&lt;!-- STATIC mode: Use existing OpenAPI schema file --&gt;
+&lt;parameter name="openapi.generationMode"&gt;STATIC&lt;/parameter&gt;
+&lt;parameter name="openapi.staticSchemaPath"&gt;existing-api-schema.json&lt;/parameter&gt;
+
+&lt;!-- HYBRID mode: Enhance introspection with static schema --&gt;
+&lt;parameter name="openapi.generationMode"&gt;HYBRID&lt;/parameter&gt;
+&lt;parameter name="openapi.staticSchemaPath"&gt;api-enhancements.json&lt;/parameter&gt;
+</pre>
+
+<h2>Client Usage and API Compatibility</h2>
+
+<p>The OpenAPI REST services are designed for seamless integration with existing frontend applications.
+Here are examples showing drop-in compatibility patterns:</p>
+
+<h3>Authentication - Custom Token Pattern</h3>
+
+<p>Login request maintaining existing frontend patterns:</p>
+
+<pre>
+curl -v -H "Content-Type: application/json" \
+     -X POST \
+     --data '{"email":"user@company.com","credentials":"password123"}' \
+     http://localhost:8080/axis2/services/authService/login
+</pre>
+
+<p>Response format compatible with existing frontends:</p>
+
+<pre>
+{
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "userId": "user123",
+    "email": "user@company.com"
+  },
+  "errorMessage": null
+}
+</pre>
+
+<h3>Data Services - Custom Header Authentication</h3>
+
+<p>Data requests using custom bigdataToken header (maintaining frontend compatibility):</p>
+
+<pre>
+curl -v -H "bigdataToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+     -H "Content-Type: application/json" \
+     -X POST \
+     --data '{"marketId":"MKT001","includeHistory":true}' \
+     http://localhost:8080/axis2/services/dataService/marketSummary
+</pre>
+
+<p>Where the response maintains existing data structure:</p>
+
+<pre>
+{
+  "data": {
+    "marketId": "MKT001",
+    "marketName": "Growth Market",
+    "totalValue": 1500000.00,
+    "performanceData": {
+      "ytdReturn": 12.5,
+      "annualizedReturn": 8.2
+    }
+  },
+  "errorMessage": null
+}
+</pre>
+
+<h3>Financial Calculation Services</h3>
+
+<p>Financial calculation requests with custom authentication:</p>
+
+<pre>
+curl -v -H "bigdataToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+     -H "Content-Type: application/json" \
+     -X POST \
+     --data '{"calculationType":"netPresentValue","cashFlows":[100,200,300],"discountRate":0.05}' \
+     http://localhost:8080/axis2/services/dataService/financialCalculation
+</pre>
+
+<p>Financial calculation response format:</p>
+
+<pre>
+{
+  "data": {
+    "calculationType": "netPresentValue",
+    "result": 544.22,
+    "calculationDetails": {
+      "inputCashFlows": [100, 200, 300],
+      "discountRate": 0.05,
+      "periodCount": 3
+    }
+  },
+  "errorMessage": null
+}
+</pre>
+
+<h3>Excel Integration - Function Metadata</h3>
+
+<p>Excel Add-in compatibility with function specification endpoints:</p>
+
+<pre>
+curl -v -H "bigdataToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+     -H "Content-Type: application/json" \
+     -X GET \
+     http://localhost:8080/axis2/services/excelService/functionSpecs
+</pre>
+
+<p>Response providing Excel function metadata:</p>
+
+<pre>
+{
+  "data": {
+    "functions": [
+      {
+        "name": "MARKET_VALUE",
+        "description": "Get current market value",
+        "parameters": ["marketId", "asOfDate"],
+        "returnType": "number"
+      },
+      {
+        "name": "FINANCIAL_CALC",
+        "description": "Perform financial calculations",
+        "parameters": ["calculationType", "parameters"],
+        "returnType": "number"
+      }
+    ]
+  },
+  "errorMessage": null
+}
+</pre>
+
+<h2>OpenAPI Documentation Access</h2>
+
+<p>Once deployed, the OpenAPI integration provides multiple ways to access API documentation:</p>
+
+<h3>Interactive Swagger UI</h3>
+
+<p>Access the interactive API documentation at:</p>
+
+<pre>
+http://localhost:8080/axis2/swagger-ui
+</pre>
+
+<p>The Swagger UI provides:</p>
+<ul>
+<li><strong>Interactive Testing:</strong> Try API endpoints directly from the browser</li>
+<li><strong>Authentication Support:</strong> Test with custom headers and tokens</li>
+<li><strong>Request/Response Examples:</strong> See expected data formats</li>
+<li><strong>Schema Documentation:</strong> Detailed model and parameter information</li>
+</ul>
+
+<h3>OpenAPI Specification Endpoints</h3>
+
+<p>Access the raw OpenAPI specifications:</p>
+
+<pre>
+# JSON format
+http://localhost:8080/axis2/openapi.json
+
+# YAML format (if supported)
+http://localhost:8080/axis2/openapi.yaml
+</pre>
+
+<p>These endpoints are CORS-enabled for frontend integration and can be used by:</p>
+<ul>
+<li><strong>Code Generation:</strong> Generate TypeScript/JavaScript clients</li>
+<li><strong>API Testing:</strong> Import into Postman, Insomnia, or similar tools</li>
+<li><strong>Documentation:</strong> Generate static documentation or integrate with docs systems</li>
+</ul>
+
+<h2>Drop-in Replacement Guide</h2>
+
+<p>This section provides step-by-step guidance for replacing existing REST backends with
+Axis2 OpenAPI services while maintaining frontend compatibility.</p>
+
+<h3>Migration Strategy</h3>
+
+<p>Follow this approach for seamless backend replacement:</p>
+
+<ol>
+<li><strong>API Analysis:</strong> Document existing endpoints, request/response formats, and authentication patterns</li>
+<li><strong>Service Implementation:</strong> Create Axis2 services matching existing API contracts</li>
+<li><strong>Configuration:</strong> Set up OpenAPI module with STATIC mode using existing schemas</li>
+<li><strong>Testing:</strong> Validate compatibility with existing frontend applications</li>
+<li><strong>Deployment:</strong> Replace backend services incrementally</li>
+</ol>
+
+<h3>Common Compatibility Patterns</h3>
+
+<p>Handle common frontend integration patterns:</p>
+
+<h4>Custom Authentication Headers</h4>
+<pre>
+// Support existing custom headers instead of standard Authorization
+@HeaderParam("bigdataToken") String customToken
+@HeaderParam("apiKey") String apiKey
+@HeaderParam("sessionId") String sessionId
+</pre>
+
+<h4>Response Envelope Patterns</h4>
+<pre>
+// Many frontends expect data/error envelope pattern
+public class StandardResponse&lt;T&gt; {
+    @Json(name = "data")
+    private T data;
+
+    @Json(name = "errorMessage")
+    private String errorMessage;
+
+    @Json(name = "success")
+    private boolean success = true;
+}
+</pre>
+
+<h4>Path Parameter Compatibility</h4>
+<pre>
+// Match existing URL patterns exactly
+@Path("/api/v1/markets/{marketId}/summary")
+@Path("/bigdataservice/calculate")  // Legacy path support
+@Path("/excel/functions/{functionName}")
+</pre>
+
+<h3>Frontend Integration Testing</h3>
+
+<p>Validate drop-in compatibility with these testing approaches:</p>
+
+<ul>
+<li><strong>TypeScript Clients:</strong> Ensure generated clients work without modifications</li>
+<li><strong>Excel Add-ins:</strong> Test Office.js integrations and custom function calls</li>
+<li><strong>React/Angular Apps:</strong> Verify existing HTTP service layers continue working</li>
+<li><strong>Mobile Apps:</strong> Test native HTTP clients and authentication flows</li>
+</ul>
+
+<h3>Configuration for Different Frameworks</h3>
+
+<p>Axis2 OpenAPI services can replace backends built with various frameworks:</p>
+
+<h4>Spring Boot Replacement</h4>
+<pre>
+# Spring Boot endpoint:
+@PostMapping("/api/markets/summary")
+public ResponseEntity&lt;MarketResponse&gt; getMarketSummary(@RequestBody MarketRequest request)
+
+# Equivalent Axis2 service:
+@POST
+@Path("/api/markets/summary")
+public MarketResponse getMarketSummary(MarketRequest request)
+</pre>
+
+<h4>Express.js/Node.js Replacement</h4>
+<pre>
+// Express.js endpoint:
+app.post('/api/auth/login', (req, res) =&gt; { ... })
+
+// Equivalent Axis2 service:
+@POST
+@Path("/api/auth/login")
+public LoginResponse login(LoginRequest request)
+</pre>
+
+<h4>ASP.NET Core Replacement</h4>
+<pre>
+// ASP.NET Core endpoint:
+[HttpPost("/api/data/process")]
+public ActionResult&lt;DataResponse&gt; ProcessData([FromBody] DataRequest request)
+
+// Equivalent Axis2 service:
+@POST
+@Path("/api/data/process")
+public DataResponse processData(DataRequest request)
+</pre>
+
+<h2>Performance and Best Practices</h2>
+
+<p>The Axis2 OpenAPI integration is designed for enterprise performance and scalability:</p>
+
+<h3>Performance Optimizations</h3>
+
+<ul>
+<li><strong>Moshi JSON Processing:</strong> High-performance JSON serialization optimized for large payloads</li>
+<li><strong>Service Caching:</strong> OpenAPI spec generation results are cached for improved response times</li>
+<li><strong>CORS Optimization:</strong> Efficient CORS header handling for browser-based applications</li>
+<li><strong>Memory Management:</strong> Streaming support for large request/response payloads</li>
+</ul>
+
+<h3>Best Practices</h3>
+
+<ul>
+<li><strong>Schema Validation:</strong> Use OpenAPI schema validation for request/response verification</li>
+<li><strong>Error Handling:</strong> Implement consistent error response formats across all services</li>
+<li><strong>Authentication:</strong> Centralize token validation and user context management</li>
+<li><strong>Monitoring:</strong> Implement service health checks and performance metrics</li>
+<li><strong>Documentation:</strong> Keep OpenAPI schemas up-to-date with service changes</li>
+</ul>
+
+<h3>Security Considerations</h3>
+
+<p>Ensure secure REST API implementation:</p>
+
+<ul>
+<li><strong>Input Validation:</strong> Validate all request parameters and payloads</li>
+<li><strong>Authentication:</strong> Implement proper token validation and session management</li>
+<li><strong>CORS Policy:</strong> Configure appropriate CORS policies for production environments</li>
+<li><strong>HTTPS:</strong> Use HTTPS in production for secure data transmission</li>
+<li><strong>Rate Limiting:</strong> Implement rate limiting to prevent API abuse</li>
+</ul>
+
+<h2>Troubleshooting and Support</h2>
+
+<p>Common issues and solutions when implementing OpenAPI REST services:</p>
+
+<h3>Module Loading Issues</h3>
+
+<p>If the OpenAPI module fails to load:</p>
+
+<ol>
+<li>Verify the module is included in axis2.xml: <code>&lt;module ref="openapi" /&gt;</code></li>
+<li>Check that openapi.mar is present in the modules directory</li>
+<li>Review server logs for initialization errors</li>
+</ol>
+
+<h3>Swagger UI Access Problems</h3>
+
+<p>If Swagger UI is not accessible:</p>
+
+<ol>
+<li>Confirm <code>enableSwaggerUI</code> parameter is set to true</li>
+<li>Check the <code>swaggerUIPath</code> configuration</li>
+<li>Verify CORS settings if accessing from a different domain</li>
+</ol>
+
+<h3>API Compatibility Issues</h3>
+
+<p>When replacing existing backends:</p>
+
+<ol>
+<li>Compare request/response formats using API testing tools</li>
+<li>Verify custom header handling and authentication patterns</li>
+<li>Test with actual frontend applications, not just cURL</li>
+<li>Review error response formats and status codes</li>
+</ol>
+
+<h3>Performance Issues</h3>
+
+<p>For performance optimization:</p>
+
+<ol>
+<li>Monitor memory usage with large JSON payloads</li>
+<li>Profile JSON serialization/deserialization performance</li>
+<li>Review OpenAPI spec generation caching configuration</li>
+<li>Check database connection pooling and query optimization</li>
+</ol>
+
+<p>For additional support, contact the Axis2 community through the mailing lists or
+GitHub issues. The community welcomes contributions and feedback on the OpenAPI
+integration.</p>
+
+</body>
+</html>

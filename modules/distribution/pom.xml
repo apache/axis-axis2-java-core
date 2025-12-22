@@ -537,7 +537,7 @@
                                     <version>${castor.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${project.build.directory}/axis2-${project.version}/samples/databinding/lib</outputDirectory>
+                            <outputDirectory>${project.build.directory}/axis2-${project.version}/modules/samples/databinding/lib</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                         </configuration>
                     </execution>
@@ -561,18 +561,18 @@
                                 <ant dir="${project.build.directory}/axis2-${project.version}/webapp" useNativeBasedir="true" />
                                 
                                 <!-- Test of the databinding sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/databinding" />
-                                
+                                <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/databinding" />
+
                                 <!-- Test of the mtom sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.service" />
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/mtom" target="generate.client" />
-                                
+                                <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/mtom" target="generate.service" />
+                                <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/mtom" target="generate.client" />
+
                                 <!-- Test of the faulthandling sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/faulthandling" target="generate.service" />
-                                
+                                <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/faulthandling" target="generate.service" />
+
                                 <!-- Test of the json sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/json" target="generate.service" />
-                                <ant dir="${project.build.directory}/axis2-${project.version}/samples/json" target="client.jar" />
+                                <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/json" target="generate.service" />
+                                <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/json" target="client.jar" />
                             </target>
                         </configuration>
                     </execution>

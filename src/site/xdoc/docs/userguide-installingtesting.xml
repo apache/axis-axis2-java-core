@@ -126,9 +126,9 @@ the <a href="webadminguide.html">Web administration
 application</a>, but to make things simple for now, copy the *.aar
 file into the Axis2 services directory. For example, to install the
 MyService service distributed as one of the Axis2 samples, copy the
-file &lt;AXIS2_HOME&gt;/samples/userguide/build/MyService.aar file,
+file &lt;AXIS2_HOME&gt;/modules/samples/userguide/build/MyService.aar file,
 which is built using the <code>ant</code> command, from
-&lt;AXIS2_HOME&gt;/samples/userguide, to the directory
+&lt;AXIS2_HOME&gt;/modules/samples/userguide, to the directory
 &lt;J2EE_HOME&gt;/webapps/axis2/WEB-INF/services.</p>
 <p>Your client can come in any number of forms, from a collection
 of files to a single *.jar file. The important thing is to ensure

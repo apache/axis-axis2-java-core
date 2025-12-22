@@ -46,7 +46,7 @@
             <arg line="${url} ${account} ${amt}"/>
             <classpath>
                 <pathelement location="${client.target}/BankService-test-client.jar"/>
-                <fileset dir="../../lib">
+                <fileset dir="../../../lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
@@ -68,7 +68,7 @@
             <arg line="-o ${service.target}"/>
             <!-- Output directory in which to generate files --> <!-- NB it generates to the src folder under this directory!! -->
             <classpath>
-                <fileset dir="../../lib">
+                <fileset dir="../../../lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
@@ -83,7 +83,7 @@
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
                destdir="${service.target}/classes" srcdir="${service.target}/src" includeantruntime="false">
             <classpath>
-                <fileset dir="../../lib">
+                <fileset dir="../../../lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
@@ -101,7 +101,7 @@
             <fileset excludes="**/Test.class" dir="${service.target}/classes"/>
         </jar>
 
-        <copy file="${service.target}/BankService.aar" tofile="../../repository/services/sample-faulthandling.aar"
+        <copy file="${service.target}/BankService.aar" tofile="../../../repository/services/sample-faulthandling.aar"
               overwrite="true"/>
 
     </target>
@@ -115,7 +115,7 @@
             <arg line="-u"/>
             <arg line="-o ${client.target}"/>
             <classpath>
-                <fileset dir="../../lib">
+                <fileset dir="../../../lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
@@ -128,7 +128,7 @@
                destdir="${client.target}/classes" includeantruntime="false">
             <src path="${client.target}/src"/>
             <classpath>
-                <fileset dir="../../lib">
+                <fileset dir="../../../lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>

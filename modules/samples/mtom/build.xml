@@ -30,7 +30,7 @@
 	<property name="lib.dir" value="../lib" />
 
 	<path id="class.path">
-		<fileset dir="../../lib">
+		<fileset dir="../../../lib">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
@@ -52,7 +52,7 @@
 		</java>
 		<copy file="${skeleton.path}" tofile="${service.dir}/${skeleton.path}" overwrite="true" />
 		<antcall target="jar.server"/>
-		<copy file="${service.dir}/sample-mtom.aar" tofile="../../repository/services/sample-mtom.aar" overwrite="true"/>
+		<copy file="${service.dir}/sample-mtom.aar" tofile="../../../repository/services/sample-mtom.aar" overwrite="true"/>
 	</target>
 	<target name="check-parameters">
 		<condition property="parameters.set">
@@ -100,7 +100,7 @@
 			<arg value="-dest" />
 			<arg value="${dest}" />
 			<classpath>
-				<fileset dir="../../lib">
+				<fileset dir="../../../lib">
 					<include name="**/*.jar" />
 				</fileset>
 				<dirset dir="${client.classes.dir}" />

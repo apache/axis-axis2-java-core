@@ -67,7 +67,7 @@ other features.</p>
 
 <p>In this (first) section, we will learn how to write and deploy Web
 services using Axis2. All the samples mentioned in this guide are located in
-the <b>"samples/userguide/src"</b> directory of <a
+the <b>"modules/samples/userguide/src"</b> directory of <a
 href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
 
@@ -123,7 +123,7 @@ code will be placed in a "samples" directory. </p>
 
 <p>This will generate the required classes in the <b>"sample/src"</b>
 directory, and the schema classes in the
-<strong>"samples/resources/schemaorg_apache_xmlbeans"</strong>
+<strong>"modules/samples/resources/schemaorg_apache_xmlbeans"</strong>
 directory<strong></strong>. Note that these are not source files and should
 be available in the class path in order to compile the generated classes.</p>
 <a name="Step2_Implement_Business_Logic"></a>
@@ -133,9 +133,9 @@ be available in the class path in order to compile the generated classes.</p>
 <p>Now you should fill the business logic in the skeleton class. You can find
 the skeleton class -Axis2SampleDocLitServiceSkeleton.java- among the
 generated classes in the
-<strong>"samples/src/org/apache/axis2/userguide</strong> directory. Let's
+<strong>"modules/samples/src/org/apache/axis2/userguide</strong> directory. Let's
 fill the <code>echoString(..)</code> method in the skeleton as shown below.
-Our sample WSDL-Axis2SampleDocLit.wsdl in <strong>"samples/wsdl"</strong>
+Our sample WSDL-Axis2SampleDocLit.wsdl in <strong>"modules/samples/wsdl"</strong>
 directory has three operations: echoString, echoStringArray, echoStruct. To
 see how the others will look when they are filled up, see <a
 href="src/Axis2SampleDocLitServiceCode.html">Code Listing For

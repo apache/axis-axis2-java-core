@@ -25,7 +25,7 @@
 
     <property name="dest.dir.lib" value="${dest.dir}/lib" />
 
-    <property name="axis2.home" value="../.." />
+    <property name="axis2.home" value="../../.." />
 
     <property name="repository.path" value="${axis2.home}/repository/services" />
 

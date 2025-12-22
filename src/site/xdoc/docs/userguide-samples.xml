@@ -159,7 +159,7 @@ as input values.</p>
 <a name="json" id="json"></a>
 <h2>Sample webapp that uses JSON, Spring Boot, Spring Security, and Moshi</h2>
 <p>A complete Axis2 webapp via Maven that demonstrates JSON and Moshi securely with 
-Spring Boot is located in the <b>"samples/userguide/src/springbootdemo"</b> directory of <a
+Spring Boot is located in the <b>"modules/samples/userguide/src/springbootdemo"</b> directory of <a
 href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
 <a name="others" id="others"></a>

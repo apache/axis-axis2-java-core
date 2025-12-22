@@ -122,7 +122,7 @@ new JSON and REST based Web Service using Axis2, and how to invoke a Web Service
 </p>
 
 <p>All the sample code mentioned in this guide is located in
-the <b>"samples/userguide/src/springbootdemo"</b> directory of <a
+the <b>"modules/samples/userguide/src/springbootdemo"</b> directory of <a
 href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
 <p>

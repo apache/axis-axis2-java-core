@@ -54,6 +54,14 @@ Guide</a></li>
 Guide</a></li>
 <li><a href="adv-userguide.html">Advanced User's
 Guide</a></li>
+<li><strong><a href="openapi-rest-userguide.html">OpenAPI REST Services Guide</a></strong>
+<ul>
+<li>7.1 <a href="openapi-rest-userguide.html#Introduction">Getting Started with OpenAPI</a></li>
+<li>7.2 <a href="openapi-rest-userguide.html#OpenAPI_Integration_Features">OpenAPI Integration Features</a></li>
+<li>7.3 <a href="openapi-rest-userguide.html#Samples">Complete Sample Application</a></li>
+<li>7.4 <a href="openapi-rest-userguide.html#Swagger_UI">Interactive Swagger UI</a></li>
+</ul>
+</li>
 <li><a href="axis2config.html">Configuration
 Guide</a></li>
 <li><a href="webadminguide.html">Web
@@ -114,7 +122,7 @@ Transport</a></li>
 </li>
 <li><a href="WS_policy.html">WS-Policy
 Support</a></li>
-<li><a href="rest-ws.html">REST Support</a></li>
+<li><a href="rest-ws.html">REST Support</a> (See also: <strong><a href="openapi-rest-userguide.html">OpenAPI REST Services Guide</a></strong>)</li>
 <li>JSON support
     <ul>
     <li>23.1<a href="json_support.html">JSON support with Mapped/Badgerfish formats</a></li>
@@ -124,6 +132,13 @@ Support</a></li>
         <li><a href="json_support_gson.html#xml_stream_api_base_approach">XML Stream API Base Approach</a></li>
         <li><a href="json_gson_user_guide.html">User Guide</a></li>
         <li><a href="json-springboot-userguide.html">JSON and REST with Spring Boot User's Guide</a></li>
+    </ul>
+    </li>
+    <li><strong>23.3 <a href="openapi-rest-userguide.html">OpenAPI REST with JSON Support</a></strong>
+    <ul>
+        <li><a href="openapi-rest-userguide.html#OpenAPI_Integration_Features">Automatic OpenAPI 3.0.1 Generation</a></li>
+        <li><a href="openapi-rest-userguide.html#Samples">Complete JSON REST API Examples</a></li>
+        <li><a href="openapi-rest-userguide.html#Swagger_UI">Interactive API Testing with Swagger UI</a></li>
     </ul>
     </li>
 </ul>

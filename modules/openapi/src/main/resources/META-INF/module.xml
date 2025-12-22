@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<module name="openapi" class="org.apache.axis2.openapi.OpenApiModule">
+    <Description>
+        Apache Axis2 OpenAPI/Swagger Integration Module
+
+        Provides flexible OpenAPI 3.0.1 specification support for Axis2 REST services.
+        Supports both automatic generation from service introspection and manual schema override
+        to balance Apache project standards with real-world usage patterns.
+
+        Generation Modes:
+        1. AUTOMATIC - Generate OpenAPI specs from service metadata (default)
+        2. STATIC - Use provided static OpenAPI schema files
+        3. HYBRID - Auto-generate base, override with static enhancements
+
+        Features:
+        - Service introspection with REST operation detection
+        - Static schema file support for manual API contracts
+        - Swagger UI integration for interactive documentation
+        - JSON and YAML OpenAPI specification formats
+        - CORS support for browser-based testing
+
+        Endpoints:
+        - /swagger-ui - Interactive Swagger UI documentation
+        - /openapi.json - OpenAPI specification in JSON format
+        - /openapi.yaml - OpenAPI specification in YAML format
+    </Description>
+
+    <!-- Generation Configuration -->
+    <parameter name="generationMode">AUTOMATIC</parameter> <!-- AUTOMATIC|STATIC|HYBRID -->
+    <parameter name="staticSchemaPath">openapi-schema.json</parameter>
+    <parameter name="enableServiceIntrospection">true</parameter>
+
+    <!-- UI Configuration -->
+    <parameter name="enableSwaggerUI">true</parameter>
+    <parameter name="swaggerUIPath">/swagger-ui</parameter>
+    <parameter name="swaggerUIVersion">4.15.5</parameter>
+
+    <!-- API Specification Endpoints -->
+    <parameter name="openApiJsonPath">/openapi.json</parameter>
+    <parameter name="openApiYamlPath">/openapi.yaml</parameter>
+    <parameter name="enableCORS">true</parameter>
+
+    <!-- Default API Information -->
+    <parameter name="apiTitle">Apache Axis2 REST API</parameter>
+    <parameter name="apiVersion">1.0.0</parameter>
+    <parameter name="apiDescription">REST API documentation for Apache Axis2 services</parameter>
+
+    <!-- Service Discovery -->
+    <parameter name="excludeSystemServices">true</parameter>
+    <parameter name="includeAllServices">false</parameter>
+    <parameter name="restServicesOnly">true</parameter>
+
+    <!-- Contact Information -->
+    <parameter name="contactName">Apache Axis2</parameter>
+    <parameter name="contactUrl">https://axis.apache.org/axis2/java/core/</parameter>
+
+    <!-- License Information -->
+    <parameter name="licenseName">Apache License 2.0</parameter>
+    <parameter name="licenseUrl">https://www.apache.org/licenses/LICENSE-2.0</parameter>
+</module>

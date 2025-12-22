@@ -1,0 +1,408 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Financial Data Services API",
+        "description": "Apache Axis2 financial data management REST API with comprehensive OpenAPI documentation",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://localhost:8006",
+            "description": "Development server"
+        }
+    ],
+    "paths": {
+        "/bigdataservice/login": {
+            "post": {
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "User authentication",
+                "operationId": "authenticateUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authentication successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/bigdataservice/funds/summary": {
+            "post": {
+                "tags": [
+                    "funds"
+                ],
+                "summary": "Get fund summary data",
+                "operationId": "getFundSummary",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FundSummaryRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Fund summary retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FundSummaryResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/bigdataservice/assets/calculate": {
+            "post": {
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Calculate asset values",
+                "operationId": "calculateAssets",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssetCalculationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Asset calculation completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssetCalculationResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/bigdataservice/user/info": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user information",
+                "operationId": "getUserInfo",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User information retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserInfo"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/bigdataservice/user/permissions": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user permissions",
+                "operationId": "getUserPermissions",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User permissions retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserPermissions"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LoginRequest": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "credentials"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "credentials": {
+                        "type": "string",
+                        "description": "User password or authentication token"
+                    }
+                }
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "description": "Authentication token"
+                    },
+                    "expiresIn": {
+                        "type": "integer",
+                        "description": "Token expiration time in seconds"
+                    },
+                    "userInfo": {
+                        "$ref": "#/components/schemas/UserInfo"
+                    },
+                    "errorMessage": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "FundSummaryRequest": {
+                "type": "object",
+                "properties": {
+                    "fundIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of fund identifiers"
+                    },
+                    "dateRange": {
+                        "$ref": "#/components/schemas/DateRange"
+                    }
+                }
+            },
+            "FundSummaryResponse": {
+                "type": "object",
+                "properties": {
+                    "funds": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FundSummary"
+                        }
+                    },
+                    "errorMessage": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "FundSummary": {
+                "type": "object",
+                "properties": {
+                    "fundId": {
+                        "type": "string"
+                    },
+                    "fundName": {
+                        "type": "string"
+                    },
+                    "totalValue": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "asOfDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "AssetCalculationRequest": {
+                "type": "object",
+                "properties": {
+                    "assetIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "calculationType": {
+                        "type": "string",
+                        "enum": ["market_value", "risk_metrics", "performance"]
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                }
+            },
+            "AssetCalculationResponse": {
+                "type": "object",
+                "properties": {
+                    "calculations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AssetCalculation"
+                        }
+                    },
+                    "errorMessage": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "AssetCalculation": {
+                "type": "object",
+                "properties": {
+                    "assetId": {
+                        "type": "string"
+                    },
+                    "calculationType": {
+                        "type": "string"
+                    },
+                    "result": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "calculatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "UserInfo": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "UserPermissions": {
+                "type": "object",
+                "properties": {
+                    "canAccessFunds": {
+                        "type": "boolean"
+                    },
+                    "canCalculateAssets": {
+                        "type": "boolean"
+                    },
+                    "canViewReports": {
+                        "type": "boolean"
+                    },
+                    "accessibleFundIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "DateRange": {
+                "type": "object",
+                "properties": {
+                    "startDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "endDate": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                }
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

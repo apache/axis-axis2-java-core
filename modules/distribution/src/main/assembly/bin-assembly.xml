@@ -121,7 +121,7 @@
         <!-- copy samples -->
         <fileSet>
             <directory>../../modules/samples</directory>
-            <outputDirectory>samples</outputDirectory>
+            <outputDirectory>modules/samples</outputDirectory>
             <includes>
                 <include>pom.xml</include>
                 <include>databinding/**/*</include>
@@ -150,7 +150,8 @@
                 <include>version/**/*</include>
                 <include>wsdl/**/*</include>
                 <include>yahoojsonsearch/**/*</include>
-                <include>yahoorestsearch/**/*</include>            
+                <include>yahoorestsearch/**/*</include>
+                <include>swagger-server/**/*</include>            
             </includes>
             <excludes>
                 <!-- The release process builds the binary distribution from a clean checkout,
