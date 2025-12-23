@@ -73,12 +73,12 @@
         <dependency>
             <groupId>com.squareup.moshi</groupId>
             <artifactId>moshi</artifactId>
-            <version>1.15.0</version>
+            <version>1.15.2</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.moshi</groupId>
             <artifactId>moshi-adapters</artifactId>
-            <version>1.15.0</version>
+            <version>1.15.2</version>
         </dependency>
 
         <!-- Axis2 JSON module for enhanced moshih2 performance metrics -->
