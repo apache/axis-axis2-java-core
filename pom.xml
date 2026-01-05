@@ -484,7 +484,7 @@
         <jibx.version>1.4.5</jibx.version>
         <maven.archiver.version>3.6.6</maven.archiver.version>
         <maven.version>3.9.11</maven.version>
-        <rhino.version>1.8.1</rhino.version>
+        <rhino.version>1.9.0</rhino.version>
         <slf4j.version>2.0.17</slf4j.version>
         <spring.version>7.0.2</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
