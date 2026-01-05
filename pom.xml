@@ -476,7 +476,7 @@
         <fi.version>2.1.1</fi.version>
         <google.gson.version>2.13.2</google.gson.version>
         <groovy.version>5.0.3</groovy.version>
-        <httpcore.version>5.3.6</httpcore.version>
+        <httpcore.version>5.4</httpcore.version>
         <httpclient.version>5.6</httpclient.version>
         <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
