@@ -29,7 +29,7 @@ final class SchemaFactoryErrorHandler implements ErrorHandler {
 
     @Override
     public void warning(SAXParseException exception) throws SAXException {
-        log.warn(exception.getMessage());
+        log.warn("Schema compilation warning: " + exception.getMessage(), exception);
     }
 
     @Override

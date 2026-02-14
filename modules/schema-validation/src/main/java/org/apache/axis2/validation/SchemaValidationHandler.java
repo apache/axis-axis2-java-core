@@ -71,15 +71,29 @@ public class SchemaValidationHandler extends AbstractHandler {
         try {
             schema = schemaFactory.newSchema(schemaSources.toArray(new Source[schemaSources.size()]));
         } catch (SAXException ex) {
-            throw new AxisFault("Failed to compile schemas", ex);
+            throw new AxisFault("Failed to compile schemas: " + ex.getMessage()
+                    + appendRefHint(ex), ex);
         }
         try {
             schema.newValidator().validate(msgContext.getEnvelope().getBody().getFirstElement().getSAXSource(true));
         } catch (SAXException ex) {
-            throw new AxisFault("Failed to validate message: " + ex.getMessage(), ex);
+            throw new AxisFault("Failed to validate message: " + ex.getMessage()
+                    + appendRefHint(ex), ex);
         } catch (OMException | IOException ex) {
             throw new AxisFault("Failed to validate message", ex);
         }
         return InvocationResponse.CONTINUE;
+    }
+
+    static String appendRefHint(SAXException ex) {
+        String msg = ex.getMessage();
+        if (msg != null && msg.contains("cvc-complex-type.3.2.2")) {
+            return ". This may be caused by a schema using xs:attribute ref= to reference"
+                    + " an attribute from an external namespace (e.g., xmime:contentType)"
+                    + " whose schema was not imported or could not be resolved."
+                    + " Consider defining the attribute inline instead of using ref=,"
+                    + " or ensure the referenced schema is accessible.";
+        }
+        return "";
     }
 }
