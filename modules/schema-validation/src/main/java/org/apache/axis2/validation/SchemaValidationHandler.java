@@ -88,11 +88,12 @@ public class SchemaValidationHandler extends AbstractHandler {
     static String appendRefHint(SAXException ex) {
         String msg = ex.getMessage();
         if (msg != null && msg.contains("cvc-complex-type.3.2.2")) {
-            return ". This may be caused by a schema using xs:attribute ref= to reference"
+            return ". Note: if this attribute is expected to be valid,"
+                    + " one common cause is a schema using xs:attribute ref= to reference"
                     + " an attribute from an external namespace (e.g., xmime:contentType)"
                     + " whose schema was not imported or could not be resolved."
-                    + " Consider defining the attribute inline instead of using ref=,"
-                    + " or ensure the referenced schema is accessible.";
+                    + " In that case, ensure the referenced schema is accessible"
+                    + " or define the attribute inline instead of using ref=.";
         }
         return "";
     }

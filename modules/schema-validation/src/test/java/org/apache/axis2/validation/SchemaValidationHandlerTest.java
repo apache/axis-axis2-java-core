@@ -49,8 +49,8 @@ public class SchemaValidationHandlerTest {
         SAXException ex = new SAXException(
                 "cvc-complex-type.3.2.2: Attribute 'contentType' is not allowed to appear in element 'foo'");
         String hint = SchemaValidationHandler.appendRefHint(ex);
+        assertThat(hint).contains("if this attribute is expected to be valid");
         assertThat(hint).contains("xs:attribute ref=");
-        assertThat(hint).contains("xmime:contentType");
         assertThat(hint).contains("not imported or could not be resolved");
     }
 
@@ -128,7 +128,7 @@ public class SchemaValidationHandlerTest {
         assertThatThrownBy(() -> handler.invoke(msgCtx))
                 .isInstanceOf(AxisFault.class)
                 .hasMessageContaining("cvc-complex-type.3.2.2")
-                .hasMessageContaining("xs:attribute ref=")
-                .hasMessageContaining("not imported or could not be resolved");
+                .hasMessageContaining("if this attribute is expected to be valid")
+                .hasMessageContaining("xs:attribute ref=");
     }
 }
