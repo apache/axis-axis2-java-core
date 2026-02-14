@@ -47,6 +47,7 @@ as the transport mechanism.</p>
   <li><a href="#preemptive_auth">Basic, Digest and NTLM Authentication</a></li>
   <li><a href="#reusing_httpclient_object">Reusing the httpclient object</a></li>
   <li><a href="#setting_cached_httpclient_object">Setting the cached httpclient object</a></li>
+  <li><a href="#custom_http_status_codes">Custom HTTP Response Status Codes</a></li>
 </ul>
 <a name="HTTPClient5TransportSender"></a>
 
@@ -400,8 +401,69 @@ HttpState myHttpState = new HttpState();
 options.setProperty(WSClientConstants.CACHED_HTTP_STATE, myHttpState);
 </pre>
     
-Doing so the HttpState is attached to the client. Respectively this is automatically propagated to all MessageContext objects used by the client. 
-Underneath this just instructs Axis2 that the CACHED_HTTP_STATE set should be passed as a parameter when HttpClient#executeMethod is invoked. 
-    
+Doing so the HttpState is attached to the client. Respectively this is automatically propagated to all MessageContext objects used by the client.
+Underneath this just instructs Axis2 that the CACHED_HTTP_STATE set should be passed as a parameter when HttpClient#executeMethod is invoked.
+
+<a name="custom_http_status_codes"></a>
+<h2>Custom HTTP Response Status Codes</h2>
+
+<p>By default, Axis2 sends HTTP 200 for successful responses and HTTP 500 for
+fault responses. For SOAP 1.2 messages where the fault code is
+<code>Sender</code>, Axis2 automatically uses HTTP 400 instead of 500.</p>
+
+<p>You can override the HTTP status code on any response by setting the
+<code>Constants.HTTP_RESPONSE_STATE</code> property
+(<code>"axis2.http.response.state"</code>) on the MessageContext. The value
+must be a String representation of the desired HTTP status code. This works
+for both fault and non-fault responses.</p>
+
+<h3>Server-side: Custom fault status code</h3>
+
+<p>In a service implementation or handler, set the property on the inbound
+MessageContext before throwing the fault. The status code will be propagated
+to the fault response context automatically.</p>
+<pre>
+public void myServiceMethod(MessageContext msgContext) throws AxisFault {
+    if (isServiceUnavailable()) {
+        // Return 503 Service Unavailable instead of the default 500
+        msgContext.setProperty("axis2.http.response.state", "503");
+        throw new AxisFault("Service temporarily unavailable");
+    }
+}
+</pre>
+
+<h3>Server-side: Custom status in a handler</h3>
+
+<p>Axis2 handlers in the inbound flow can set the status code before the
+message reaches the service. The transport sender will respect this value
+when writing the response.</p>
+<pre>
+public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+    // Example: return 429 Too Many Requests for rate limiting
+    if (isRateLimited(msgContext)) {
+        msgContext.setProperty("axis2.http.response.state", "429");
+        throw new AxisFault("Rate limit exceeded");
+    }
+    return InvocationResponse.CONTINUE;
+}
+</pre>
+
+<h3>Precedence rules</h3>
+
+<p>When determining the HTTP status code for a response, the following
+precedence applies (highest to lowest):</p>
+<ol>
+    <li>User-specified value in <code>Constants.HTTP_RESPONSE_STATE</code> on
+    the MessageContext</li>
+    <li>SOAP 1.2 Sender fault code mapping to HTTP 400 (only applied if no
+    user-specified value exists)</li>
+    <li>WSDL binding <code>whttp:code</code> attribute</li>
+    <li>Default: HTTP 500 for faults, HTTP 200 for success</li>
+</ol>
+
+<p>This feature was introduced to address
+<a href="https://issues.apache.org/jira/browse/AXIS2-3879">AXIS2-3879</a> and
+<a href="https://issues.apache.org/jira/browse/AXIS2-4146">AXIS2-4146</a>.</p>
+
 </body>
 </html>
