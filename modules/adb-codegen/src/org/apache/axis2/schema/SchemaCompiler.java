@@ -1898,22 +1898,32 @@ public class SchemaCompiler {
 
         } else if (att.getRef().getTargetQName() != null) {
 
-            XmlSchema resolvedSchema = getParentSchema(parentSchema, att.getRef().getTargetQName(),
+            QName refQName = att.getRef().getTargetQName();
+            XmlSchema resolvedSchema = getParentSchema(parentSchema, refQName,
                                                        COMPONENT_ATTRIBUTE);
             if (resolvedSchema == null) {
                 throw new SchemaCompilationException("can not find the attribute " +
-                                                     att.getRef().getTargetQName() +
+                                                     refQName +
                                                      " from the parent schema " +
                                                      parentSchema.getTargetNamespace());
             } else {
                 XmlSchemaAttribute xmlSchemaAttribute =
-                        resolvedSchema.getAttributes().get(att.getRef().getTargetQName());
+                        resolvedSchema.getAttributes().get(refQName);
                 if (xmlSchemaAttribute != null) {
                     // call recursively to process the schema
                     processAttribute(xmlSchemaAttribute, metainf, resolvedSchema);
+                    // AXIS2-5972: Preserve the namespace from the ref QName.
+                    // The resolved attribute's getWireName() may return an empty namespace
+                    // for global attributes with inline types, losing the ref namespace.
+                    QName wireName = xmlSchemaAttribute.getWireName();
+                    if (wireName != null
+                            && (wireName.getNamespaceURI() == null || wireName.getNamespaceURI().isEmpty())
+                            && refQName.getNamespaceURI() != null && !refQName.getNamespaceURI().isEmpty()) {
+                        metainf.rekeyMapping(wireName, refQName);
+                    }
                 } else {
                     throw new SchemaCompilationException("Attribute QName reference refer to an invalid attribute " +
-                                                         att.getRef().getTargetQName());
+                                                         refQName);
                 }
             }
 

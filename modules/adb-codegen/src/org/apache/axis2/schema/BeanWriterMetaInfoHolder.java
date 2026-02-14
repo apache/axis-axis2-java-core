@@ -961,7 +961,62 @@ public class BeanWriterMetaInfoHolder {
 
     public QName getRestrictionBaseType() {
         return restrictionBaseType;
-    }    
+    }
+
+    /**
+     * Re-keys all map entries from oldKey to newKey across all internal maps.
+     * This is used when an attribute ref= resolves to a global attribute whose
+     * wireName has lost the original namespace, so we need to re-register
+     * the mapping under the correct QName (AXIS2-5972).
+     *
+     * @param oldKey the QName currently used as key (e.g. with empty namespace)
+     * @param newKey the correct QName to use (e.g. with the ref namespace)
+     */
+    public void rekeyMapping(QName oldKey, QName newKey) {
+        if (oldKey.equals(newKey)) {
+            return;
+        }
+        // Re-key elementToJavaClassMap
+        if (elementToJavaClassMap.containsKey(oldKey)) {
+            elementToJavaClassMap.put(newKey, elementToJavaClassMap.remove(oldKey));
+        }
+        // Re-key elementToSchemaQNameMap
+        if (elementToSchemaQNameMap.containsKey(oldKey)) {
+            elementToSchemaQNameMap.put(newKey, elementToSchemaQNameMap.remove(oldKey));
+        }
+        // Re-key specialTypeFlagMap
+        if (specialTypeFlagMap.containsKey(oldKey)) {
+            specialTypeFlagMap.put(newKey, specialTypeFlagMap.remove(oldKey));
+        }
+        // Re-key qNameMaxOccursCountMap
+        if (qNameMaxOccursCountMap.containsKey(oldKey)) {
+            qNameMaxOccursCountMap.put(newKey, qNameMaxOccursCountMap.remove(oldKey));
+        }
+        // Re-key qNameMinOccursCountMap
+        if (qNameMinOccursCountMap.containsKey(oldKey)) {
+            qNameMinOccursCountMap.put(newKey, qNameMinOccursCountMap.remove(oldKey));
+        }
+        // Re-key elementQNameToDefulatValueMap
+        if (elementQNameToDefulatValueMap.containsKey(oldKey)) {
+            elementQNameToDefulatValueMap.put(newKey, elementQNameToDefulatValueMap.remove(oldKey));
+        }
+        // Re-key nillableQNameList
+        int nillIdx = nillableQNameList.indexOf(oldKey);
+        if (nillIdx >= 0) {
+            nillableQNameList.set(nillIdx, newKey);
+        }
+        // Re-key fixedQNameList
+        int fixedIdx = fixedQNameList.indexOf(oldKey);
+        if (fixedIdx >= 0) {
+            fixedQNameList.set(fixedIdx, newKey);
+        }
+        // Re-key qNameOrderMap (maps Integer -> QName, so replace values)
+        for (Map.Entry<Integer, QName> entry : qNameOrderMap.entrySet()) {
+            if (oldKey.equals(entry.getValue())) {
+                entry.setValue(newKey);
+            }
+        }
+    }
 
     @Override
     public String toString() {
