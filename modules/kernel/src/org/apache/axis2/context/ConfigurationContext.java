@@ -737,6 +737,10 @@ public class ConfigurationContext extends AbstractContext {
      */
     public void terminate() throws AxisFault {
         shutdownModulesAndServices();
+        // AXIS2-5696: Shut down the thread pool to prevent thread leaks
+        if (threadPool instanceof ThreadPool) {
+            ((ThreadPool) threadPool).safeShutDown();
+        }
         if (listenerManager != null) {
             listenerManager.destroy();
         }

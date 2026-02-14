@@ -114,8 +114,7 @@ public class ThreadPool implements ThreadFactory {
                     TimeUnit.SECONDS, new LinkedBlockingQueue(),
                     new DefaultThreadFactory(name, daemon, priority));
         }
-// FIXME: This API is only in JDK 1.6 - Use reflection?        
-//        rc.allowCoreThreadTimeOut(true);
+        rc.allowCoreThreadTimeOut(true);
         return rc;
     }
 
