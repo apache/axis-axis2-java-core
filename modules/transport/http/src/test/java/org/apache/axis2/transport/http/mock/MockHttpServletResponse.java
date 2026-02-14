@@ -49,8 +49,9 @@ public class MockHttpServletResponse implements HttpServletResponse, OutTranspor
     private OutputStream outStream;
     private boolean committed;
     private HeaderGroup headerGroup;
-    private ByteArrayOutputStream byteArrayOutputStream;   
-    
+    private ByteArrayOutputStream byteArrayOutputStream;
+    private int status = 200;
+
     public MockHttpServletResponse() {
 	headerGroup = new HeaderGroup();
         byteArrayOutputStream = new ByteArrayOutputStream();
@@ -203,6 +204,7 @@ public class MockHttpServletResponse implements HttpServletResponse, OutTranspor
 
     @Override
     public void setStatus(int sc) {
+        this.status = sc;
     }
 
     @Override
@@ -222,7 +224,7 @@ public class MockHttpServletResponse implements HttpServletResponse, OutTranspor
 
     @Override
     public int getStatus() {
-        throw new UnsupportedOperationException();
+        return status;
     }
 
     @Override

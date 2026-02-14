@@ -149,6 +149,68 @@ public abstract class HTTPTransportSenderTest extends TestCase  {
 
     }
     
+    /**
+     * AXIS2-3879: Fault with a user-specified custom status code should use that code,
+     * not the default 500.
+     */
+    public void testFaultWithCustomStatusCode() throws Exception {
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        ServletBasedOutTransportInfo info = new ServletBasedOutTransportInfo(httpResponse);
+        configAndRunFault(httpResponse, info, "503", getTransportSender());
+        assertEquals("Custom status code should be respected", 503, httpResponse.getStatus());
+    }
+
+    /**
+     * AXIS2-3879: Fault without a custom status code should default to 500.
+     */
+    public void testFaultDefaultsTo500() throws Exception {
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        ServletBasedOutTransportInfo info = new ServletBasedOutTransportInfo(httpResponse);
+        configAndRunFault(httpResponse, info, null, getTransportSender());
+        assertEquals("Default fault status should be 500", 500, httpResponse.getStatus());
+    }
+
+    /**
+     * AXIS2-4146: User-set status code 400 should not be overwritten to 500.
+     */
+    public void testFaultWithStatus400NotOverwritten() throws Exception {
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        ServletBasedOutTransportInfo info = new ServletBasedOutTransportInfo(httpResponse);
+        configAndRunFault(httpResponse, info, "400", getTransportSender());
+        assertEquals("Status 400 should not be overwritten to 500", 400, httpResponse.getStatus());
+    }
+
+    private static void configAndRunFault(MockHttpServletResponse outResponse,
+            OutTransportInfo outTransportInfo, String customStatus,
+            TransportSender sender) throws Exception {
+        ConfigurationContext confContext = ConfigurationContextFactory
+                .createEmptyConfigurationContext();
+        TransportOutDescription transportOut = new TransportOutDescription("http");
+        Parameter param = new Parameter(HTTPConstants.OMIT_SOAP_12_ACTION, false);
+        SOAPEnvelope envelope = getFaultEnvelope();
+        MessageContext msgContext = new MessageContext();
+
+        transportOut.addParameter(param);
+        msgContext.setEnvelope(envelope);
+        msgContext.setProperty(MessageContext.TRANSPORT_OUT,
+                outResponse.getByteArrayOutputStream());
+        msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outTransportInfo);
+        msgContext.setTransportOut(transportOut);
+        msgContext.setConfigurationContext(confContext);
+        if (customStatus != null) {
+            msgContext.setProperty(Constants.HTTP_RESPONSE_STATE, customStatus);
+        }
+        sender.init(confContext, transportOut);
+        sender.invoke(msgContext);
+    }
+
+    static SOAPEnvelope getFaultEnvelope() {
+        SOAPFactory soapFac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = soapFac.getDefaultFaultEnvelope();
+        envelope.getBody().getFault().getReason().setText("test fault");
+        return envelope;
+    }
+
     static SOAPEnvelope getEnvelope() throws IOException {
         SOAPFactory soapFac = OMAbstractFactory.getSOAP11Factory();
         OMFactory omFac = OMAbstractFactory.getOMFactory();

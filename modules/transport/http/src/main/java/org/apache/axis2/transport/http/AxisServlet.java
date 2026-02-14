@@ -512,7 +512,12 @@ public class AxisServlet extends HttpServlet {
             if (valueElement != null) {
                 if (SOAP12Constants.FAULT_CODE_SENDER.equals(valueElement.getTextAsQName().getLocalPart())
                         && !msgContext.isDoingREST()) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    // Only set SOAP 1.2 Sender → 400 if the user hasn't already set a custom status
+                    if (msgContext.getProperty(Constants.HTTP_RESPONSE_STATE) == null) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        faultContext.setProperty(Constants.HTTP_RESPONSE_STATE,
+                                String.valueOf(HttpServletResponse.SC_BAD_REQUEST));
+                    }
                 }
             }
         }

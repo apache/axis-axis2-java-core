@@ -271,9 +271,11 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
             servletBasedOutTransportInfo =
                     (ServletBasedOutTransportInfo) transportInfo;
 
-            // if sending a fault, set HTTP status code to 500
+            // if sending a fault, set HTTP status code (respecting user-set status codes)
             if (msgContext.isFault()) {
-                servletBasedOutTransportInfo.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                int faultStatus = resolveHttpStatusCode(msgContext,
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                servletBasedOutTransportInfo.setStatus(faultStatus);
             }
 
             Object customHeaders = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
@@ -299,6 +301,12 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
                 }
             }
         } else if (transportInfo instanceof AxisHttpResponse) {
+            if (msgContext.isFault()) {
+                int faultStatus = resolveHttpStatusCode(msgContext,
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                ((AxisHttpResponse) transportInfo).setStatus(faultStatus);
+            }
+
             Object customHeaders = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
             if (customHeaders != null) {
                 if (customHeaders instanceof List) {
@@ -358,6 +366,39 @@ public abstract class AbstractHTTPTransportSender extends AbstractHandler implem
             log.error(axisFault.getMessage(), axisFault);
             throw axisFault;
         }
+    }
+
+    /**
+     * Resolves the HTTP status code to use for a response. Checks the message context
+     * (and the inbound message context as a fallback) for a user-specified status code
+     * via {@link Constants#HTTP_RESPONSE_STATE}. If none is found, returns the default.
+     *
+     * @param msgContext the current (outbound) message context
+     * @param defaultStatus the default HTTP status code to use if no user override is found
+     * @return the resolved HTTP status code
+     */
+    private static int resolveHttpStatusCode(MessageContext msgContext, int defaultStatus) {
+        // Check the outbound message context first
+        String statusStr = (String) msgContext.getProperty(Constants.HTTP_RESPONSE_STATE);
+
+        // Fall back to the inbound message context (createFaultMessageContext may not
+        // have copied this property in older code paths)
+        if (statusStr == null) {
+            MessageContext inMsgCtx =
+                    (MessageContext) msgContext.getProperty(MessageContext.IN_MESSAGE_CONTEXT);
+            if (inMsgCtx != null) {
+                statusStr = (String) inMsgCtx.getProperty(Constants.HTTP_RESPONSE_STATE);
+            }
+        }
+
+        if (statusStr != null) {
+            try {
+                return Integer.parseInt(statusStr);
+            } catch (NumberFormatException e) {
+                log.error("Invalid HTTP status code value: " + statusStr, e);
+            }
+        }
+        return defaultStatus;
     }
 
     private void writeMessageWithCommons(MessageContext messageContext,

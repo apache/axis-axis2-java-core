@@ -114,6 +114,9 @@ public class MessageContextBuilder {
         newmsgCtx.setProperty(Constants.OUT_TRANSPORT_INFO,
                               inMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
 
+        newmsgCtx.setProperty(Constants.HTTP_RESPONSE_STATE,
+                              inMessageContext.getProperty(Constants.HTTP_RESPONSE_STATE));
+
         handleCorrelationID(inMessageContext,newmsgCtx);
         return newmsgCtx;
     }
