@@ -509,6 +509,7 @@
         <maven.compiler.release>17</maven.compiler.release>
         <jacoco.version>0.8.14</jacoco.version>
         <asm.version>9.9.1</asm.version>
+        <swagger.version>2.2.43</swagger.version>
     </properties>
 
     <dependencyManagement>
@@ -1037,6 +1038,21 @@
                 <artifactId>byte-buddy</artifactId>
                 <version>1.18.5</version>
             </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-core</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1452,7 +1468,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <skip>${skipScmValidation}</skip>
+                            <skipScriptExecution>${skipScmValidation}</skipScriptExecution>
                             <scripts>
                                 <script><![CDATA[
                                     // Ensure that the <scm> element is present and correctly populated. This prevents
