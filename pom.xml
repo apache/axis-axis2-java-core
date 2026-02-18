@@ -1468,7 +1468,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <skip>${skipScmValidation}</skip>
+                            <skipScriptExecution>${skipScmValidation}</skipScriptExecution>
                             <scripts>
                                 <script><![CDATA[
                                     // Ensure that the <scm> element is present and correctly populated. This prevents
