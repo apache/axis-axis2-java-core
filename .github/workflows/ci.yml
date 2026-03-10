@@ -52,6 +52,27 @@ jobs:
       run: mvn -B -e -Papache-release -Dgpg.skip=true -Dmaven.compiler.release=${{ matrix.java }} verify
     - name: Remove Snapshots
       run: find ~/.m2/repository -name '*-SNAPSHOT' -a -type d -print0 | xargs -0 rm -rf
+    - name: Publish Test Report
+      uses: ctrf-io/github-test-reporter@v1.0.26
+      with:
+        github-report: true
+        report-path: '**/target/surefire-reports/*.xml'
+        integrations-config: |
+          {
+            "junit-to-ctrf": {
+              "enabled": true,
+              "action": "convert",
+              "options": {
+                "output": "./target/ctrf-reports/ctrf-report.json",
+                "toolname": "junit-to-ctrf",
+                "useSuiteName": false,
+                "env": {
+                  "appName": "axis2"
+                }
+              }
+            }
+          }
+      if: always()
   site:
     name: Site
     runs-on: ubuntu-24.04
