@@ -134,7 +134,7 @@
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>3.16.4</version>
+            <version>3.17.0</version>
         </dependency>
 
         <!-- HTTP/2 testing infrastructure - simplified without Jetty dependencies -->
