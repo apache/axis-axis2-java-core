@@ -506,7 +506,7 @@
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
         <axis2_version>${project.version}</axis2_version>
         <project.build.outputTimestamp>2025-03-04T22:45:29Z</project.build.outputTimestamp>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <jacoco.version>0.8.14</jacoco.version>
         <asm.version>9.9.1</asm.version>
         <swagger.version>2.2.45</swagger.version>
@@ -1293,8 +1293,8 @@
                                     <version>3.6.0</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <!-- We require Java 17+ for the build, supporting up to Java 25 -->
-                                    <version>[17,26)</version>
+                                    <!-- We require Java 21+ for the build, supporting up to Java 25 -->
+                                    <version>[21,26)</version>
                                 </requireJavaVersion>
                                 <requireNoRepositories>
                                     <message>The POM must not include repository definitions since non Apache repositories threaten the build stability.</message>
