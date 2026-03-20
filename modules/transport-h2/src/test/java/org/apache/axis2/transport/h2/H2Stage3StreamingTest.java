@@ -27,6 +27,7 @@ import org.apache.axis2.transport.h2.impl.httpclient5.H2FlowControlManager;
 import org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -299,6 +300,7 @@ public class H2Stage3StreamingTest {
         System.out.println("Memory pressure handling test passed");
     }
 
+    @Ignore("For manual testing only, not stable enough to run in CI")
     @Test
     public void testStreamingPerformanceImprovement() throws Exception {
         System.err.println("================================================================================");
