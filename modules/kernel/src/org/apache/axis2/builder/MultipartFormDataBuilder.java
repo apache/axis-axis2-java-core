@@ -125,7 +125,7 @@ public class MultipartFormDataBuilder implements Builder {
         JakartaServletFileUpload upload = new JakartaServletFileUpload<>(fileItemFactory);
         // There must be a limit. 
         // This is for contentType="multipart/form-data"
-        upload.setFileCountMax(1L);
+        upload.setMaxFileCount(1L);
         // Parse the request
         return upload.parseRequest(requestContext);
     }
