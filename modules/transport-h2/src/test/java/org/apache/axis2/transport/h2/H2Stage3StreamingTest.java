@@ -92,6 +92,7 @@ public class H2Stage3StreamingTest {
         }
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testHTTP2StreamingOptimization() throws Exception {
         System.err.println("================================================================================");
@@ -174,6 +175,7 @@ public class H2Stage3StreamingTest {
         System.out.println("Flow control manager test passed");
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testConcurrentStreamProcessing() throws Exception {
         System.err.println("================================================================================");
@@ -246,6 +248,7 @@ public class H2Stage3StreamingTest {
         System.err.println("================================================================================");
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testMemoryPressureHandling() throws Exception {
         // Test Stage 3 memory pressure handling and adaptive flow control

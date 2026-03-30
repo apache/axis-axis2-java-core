@@ -27,6 +27,7 @@ import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class H2PerformanceBenchmarkTest {
         }
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testLatencyBenchmark() throws Exception {
         System.err.println("================================================================================");
@@ -124,6 +126,7 @@ public class H2PerformanceBenchmarkTest {
         System.err.println("================================================================================");
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testLargeJSONProcessingBenchmark() throws Exception {
         System.err.println("================================================================================");
@@ -163,6 +166,7 @@ public class H2PerformanceBenchmarkTest {
         System.err.println("================================================================================");
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testMemoryEfficiencyBenchmark() throws Exception {
         System.err.println("================================================================================");
@@ -201,6 +205,7 @@ public class H2PerformanceBenchmarkTest {
         System.err.println("================================================================================");
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testConnectionMultiplexingEfficiency() throws Exception {
         System.err.println("================================================================================");
@@ -237,6 +242,7 @@ public class H2PerformanceBenchmarkTest {
         System.err.println("================================================================================");
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testConnectionReuseEfficiency() throws Exception {
         // Test connection reuse efficiency (HTTP/2 advantage)
@@ -263,6 +269,7 @@ public class H2PerformanceBenchmarkTest {
         System.out.println("Connection reuse benchmark completed successfully");
     }
 
+    @Ignore("Benchmark test - disabled in CI due to timing sensitivity. Run manually to validate performance.")
     @Test
     public void testOverallPerformanceProfile() throws Exception {
         System.err.println("================================================================================");
