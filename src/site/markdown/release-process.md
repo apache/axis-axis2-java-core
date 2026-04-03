@@ -166,7 +166,7 @@ In order to prepare the release artifacts for vote, execute the following steps:
 
 If not yet done, export your public key and <a href="https://dist.apache.org/repos/dist/release/axis/axis2/java/core/KEYS"> append it there. </a>
 
-If not yet done, also export your public key to the dev area and <a href="https://dist.apache.org/repos/dist/release/axis/axis2/java/core/KEYS"> append it there. </a>
+If not yet done, also export your public key to the dev area and <a href="https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/KEYS"> append it there. </a>
 
 The command to export a public key is as follows:
 
