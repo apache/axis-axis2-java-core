@@ -349,10 +349,10 @@ sender configuration to your axis2.xml file:</p>
 Invoking the client for a login that returns a token can be done as follows:
 </p>
 <pre>
-curl -v -H "Content-Type: application/json" -X POST --data @/home/myuser/login.dat http://localhost:8080/axis2-json-api/services/loginService
+curl -v -H "Content-Type: application/json" -X POST --data @login.dat http://localhost:8080/axis2-json-api/services/loginService
 </pre>
 <p>
-Where the contents of /home/myuser/login.dat are:
+Where the contents of login.dat are:
 </p>
 <pre>
 {"doLogin":[{"arg0":{"email":java-dev@axis.apache.org,"credentials":userguide}}]}
@@ -368,10 +368,10 @@ Invoking the client for a Test Service that validates a sample token can be done
 follows:
 </p>
 <pre>
-curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" -H "Content-Type: application/json" -X POST --data @/home/myuser/test.dat http://localhost:8080/axis2-json-api/services/testws'
+curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" -H "Content-Type: application/json" -X POST --data @test.dat http://localhost:8080/axis2-json-api/services/testws'
 </pre>
 <p>
-Where the contents of /home/myuser/test.dat are below. arg0 is a var name 
+Where the contents of test.dat are below. arg0 is a var name 
 and is used by Axis2 as part of its reflection based code:
 </p>
 <pre>
@@ -397,11 +397,11 @@ Here are examples of how to invoke the service using cURL:</p>
 curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" \
      -H "Content-Type: application/json" \
      -X POST \
-     --data @/home/myuser/small_dataset.dat \
+     --data @small_dataset.dat \
      https://localhost:8443/axis2-json-api/services/BigDataH2Service
 </pre>
 
-<p>Where the contents of /home/myuser/small_dataset.dat are:</p>
+<p>Where the contents of small_dataset.dat are:</p>
 
 <pre>
 {"processBigDataSet":[{"arg0":{
@@ -421,11 +421,11 @@ curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" \
 curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" \
      -H "Content-Type: application/json" \
      -X POST \
-     --data @/home/myuser/medium_dataset.dat \
+     --data @medium_dataset.dat \
      https://localhost:8443/axis2-json-api/services/BigDataH2Service
 </pre>
 
-<p>Where the contents of /home/myuser/medium_dataset.dat are:</p>
+<p>Where the contents of medium_dataset.dat are:</p>
 
 <pre>
 {"processBigDataSet":[{"arg0":{
@@ -445,11 +445,11 @@ curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" \
 curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" \
      -H "Content-Type: application/json" \
      -X POST \
-     --data @/home/myuser/large_dataset.dat \
+     --data @large_dataset.dat \
      https://localhost:8443/axis2-json-api/services/BigDataH2Service
 </pre>
 
-<p>Where the contents of /home/myuser/large_dataset.dat are:</p>
+<p>Where the contents of large_dataset.dat are:</p>
 
 <pre>
 {"processBigDataSet":[{"arg0":{
