@@ -78,7 +78,8 @@ public class BigDataH2Client {
 
         // Configure for large JSON payloads
         serviceClient.getOptions().setProperty(HTTPConstants.CHUNKED, Boolean.FALSE);
-        serviceClient.getOptions().setProperty(HTTPTransportConstants.HTTP_CLIENT_VERSION, HTTPTransportConstants.HTTP_CLIENT_5_X_VERSION);
+        serviceClient.getOptions().setProperty(HTTPTransportConstants.HTTP_CLIENT_VERSION,
+                HTTPTransportConstants.HTTP_CLIENT_5_X_VERSION);
 
         // HTTP/2 specific configurations
         serviceClient.getOptions().setProperty("HTTP2_ENABLED", Boolean.TRUE);

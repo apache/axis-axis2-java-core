@@ -29,6 +29,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
@@ -228,12 +229,13 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
      */
     private int getIntParameter(TransportOutDescription transportOut, String paramName, int defaultValue) {
         try {
-            Object param = transportOut.getParameter(paramName);
+            Parameter param = transportOut.getParameter(paramName);
             if (param != null) {
-                if (param instanceof Integer) {
-                    return (Integer) param;
-                } else {
-                    return Integer.parseInt(param.toString());
+                Object value = param.getValue();
+                if (value instanceof Integer) {
+                    return (Integer) value;
+                } else if (value != null) {
+                    return Integer.parseInt(value.toString().trim());
                 }
             }
         } catch (Exception e) {
@@ -247,12 +249,13 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
      */
     private boolean getBooleanParameter(TransportOutDescription transportOut, String paramName, boolean defaultValue) {
         try {
-            Object param = transportOut.getParameter(paramName);
+            Parameter param = transportOut.getParameter(paramName);
             if (param != null) {
-                if (param instanceof Boolean) {
-                    return (Boolean) param;
-                } else {
-                    return Boolean.parseBoolean(param.toString());
+                Object value = param.getValue();
+                if (value instanceof Boolean) {
+                    return (Boolean) value;
+                } else if (value != null) {
+                    return Boolean.parseBoolean(value.toString().trim());
                 }
             }
         } catch (Exception e) {
@@ -266,12 +269,13 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
      */
     private long getLongParameter(TransportOutDescription transportOut, String paramName, long defaultValue) {
         try {
-            Object param = transportOut.getParameter(paramName);
+            Parameter param = transportOut.getParameter(paramName);
             if (param != null) {
-                if (param instanceof Long) {
-                    return (Long) param;
-                } else {
-                    return Long.parseLong(param.toString());
+                Object value = param.getValue();
+                if (value instanceof Long) {
+                    return (Long) value;
+                } else if (value != null) {
+                    return Long.parseLong(value.toString().trim());
                 }
             }
         } catch (Exception e) {
@@ -285,12 +289,13 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
      */
     private double getDoubleParameter(TransportOutDescription transportOut, String paramName, double defaultValue) {
         try {
-            Object param = transportOut.getParameter(paramName);
+            Parameter param = transportOut.getParameter(paramName);
             if (param != null) {
-                if (param instanceof Double) {
-                    return (Double) param;
-                } else {
-                    return Double.parseDouble(param.toString());
+                Object value = param.getValue();
+                if (value instanceof Double) {
+                    return (Double) value;
+                } else if (value != null) {
+                    return Double.parseDouble(value.toString().trim());
                 }
             }
         } catch (Exception e) {
@@ -304,9 +309,12 @@ public class H2TransportSender extends AbstractHTTPTransportSender {
      */
     private String getStringParameter(TransportOutDescription transportOut, String paramName, String defaultValue) {
         try {
-            Object param = transportOut.getParameter(paramName);
+            Parameter param = transportOut.getParameter(paramName);
             if (param != null) {
-                return param.toString();
+                Object value = param.getValue();
+                if (value != null) {
+                    return value.toString().trim();
+                }
             }
         } catch (Exception e) {
             log.warn("Failed to parse string parameter '" + paramName + "', using default: " + defaultValue, e);
