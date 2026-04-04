@@ -131,12 +131,24 @@ the <b>"modules/samples/userguide/src/springbootdemo"</b> directory of <a
 href="../download.cgi">Axis2 standard binary
 distribution</a>.</p>
 <p>
-This quide supplies a pom.xml for building an exploded WAR with Spring Boot 3 - 
-however this WAR does not have an embedded web server such as Tomcat. 
+This guide supplies a pom.xml for building an exploded WAR with Spring Boot 3 —
+this WAR does not have an embedded web server and must be deployed to an external application server.
 </p>
 <p>
-The testing was carried out on Wildfly 32 with Jakarta, by installing the WAR in its app server. 
+The testing was carried out on WildFly 32 with Jakarta, by installing the WAR in its app server.
+For the equivalent guide targeting Apache Tomcat 11, see the
+<a href="json-springboot-tomcat11-userguide.html">Tomcat 11 User's Guide</a>.
+The key differences between the two deployments are:
 </p>
+<ul>
+<li><strong>Context root:</strong> On WildFly the WAR name becomes the context root (<code>/axis2-json-api</code>);
+on Tomcat 11 (ROOT deployment) the context root is <code>/</code> and service URLs omit the <code>/axis2-json-api</code> prefix.</li>
+<li><strong>Deploy trigger:</strong> WildFly requires a <code>.dodeploy</code> marker file; Tomcat uses <code>cp -r</code> to <code>webapps/ROOT/</code>.</li>
+<li><strong>WildFly-specific files:</strong> <code>jboss-deployment-structure.xml</code> and <code>jboss-web.xml</code> are required here but absent from the Tomcat variant.</li>
+<li><strong>DataSource auto-config:</strong> WildFly suppresses Spring Boot's DataSource auto-configuration automatically;
+Tomcat requires explicit exclusion in <code>@SpringBootApplication</code>.</li>
+<li><strong>JSON request format:</strong> Identical for both — <code>{"methodName":[{"paramName":{...}}]}</code>.</li>
+</ul>
 <p>Please deploy the result of the maven build via 'mvn clean install', axis2-json-api.war, into your servlet container and ensure that it installs without any errors.</p>
 
 <h2>Creating secure Web Services</h2>
