@@ -135,7 +135,7 @@ This guide supplies a pom.xml for building an exploded WAR with Spring Boot 3 â€
 this WAR does not have an embedded web server and must be deployed to an external application server.
 </p>
 <p>
-The testing was carried out on WildFly 32 with Jakarta, by installing the WAR in its app server.
+Testing was carried out on WildFly 32 with OpenJDK 21, and WildFly 39 with OpenJDK 25, by installing the WAR in the app server.
 For the equivalent guide targeting Apache Tomcat 11, see the
 <a href="json-springboot-tomcat11-userguide.html">Tomcat 11 User's Guide</a>.
 The key differences between the two deployments are:

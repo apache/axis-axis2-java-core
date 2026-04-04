@@ -77,7 +77,7 @@ prefix the subject of the mail with [Axis2].</p>
 which targets WildFly 32. The following table summarises all differences:</p>
 
 <table border="1" cellpadding="4">
-<tr><th>Aspect</th><th>WildFly 32</th><th>Tomcat 11</th></tr>
+<tr><th>Aspect</th><th>WildFly 32 / 39</th><th>Tomcat 11</th></tr>
 <tr>
   <td><strong>Context root</strong></td>
   <td><code>/axis2-json-api</code> (WAR name becomes context root automatically)</td>
@@ -246,7 +246,7 @@ This guide supplies a pom.xml for building an exploded WAR with Spring Boot 3 -
 however this WAR does not have an embedded web server such as Tomcat.
 </p>
 <p>
-The testing was carried out on Apache Tomcat 11.0.20 with Jakarta EE 9+, by installing the WAR in its app server.
+Testing was carried out on Apache Tomcat 11.0.20 with OpenJDK 21 and OpenJDK 25, by installing the WAR in its app server.
 </p>
 <p>Please deploy the result of the maven build via 'mvn clean install', axis2-json-api.war, into your servlet container and ensure that it installs without any errors.</p>
 
