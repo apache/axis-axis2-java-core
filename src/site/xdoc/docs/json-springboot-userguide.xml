@@ -120,6 +120,23 @@ processing and adaptive windowing for enterprise big data requirements</li>
 <li><strong>Performance Monitoring:</strong> Built-in metrics collection for throughput and memory usage</li>
 </ul>
 
+<h2>See Also: Axis2/C 2.0.0</h2>
+
+<p>
+<a href="https://github.com/apache/axis-axis2-c-core/blob/master/docs/userguide/json-httpd-h2-userguide.md">Axis2/C 2.0.0</a>
+is in release vote and expected to ship around the same time as Axis2/Java 2.0.1. It provides
+equivalent services (BigDataH2, Login, TestWS) implemented in native C with Apache httpd and mod_h2.
+For most Java users this is of no interest. For those who need maximum throughput or minimal memory
+footprint, native C achieves 240MB peak for a 50MB JSON payload versus JVM heap overhead, and
+26 MB/s JSON throughput with zero warm-up time.
+</p>
+<p>
+The performance headroom is sufficient to run the full HTTP/2 service stack on Android — the
+<a href="https://github.com/apache/axis-axis2-c-core/blob/master/docs/HTTP2_ANDROID.md">Axis2/C Android guide</a>
+covers a camera control service that uses this approach.
+This is a notable milestone: the previous Axis2/C release was 1.6 in 2009.
+</p>
+
 <h2>Getting Started</h2>
 
 <p>This user guide explains how to write and deploy a
