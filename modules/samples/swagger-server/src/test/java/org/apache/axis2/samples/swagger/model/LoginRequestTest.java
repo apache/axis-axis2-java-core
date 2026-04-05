@@ -113,8 +113,10 @@ public class LoginRequestTest extends TestCase {
         requestWithNulls.setEmail(null);
         requestWithNulls.setCredentials("test");
 
+        // Moshi omits null fields by default — verify serialization succeeds without throwing
         String serialized = adapter.toJson(requestWithNulls);
-        assertTrue("Should handle null values in serialization", serialized.contains("null"));
+        assertNotNull("Serialization should succeed with null fields", serialized);
+        assertTrue("Should include non-null credentials field", serialized.contains("test"));
     }
 
     /**
