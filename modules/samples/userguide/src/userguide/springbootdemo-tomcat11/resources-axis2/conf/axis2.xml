@@ -258,6 +258,9 @@
     <!-- commented out for the Axis2 spring boot demo that uses JSON -->
     <!-- <module ref="addressing"/> -->
 
+    <!-- OpenAPI/Swagger documentation module -->
+    <module ref="openapi"/>
+
     <!--Configuring module , providing parameters for modules whether they refer or not-->
     <!--<moduleConfig name="addressing">-->
     <!--<parameter name="addressingPara">N/A</parameter>-->

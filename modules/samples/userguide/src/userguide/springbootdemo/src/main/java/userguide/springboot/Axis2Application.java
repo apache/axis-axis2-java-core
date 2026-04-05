@@ -341,11 +341,34 @@ public class Axis2Application extends SpringBootServletInitializer {
             return headerFilter;
         }
       
-        // these two chains are a binary choice. 
+        // OpenAPI documentation endpoints — GET requests, no auth required
+        class OpenApiRequestMatcher implements RequestMatcher {
+            private static final String[] OPENAPI_PATHS = {"/openapi.json", "/openapi.yaml", "/swagger-ui"};
+
+            @Override
+            public boolean matches(HttpServletRequest request) {
+                String uri = request.getRequestURI();
+                for (String path : OPENAPI_PATHS) {
+                    if (uri.equals(path) || uri.startsWith(path + "/")) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        @Bean(name = "springSecurityFilterChainOpenApi")
+        @Order(2)
+        public SecurityFilterChain springSecurityFilterChainOpenApi() throws Exception {
+            // Only header filter — no POST restriction, no JWT, no login processing
+            return new DefaultSecurityFilterChain(new OpenApiRequestMatcher(), headerWriterFilter());
+        }
+
+        // these two chains are a binary choice.
         // A login url will match, otherwise invoke jwtAuthenticationFilter
 
         @Bean(name = "springSecurityFilterChainLogin")
-	@Order(1)
+	@Order(3)
         public SecurityFilterChain springSecurityFilterChainLogin() throws ServletException, Exception {
             String logPrefix = "GenericAccessDecisionManager.springSecurityFilterChain , ";
             logger.debug(logPrefix + "inside main filter config ...");
