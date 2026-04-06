@@ -60,8 +60,8 @@ public class Axis2WebAppInitializer implements ServletContextInitializer {
         ServletRegistration.Dynamic openApi = container.addServlet(
           "OpenApiServlet", new OpenApiServlet());
         openApi.setLoadOnStartup(2);
-        openApi.addMapping("/openapi.json", "/openapi.yaml", "/swagger-ui");
-        logger.warn("OpenApiServlet registered at /openapi.json, /openapi.yaml, /swagger-ui");
+        openApi.addMapping("/openapi.json", "/openapi.yaml", "/swagger-ui", "/openapi-mcp.json");
+        logger.warn("OpenApiServlet registered at /openapi.json, /openapi.yaml, /swagger-ui, /openapi-mcp.json");
     }
 
     private void addAxis2Servlet(ServletContext container, AnnotationConfigWebApplicationContext ctx) {

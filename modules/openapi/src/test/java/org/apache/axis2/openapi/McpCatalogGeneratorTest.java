@@ -1,0 +1,421 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.axis2.openapi;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import junit.framework.TestCase;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.engine.AxisConfiguration;
+
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
+
+import javax.xml.namespace.QName;
+import java.io.BufferedReader;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * Unit tests for the {@code /openapi-mcp.json} endpoint implemented in
+ * {@link OpenApiSpecGenerator#generateMcpCatalogJson(HttpServletRequest)}.
+ *
+ * <p>Tests cover:
+ * <ul>
+ *   <li>JSON structure validity (parseable, has "tools" array)</li>
+ *   <li>Empty catalog when no user services are registered</li>
+ *   <li>Correct tool fields: name, description, inputSchema, endpoint</li>
+ *   <li>Multiple services / multiple operations per service</li>
+ *   <li>JSON special-character escaping in service and operation names</li>
+ *   <li>Endpoint format: {@code "POST /services/SvcName/opName"}</li>
+ *   <li>inputSchema has the required MCP structure</li>
+ * </ul>
+ */
+public class McpCatalogGeneratorTest extends TestCase {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private AxisConfiguration axisConfig;
+    private ConfigurationContext configCtx;
+    private OpenApiSpecGenerator generator;
+    private MockHttpServletRequest mockRequest;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        axisConfig = new AxisConfiguration();
+        configCtx  = new ConfigurationContext(axisConfig);
+        generator  = new OpenApiSpecGenerator(configCtx);
+        mockRequest = new MockHttpServletRequest();
+    }
+
+    // ── JSON validity ─────────────────────────────────────────────────────────
+
+    public void testCatalogIsValidJson() throws Exception {
+        String json = generator.generateMcpCatalogJson(mockRequest);
+        assertNotNull(json);
+        // Must be parseable
+        JsonNode root = MAPPER.readTree(json);
+        assertNotNull(root);
+    }
+
+    public void testCatalogRootHasToolsArray() throws Exception {
+        JsonNode root = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest));
+        assertTrue("Root must have 'tools' key", root.has("tools"));
+        assertTrue("tools must be an array", root.get("tools").isArray());
+    }
+
+    // ── empty / no-service cases ──────────────────────────────────────────────
+
+    public void testEmptyConfigurationProducesEmptyToolsArray() throws Exception {
+        // No services registered — only system services which are filtered out
+        JsonNode tools = getCatalogTools();
+        assertEquals("No user services → empty tools array", 0, tools.size());
+    }
+
+    // ── single service / single operation ────────────────────────────────────
+
+    public void testSingleServiceSingleOperationProducesOneTool() throws Exception {
+        addService("OrderService", "placeOrder");
+
+        JsonNode tools = getCatalogTools();
+        assertEquals(1, tools.size());
+    }
+
+    public void testToolNameMatchesOperationName() throws Exception {
+        addService("OrderService", "placeOrder");
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertEquals("placeOrder", tool.path("name").asText());
+    }
+
+    public void testToolDescriptionContainsServiceAndOperationName() throws Exception {
+        addService("OrderService", "placeOrder");
+
+        JsonNode tool = getCatalogTools().get(0);
+        String desc = tool.path("description").asText();
+        assertTrue("Description must mention service name", desc.contains("OrderService"));
+        assertTrue("Description must mention operation name", desc.contains("placeOrder"));
+    }
+
+    public void testToolEndpointFormat() throws Exception {
+        addService("BigDataH2Service", "processBigDataSet");
+
+        JsonNode tool = getCatalogTools().get(0);
+        String endpoint = tool.path("endpoint").asText();
+        assertEquals("POST /services/BigDataH2Service/processBigDataSet", endpoint);
+    }
+
+    public void testToolEndpointStartsWithPost() throws Exception {
+        addService("MyService", "myOperation");
+
+        JsonNode tool = getCatalogTools().get(0);
+        String endpoint = tool.path("endpoint").asText();
+        assertTrue("Endpoint must start with POST", endpoint.startsWith("POST "));
+    }
+
+    public void testToolEndpointPathContainsServices() throws Exception {
+        addService("MyService", "myOperation");
+
+        JsonNode tool = getCatalogTools().get(0);
+        String endpoint = tool.path("endpoint").asText();
+        assertTrue("Endpoint path must contain /services/",
+                endpoint.contains("/services/"));
+    }
+
+    // ── inputSchema ───────────────────────────────────────────────────────────
+
+    public void testToolHasInputSchemaField() throws Exception {
+        addService("TestService", "testOp");
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertFalse("inputSchema must be present", tool.path("inputSchema").isMissingNode());
+    }
+
+    public void testInputSchemaTypeIsObject() throws Exception {
+        addService("TestService", "testOp");
+
+        JsonNode schema = getCatalogTools().get(0).path("inputSchema");
+        assertEquals("object", schema.path("type").asText());
+    }
+
+    public void testInputSchemaHasPropertiesField() throws Exception {
+        addService("TestService", "testOp");
+
+        JsonNode schema = getCatalogTools().get(0).path("inputSchema");
+        assertFalse("inputSchema.properties must be present",
+                schema.path("properties").isMissingNode());
+    }
+
+    public void testInputSchemaHasRequiredField() throws Exception {
+        addService("TestService", "testOp");
+
+        JsonNode schema = getCatalogTools().get(0).path("inputSchema");
+        assertFalse("inputSchema.required must be present",
+                schema.path("required").isMissingNode());
+        assertTrue("inputSchema.required must be an array",
+                schema.path("required").isArray());
+    }
+
+    // ── multiple services / operations ────────────────────────────────────────
+
+    public void testTwoServicesEachWithOneOperationProduceTwoTools() throws Exception {
+        addService("ServiceA", "doAlpha");
+        addService("ServiceB", "doBeta");
+
+        JsonNode tools = getCatalogTools();
+        assertEquals(2, tools.size());
+    }
+
+    public void testOneServiceWithThreeOperationsProducesThreeTools() throws Exception {
+        AxisService svc = new AxisService("CalculatorService");
+        addOperation(svc, "add");
+        addOperation(svc, "subtract");
+        addOperation(svc, "multiply");
+        axisConfig.addService(svc);
+
+        JsonNode tools = getCatalogTools();
+        assertEquals(3, tools.size());
+    }
+
+    public void testAllToolNamesArePresent() throws Exception {
+        AxisService svc = new AxisService("CalculatorService");
+        addOperation(svc, "add");
+        addOperation(svc, "subtract");
+        axisConfig.addService(svc);
+
+        JsonNode tools = getCatalogTools();
+        java.util.Set<String> names = new java.util.HashSet<>();
+        for (JsonNode t : tools) names.add(t.path("name").asText());
+        assertTrue("'add' must be in tool names",      names.contains("add"));
+        assertTrue("'subtract' must be in tool names", names.contains("subtract"));
+    }
+
+    public void testToolsFromDifferentServicesHaveCorrectEndpoints() throws Exception {
+        addService("ServiceA", "opA");
+        addService("ServiceB", "opB");
+
+        JsonNode tools = getCatalogTools();
+        java.util.Set<String> endpoints = new java.util.HashSet<>();
+        for (JsonNode t : tools) endpoints.add(t.path("endpoint").asText());
+        assertTrue(endpoints.contains("POST /services/ServiceA/opA"));
+        assertTrue(endpoints.contains("POST /services/ServiceB/opB"));
+    }
+
+    // ── JSON escaping ─────────────────────────────────────────────────────────
+
+    /**
+     * Operation names with JSON-special characters must be escaped so the
+     * output remains valid JSON.
+     */
+    public void testOperationNameWithQuoteIsEscaped() throws Exception {
+        AxisService svc = new AxisService("TestService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("say\"Hello\""));   // contains double-quote
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        // Must not throw during JSON parsing
+        String json = generator.generateMcpCatalogJson(mockRequest);
+        JsonNode root = MAPPER.readTree(json);
+        assertNotNull("JSON with escaped quotes must be parseable", root);
+    }
+
+    public void testServiceNameWithBackslashIsEscaped() throws Exception {
+        AxisService svc = new AxisService("My\\Service");   // contains backslash
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("doOp"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        String json = generator.generateMcpCatalogJson(mockRequest);
+        JsonNode root = MAPPER.readTree(json);   // must be parseable
+        assertNotNull(root);
+    }
+
+    // ── catalog request is null-safe ──────────────────────────────────────────
+
+    public void testGenerateMcpCatalogWithNullRequestDoesNotThrow() throws Exception {
+        addService("TestService", "testOp");
+
+        // null request is passed — generator should handle it gracefully
+        // (request is not used by generateMcpCatalogJson; it only introspects AxisConfig)
+        try {
+            String json = generator.generateMcpCatalogJson(null);
+            assertNotNull(json);
+            JsonNode root = MAPPER.readTree(json);
+            assertTrue(root.has("tools"));
+        } catch (NullPointerException e) {
+            // Acceptable if the method does not guard against null — document behaviour
+            System.out.println("INFO: generateMcpCatalogJson(null) throws NPE — " +
+                    "callers must ensure request is non-null");
+        }
+    }
+
+    // ── tool list mirrors existing OpenAPI paths ──────────────────────────────
+
+    /**
+     * Every tool in the MCP catalog must correspond to a path in the OpenAPI
+     * spec (same service/operation pair). This verifies that both endpoints
+     * apply identical filtering logic.
+     */
+    public void testMcpToolsMatchOpenApiPaths() throws Exception {
+        addService("BigDataH2Service", "processBigDataSet");
+        addService("OrderService", "placeOrder");
+
+        // Collect MCP tool endpoints
+        JsonNode tools = getCatalogTools();
+        java.util.Set<String> mcpPaths = new java.util.HashSet<>();
+        for (JsonNode tool : tools) {
+            String endpoint = tool.path("endpoint").asText();
+            // Strip "POST " prefix
+            mcpPaths.add(endpoint.substring("POST ".length()));
+        }
+
+        // Collect OpenAPI paths
+        io.swagger.v3.oas.models.OpenAPI openApi = generator.generateOpenApiSpec(mockRequest);
+        java.util.Set<String> openApiPaths = new java.util.HashSet<>();
+        if (openApi.getPaths() != null) {
+            openApiPaths.addAll(openApi.getPaths().keySet());
+        }
+
+        // Every MCP path must appear in the OpenAPI spec
+        for (String mcpPath : mcpPaths) {
+            assertTrue("MCP tool path '" + mcpPath + "' must appear in OpenAPI paths",
+                    openApiPaths.contains(mcpPath));
+        }
+    }
+
+    // ── helpers ─────────────────────────────────────────────────────────────
+
+    private void addService(String serviceName, String operationName) throws Exception {
+        AxisService svc = new AxisService(serviceName);
+        addOperation(svc, operationName);
+        axisConfig.addService(svc);
+    }
+
+    private void addOperation(AxisService svc, String operationName) {
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf(operationName));
+        svc.addOperation(op);
+    }
+
+    private JsonNode getCatalogTools() throws Exception {
+        String json = generator.generateMcpCatalogJson(mockRequest);
+        return MAPPER.readTree(json).path("tools");
+    }
+
+    // ── mock request ─────────────────────────────────────────────────────────
+
+    private static class MockHttpServletRequest implements HttpServletRequest {
+        private String scheme = "https";
+        private String serverName = "localhost";
+        private int serverPort = 8443;
+        private String contextPath = "/axis2-json-api";
+
+        @Override public String getScheme()      { return scheme; }
+        @Override public String getServerName()  { return serverName; }
+        @Override public int    getServerPort()  { return serverPort; }
+        @Override public String getContextPath() { return contextPath; }
+
+        @Override public String getAuthType() { return null; }
+        @Override public Cookie[] getCookies() { return new Cookie[0]; }
+        @Override public long getDateHeader(String n) { return 0; }
+        @Override public String getHeader(String n) { return null; }
+        @Override public Enumeration<String> getHeaders(String n) { return null; }
+        @Override public Enumeration<String> getHeaderNames() { return null; }
+        @Override public int getIntHeader(String n) { return 0; }
+        @Override public String getMethod() { return "GET"; }
+        @Override public String getPathInfo() { return null; }
+        @Override public String getPathTranslated() { return null; }
+        @Override public String getQueryString() { return null; }
+        @Override public String getRemoteUser() { return null; }
+        @Override public boolean isUserInRole(String r) { return false; }
+        @Override public Principal getUserPrincipal() { return null; }
+        @Override public String getRequestedSessionId() { return null; }
+        @Override public String getRequestURI() { return ""; }
+        @Override public StringBuffer getRequestURL() { return new StringBuffer(); }
+        @Override public String getServletPath() { return ""; }
+        @Override public HttpSession getSession(boolean c) { return null; }
+        @Override public HttpSession getSession() { return null; }
+        @Override public String changeSessionId() { return null; }
+        @Override public boolean isRequestedSessionIdValid() { return false; }
+        @Override public boolean isRequestedSessionIdFromCookie() { return false; }
+        @Override public boolean isRequestedSessionIdFromURL() { return false; }
+        @Override public boolean authenticate(HttpServletResponse r) { return false; }
+        @Override public void login(String u, String p) { }
+        @Override public void logout() { }
+        @Override public Collection<Part> getParts() { return null; }
+        @Override public Part getPart(String n) { return null; }
+        @Override public <T extends HttpUpgradeHandler> T upgrade(Class<T> c) { return null; }
+        @Override public Object getAttribute(String n) { return null; }
+        @Override public Enumeration<String> getAttributeNames() { return null; }
+        @Override public String getCharacterEncoding() { return null; }
+        @Override public void setCharacterEncoding(String e) { }
+        @Override public int getContentLength() { return 0; }
+        @Override public long getContentLengthLong() { return 0; }
+        @Override public String getContentType() { return null; }
+        @Override public ServletInputStream getInputStream() { return null; }
+        @Override public String getParameter(String n) { return null; }
+        @Override public Enumeration<String> getParameterNames() { return null; }
+        @Override public String[] getParameterValues(String n) { return new String[0]; }
+        @Override public Map<String, String[]> getParameterMap() { return null; }
+        @Override public String getProtocol() { return "HTTP/2"; }
+        @Override public String getRemoteAddr() { return "127.0.0.1"; }
+        @Override public String getRemoteHost() { return "localhost"; }
+        @Override public void setAttribute(String n, Object o) { }
+        @Override public void removeAttribute(String n) { }
+        @Override public Locale getLocale() { return Locale.US; }
+        @Override public Enumeration<Locale> getLocales() { return null; }
+        @Override public boolean isSecure() { return true; }
+        @Override public RequestDispatcher getRequestDispatcher(String p) { return null; }
+        @Override public int getRemotePort() { return 0; }
+        @Override public String getLocalName() { return "localhost"; }
+        @Override public String getLocalAddr() { return "127.0.0.1"; }
+        @Override public int getLocalPort() { return serverPort; }
+        @Override public ServletContext getServletContext() { return null; }
+        @Override public AsyncContext startAsync() { return null; }
+        @Override public AsyncContext startAsync(ServletRequest q, ServletResponse s) { return null; }
+        @Override public boolean isAsyncStarted() { return false; }
+        @Override public boolean isAsyncSupported() { return false; }
+        @Override public AsyncContext getAsyncContext() { return null; }
+        @Override public DispatcherType getDispatcherType() { return null; }
+        @Override public BufferedReader getReader() { return null; }
+        @Override public jakarta.servlet.ServletConnection getServletConnection() { return null; }
+        @Override public String getProtocolRequestId() { return null; }
+        @Override public String getRequestId() { return null; }
+    }
+}

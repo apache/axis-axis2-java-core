@@ -1,14 +1,15 @@
 ---
 type: architecture
 created: 2026-04-06
-status: Active — pre-implementation
+last-verified: 2026-04-06
+status: Active — A1/A2/A3 complete, mTLS validated
 ---
 
 # MCP Support for Apache Axis2/Java
 
 **BLUF**: Axis2/Java gains MCP (Model Context Protocol) support in two phases. Phase A
 (practical, immediate) wraps an existing Axis2 deployment with a bridge that reads
-`/openapi-mcp.json` and proxies MCP `tools/call` to Axis2 over HTTP. Phase B (native,
+`/openapi-mcp.json` and proxies MCP `tools/call` to Axis2 over HTTPS+mTLS. Phase B (native,
 novel Apache contribution) implements `axis2-transport-mcp` so Axis2 speaks MCP
 directly — no wrapper. One service deployment, three protocols: JSON-RPC, REST, MCP.
 
@@ -25,128 +26,194 @@ modelcontextprotocol.io.
 
 | Artifact | Status | Notes |
 |----------|--------|-------|
-| `springbootdemo-tomcat11` | ✅ Working | Spring Boot 3.x + Axis2 + Tomcat 11 + Java 25, end-to-end tested |
+| `springbootdemo-tomcat11` | ✅ Working | Spring Boot 3.x + Axis2 + Tomcat 11 + Java 25 |
 | `axis2-openapi` module | ✅ Working | Serves `/openapi.json`, `/openapi.yaml`, `/swagger-ui` |
-| `modules/transport-h2` | ✅ Tested | HTTP/2 transport PoC, `BigDataH2Service` confirmed working |
-| ThreadPool instance-field fix | ✅ Committed | `27860ddf9f` — static→instance, fixes multi-pool JVM isolation |
+| `/openapi-mcp.json` endpoint | ✅ Done | `OpenApiSpecGenerator.generateMcpCatalogJson()` + `SwaggerUIHandler.handleMcpCatalogRequest()` |
+| `axis2-mcp-bridge` stdio JAR | ✅ Done | `modules/mcp-bridge/`, produces `*-exe.jar` uber-jar |
+| mTLS transport | ✅ Done | Tomcat 8443, `certificateVerification="required"`, IoT CA pattern |
+| X.509 Spring Security | ✅ Done | `X509AuthenticationFilter` at `@Order(2)`, CN → `ROLE_X509_CLIENT` |
+| A3 end-to-end validation | ✅ Done | `Claude Desktop → bridge → mTLS 8443 → BigDataH2Service` confirmed |
 | `axis2-spring-boot-starter` | ❌ Not started | Phase 1 of modernization plan |
-| `/openapi-mcp.json` endpoint | ❌ Not started | Requires work in `axis2-openapi` module |
-| `axis2-mcp-bridge` | ❌ Not started | Thin bridge JAR, reads MCP catalog, proxies to Axis2 |
-| `axis2-transport-mcp` | ❌ Not started | Native MCP transport — novel Apache contribution |
+| A4 HTTP/SSE transport | ❌ Not started | Post-demo, deferred |
+| `axis2-transport-mcp` native | ❌ Not started | Track B — novel Apache contribution |
 
 ### Reference implementation
 
 ```
-springbootdemo-tomcat11 base URL: http://localhost:8080/axis2-json-api
+springbootdemo-tomcat11 base URL: https://localhost:8443/axis2-json-api
 Services deployed:
-  - LoginService      (auth)
-  - BigDataH2Service  (streaming/multiplexing demo)
+  - LoginService      (auth, port 8080 only)
+  - BigDataH2Service  (streaming/multiplexing demo, accessible via mTLS on 8443)
 ```
 
-`BigDataH2Service` request format (confirmed working):
+`BigDataH2Service` request format (confirmed working via MCP bridge):
 ```json
 {"processBigDataSet":[{"request":{"datasetId":"test-dataset-001","datasetSize":1048576}}]}
 ```
 
 ---
 
+## Security Architecture
+
+### PKI (IoT CA Pattern)
+
+Certificates live in `/home/robert/repos/axis-axis2-java-core/certs/`. The CA follows
+the same pattern as the Kanaha camera project — RSA 4096 CA with RSA 2048 leaf certs,
+appropriate for IoT/embedded where certificate management is manual.
+
+| File | Contents | Validity |
+|------|----------|---------|
+| `ca.key` / `ca.crt` | Root CA, `CN=Axis2 CA, O=Apache Axis2, OU=IoT Services` | 10 years |
+| `server.key` / `server.crt` | Server cert, `CN=localhost`, SAN: `DNS:localhost, IP:127.0.0.1` | 2 years |
+| `server-keystore.p12` | Tomcat server keystore (server cert + key + CA chain) | — |
+| `ca-truststore.p12` | Tomcat truststore (CA cert only) | — |
+| `client.key` / `client.crt` | Client cert, `CN=axis2-mcp-bridge`, `extendedKeyUsage=clientAuth` | 2 years |
+| `client-keystore.p12` | Bridge client keystore (client cert + key + CA chain) | — |
+
+Keystores are also copied to `/home/robert/apache-tomcat-11.0.20/conf/`.
+
+Password for all PKCS12 files: `changeit`
+
+### Tomcat mTLS Connector (port 8443)
+
+`server.xml` connector in `/home/robert/apache-tomcat-11.0.20/conf/server.xml`:
+
+```xml
+<Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+           maxThreads="150" SSLEnabled="true">
+    <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
+    <SSLHostConfig certificateVerification="required"
+                   truststoreFile="conf/ca-truststore.p12"
+                   truststorePassword="changeit"
+                   truststoreType="PKCS12"
+                   protocols="TLSv1.2+">
+        <Certificate certificateKeystoreFile="conf/server-keystore.p12"
+                     certificateKeystorePassword="changeit"
+                     certificateKeystoreType="PKCS12"
+                     type="RSA" />
+    </SSLHostConfig>
+</Connector>
+```
+
+Plain HTTP port 8081 is commented out. All traffic goes through 8443.
+
+### Spring Security Filter Chain
+
+The filter chains in `Axis2Application.java` are ordered:
+
+| Order | Chain | Matcher | Auth |
+|-------|-------|---------|------|
+| 1 | `springSecurityFilterChain` (default) | Everything | JWT |
+| 2 | `springSecurityFilterChainMtls` | Port 8443 (`MtlsRequestMatcher`) | X.509 cert |
+| 3 | `springSecurityFilterChainOpenApi` | `/openapi.json`, `/openapi.yaml`, `/swagger-ui`, `/openapi-mcp.json` | None |
+| 4 | `springSecurityFilterChainLogin` | `/services/LoginService/**` | None |
+
+The `@Order(2)` mTLS chain intercepts all 8443 requests before the JWT chain.
+`X509AuthenticationFilter` reads `jakarta.servlet.request.X509Certificate` (set by
+Tomcat after the TLS handshake), extracts the CN, and creates an
+`UsernamePasswordAuthenticationToken` with `ROLE_X509_CLIENT`. The existing
+`GenericAccessDecisionManager.decide()` is a no-op, so any authenticated principal
+passes `FilterSecurityInterceptor`.
+
+### X.509 Authentication Flow
+
+```
+Client presents cert → Tomcat TLS handshake (certificateVerification=required)
+    → Only CA-signed certs pass
+    → Tomcat writes cert chain to jakarta.servlet.request.X509Certificate attribute
+    → X509AuthenticationFilter.doFilter()
+    → Extract CN (e.g., "axis2-mcp-bridge")
+    → SecurityContextHolder.getContext().setAuthentication(token)
+    → FilterSecurityInterceptor: authenticated → passes
+    → Service handler executes
+```
+
+---
+
 ## Track A — OpenAPI-Driven MCP Bridge
 
-**When**: Immediate next work session. No dependency on native transport.
+### A1 — `/openapi-mcp.json` endpoint ✅ Done
 
-**Why first**: The team already knows MCP. This gives them a working demo calling
-existing Axis2 services through Claude/Cursor without writing MCP-specific service code.
-
-### A1 — `/openapi-mcp.json` endpoint in `axis2-openapi`
-
-**File**: `modules/openapi/src/main/java/org/apache/axis2/openapi/`
-
-Add `McpToolCatalogServlet` alongside the existing `OpenApiServlet`. Endpoint returns:
+**Implementation**: `OpenApiSpecGenerator.generateMcpCatalogJson(HttpServletRequest)` iterates
+`AxisConfiguration.getServices()` using the same `isSystemService()` / `shouldIncludeService()` /
+`shouldIncludeOperation()` filters as the existing OpenAPI path generation. Output:
 
 ```json
 {
   "tools": [
     {
       "name": "processBigDataSet",
-      "description": "Process a large dataset using HTTP/2 multiplexing",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "datasetId": { "type": "string" },
-          "datasetSize": { "type": "integer" }
-        },
-        "required": ["datasetId", "datasetSize"]
-      },
+      "description": "BigDataH2Service: processBigDataSet",
+      "inputSchema": { "type": "object", "properties": {}, "required": [] },
       "endpoint": "POST /services/BigDataH2Service/processBigDataSet"
     }
   ]
 }
 ```
 
-Implementation strategy:
-- Inject `ConfigurationContext` via `getServletContext().getAttribute(AxisServlet.CONFIGURATION_CONTEXT)`
-- Iterate `ctx.getAxisConfiguration().getServices()` → each `AxisService`
-- Iterate `service.getOperations()` → each `AxisOperation`
-- Use existing `axis2-openapi` reflection infrastructure for schema extraction
-- Add optional `@McpTool(description = "...")` annotation for richer descriptions
+**Routing**: `OpenApiServlet.java` dispatches `uri.endsWith("/openapi-mcp.json")` to
+`handler.handleMcpCatalogRequest()`. `Axis2WebAppInitializer.java` maps the path.
+`Axis2Application.java` `OPENAPI_PATHS` array includes `/openapi-mcp.json` so the
+OpenAPI filter chain (`@Order(3)`) handles it without auth.
 
-**Estimated effort**: 2–3 days.
+### A2 — `axis2-mcp-bridge` stdio JAR ✅ Done
 
-### A2 — `axis2-mcp-bridge` stdio server
+**Location**: `modules/mcp-bridge/`
 
-**Location**: New module `modules/mcp-bridge/` or standalone JAR.
+**Key decision**: No MCP Java SDK (Apache 2.0 license constraint — SDK license
+uncertain at implementation time). JSON-RPC 2.0 is implemented directly using
+Jackson 2.21.1 (Apache 2.0) + Java stdlib `HttpClient`. The three-method
+handshake is straightforward enough to hand-roll correctly.
 
-Startup (Claude Desktop `~/.config/claude/claude_desktop_config.json`):
+**Classes**:
+- `McpBridgeMain` — entry point, parses `--base-url`, `--keystore`, `--truststore` args, builds `SSLContext`, starts registry + server
+- `ToolRegistry` — GETs `{baseUrl}/openapi-mcp.json` at startup, builds `List<McpTool>` and `Map<String,McpTool>`
+- `McpStdioServer` — blocking stdin read loop, JSON-RPC 2.0 dispatch
+- `McpTool` — data class: name, description, inputSchema (JsonNode), endpoint, path
+
+**Build**: maven-shade-plugin 3.6.0 produces `axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar`
+(classifier: `exe`) with `MainClass=McpBridgeMain`.
+
+**Axis2 JSON-RPC envelope**: `tools/call` wraps arguments as `{toolName: [arguments]}`
+before POSTing to the Axis2 endpoint, matching the existing JSON-RPC convention.
+
+**Notifications**: MCP `notifications/initialized` (no `id` field) is silently consumed
+with no response, as required by JSON-RPC 2.0.
+
+**Protocol version**: `"2024-11-05"`
+
+**Claude Desktop config** (`~/.config/claude/claude_desktop_config.json`):
 ```json
 {
   "mcpServers": {
     "axis2-demo": {
       "command": "java",
-      "args": ["-jar", "/path/to/axis2-mcp-bridge.jar",
-               "--base-url", "http://localhost:8080/axis2-json-api"]
+      "args": ["-jar", "/path/to/axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar",
+               "--base-url",    "https://localhost:8443/axis2-json-api",
+               "--keystore",    "/home/robert/repos/axis-axis2-java-core/certs/client-keystore.p12",
+               "--truststore",  "/home/robert/repos/axis-axis2-java-core/certs/ca-truststore.p12"]
     }
   }
 }
 ```
 
-Core loop:
-1. Fetch `{base-url}/openapi-mcp.json` at startup → build tool registry
-2. Read JSON-RPC 2.0 lines from `System.in`
-3. `initialize` → return server info + tool capabilities
-4. `tools/list` → return registry
-5. `tools/call` → `HttpClient.send(POST to Axis2 endpoint)` → return result
-6. Write JSON-RPC 2.0 response to `System.out`
+### A3 — End-to-end validation ✅ Done
 
-Use the official MCP Java SDK to handle `initialize` capability negotiation rather than
-hand-rolling it. Community Java port: `io.modelcontextprotocol:sdk` (check Maven Central
-for latest coordinates).
-
-**Do not** hand-roll JSON-RPC framing — the initialize/capability handshake has version
-negotiation subtleties that the SDK handles correctly.
-
-**Estimated effort**: 3–4 days.
-
-### A3 — Team validation against `springbootdemo-tomcat11`
-
-Quick smoke-test script:
-```bash
-#!/bin/bash
-# Initialize
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' \
-  | java -jar axis2-mcp-bridge.jar --base-url http://localhost:8080/axis2-json-api
-
-# List tools
-echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
-  | java -jar axis2-mcp-bridge.jar --base-url http://localhost:8080/axis2-json-api
-
-# Call a tool
-echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"processBigDataSet","arguments":{"datasetId":"mcp-test-001","datasetSize":1048576}}}' \
-  | java -jar axis2-mcp-bridge.jar --base-url http://localhost:8080/axis2-json-api
+Full chain confirmed working:
+```
+Claude Desktop → axis2-mcp-bridge stdio → HTTPS+mTLS port 8443
+    → Tomcat TLS handshake (client cert CN=axis2-mcp-bridge)
+    → X509AuthenticationFilter (authenticated, ROLE_X509_CLIENT)
+    → BigDataH2Service.processBigDataSet()
+    → real response returned to Claude
 ```
 
-**Estimated effort**: 1–2 days.
+Tomcat log confirmation:
+```
+X509AuthenticationFilter: authenticated CN=axis2-mcp-bridge on port 8443
+```
 
-### A4 — HTTP/SSE transport (post-demo, deferred)
+### A4 — HTTP/SSE transport (deferred)
 
 Adds persistent server mode (multiple Claude sessions sharing one bridge). Required for
 production. Additive — no changes to Axis2 side or tool catalog format.
@@ -228,15 +295,55 @@ decouples the bridge from Axis2 internals. The bridge works against any HTTP ser
 that serves this format — not just Axis2. This is useful for the Apache community
 beyond the Axis2 user base.
 
+**Why no MCP Java SDK**: Apache 2.0 license constraint. Jackson (Apache 2.0) + Java
+stdlib `HttpClient` implement the three-method JSON-RPC 2.0 protocol without external
+dependencies whose license compatibility is uncertain. The protocol is well-specified
+enough to hand-roll correctly.
+
+**Why IoT CA pattern**: RSA 4096 CA (10 years) + RSA 2048 leaf certs (2 years) matches
+the Kanaha camera project pattern. Appropriate for environments where certificate
+management is manual and infrequent. The CA is only on one machine — this is a
+development/demo CA, not a production CA.
+
+**Why `certificateVerification="required"` at Tomcat, not Spring Security**: Tomcat
+enforces the TLS handshake before any HTTP processing. Invalid client certs are rejected
+at the TCP layer — Spring Security never sees them. `X509AuthenticationFilter` only
+needs to extract identity from an already-verified cert, not verify it.
+
 **Why not JAX-RS instead of `@RestMapping`**: JAX-RS brings a second framework
 dependency and its own lifecycle. `@RestMapping` is a thin annotation processed by
 Axis2's existing REST dispatcher — no container dependency, backwards compatible,
 opt-in per-operation.
 
-**Why not Spring AI or LangChain4j as the MCP layer**: Those are application-layer
-frameworks. The goal is transport-level integration so Axis2 services are callable from
-*any* MCP client, not just Spring-based applications. `axis2-transport-mcp` is at the
-right abstraction level.
+---
+
+## Next Steps
+
+### Immediate — C port is now unblocked
+
+Java A2 is validated against Claude Desktop. The Axis2/C `financial_benchmark_service`
+can now implement C1 (stdio MCP mode) in parallel with any Java Track B work.
+
+See `docs/MCP.md` in the `axis-axis2-c-core` repo for the C1 plan.
+
+### Track A remaining
+
+| Step | Work | Notes |
+|------|------|-------|
+| `@McpTool` annotation | Richer `inputSchema` in `/openapi-mcp.json` | Currently all tools return empty properties `{}` |
+| A4 HTTP/SSE | Persistent bridge server mode | Required for production, additive |
+
+### Track B
+
+1. `modules/transport-mcp/` — new module scaffolding
+2. stdio transport first (B1) — validates JSON-RPC 2.0 ↔ MessageContext translation
+3. HTTP/SSE transport (B2) — reuses Axis2 HTTP infrastructure
+
+### Penguin demo
+
+`build_financial_service.sh` in `axis-axis2-c-core` needs to be run on the Penguin
+host after Axis2/C is installed. The service is committed and compiles clean — the
+script is the only remaining deployment step.
 
 ---
 
@@ -244,29 +351,11 @@ right abstraction level.
 
 Track A (`axis2-mcp-bridge`) requires:
 - `axis2-openapi` module (for `/openapi-mcp.json`)
-- MCP Java SDK (check coordinates at time of implementation)
+- `com.fasterxml.jackson.core:jackson-databind:2.21.1` (Apache 2.0)
 - Java 21+ (HttpClient is standard library)
 - No Axis2 core dependency — bridge is a separate process
 
 Track B (`axis2-transport-mcp`) requires:
 - `axis2-core` / `axis2-kernel` (TransportListener interface)
 - `axis2-openapi` (tool schema generation)
-- MCP Java SDK (JSON-RPC 2.0 framing)
-
-Both tracks require `axis2-spring-boot-starter` (Phase 1) to wire transport config
-via `application.properties`.
-
----
-
-## Next Immediate Actions
-
-1. **Start A1**: Add `McpToolCatalogServlet` to `modules/openapi/`. Start with
-   structural introspection (no annotation support yet) — get `/openapi-mcp.json`
-   serving a valid tool list from `springbootdemo-tomcat11`.
-
-2. **Check MCP Java SDK coordinates**: Verify artifact ID and version on Maven Central
-   before starting A2. The protocol is at `modelcontextprotocol.io/specification`.
-
-3. **Penguin demo (Track C, parallel)**: The Axis2/C financial benchmark service is
-   committed and compiles clean. When Penguin demo prep begins, the service is ready —
-   just needs `build_financial_service.sh` run on the Penguin host after Axis2/C install.
+- No MCP SDK — same Jackson-only approach as A2

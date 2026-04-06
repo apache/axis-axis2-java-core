@@ -96,6 +96,7 @@ import userguide.springboot.security.webservices.JWTAuthenticationProvider;
 import userguide.springboot.security.webservices.HTTPPostOnlyRejectionFilter;
 import userguide.springboot.security.webservices.RequestAndResponseValidatorFilter;
 import userguide.springboot.security.webservices.RestAuthenticationEntryPoint;
+import userguide.springboot.security.webservices.X509AuthenticationFilter;
 
 @SpringBootApplication(exclude = {
     DataSourceAutoConfiguration.class,
@@ -347,9 +348,37 @@ public class Axis2Application extends SpringBootServletInitializer {
             return headerFilter;
         }
       
-        // OpenAPI documentation endpoints — GET requests, no auth required
+        // mTLS requests arrive on port 8443; Tomcat enforces certificateVerification=required
+        // so any request reaching this matcher has already passed the TLS client cert check.
+        class MtlsRequestMatcher implements RequestMatcher {
+            @Override
+            public boolean matches(HttpServletRequest request) {
+                return request.getLocalPort() == 8443;
+            }
+        }
+
+        @Bean
+        public X509AuthenticationFilter x509AuthenticationFilter() {
+            return new X509AuthenticationFilter();
+        }
+
+        @Bean(name = "springSecurityFilterChainMtls")
+        @Order(2)
+        public SecurityFilterChain springSecurityFilterChainMtls() throws Exception {
+            // No JWT, no POST-only restriction. X509 filter sets authentication from the
+            // client cert; filterSecurityInterceptor passes any authenticated principal.
+            return new DefaultSecurityFilterChain(
+                    new MtlsRequestMatcher(),
+                    headerWriterFilter(),
+                    x509AuthenticationFilter(),
+                    requestAndResponseValidatorFilter(),
+                    sessionManagementFilter(),
+                    filterSecurityInterceptor());
+        }
+
+        // OpenAPI documentation endpoints — GET requests, no auth required (plain HTTP fallback)
         class OpenApiRequestMatcher implements RequestMatcher {
-            private static final String[] OPENAPI_PATHS = {"/openapi.json", "/openapi.yaml", "/swagger-ui"};
+            private static final String[] OPENAPI_PATHS = {"/openapi.json", "/openapi.yaml", "/swagger-ui", "/openapi-mcp.json"};
 
             @Override
             public boolean matches(HttpServletRequest request) {
@@ -364,7 +393,7 @@ public class Axis2Application extends SpringBootServletInitializer {
         }
 
         @Bean(name = "springSecurityFilterChainOpenApi")
-        @Order(2)
+        @Order(3)
         public SecurityFilterChain springSecurityFilterChainOpenApi() throws Exception {
             // Only header filter — no POST restriction, no JWT, no login processing
             return new DefaultSecurityFilterChain(new OpenApiRequestMatcher(), headerWriterFilter());
@@ -374,7 +403,7 @@ public class Axis2Application extends SpringBootServletInitializer {
         // A login url will match, otherwise invoke jwtAuthenticationFilter
 
         @Bean(name = "springSecurityFilterChainLogin")
-	@Order(3)
+        @Order(4)
         public SecurityFilterChain springSecurityFilterChainLogin() throws ServletException, Exception {
             String logPrefix = "GenericAccessDecisionManager.springSecurityFilterChain , ";
             logger.debug(logPrefix + "inside main filter config ...");

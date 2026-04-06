@@ -190,6 +190,38 @@ public class SwaggerUIHandler {
     }
 
     /**
+     * Handle MCP tool catalog request ({@code /openapi-mcp.json}).
+     *
+     * Returns the tool catalog consumed by axis2-mcp-bridge at startup so it
+     * can register Axis2 operations as MCP tools without any Axis2-specific
+     * knowledge in the bridge process.
+     */
+    public void handleMcpCatalogRequest(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        log.debug("Serving MCP tool catalog");
+
+        response.setContentType("application/json; charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        addSecurityHeaders(response);
+        addCorsHeaders(response);
+
+        try {
+            String mcpJson = specGenerator.generateMcpCatalogJson(request);
+
+            PrintWriter writer = response.getWriter();
+            writer.write(mcpJson);
+            writer.flush();
+
+        } catch (Exception e) {
+            log.error("Failed to generate MCP tool catalog", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                              "Failed to generate MCP tool catalog");
+        }
+    }
+
+    /**
      * Build the URL for the OpenAPI specification endpoint using configuration.
      */
     private String buildOpenApiUrl(HttpServletRequest request) {

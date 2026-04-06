@@ -617,6 +617,82 @@ public class OpenApiSpecGenerator {
     }
 
     /**
+     * Generate MCP tool catalog JSON for all deployed services.
+     *
+     * Produces the {@code /openapi-mcp.json} format consumed by axis2-mcp-bridge:
+     * <pre>
+     * {
+     *   "tools": [
+     *     { "name": "...", "description": "...",
+     *       "inputSchema": { "type": "object", "properties": {}, "required": [] },
+     *       "endpoint": "POST /services/ServiceName/operationName" }
+     *   ]
+     * }
+     * </pre>
+     *
+     * Uses the same service filtering as {@link #generatePaths()} so the tool
+     * catalog is consistent with the OpenAPI spec.
+     */
+    public String generateMcpCatalogJson(HttpServletRequest request) {
+        try {
+            AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+            StringBuilder json = new StringBuilder();
+            json.append("{\n  \"tools\": [\n");
+            boolean firstTool = true;
+
+            Iterator<AxisService> services = axisConfig.getServices().values().iterator();
+            while (services.hasNext()) {
+                AxisService service = services.next();
+                if (isSystemService(service)) continue;
+                if (!shouldIncludeService(service)) continue;
+
+                Iterator<AxisOperation> operations = service.getOperations();
+                while (operations.hasNext()) {
+                    AxisOperation operation = operations.next();
+                    if (!shouldIncludeOperation(service, operation)) continue;
+
+                    String opName = operation.getName().getLocalPart();
+                    String path = "/services/" + service.getName() + "/" + opName;
+
+                    if (!firstTool) json.append(",\n");
+                    firstTool = false;
+
+                    json.append("    {\n");
+                    json.append("      \"name\": \"").append(escapeJson(opName)).append("\",\n");
+                    json.append("      \"description\": \"").append(escapeJson(service.getName()))
+                        .append(": ").append(escapeJson(opName)).append("\",\n");
+                    json.append("      \"inputSchema\": {\n");
+                    json.append("        \"type\": \"object\",\n");
+                    json.append("        \"properties\": {},\n");
+                    json.append("        \"required\": []\n");
+                    json.append("      },\n");
+                    json.append("      \"endpoint\": \"POST ").append(escapeJson(path)).append("\"\n");
+                    json.append("    }");
+                }
+            }
+
+            json.append("\n  ]\n}");
+            log.debug("Generated MCP catalog JSON");
+            return json.toString();
+
+        } catch (Exception e) {
+            log.error("Failed to generate MCP catalog JSON", e);
+            return "{\"tools\":[]}";
+        }
+    }
+
+    /**
+     * Escape a string for safe inclusion in a JSON string value.
+     * Axis2 service/operation names follow XML NCName rules and will not
+     * contain control characters, but backslash and double-quote are escaped
+     * defensively.
+     */
+    private String escapeJson(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    /**
      * Get OpenAPI JSON processing performance statistics using moshih2 metrics.
      */
     public JsonProcessingMetrics.Statistics getProcessingStatistics() {
