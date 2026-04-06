@@ -481,7 +481,11 @@ public class OpenApiSpecGeneratorTest extends TestCase {
             java.io.File schemaFile = new java.io.File(
                 "../../samples/swagger-server/src/main/resources/openapi/financial-api-schema.json");
             if (!schemaFile.exists()) {
-                // Skip gracefully when running outside the full repo checkout
+                // File lives in the swagger-server module; skip with a visible warning
+                // when this test runs outside the full multi-module checkout.
+                System.out.println("SKIPPED testFinancialApiSchemaAdvancedFeatures: " +
+                        "financial-api-schema.json not found at " + schemaFile.getAbsolutePath() +
+                        " — run from the repo root to include this assertion.");
                 return;
             }
             is = new java.io.FileInputStream(schemaFile);

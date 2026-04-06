@@ -422,7 +422,11 @@ public class OpenApiSpecGenerator {
         // Swagger UI to render a Try-It-Out editor and for clients to know a body is required.
         RequestBody requestBody = new RequestBody();
         requestBody.setRequired(true);
-        requestBody.setDescription("JSON request body for " + axisOperation.getName().getLocalPart());
+        // Sanitize operation name: Axis2 QName local parts follow XML NCName rules and
+        // cannot contain angle brackets or control characters, but sanitize defensively
+        // in case a malformed deployment descriptor produces unexpected characters.
+        String safeOpName = axisOperation.getName().getLocalPart().replaceAll("[^\\w.\\-]", "_");
+        requestBody.setDescription("JSON request body for " + safeOpName);
         Content requestContent = new Content();
         MediaType requestMediaType = new MediaType();
         Schema requestSchema = new Schema();
