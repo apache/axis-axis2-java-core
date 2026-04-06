@@ -18,13 +18,13 @@
  * under the License.
  */
 package userguide.springboot.configuration;
- 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.axis2.transport.http.AxisServlet;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.annotation.Configuration; 
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;   
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.core.annotation.Order;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,40 +33,49 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import jakarta.servlet.ServletContext; 
-import jakarta.servlet.ServletRegistration; 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 
-import java.util.Set; 
- 
+import java.util.Set;
+
 @Configuration
 @Order(4)
-public class Axis2WebAppInitializer implements ServletContextInitializer { 
- 
-    private static final Logger logger = LogManager.getLogger(Axis2WebAppInitializer.class); 
-    private static final String SERVICES_MAPPING = "/services/*"; 
- 
-    @Override 
-    public void onStartup(ServletContext container) { 
+public class Axis2WebAppInitializer implements ServletContextInitializer {
+
+    private static final Logger logger = LogManager.getLogger(Axis2WebAppInitializer.class);
+    private static final String SERVICES_MAPPING = "/services/*";
+
+    @Override
+    public void onStartup(ServletContext container) {
         logger.warn("inside onStartup() ...");
-        // Create the 'root' Spring application context 
-        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext(); 
- 
-        addAxis2Servlet(container, ctx); 
+        // Create the 'root' Spring application context
+        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
+
+        addAxis2Servlet(container, ctx);
+        addOpenApiServlet(container);
         logger.warn("onStartup() completed ...");
     }
- 
-    private void addAxis2Servlet(ServletContext container, AnnotationConfigWebApplicationContext ctx) { 
+
+    private void addAxis2Servlet(ServletContext container, AnnotationConfigWebApplicationContext ctx) {
 
         ServletRegistration.Dynamic dispatcher = container.addServlet(
           "AxisServlet", new AxisServlet());
         dispatcher.setLoadOnStartup(1);
         Set<String> mappingConflicts = dispatcher.addMapping(SERVICES_MAPPING);
-        if (!mappingConflicts.isEmpty()) { 
-            for (String s : mappingConflicts) { 
-                logger.error("Mapping conflict: " + s); 
-            } 
-            throw new IllegalStateException("'AxisServlet' could not be mapped to '" + SERVICES_MAPPING + "'"); 
+        if (!mappingConflicts.isEmpty()) {
+            for (String s : mappingConflicts) {
+                logger.error("Mapping conflict: " + s);
+            }
+            throw new IllegalStateException("'AxisServlet' could not be mapped to '" + SERVICES_MAPPING + "'");
         }
+    }
+
+    private void addOpenApiServlet(ServletContext container) {
+        ServletRegistration.Dynamic openApi = container.addServlet(
+          "OpenApiServlet", new OpenApiServlet());
+        openApi.setLoadOnStartup(2);
+        openApi.addMapping("/openapi.json", "/openapi.yaml", "/swagger-ui");
+        logger.warn("OpenApiServlet registered at /openapi.json, /openapi.yaml, /swagger-ui");
     }
 
 }

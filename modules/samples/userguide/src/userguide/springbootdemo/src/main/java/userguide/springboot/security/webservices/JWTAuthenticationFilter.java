@@ -55,6 +55,10 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        String uri = request.getRequestURI();
+        if (uri.endsWith("/openapi.json") || uri.endsWith("/openapi.yaml") || uri.endsWith("/swagger-ui")) {
+            return false; // OpenAPI documentation endpoints are public
+        }
         return true;
     }
 

@@ -55,6 +55,13 @@ public class HTTPPostOnlyRejectionFilter extends OncePerRequestFilter {
         
         logger.trace(logPrefix + "starting ... ");
         
+        String uri = request.getRequestURI();
+        boolean isOpenApiPath = uri.endsWith("/openapi.json") || uri.endsWith("/openapi.yaml") || uri.endsWith("/swagger-ui");
+        if (isOpenApiPath) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (!request.getMethod().equals("POST")) {
 
 	    String ip = "unknown";

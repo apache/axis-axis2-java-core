@@ -355,7 +355,7 @@ public class Axis2Application extends SpringBootServletInitializer {
             public boolean matches(HttpServletRequest request) {
                 String uri = request.getRequestURI();
                 for (String path : OPENAPI_PATHS) {
-                    if (uri.equals(path) || uri.startsWith(path + "/")) {
+                    if (uri.endsWith(path) || uri.contains(path + "/")) {
                         return true;
                     }
                 }
