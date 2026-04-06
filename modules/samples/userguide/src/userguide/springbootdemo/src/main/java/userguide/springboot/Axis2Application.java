@@ -117,8 +117,8 @@ public class Axis2Application extends SpringBootServletInitializer {
             @Override
             public boolean matches(HttpServletRequest request) {
                 String logPrefix = "AnonRequestMatcher.matches , ";
-                boolean result = request.getRequestURI().contains(
-                        "/services/loginService");
+                boolean result = request.getRequestURI().toLowerCase().contains(
+                        "/services/loginservice");
                 logger.debug(logPrefix
                         + "inside AnonRequestMatcher.matches, will return result: "
                         + result + " , on request.getRequestURI() : "

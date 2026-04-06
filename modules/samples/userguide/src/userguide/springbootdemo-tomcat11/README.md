@@ -105,11 +105,17 @@ curl -s -X POST http://localhost:8080/axis2-json-api/services/TestwsService \
 
 ### 4. Call public BigData service
 
+Required fields: `datasetId` (non-empty string) and `datasetSize` (bytes). Size determines
+processing path: <10MB → standard, 10–50MB → multiplexing, >50MB → streaming.
+
 ```bash
 curl -s -X POST http://localhost:8080/axis2-json-api/services/BigDataH2Service \
   -H 'Content-Type: application/json' \
-  -d '{"processBigDataSet":[{"request":{"numRecords":1000}}]}'
+  -d '{"processBigDataSet":[{"request":{"datasetId":"test-dataset-001","datasetSize":1048576}}]}'
 ```
+
+Response includes `processedRecordCount`, `http2Optimized`, `memoryOptimized`, and (for <10MB
+datasets) a `processedRecords` array.
 
 ---
 
