@@ -68,7 +68,7 @@ public class OpenApiServlet extends HttpServlet {
                 handler.handleOpenApiJsonRequest(request, response);
             } else if (uri.endsWith("/openapi.yaml")) {
                 handler.handleOpenApiYamlRequest(request, response);
-            } else if (uri.contains("/swagger-ui")) {
+            } else if (uri.endsWith("/swagger-ui") || uri.contains("/swagger-ui/")) {
                 handler.handleSwaggerUIRequest(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
