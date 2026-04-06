@@ -268,12 +268,11 @@ public class AdvancedGuideIntegrationTest extends TestCase {
         assertTrue("Should have at least one security scheme", securitySchemes.size() >= 1);
 
         // Verify multiple authentication options are available
-        boolean hasBasicAuth = securitySchemes.containsKey("basicAuth");
         boolean hasBearerAuth = securitySchemes.containsKey("bearerAuth");
         boolean hasApiKey = securitySchemes.containsKey("apiKey");
         boolean hasOAuth2 = securitySchemes.containsKey("oauth2");
 
-        assertTrue("Should have basic authentication by default", hasBasicAuth);
+        assertTrue("Should have bearer token authentication by default", hasBearerAuth);
 
         // Test that operations can use different security schemes
         Map<String, PathItem> paths = openApi.getPaths();

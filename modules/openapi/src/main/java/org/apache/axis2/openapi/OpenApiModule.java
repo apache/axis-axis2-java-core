@@ -45,7 +45,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
  * Key features (Enhanced in v2.0.1):
  * - Automatic OpenAPI 3.0.1 specification generation from service metadata
  * - Comprehensive configuration system with properties file support
- * - Security schemes integration (OAuth2, API Key, Basic Auth, etc.)
+ * - Security schemes integration (OAuth2, API Key, Bearer token, etc.)
  * - Advanced customization via OpenApiCustomizer interface
  * - Swagger UI integration for interactive API documentation
  * - Resource filtering and route management

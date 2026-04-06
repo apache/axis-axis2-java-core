@@ -81,11 +81,11 @@ public class OpenApiConfigurationTest {
         assertNotNull(config.getSecurityDefinitions());
         assertNotNull(config.getSwaggerUiMediaTypes());
 
-        // Should have default security scheme
-        assertTrue(config.getSecurityDefinitions().containsKey("basicAuth"));
-        SecurityScheme basicAuth = config.getSecurityDefinitions().get("basicAuth");
-        assertEquals(SecurityScheme.Type.HTTP, basicAuth.getType());
-        assertEquals("basic", basicAuth.getScheme());
+        // Should have default security scheme (Bearer token)
+        assertTrue(config.getSecurityDefinitions().containsKey("bearerAuth"));
+        SecurityScheme bearerAuth = config.getSecurityDefinitions().get("bearerAuth");
+        assertEquals(SecurityScheme.Type.HTTP, bearerAuth.getType());
+        assertEquals("bearer", bearerAuth.getScheme());
     }
 
     @Test
@@ -456,7 +456,7 @@ public class OpenApiConfigurationTest {
         assertEquals(10000, config.getResourcePackages().size());
         assertEquals(10000, config.getResourceClasses().size());
         assertEquals(10000, config.getIgnoredRoutes().size());
-        // +1 for default basicAuth scheme
+        // +1 for default bearerAuth scheme
         assertEquals(10001, config.getSecurityDefinitions().size());
     }
 

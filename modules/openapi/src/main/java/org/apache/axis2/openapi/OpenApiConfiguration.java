@@ -196,12 +196,12 @@ public class OpenApiConfiguration {
      * Load default configuration values.
      */
     private void loadDefaultConfiguration() {
-        // Add default security scheme
-        SecurityScheme basicAuth = new SecurityScheme();
-        basicAuth.setType(SecurityScheme.Type.HTTP);
-        basicAuth.setScheme("basic");
-        basicAuth.setDescription("Basic Authentication");
-        securityDefinitions.put("basicAuth", basicAuth);
+        // Add default security scheme — Bearer token auth
+        SecurityScheme bearerAuth = new SecurityScheme();
+        bearerAuth.setType(SecurityScheme.Type.HTTP);
+        bearerAuth.setScheme("bearer");
+        bearerAuth.setDescription("Bearer token authentication");
+        securityDefinitions.put("bearerAuth", bearerAuth);
     }
 
     /**
