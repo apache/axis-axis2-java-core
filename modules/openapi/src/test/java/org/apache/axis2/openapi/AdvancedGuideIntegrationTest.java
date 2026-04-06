@@ -273,19 +273,21 @@ public class AdvancedGuideIntegrationTest extends TestCase {
         boolean hasOAuth2 = securitySchemes.containsKey("oauth2");
 
         assertTrue("Should have bearer token authentication by default", hasBearerAuth);
+        assertFalse("basicAuth must not appear in the default spec", securitySchemes.containsKey("basicAuth"));
 
-        // Test that operations can use different security schemes
-        Map<String, PathItem> paths = openApi.getPaths();
-        for (PathItem pathItem : paths.values()) {
-            for (Operation operation : pathItem.readOperationsMap().values()) {
-                if (operation.getSecurity() != null && !operation.getSecurity().isEmpty()) {
-                    // Verify security requirements are properly structured
-                    for (SecurityRequirement secReq : operation.getSecurity()) {
-                        assertFalse("Security requirements should not be empty", secReq.isEmpty());
-                    }
-                }
-            }
-        }
+        // Verify the bearerAuth scheme is correctly typed
+        SecurityScheme bearer = securitySchemes.get("bearerAuth");
+        assertEquals("bearerAuth type must be HTTP", SecurityScheme.Type.HTTP, bearer.getType());
+        assertEquals("bearerAuth scheme must be bearer", "bearer", bearer.getScheme());
+
+        // Verify the API-level security requirement references bearerAuth
+        List<SecurityRequirement> apiSecurity = openApi.getSecurity();
+        assertNotNull("API-level security requirements should be set", apiSecurity);
+        assertFalse("API-level security requirements should not be empty", apiSecurity.isEmpty());
+        boolean apiReferencesBearerAuth = apiSecurity.stream()
+                .anyMatch(req -> req.containsKey("bearerAuth"));
+        assertTrue("At least one API-level security requirement must reference bearerAuth",
+                apiReferencesBearerAuth);
     }
 
     // ========== Advanced SwaggerUI Customization Tests ==========

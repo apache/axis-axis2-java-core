@@ -456,8 +456,10 @@ public class OpenApiConfigurationTest {
         assertEquals(10000, config.getResourcePackages().size());
         assertEquals(10000, config.getResourceClasses().size());
         assertEquals(10000, config.getIgnoredRoutes().size());
-        // +1 for default bearerAuth scheme
+        // +1 for default bearerAuth scheme; basicAuth must not be present
         assertEquals(10001, config.getSecurityDefinitions().size());
+        assertFalse("basicAuth must not be present after switch to bearerAuth",
+                config.getSecurityDefinitions().containsKey("basicAuth"));
     }
 
     @Test
