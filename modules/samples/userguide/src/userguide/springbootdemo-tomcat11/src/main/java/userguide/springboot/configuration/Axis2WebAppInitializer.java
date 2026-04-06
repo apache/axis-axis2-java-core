@@ -51,11 +51,20 @@ public class Axis2WebAppInitializer implements ServletContextInitializer {
         // Create the 'root' Spring application context 
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext(); 
  
-        addAxis2Servlet(container, ctx); 
+        addAxis2Servlet(container, ctx);
+        addOpenApiServlet(container);
         logger.warn("onStartup() completed ...");
     }
- 
-    private void addAxis2Servlet(ServletContext container, AnnotationConfigWebApplicationContext ctx) { 
+
+    private void addOpenApiServlet(ServletContext container) {
+        ServletRegistration.Dynamic openApi = container.addServlet(
+          "OpenApiServlet", new OpenApiServlet());
+        openApi.setLoadOnStartup(2);
+        openApi.addMapping("/openapi.json", "/openapi.yaml", "/swagger-ui");
+        logger.warn("OpenApiServlet registered at /openapi.json, /openapi.yaml, /swagger-ui");
+    }
+
+    private void addAxis2Servlet(ServletContext container, AnnotationConfigWebApplicationContext ctx) {
 
         ServletRegistration.Dynamic dispatcher = container.addServlet(
           "AxisServlet", new AxisServlet());
