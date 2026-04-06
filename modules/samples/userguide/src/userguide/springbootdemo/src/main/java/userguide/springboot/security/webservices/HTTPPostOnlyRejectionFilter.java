@@ -38,9 +38,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 public class HTTPPostOnlyRejectionFilter extends OncePerRequestFilter {
- 
+
+    private static final String PATH_OPENAPI_JSON = "/openapi.json";
+    private static final String PATH_OPENAPI_YAML = "/openapi.yaml";
+    private static final String PATH_SWAGGER_UI = "/swagger-ui";
+
     private static Log logger = LogFactory.getLog(HTTPPostOnlyRejectionFilter.class);
-    
+
     private final RedirectStrategy redirectStrategy = new NoRedirectStrategy();
 
     public HTTPPostOnlyRejectionFilter() {
@@ -52,11 +56,11 @@ public class HTTPPostOnlyRejectionFilter extends OncePerRequestFilter {
 
         String uuid = UUID.randomUUID().toString();
         String logPrefix = "HTTPPostOnlyRejectionFilter.doFilterInternal , uuid: " + uuid + " , ";
-        
+
         logger.trace(logPrefix + "starting ... ");
-        
+
         String uri = request.getRequestURI();
-        boolean isOpenApiPath = uri.endsWith("/openapi.json") || uri.endsWith("/openapi.yaml") || uri.endsWith("/swagger-ui");
+        boolean isOpenApiPath = uri.endsWith(PATH_OPENAPI_JSON) || uri.endsWith(PATH_OPENAPI_YAML) || uri.endsWith(PATH_SWAGGER_UI);
         if (isOpenApiPath) {
             filterChain.doFilter(request, response);
             return;

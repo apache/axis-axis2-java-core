@@ -39,7 +39,11 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;
 
 public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-    
+
+    private static final String PATH_OPENAPI_JSON = "/openapi.json";
+    private static final String PATH_OPENAPI_YAML = "/openapi.yaml";
+    private static final String PATH_SWAGGER_UI = "/swagger-ui";
+
     @Autowired
     private WSSecUtils wssecutils;
 
@@ -56,7 +60,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
         String uri = request.getRequestURI();
-        if (uri.endsWith("/openapi.json") || uri.endsWith("/openapi.yaml") || uri.endsWith("/swagger-ui")) {
+        if (uri.endsWith(PATH_OPENAPI_JSON) || uri.endsWith(PATH_OPENAPI_YAML) || uri.endsWith(PATH_SWAGGER_UI)) {
             return false; // OpenAPI documentation endpoints are public
         }
         return true;
