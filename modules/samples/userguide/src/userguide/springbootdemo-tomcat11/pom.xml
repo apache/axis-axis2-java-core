@@ -334,7 +334,7 @@
                                     <version>0.0.1-SNAPSHOT</version>
                                     <type>war</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/deploy/axis2-json-api.war</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/deploy/axis2-json-api</outputDirectory>
                                     <includes>**/*.class,**/*.xml</includes>
                                     <excludes>**/*test.class</excludes>
                                 </artifactItem>
@@ -357,23 +357,23 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <target>
-                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/Login.aar">
+                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api/WEB-INF/services/Login.aar">
                                     <metainf file="resources-axis2/login_resources/services.xml"/>
                                 </jar>
-                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/testws.aar">
+                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api/WEB-INF/services/testws.aar">
                                     <metainf file="resources-axis2/test_service_resources/services.xml"/>
                                 </jar>
-                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/BigDataH2Service.aar">
+                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api/WEB-INF/services/BigDataH2Service.aar">
                                     <metainf file="resources-axis2/bigdata_h2_resources/services.xml"/>
                                 </jar>
-                                <copy todir="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/conf">
+                                <copy todir="${project.build.directory}/deploy/axis2-json-api/WEB-INF/conf">
                                     <fileset dir="resources-axis2/conf">
                                         <include name="axis2.xml"/>
                                     </fileset>
                                 </copy>
-                                <mkdir dir="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/modules"/>
+                                <mkdir dir="${project.build.directory}/deploy/axis2-json-api/WEB-INF/modules"/>
                                 <copy file="${settings.localRepository}/org/apache/axis2/axis2-openapi/${axis2.version}/axis2-openapi-${axis2.version}.jar"
-                                      tofile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/modules/openapi-${axis2.version}.mar"
+                                      tofile="${project.build.directory}/deploy/axis2-json-api/WEB-INF/modules/openapi-${axis2.version}.mar"
                                       overwrite="true"/>
                                 <unzip src="${project.build.directory}/axis2-json-api-0.0.1-SNAPSHOT.war" dest="${project.build.directory}/exploded"/>
                                 <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/Login.aar">
@@ -418,7 +418,7 @@
                             <filtering>true</filtering>
                         </resource>
                     </webResources>
-                    <webappDirectory>${project.build.directory}/deploy/axis2-json-api.war</webappDirectory>
+                    <webappDirectory>${project.build.directory}/deploy/axis2-json-api</webappDirectory>
                 </configuration>
                 <executions>
                     <execution>
