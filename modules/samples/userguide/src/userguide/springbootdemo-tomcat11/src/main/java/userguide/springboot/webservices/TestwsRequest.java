@@ -31,6 +31,9 @@ public class TestwsRequest {
         this.messagein = messagein;
     }
 
+    /** No-arg constructor required by Moshi (JsonRpcMessageReceiver) for deserialization. */
+    public TestwsRequest() {}
+
     public TestwsRequest(String messagein) {
         this.messagein = messagein;
     }

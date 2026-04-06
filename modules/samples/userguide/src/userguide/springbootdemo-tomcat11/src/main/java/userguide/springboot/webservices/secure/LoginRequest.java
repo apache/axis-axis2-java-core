@@ -42,6 +42,9 @@ public class LoginRequest {
     }
 
 
+    /** No-arg constructor required by Moshi (JsonRpcMessageReceiver) for deserialization. */
+    public LoginRequest() {}
+
     public LoginRequest(String email, String credentials) {
         this.email = email;
         this.credentials = credentials;
