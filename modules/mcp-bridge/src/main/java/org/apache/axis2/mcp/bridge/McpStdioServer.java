@@ -119,18 +119,32 @@ public class McpStdioServer {
         JsonNode params = request.path("params");
         System.err.println("[axis2-mcp-bridge] Request id=" + id + " method=" + method);
 
-        switch (method) {
-            case "initialize":
-                writeSuccess(id, buildInitializeResult(params));
-                break;
-            case "tools/list":
-                writeSuccess(id, buildToolsListResult());
-                break;
-            case "tools/call":
-                writeSuccess(id, buildToolsCallResult(params));
-                break;
-            default:
-                writeError(id, -32601, "Method not found: " + method);
+        try {
+            switch (method) {
+                case "initialize":
+                    writeSuccess(id, buildInitializeResult(params));
+                    break;
+                case "tools/list":
+                    writeSuccess(id, buildToolsListResult());
+                    break;
+                case "tools/call":
+                    writeSuccess(id, buildToolsCallResult(params));
+                    break;
+                default:
+                    writeError(id, -32601, "Method not found: " + method);
+            }
+        } catch (IllegalArgumentException e) {
+            // Invalid params: unknown tool name, missing required param, etc.
+            writeError(id, -32602, "Invalid params: " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            writeError(id, -32000, "Server error during tool call: " + e.getMessage());
+        } catch (IOException e) {
+            writeError(id, -32000, "Server error during tool call: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("[axis2-mcp-bridge] Internal error id=" + id + ": " + e.getMessage());
+            e.printStackTrace(System.err);
+            writeError(id, -32603, "Internal error: " + e.getMessage());
         }
     }
 

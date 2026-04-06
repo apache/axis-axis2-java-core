@@ -633,12 +633,23 @@ public class OpenApiSpecGenerator {
      * Uses the same service filtering as {@link #generatePaths()} so the tool
      * catalog is consistent with the OpenAPI spec.
      */
+    /**
+     * Generates the MCP tool catalog JSON for the {@code /openapi-mcp.json} endpoint.
+     *
+     * <p>Uses Jackson to build the JSON object graph, which guarantees correct
+     * escaping of all string values including control characters — something a
+     * hand-rolled {@code StringBuilder} approach cannot safely guarantee.
+     *
+     * <p>Uses the same service/operation filtering as {@link #generatePaths()}.
+     */
     public String generateMcpCatalogJson(HttpServletRequest request) {
         try {
             AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
-            StringBuilder json = new StringBuilder();
-            json.append("{\n  \"tools\": [\n");
-            boolean firstTool = true;
+
+            com.fasterxml.jackson.databind.ObjectMapper jackson =
+                    new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.node.ObjectNode root = jackson.createObjectNode();
+            com.fasterxml.jackson.databind.node.ArrayNode toolsArray = root.putArray("tools");
 
             Iterator<AxisService> services = axisConfig.getServices().values().iterator();
             while (services.hasNext()) {
@@ -654,42 +665,29 @@ public class OpenApiSpecGenerator {
                     String opName = operation.getName().getLocalPart();
                     String path = "/services/" + service.getName() + "/" + opName;
 
-                    if (!firstTool) json.append(",\n");
-                    firstTool = false;
+                    com.fasterxml.jackson.databind.node.ObjectNode toolNode = toolsArray.addObject();
+                    toolNode.put("name", opName);
+                    toolNode.put("description", service.getName() + ": " + opName);
 
-                    json.append("    {\n");
-                    json.append("      \"name\": \"").append(escapeJson(opName)).append("\",\n");
-                    json.append("      \"description\": \"").append(escapeJson(service.getName()))
-                        .append(": ").append(escapeJson(opName)).append("\",\n");
-                    json.append("      \"inputSchema\": {\n");
-                    json.append("        \"type\": \"object\",\n");
-                    json.append("        \"properties\": {},\n");
-                    json.append("        \"required\": []\n");
-                    json.append("      },\n");
-                    json.append("      \"endpoint\": \"POST ").append(escapeJson(path)).append("\"\n");
-                    json.append("    }");
+                    // inputSchema: minimal MCP-compliant structure. Richer schemas are
+                    // produced when services carry @McpTool annotations (future work).
+                    com.fasterxml.jackson.databind.node.ObjectNode schema =
+                            toolNode.putObject("inputSchema");
+                    schema.put("type", "object");
+                    schema.putObject("properties");
+                    schema.putArray("required");
+
+                    toolNode.put("endpoint", "POST " + path);
                 }
             }
 
-            json.append("\n  ]\n}");
             log.debug("Generated MCP catalog JSON");
-            return json.toString();
+            return jackson.writeValueAsString(root);
 
         } catch (Exception e) {
             log.error("Failed to generate MCP catalog JSON", e);
             return "{\"tools\":[]}";
         }
-    }
-
-    /**
-     * Escape a string for safe inclusion in a JSON string value.
-     * Axis2 service/operation names follow XML NCName rules and will not
-     * contain control characters, but backslash and double-quote are escaped
-     * defensively.
-     */
-    private String escapeJson(String s) {
-        if (s == null) return "";
-        return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     /**

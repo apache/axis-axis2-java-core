@@ -266,6 +266,24 @@ public class McpCatalogGeneratorTest extends TestCase {
         assertNotNull(root);
     }
 
+    /**
+     * Jackson correctly escapes all JSON control characters including tab, newline,
+     * and carriage return — not just backslash and double-quote.
+     */
+    public void testControlCharactersInOperationNameAreEscaped() throws Exception {
+        AxisService svc = new AxisService("TestService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("op\twith\ttabs"));   // tab chars
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        String json = generator.generateMcpCatalogJson(mockRequest);
+        assertFalse("Tab characters must not appear literally in JSON output",
+                json.contains("\t"));
+        JsonNode root = MAPPER.readTree(json);   // still parseable
+        assertNotNull(root);
+    }
+
     // ── catalog request is null-safe ──────────────────────────────────────────
 
     public void testGenerateMcpCatalogWithNullRequestDoesNotThrow() throws Exception {

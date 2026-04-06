@@ -202,27 +202,35 @@ public class McpStdioServerTest extends TestCase {
     // ── tools/call ──────────────────────────────────────────────────────────
 
     /**
-     * When tools/call names a tool that is not in the registry, the server
-     * throws IllegalArgumentException, which is caught by the run() loop and
-     * logged to stderr. No JSON-RPC response is written to stdout.
+     * When tools/call names a tool not in the registry, the server must return
+     * a JSON-RPC error with code -32602 (Invalid Params) per the spec. The id
+     * from the request must be echoed in the error response so the client can
+     * correlate it.
      */
-    public void testToolsCallUnknownToolProducesNoStdoutResponse() throws Exception {
+    public void testToolsCallUnknownToolReturnsInvalidParamsError() throws Exception {
         String output = runServer(new StubToolRegistry(),
                 "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\"," +
                 "\"params\":{\"name\":\"nonexistentTool\",\"arguments\":{}}}");
 
-        // Nothing should be written to stdout for the unknown-tool error path
-        // (exception is caught in run() and logged to stderr only)
-        assertTrue("No stdout response expected for unknown tool", output.isEmpty());
+        JsonNode response = parseSingleResponse(output);
+        assertEquals("id must be echoed", 3, response.path("id").asInt());
+        assertTrue("Response must contain 'error'", response.has("error"));
+        assertFalse("Response must not contain 'result'", response.has("result"));
+        assertEquals(-32602, response.path("error").path("code").asInt());
+        assertTrue("Error message must mention the tool name",
+                response.path("error").path("message").asText().contains("nonexistentTool"));
     }
 
-    public void testToolsCallMissingNameProducesNoStdoutResponse() throws Exception {
+    public void testToolsCallMissingNameReturnsInvalidParamsError() throws Exception {
         // params.name is absent — throws IllegalArgumentException in buildToolsCallResult
         String output = runServer(new StubToolRegistry(),
-                "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\"," +
+                "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\"," +
                 "\"params\":{\"arguments\":{}}}");
 
-        assertTrue("No stdout response expected for missing name", output.isEmpty());
+        JsonNode response = parseSingleResponse(output);
+        assertEquals(7, response.path("id").asInt());
+        assertTrue("Response must contain 'error'", response.has("error"));
+        assertEquals(-32602, response.path("error").path("code").asInt());
     }
 
     // ── error cases ─────────────────────────────────────────────────────────

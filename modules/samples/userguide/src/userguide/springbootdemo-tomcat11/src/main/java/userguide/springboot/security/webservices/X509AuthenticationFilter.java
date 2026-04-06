@@ -33,6 +33,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -95,17 +98,25 @@ public class X509AuthenticationFilter extends GenericFilterBean {
     /**
      * Extracts the CN value from an {@link X500Principal}.
      *
-     * <p>Uses RFC 2253 format ({@code CN=value,O=...}) for reliable parsing.
-     * Returns the full DN string if no CN attribute is present.
+     * <p>Uses {@link LdapName} to parse the RFC 2253 DN, which correctly
+     * handles escaped commas in RDN values (e.g. {@code O="Example, Inc."}).
+     * Falls back to the full DN string if parsing fails or no CN attribute
+     * is present.
      */
     private String extractCN(X500Principal principal) {
-        String dn = principal.getName(X500Principal.RFC2253);
-        for (String part : dn.split(",")) {
-            part = part.trim();
-            if (part.startsWith("CN=")) {
-                return part.substring(3);
+        try {
+            LdapName ldapDN = new LdapName(principal.getName());
+            // Iterate in reverse — CN is typically the most-specific (last) RDN
+            for (int i = ldapDN.size() - 1; i >= 0; i--) {
+                Rdn rdn = ldapDN.getRdn(i);
+                if ("CN".equalsIgnoreCase(rdn.getType())) {
+                    return rdn.getValue().toString();
+                }
             }
+        } catch (InvalidNameException e) {
+            logger.warn("X509AuthenticationFilter: could not parse DN, using full DN: "
+                    + principal.getName());
         }
-        return dn;
+        return principal.getName();
     }
 }
