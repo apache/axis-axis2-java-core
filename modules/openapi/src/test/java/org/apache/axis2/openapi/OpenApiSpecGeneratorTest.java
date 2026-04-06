@@ -235,6 +235,175 @@ public class OpenApiSpecGeneratorTest extends TestCase {
         // Note: Actual path structure depends on service configuration
     }
 
+    // ========== Service / Operation Exclusion Tests ==========
+
+    /**
+     * Test that a service listed in ignoredServices is omitted from the spec.
+     */
+    public void testIgnoredServiceIsExcluded() throws Exception {
+        // Arrange
+        AxisService visible = new AxisService("PublicService");
+        AxisOperation visibleOp = new org.apache.axis2.description.InOutAxisOperation();
+        visibleOp.setName(javax.xml.namespace.QName.valueOf("getData"));
+        visible.addOperation(visibleOp);
+
+        AxisService hidden = new AxisService("InternalService");
+        AxisOperation hiddenOp = new org.apache.axis2.description.InOutAxisOperation();
+        hiddenOp.setName(javax.xml.namespace.QName.valueOf("secretOp"));
+        hidden.addOperation(hiddenOp);
+
+        axisConfiguration.addService(visible);
+        axisConfiguration.addService(hidden);
+
+        OpenApiConfiguration config = new OpenApiConfiguration();
+        config.addIgnoredService("InternalService");
+        OpenApiSpecGenerator filtered = new OpenApiSpecGenerator(configurationContext, config);
+
+        // Act
+        OpenAPI openApi = filtered.generateOpenApiSpec(mockRequest);
+
+        // Assert
+        assertNotNull(openApi.getPaths());
+        assertNotNull("Public service path should be present",
+                openApi.getPaths().get("/services/PublicService/getData"));
+        assertNull("Hidden service path must be absent",
+                openApi.getPaths().get("/services/InternalService/secretOp"));
+    }
+
+    /**
+     * Test that a qualified "ServiceName/operationName" entry in ignoredOperations
+     * removes only that specific operation, leaving other operations on the same
+     * service in the spec.
+     */
+    public void testIgnoredQualifiedOperationIsExcluded() throws Exception {
+        // Arrange
+        AxisService svc = new AxisService("DataService");
+
+        AxisOperation keep = new org.apache.axis2.description.InOutAxisOperation();
+        keep.setName(javax.xml.namespace.QName.valueOf("publicQuery"));
+        svc.addOperation(keep);
+
+        AxisOperation drop = new org.apache.axis2.description.InOutAxisOperation();
+        drop.setName(javax.xml.namespace.QName.valueOf("adminDump"));
+        svc.addOperation(drop);
+
+        axisConfiguration.addService(svc);
+
+        OpenApiConfiguration config = new OpenApiConfiguration();
+        config.addIgnoredOperation("DataService/adminDump");
+        OpenApiSpecGenerator filtered = new OpenApiSpecGenerator(configurationContext, config);
+
+        // Act
+        OpenAPI openApi = filtered.generateOpenApiSpec(mockRequest);
+
+        // Assert
+        assertNotNull("publicQuery must remain", openApi.getPaths().get("/services/DataService/publicQuery"));
+        assertNull("adminDump must be excluded", openApi.getPaths().get("/services/DataService/adminDump"));
+    }
+
+    /**
+     * Test that a bare operation name (no service prefix) in ignoredOperations
+     * suppresses that operation across every service.
+     */
+    public void testIgnoredBareOperationIsExcludedAcrossAllServices() throws Exception {
+        // Arrange — two services each with the banned operation name
+        AxisService svc1 = new AxisService("ServiceAlpha");
+        AxisOperation alpha_good = new org.apache.axis2.description.InOutAxisOperation();
+        alpha_good.setName(javax.xml.namespace.QName.valueOf("doWork"));
+        svc1.addOperation(alpha_good);
+        AxisOperation alpha_bad = new org.apache.axis2.description.InOutAxisOperation();
+        alpha_bad.setName(javax.xml.namespace.QName.valueOf("internalStatus"));
+        svc1.addOperation(alpha_bad);
+
+        AxisService svc2 = new AxisService("ServiceBeta");
+        AxisOperation beta_good = new org.apache.axis2.description.InOutAxisOperation();
+        beta_good.setName(javax.xml.namespace.QName.valueOf("doWork"));
+        svc2.addOperation(beta_good);
+        AxisOperation beta_bad = new org.apache.axis2.description.InOutAxisOperation();
+        beta_bad.setName(javax.xml.namespace.QName.valueOf("internalStatus"));
+        svc2.addOperation(beta_bad);
+
+        axisConfiguration.addService(svc1);
+        axisConfiguration.addService(svc2);
+
+        OpenApiConfiguration config = new OpenApiConfiguration();
+        config.addIgnoredOperation("internalStatus"); // bare name — applies to both services
+        OpenApiSpecGenerator filtered = new OpenApiSpecGenerator(configurationContext, config);
+
+        // Act
+        OpenAPI openApi = filtered.generateOpenApiSpec(mockRequest);
+
+        // Assert — doWork present on both, internalStatus absent on both
+        assertNotNull(openApi.getPaths().get("/services/ServiceAlpha/doWork"));
+        assertNotNull(openApi.getPaths().get("/services/ServiceBeta/doWork"));
+        assertNull("internalStatus must be absent from ServiceAlpha",
+                openApi.getPaths().get("/services/ServiceAlpha/internalStatus"));
+        assertNull("internalStatus must be absent from ServiceBeta",
+                openApi.getPaths().get("/services/ServiceBeta/internalStatus"));
+    }
+
+    /**
+     * Test that ignoredServices and ignoredOperations are populated correctly
+     * via the programmatic API (the same code path exercised by properties loading
+     * once applyPropertiesConfiguration parses the values).
+     */
+    public void testIgnoredServicesAndOperationsProgrammaticAPI() throws Exception {
+        OpenApiConfiguration config = new OpenApiConfiguration();
+        config.addIgnoredService("SecretService");
+        config.addIgnoredService("HiddenService");
+        config.addIgnoredOperation("AdminService/nukeDatabase");
+        config.addIgnoredOperation("debugPing");
+
+        assertTrue("SecretService should be in ignoredServices",
+                config.getIgnoredServices().contains("SecretService"));
+        assertTrue("HiddenService should be in ignoredServices",
+                config.getIgnoredServices().contains("HiddenService"));
+        assertTrue("AdminService/nukeDatabase should be in ignoredOperations",
+                config.getIgnoredOperations().contains("AdminService/nukeDatabase"));
+        assertTrue("debugPing should be in ignoredOperations",
+                config.getIgnoredOperations().contains("debugPing"));
+
+        // Verify copy() preserves exclusion sets
+        OpenApiConfiguration copy = config.copy();
+        assertTrue("copy must preserve ignoredServices",
+                copy.getIgnoredServices().contains("SecretService"));
+        assertTrue("copy must preserve ignoredOperations",
+                copy.getIgnoredOperations().contains("debugPing"));
+    }
+
+    /**
+     * Test that a qualified operation entry does NOT suppress the same operation
+     * name on a different service (targeted exclusion, not global).
+     */
+    public void testQualifiedIgnoredOperationDoesNotAffectOtherServices() throws Exception {
+        // Arrange
+        AxisService svcA = new AxisService("ServiceA");
+        AxisOperation opA = new org.apache.axis2.description.InOutAxisOperation();
+        opA.setName(javax.xml.namespace.QName.valueOf("sensitiveOp"));
+        svcA.addOperation(opA);
+
+        AxisService svcB = new AxisService("ServiceB");
+        AxisOperation opB = new org.apache.axis2.description.InOutAxisOperation();
+        opB.setName(javax.xml.namespace.QName.valueOf("sensitiveOp")); // same name, different service
+        svcB.addOperation(opB);
+
+        axisConfiguration.addService(svcA);
+        axisConfiguration.addService(svcB);
+
+        OpenApiConfiguration config = new OpenApiConfiguration();
+        config.addIgnoredOperation("ServiceA/sensitiveOp"); // target ServiceA only
+        OpenApiSpecGenerator filtered = new OpenApiSpecGenerator(configurationContext, config);
+
+        // Act
+        OpenAPI openApi = filtered.generateOpenApiSpec(mockRequest);
+
+        // Assert
+        assertNull("ServiceA/sensitiveOp must be excluded",
+                openApi.getPaths().get("/services/ServiceA/sensitiveOp"));
+        assertNotNull("ServiceB/sensitiveOp must remain (different service)",
+                openApi.getPaths().get("/services/ServiceB/sensitiveOp"));
+    }
+
     /**
      * Test that generated JSON contains no null fields.
      * Jackson must be configured with Include.NON_NULL so null-valued model

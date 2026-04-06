@@ -85,6 +85,26 @@ public class OpenApiConfiguration {
     /** Routes/paths to ignore during generation */
     private Collection<String> ignoredRoutes = new ArrayList<>();
 
+    /**
+     * Service names to exclude from the generated spec.
+     * Checked against {@link org.apache.axis2.description.AxisService#getName()}.
+     * Example: {@code ignoredServices = {"InternalService", "DebugService"}}
+     * Properties key: {@code openapi.ignoredServices} (comma-separated)
+     */
+    private Set<String> ignoredServices = new HashSet<>();
+
+    /**
+     * Operations to exclude from the generated spec.
+     * Each entry is either:
+     * <ul>
+     *   <li>{@code "ServiceName/operationName"} — excludes that operation on that service only</li>
+     *   <li>{@code "operationName"} — excludes that operation name across all services</li>
+     * </ul>
+     * Example: {@code ignoredOperations = {"AdminService/deleteAll", "internalStatus"}}
+     * Properties key: {@code openapi.ignoredOperations} (comma-separated)
+     */
+    private Set<String> ignoredOperations = new HashSet<>();
+
     /** Whether to scan known configuration locations */
     private boolean scanKnownConfigLocations = true;
 
@@ -243,6 +263,24 @@ public class OpenApiConfiguration {
         if (packages != null) {
             resourcePackages.addAll(Arrays.asList(packages.split("\\s*,\\s*")));
         }
+
+        // Ignored routes (comma-separated path patterns)
+        String routes = getProperty(props, "openapi.ignoredRoutes", null);
+        if (routes != null) {
+            ignoredRoutes.addAll(Arrays.asList(routes.split("\\s*,\\s*")));
+        }
+
+        // Ignored service names (comma-separated exact names)
+        String services = getProperty(props, "openapi.ignoredServices", null);
+        if (services != null) {
+            ignoredServices.addAll(Arrays.asList(services.split("\\s*,\\s*")));
+        }
+
+        // Ignored operations (comma-separated, each "ServiceName/opName" or bare "opName")
+        String operations = getProperty(props, "openapi.ignoredOperations", null);
+        if (operations != null) {
+            ignoredOperations.addAll(Arrays.asList(operations.split("\\s*,\\s*")));
+        }
     }
 
     /**
@@ -350,6 +388,12 @@ public class OpenApiConfiguration {
     public Collection<String> getIgnoredRoutes() { return ignoredRoutes; }
     public void setIgnoredRoutes(Collection<String> ignoredRoutes) { this.ignoredRoutes = ignoredRoutes; }
 
+    public Set<String> getIgnoredServices() { return ignoredServices; }
+    public void setIgnoredServices(Set<String> ignoredServices) { this.ignoredServices = ignoredServices; }
+
+    public Set<String> getIgnoredOperations() { return ignoredOperations; }
+    public void setIgnoredOperations(Set<String> ignoredOperations) { this.ignoredOperations = ignoredOperations; }
+
     public boolean isPrettyPrint() { return prettyPrint; }
     public void setPrettyPrint(boolean prettyPrint) { this.prettyPrint = prettyPrint; }
 
@@ -428,6 +472,23 @@ public class OpenApiConfiguration {
     }
 
     /**
+     * Exclude a service from the generated spec by its exact name.
+     * @param serviceName value of {@link org.apache.axis2.description.AxisService#getName()}
+     */
+    public void addIgnoredService(String serviceName) {
+        ignoredServices.add(serviceName);
+    }
+
+    /**
+     * Exclude an operation from the generated spec.
+     * @param entry either {@code "ServiceName/operationName"} (targeted) or
+     *              {@code "operationName"} (applies to every service)
+     */
+    public void addIgnoredOperation(String entry) {
+        ignoredOperations.add(entry);
+    }
+
+    /**
      * Create a copy of this configuration.
      */
     public OpenApiConfiguration copy() {
@@ -458,6 +519,8 @@ public class OpenApiConfiguration {
         copy.resourcePackages = new HashSet<>(this.resourcePackages);
         copy.resourceClasses = new HashSet<>(this.resourceClasses);
         copy.ignoredRoutes = new ArrayList<>(this.ignoredRoutes);
+        copy.ignoredServices = new HashSet<>(this.ignoredServices);
+        copy.ignoredOperations = new HashSet<>(this.ignoredOperations);
         copy.securityDefinitions = new HashMap<>(this.securityDefinitions);
         copy.swaggerUiMediaTypes = new HashMap<>(this.swaggerUiMediaTypes);
 

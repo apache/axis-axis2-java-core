@@ -338,6 +338,27 @@ public class OpenApiSpecGenerator {
     }
 
     /**
+     * Check if an operation should be included based on {@code ignoredOperations}.
+     * An entry matches if it equals either:
+     * <ul>
+     *   <li>{@code "ServiceName/operationName"} — targeted exclusion for one service</li>
+     *   <li>{@code "operationName"} — excludes this operation name from every service</li>
+     * </ul>
+     */
+    private boolean shouldIncludeOperation(AxisService service, AxisOperation operation) {
+        String opName = operation.getName().getLocalPart();
+        String qualified = service.getName() + "/" + opName;
+
+        for (String entry : configuration.getIgnoredOperations()) {
+            if (entry.equals(qualified) || entry.equals(opName)) {
+                log.debug("Skipping operation excluded by ignoredOperations '" + entry + "': " + qualified);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Generate paths for a specific service.
      */
     private void generateServicePaths(AxisService service, Paths paths) {
@@ -346,6 +367,11 @@ public class OpenApiSpecGenerator {
             Iterator<AxisOperation> operations = service.getOperations();
             while (operations.hasNext()) {
                 AxisOperation operation = operations.next();
+
+                // Check per-operation exclusion before generating the path
+                if (!shouldIncludeOperation(service, operation)) {
+                    continue;
+                }
 
                 // Generate path for REST operation
                 String path = generateOperationPath(service, operation);
@@ -439,9 +465,18 @@ public class OpenApiSpecGenerator {
 
     /**
      * Check if a service should be included based on configuration filters.
+     * Exclusion is evaluated before inclusion: a service listed in
+     * {@code ignoredServices} is always skipped regardless of other settings.
      */
     private boolean shouldIncludeService(AxisService service) {
         String serviceName = service.getName();
+
+        // Explicit exclusion by name takes priority over all other filters
+        if (configuration.getIgnoredServices().contains(serviceName)) {
+            log.debug("Skipping service explicitly excluded by ignoredServices: " + serviceName);
+            return false;
+        }
+
         String servicePackage = getServicePackage(service);
 
         // If readAllResources is false, check specific resource classes/packages
