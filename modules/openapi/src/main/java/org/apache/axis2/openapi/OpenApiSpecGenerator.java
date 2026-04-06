@@ -44,11 +44,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter;
@@ -78,8 +75,6 @@ public class OpenApiSpecGenerator {
 
     private final ConfigurationContext configurationContext;
     private final ServiceIntrospector serviceIntrospector;
-    private final ObjectMapper objectMapper;  // Required for Swagger OpenAPI model serialization (JSON)
-    private final ObjectMapper yamlMapper;    // Jackson with YAMLFactory for YAML output
     private final Moshi moshi;  // Preferred for general JSON operations
     private final JsonProcessingMetrics metrics;
     private final OpenApiConfiguration configuration;
@@ -99,36 +94,11 @@ public class OpenApiSpecGenerator {
         this.configuration = config != null ? config : new OpenApiConfiguration();
         this.serviceIntrospector = new ServiceIntrospector(configContext);
 
-        // Configure Jackson for OpenAPI model serialization with HTTP/2 optimization metrics.
-        // Fix: NON_NULL inclusion is required because the Swagger model POJOs (Info, Contact,
-        // License, Schema, etc.) declare many optional fields that default to null. Without this,
-        // Jackson serializes every null field as "key": null, inflating a simple 3-service spec
-        // by ~300 null entries and producing invalid Swagger UI display artifacts.
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        this.objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        if (configuration.isPrettyPrint()) {
-            this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        }
+        // OpenAPI spec serialization delegates entirely to swagger-core's Json/Yaml utilities,
+        // which already configure NON_NULL, WRITE_DATES_AS_TIMESTAMPS=false, and FAIL_ON_EMPTY_BEANS=false
+        // on their internal Jackson mapper. No direct Jackson dependency is needed in this class.
 
-        // Fix: generateOpenApiYaml() was returning JSON because it delegated to
-        // generateOpenApiJson(). A second ObjectMapper backed by YAMLFactory produces
-        // proper YAML. WRITE_DOC_START_MARKER is disabled to suppress the "---" header
-        // that confuses some YAML parsers. jackson-dataformat-yaml is already on the
-        // classpath transitively from io.swagger.core.v3:swagger-core.
-        YAMLFactory yamlFactory = YAMLFactory.builder()
-            .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-            .build();
-        this.yamlMapper = new ObjectMapper(yamlFactory);
-        this.yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        this.yamlMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        this.yamlMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        if (configuration.isPrettyPrint()) {
-            this.yamlMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        }
-
-        // Initialize Moshi for general JSON operations (preferred over Jackson where possible)
+        // Initialize Moshi for general JSON operations (Axis2 preference)
         this.moshi = new Moshi.Builder()
             .add(Date.class, new Rfc3339DateJsonAdapter())
             .build();
@@ -136,7 +106,7 @@ public class OpenApiSpecGenerator {
         // Initialize performance metrics from moshih2 package for HTTP/2 optimization tracking
         this.metrics = new JsonProcessingMetrics();
 
-        log.info("OpenAPI JSON processing configured with Moshi + Jackson hybrid approach (Jackson only for Swagger model serialization, Moshi preferred for other JSON operations, moshih2 performance tracking enabled)");
+        log.info("OpenAPI spec generator configured: swagger-core Json/Yaml utilities for spec serialization, Moshi for general JSON, moshih2 HTTP/2 metrics enabled");
     }
 
     /**
@@ -180,24 +150,19 @@ public class OpenApiSpecGenerator {
         try {
             OpenAPI spec = generateOpenApiSpec(request);
 
-            // Use Jackson for OpenAPI model serialization (required by Swagger library) with enhanced HTTP/2 performance metrics tracking
             long startTime = System.currentTimeMillis();
-            String jsonSpec = objectMapper.writeValueAsString(spec);
+            String jsonSpec = configuration.isPrettyPrint() ? Json.pretty(spec) : Json.mapper().writeValueAsString(spec);
             long processingTime = System.currentTimeMillis() - startTime;
 
-            // Record performance metrics using moshih2 infrastructure
             long specSize = jsonSpec.getBytes().length;
             metrics.recordProcessingStart(requestId, specSize, false);
             metrics.recordProcessingComplete(requestId, specSize, processingTime);
 
-            // Pretty printing is handled by Jackson configuration in constructor
-
-            log.debug("Generated OpenAPI JSON specification (" + (specSize / 1024) + "KB) in " + processingTime + "ms using Jackson with HTTP/2 metrics");
+            log.debug("Generated OpenAPI JSON specification (" + (specSize / 1024) + "KB) in " + processingTime + "ms");
             return jsonSpec;
         } catch (Exception e) {
-            long errorTime = 0; // Error occurred, no meaningful processing time
-            metrics.recordProcessingError(requestId, e, errorTime);
-            log.error("Failed to generate OpenAPI JSON using Jackson with HTTP/2 metrics", e);
+            metrics.recordProcessingError(requestId, e, 0);
+            log.error("Failed to generate OpenAPI JSON", e);
             return "{\"error\":\"Failed to generate OpenAPI specification\"}";
         }
     }
@@ -210,7 +175,7 @@ public class OpenApiSpecGenerator {
         try {
             OpenAPI spec = generateOpenApiSpec(request);
             long startTime = System.currentTimeMillis();
-            String yamlSpec = yamlMapper.writeValueAsString(spec);
+            String yamlSpec = configuration.isPrettyPrint() ? Yaml.pretty(spec) : Yaml.mapper().writeValueAsString(spec);
             long processingTime = System.currentTimeMillis() - startTime;
             long specSize = yamlSpec.getBytes().length;
             metrics.recordProcessingStart(requestId, specSize, false);
@@ -664,7 +629,7 @@ public class OpenApiSpecGenerator {
     public String getOptimizationRecommendations() {
         JsonProcessingMetrics.Statistics stats = metrics.getStatistics();
         StringBuilder recommendations = new StringBuilder();
-        recommendations.append("OpenAPI JSON Processing Performance Analysis (Jackson + HTTP/2 Metrics):\n");
+        recommendations.append("OpenAPI JSON Processing Performance Analysis (swagger-core + HTTP/2 Metrics):\n");
         recommendations.append("  - Total specifications generated: ").append(stats.getTotalRequests()).append("\n");
         recommendations.append("  - Average processing time: ").append(stats.getAverageProcessingTimeMs()).append("ms\n");
         recommendations.append("  - Total data processed: ").append(stats.getTotalBytes() / 1024).append("KB\n");

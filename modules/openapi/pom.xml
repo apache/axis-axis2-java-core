@@ -64,7 +64,9 @@
             <artifactId>swagger-annotations</artifactId>
         </dependency>
 
-        <!-- Jackson comes transitively from swagger-core dependency -->
+        <!-- No direct Jackson dependency: serialization delegates to swagger-core's
+             Json/Yaml utilities (io.swagger.v3.core.util), which manage their own
+             Jackson mapper internally. Jackson arrives transitively from swagger-core. -->
 
         <!-- Moshi for JSON serialization (preferred over Jackson where possible) -->
         <dependency>

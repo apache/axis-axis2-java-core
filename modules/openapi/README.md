@@ -182,4 +182,4 @@ String yaml = generator.generateOpenApiYaml(httpRequest);
 
 - **Request body schema** — all operations are typed as `object` because Axis2 JSON-RPC services use `JsonRpcMessageReceiver` and have no annotation-level parameter metadata. Schema details must be added via `OpenApiCustomizer` or by serving a static schema file.
 - **GET operations** — all operations are mapped to `POST`; override via `OpenApiCustomizer` if GET endpoints are needed.
-- **YAML format** — uses `jackson-dataformat-yaml` (transitive from `swagger-core`); no additional dependency required.
+- **YAML format** — delegates to `io.swagger.v3.core.util.Yaml`, which uses `jackson-dataformat-yaml` internally; no additional dependency required.

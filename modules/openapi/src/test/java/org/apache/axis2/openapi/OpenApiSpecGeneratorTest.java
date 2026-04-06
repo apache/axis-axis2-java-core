@@ -406,14 +406,57 @@ public class OpenApiSpecGeneratorTest extends TestCase {
 
     /**
      * Test that generated JSON contains no null fields.
-     * Jackson must be configured with Include.NON_NULL so null-valued model
-     * fields (e.g. termsOfService, extensions, summary) are omitted entirely.
+     * swagger-core's ObjectMapperFactory configures NON_NULL on the shared mapper,
+     * so null-valued model fields (e.g. termsOfService, extensions, summary) are
+     * omitted entirely without any additional configuration in this module.
      */
     public void testNoNullFieldsInJson() throws Exception {
         String json = generator.generateOpenApiJson(mockRequest);
 
         assertFalse("JSON output must not contain ': null' entries", json.contains(": null"));
         assertFalse("JSON output must not contain ':null' entries", json.contains(":null"));
+    }
+
+    /**
+     * Test compact vs pretty JSON output — exercises the isPrettyPrint() branch
+     * that selects between Json.pretty(spec) and Json.mapper().writeValueAsString(spec).
+     * Both paths delegate to swagger-core's Json utility.
+     */
+    public void testPrettyAndCompactJsonOutput() throws Exception {
+        OpenApiConfiguration prettyConfig = new OpenApiConfiguration();
+        prettyConfig.setPrettyPrint(true);
+        OpenApiSpecGenerator prettyGen = new OpenApiSpecGenerator(configurationContext, prettyConfig);
+        String prettyJson = prettyGen.generateOpenApiJson(mockRequest);
+        assertTrue("Pretty JSON must contain newlines", prettyJson.contains("\n"));
+        assertFalse("Pretty JSON must not contain null fields", prettyJson.contains(": null"));
+
+        OpenApiConfiguration compactConfig = new OpenApiConfiguration();
+        compactConfig.setPrettyPrint(false);
+        OpenApiSpecGenerator compactGen = new OpenApiSpecGenerator(configurationContext, compactConfig);
+        String compactJson = compactGen.generateOpenApiJson(mockRequest);
+        // Compact output may not have newlines (single-line) but must still be valid JSON
+        assertTrue("Compact JSON must start with '{'", compactJson.trim().startsWith("{"));
+        assertFalse("Compact JSON must not contain null fields", compactJson.contains(":null"));
+    }
+
+    /**
+     * Test compact vs pretty YAML output — exercises the isPrettyPrint() branch
+     * that selects between Yaml.pretty(spec) and Yaml.mapper().writeValueAsString(spec).
+     */
+    public void testPrettyAndCompactYamlOutput() throws Exception {
+        OpenApiConfiguration prettyConfig = new OpenApiConfiguration();
+        prettyConfig.setPrettyPrint(true);
+        OpenApiSpecGenerator prettyGen = new OpenApiSpecGenerator(configurationContext, prettyConfig);
+        String prettyYaml = prettyGen.generateOpenApiYaml(mockRequest);
+        assertFalse("Pretty YAML must not start with '{'", prettyYaml.trim().startsWith("{"));
+        assertTrue("Pretty YAML must contain openapi key", prettyYaml.contains("openapi:"));
+
+        OpenApiConfiguration compactConfig = new OpenApiConfiguration();
+        compactConfig.setPrettyPrint(false);
+        OpenApiSpecGenerator compactGen = new OpenApiSpecGenerator(configurationContext, compactConfig);
+        String compactYaml = compactGen.generateOpenApiYaml(mockRequest);
+        assertFalse("Compact YAML must not start with '{'", compactYaml.trim().startsWith("{"));
+        assertTrue("Compact YAML must contain openapi key", compactYaml.contains("openapi:"));
     }
 
     /**
