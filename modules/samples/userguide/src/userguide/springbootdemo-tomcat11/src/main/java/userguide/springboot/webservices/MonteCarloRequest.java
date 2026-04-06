@@ -80,16 +80,16 @@ public class MonteCarloRequest {
     /** Optional identifier echoed in the response for request tracing. */
     private String requestId;
 
-    // ── getters ──────────────────────────────────────────────────────────────
+    // ── getters — all enforce defaults so service code has no ternary clutter ─
 
-    public int getNSimulations() { return nSimulations; }
-    public int getNPeriods() { return nPeriods; }
-    public double getInitialValue() { return initialValue; }
+    public int getNSimulations() { return nSimulations > 0 ? nSimulations : 10_000; }
+    public int getNPeriods() { return nPeriods > 0 ? nPeriods : 252; }
+    public double getInitialValue() { return initialValue > 0 ? initialValue : 1_000_000.0; }
     public double getExpectedReturn() { return expectedReturn; }
     public double getVolatility() { return volatility; }
     public long getRandomSeed() { return randomSeed; }
     public int getNPeriodsPerYear() { return nPeriodsPerYear > 0 ? nPeriodsPerYear : 252; }
-    public double[] getPercentiles() { return percentiles; }
+    public double[] getPercentiles() { return percentiles != null ? percentiles : new double[]{0.01, 0.05}; }
     public String getRequestId() { return requestId; }
 
     // ── setters ──────────────────────────────────────────────────────────────

@@ -94,26 +94,30 @@ public class FinancialBenchmarkService {
 
         int n = request.getNAssets();
         if (n <= 0 || n > MAX_ASSETS) {
-            return PortfolioVarianceResponse.failed(
-                "n_assets=" + n + " is out of range [1, " + MAX_ASSETS + "].");
+            String err = "n_assets=" + n + " is out of range [1, " + MAX_ASSETS + "].";
+            logger.warn(logPrefix + "validation failed: " + err);
+            return PortfolioVarianceResponse.failed(err);
         }
 
         // ── Resolve covariance matrix ─────────────────────────────────────────
         double[][] cov = resolveCovarianceMatrix(request, n);
         if (cov == null) {
-            return PortfolioVarianceResponse.failed(
-                "Missing or malformed \"covarianceMatrix\": provide a " + n + "×" + n +
-                " 2D array or a flat array of " + (long) n * n + " elements in row-major order.");
+            String err = "Missing or malformed \"covarianceMatrix\": provide a " + n + "×" + n +
+                " 2D array or a flat array of " + (long) n * n + " elements in row-major order.";
+            logger.warn(logPrefix + "validation failed: " + err);
+            return PortfolioVarianceResponse.failed(err);
         }
         if (cov.length != n) {
-            return PortfolioVarianceResponse.failed(
-                "covarianceMatrix row count " + cov.length + " != nAssets " + n + ".");
+            String err = "covarianceMatrix row count " + cov.length + " != nAssets " + n + ".";
+            logger.warn(logPrefix + "validation failed: " + err);
+            return PortfolioVarianceResponse.failed(err);
         }
         for (int i = 0; i < n; i++) {
             if (cov[i] == null || cov[i].length != n) {
-                return PortfolioVarianceResponse.failed(
-                    "covarianceMatrix row " + i + " has " +
-                    (cov[i] == null ? 0 : cov[i].length) + " columns, expected " + n + ".");
+                String err = "covarianceMatrix row " + i + " has " +
+                    (cov[i] == null ? 0 : cov[i].length) + " columns, expected " + n + ".";
+                logger.warn(logPrefix + "validation failed: " + err);
+                return PortfolioVarianceResponse.failed(err);
             }
         }
 
@@ -125,9 +129,10 @@ public class FinancialBenchmarkService {
         boolean weightsNormalized = false;
         if (request.isNormalizeWeights()) {
             if (weightSum <= 0.0) {
-                return PortfolioVarianceResponse.failed(
-                    "normalizeWeights=true but weights sum to " + weightSum +
-                    ". Cannot normalize a zero-weight portfolio.");
+                String err = "normalizeWeights=true but weights sum to " + weightSum +
+                    ". Cannot normalize a zero-weight portfolio.";
+                logger.warn(logPrefix + "validation failed: " + err);
+                return PortfolioVarianceResponse.failed(err);
             }
             if (Math.abs(weightSum - 1.0) > 1e-10) {
                 for (int i = 0; i < n; i++) weights[i] /= weightSum;
@@ -136,10 +141,11 @@ public class FinancialBenchmarkService {
             }
         } else {
             if (Math.abs(weightSum - 1.0) > 1e-4) {
-                return PortfolioVarianceResponse.failed(
-                    "weights sum to " + String.format("%.8f", weightSum) +
+                String err = "weights sum to " + String.format("%.8f", weightSum) +
                     ", expected 1.0 (tolerance 1e-4). " +
-                    "Pass normalizeWeights=true to rescale automatically.");
+                    "Pass normalizeWeights=true to rescale automatically.";
+                logger.warn(logPrefix + "validation failed: " + err);
+                return PortfolioVarianceResponse.failed(err);
             }
         }
 
@@ -201,11 +207,9 @@ public class FinancialBenchmarkService {
             return MonteCarloResponse.failed("Request must not be null.");
         }
 
-        int nSims = Math.min(
-            request.getNSimulations() > 0 ? request.getNSimulations() : 10_000,
-            MAX_SIMULATIONS);
-        int nPeriods = request.getNPeriods() > 0 ? request.getNPeriods() : 252;
-        double initialValue = request.getInitialValue() > 0 ? request.getInitialValue() : 1_000_000.0;
+        int nSims = Math.min(request.getNSimulations(), MAX_SIMULATIONS);
+        int nPeriods = request.getNPeriods();
+        double initialValue = request.getInitialValue();
         double mu = request.getExpectedReturn();
         double sigma = request.getVolatility();
         int npy = request.getNPeriodsPerYear();
@@ -341,8 +345,9 @@ public class FinancialBenchmarkService {
         List<ScenarioAnalysisRequest.AssetScenario> assets = request.getAssets();
         int nAssets = assets.size();
         if (nAssets > MAX_ASSETS) {
-            return ScenarioAnalysisResponse.failed(
-                "assets count " + nAssets + " exceeds maximum " + MAX_ASSETS + ".");
+            String err = "assets count " + nAssets + " exceeds maximum " + MAX_ASSETS + ".";
+            logger.warn(logPrefix + "validation failed: " + err);
+            return ScenarioAnalysisResponse.failed(err);
         }
 
         double probTolerance = request.getProbTolerance();
@@ -357,13 +362,15 @@ public class FinancialBenchmarkService {
                 probSum += s.getProbability();
             }
             if (Math.abs(probSum - 1.0) > probTolerance) {
-                return ScenarioAnalysisResponse.failed(String.format(
+                String err = String.format(
                     "Asset index %d (id=%d): scenario probabilities sum to %.8f, " +
                     "expected 1.0 (tolerance %.2g). " +
                     "All %d scenario probabilities must sum to exactly 1.0. " +
                     "Pass probTolerance to adjust validation strictness.",
                     i, asset.getAssetId(), probSum, probTolerance,
-                    asset.getScenarios().size()));
+                    asset.getScenarios().size());
+                logger.warn(logPrefix + "validation failed: " + err);
+                return ScenarioAnalysisResponse.failed(err);
             }
         }
 
@@ -515,12 +522,19 @@ public class FinancialBenchmarkService {
         return (rt.totalMemory() - rt.freeMemory()) / (1024 * 1024);
     }
 
-    /** Human-readable JVM / runtime identifier for response metadata. */
+    /**
+     * Runtime identifier for response metadata.
+     * Reports the JVM family and heap class without exposing version numbers
+     * or precise memory configuration (which would aid fingerprinting).
+     */
     private String runtimeInfo() {
         Runtime rt = Runtime.getRuntime();
-        return String.format("Java %s (heap: %d MB max / %d MB total)",
-            System.getProperty("java.version"),
-            rt.maxMemory() / (1024 * 1024),
-            rt.totalMemory() / (1024 * 1024));
+        long maxMb = rt.maxMemory() / (1024 * 1024);
+        // Heap tier, not exact size — enough for C vs JVM comparison context
+        String heapTier = maxMb >= 16_000 ? "16+ GB" :
+                          maxMb >=  8_000 ? "8+ GB"  :
+                          maxMb >=  4_000 ? "4+ GB"  :
+                          maxMb >=  2_000 ? "2+ GB"  : "< 2 GB";
+        return "Java (JVM heap tier: " + heapTier + ")";
     }
 }
