@@ -354,7 +354,7 @@
                 <executions>
                     <execution>
                         <id>install</id>
-                        <phase>install</phase>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <target>
                                 <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/Login.aar">
@@ -374,7 +374,8 @@
                                 <!-- Create openapi module archive for WEB-INF/modules -->
                                 <mkdir dir="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/modules"/>
                                 <copy file="${settings.localRepository}/org/apache/axis2/axis2-openapi/${axis2.version}/axis2-openapi-${axis2.version}.jar"
-                                      tofile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/modules/openapi-${axis2.version}.mar"/>
+                                      tofile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/modules/openapi-${axis2.version}.mar"
+                                      overwrite="true"/>
                                 <unzip src="${project.build.directory}/axis2-json-api-0.0.1-SNAPSHOT.war" dest="${project.build.directory}/exploded"/>
                                 <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/Login.aar">
                                     <metainf file="resources-axis2/login_resources/services.xml"/>
@@ -393,7 +394,8 @@
                                 <!-- Create openapi module archive for exploded WEB-INF/modules -->
                                 <mkdir dir="${project.build.directory}/exploded/WEB-INF/modules"/>
                                 <copy file="${settings.localRepository}/org/apache/axis2/axis2-openapi/${axis2.version}/axis2-openapi-${axis2.version}.jar"
-                                      tofile="${project.build.directory}/exploded/WEB-INF/modules/openapi-${axis2.version}.mar"/>
+                                      tofile="${project.build.directory}/exploded/WEB-INF/modules/openapi-${axis2.version}.mar"
+                                      overwrite="true"/>
                             </target>
                         </configuration>
                         <goals>

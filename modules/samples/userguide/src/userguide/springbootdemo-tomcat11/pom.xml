@@ -353,7 +353,7 @@
                 <executions>
                     <execution>
                         <id>install</id>
-                        <phase>install</phase>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <target>
                                 <jar jarfile="${project.build.directory}/deploy/axis2-json-api.war/WEB-INF/services/Login.aar">
