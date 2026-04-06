@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPool implements ThreadFactory {
     private static final Log log = LogFactory.getLog(ThreadPool.class);
     protected static long SLEEP_INTERVAL = 1000;
-    private static boolean shutDown;
+    private boolean shutDown;
     protected ThreadPoolExecutor executor;
 
     //integers that define the pool size, with the default values set.
