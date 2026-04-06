@@ -20,7 +20,10 @@
 package org.apache.axis2.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.servers.Server;
 import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContext;
@@ -230,6 +233,149 @@ public class OpenApiSpecGeneratorTest extends TestCase {
         assertNotNull("Paths should be generated", openApi.getPaths());
         // Verify that paths are created for the test service
         // Note: Actual path structure depends on service configuration
+    }
+
+    /**
+     * Test that generated JSON contains no null fields.
+     * Jackson must be configured with Include.NON_NULL so null-valued model
+     * fields (e.g. termsOfService, extensions, summary) are omitted entirely.
+     */
+    public void testNoNullFieldsInJson() throws Exception {
+        String json = generator.generateOpenApiJson(mockRequest);
+
+        assertFalse("JSON output must not contain ': null' entries", json.contains(": null"));
+        assertFalse("JSON output must not contain ':null' entries", json.contains(":null"));
+    }
+
+    /**
+     * Test that each generated operation carries a non-null requestBody.
+     * All JSON-RPC services accept a POST body; omitting requestBody leaves
+     * clients with no schema hint.  Mirrors the pattern in financial-api-schema.json.
+     */
+    public void testRequestBodyPresentOnOperation() throws Exception {
+        // Arrange — register a service with one operation
+        AxisService svc = new AxisService("OrderService");
+        AxisOperation op = new org.apache.axis2.description.InOutAxisOperation();
+        op.setName(javax.xml.namespace.QName.valueOf("placeOrder"));
+        svc.addOperation(op);
+        axisConfiguration.addService(svc);
+
+        // Act
+        OpenAPI openApi = generator.generateOpenApiSpec(mockRequest);
+
+        // Assert — the path for the operation must exist and have a requestBody
+        String expectedPath = "/services/OrderService/placeOrder";
+        assertNotNull("Path should exist for registered operation", openApi.getPaths());
+        PathItem pathItem = openApi.getPaths().get(expectedPath);
+        assertNotNull("PathItem must be present at " + expectedPath, pathItem);
+
+        Operation postOp = pathItem.getPost();
+        assertNotNull("Operation must be a POST", postOp);
+
+        RequestBody requestBody = postOp.getRequestBody();
+        assertNotNull("requestBody must not be null", requestBody);
+        assertTrue("requestBody must be required", Boolean.TRUE.equals(requestBody.getRequired()));
+        assertNotNull("requestBody must have content", requestBody.getContent());
+        assertNotNull("requestBody must declare application/json media type",
+                requestBody.getContent().get("application/json"));
+    }
+
+    /**
+     * Test that generated YAML is genuine YAML, not JSON.
+     * financial-api-schema.json demonstrates that a proper OpenAPI endpoint
+     * should serve parseable YAML when /openapi.yaml is requested.
+     */
+    public void testYamlGenerationIsActualYaml() throws Exception {
+        String yaml = generator.generateOpenApiYaml(mockRequest);
+
+        assertNotNull("YAML should be generated", yaml);
+        assertFalse("YAML must not start with '{' (that would be JSON)", yaml.trim().startsWith("{"));
+        assertTrue("YAML must contain openapi key in YAML style", yaml.contains("openapi:"));
+    }
+
+    /**
+     * Test that the financial-api-schema.json advanced features are structurally
+     * sound — components/schemas with $ref, required requestBodies, security
+     * schemes, error responses, and both GET and POST operations.
+     *
+     * This test reads the schema from disk and validates its advanced features,
+     * confirming the test infrastructure can parse and assert on production-grade
+     * OpenAPI specs of the kind the generator should eventually produce.
+     */
+    public void testFinancialApiSchemaAdvancedFeatures() throws Exception {
+        // Load the financial schema from the swagger-server sample resources
+        java.io.InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("openapi/financial-api-schema.json");
+        if (is == null) {
+            // File is in the swagger-server module, not on this module's classpath —
+            // load it from the filesystem relative to the repo root.
+            java.io.File schemaFile = new java.io.File(
+                "../../samples/swagger-server/src/main/resources/openapi/financial-api-schema.json");
+            if (!schemaFile.exists()) {
+                // Skip gracefully when running outside the full repo checkout
+                return;
+            }
+            is = new java.io.FileInputStream(schemaFile);
+        }
+
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(is);
+
+        // --- Basic version ---
+        assertEquals("openapi version must be 3.0.1", "3.0.1", root.get("openapi").asText());
+
+        // --- Components/schemas: advanced feature — schema definitions with $ref ---
+        com.fasterxml.jackson.databind.JsonNode schemas = root.path("components").path("schemas");
+        assertFalse("components/schemas must be present", schemas.isMissingNode());
+        assertTrue("LoginRequest schema must be defined", schemas.has("LoginRequest"));
+        assertTrue("LoginResponse schema must be defined", schemas.has("LoginResponse"));
+
+        // LoginRequest must declare required fields
+        com.fasterxml.jackson.databind.JsonNode loginReqRequired = schemas.path("LoginRequest").path("required");
+        assertFalse("LoginRequest must have required array", loginReqRequired.isMissingNode());
+        assertTrue("LoginRequest required must include 'email'",
+                loginReqRequired.toString().contains("email"));
+
+        // --- $ref usage inside a schema ---
+        com.fasterxml.jackson.databind.JsonNode loginRespUserInfo =
+                schemas.path("LoginResponse").path("properties").path("userInfo");
+        assertFalse("LoginResponse.userInfo must be present", loginRespUserInfo.isMissingNode());
+        assertTrue("LoginResponse.userInfo must use $ref",
+                loginRespUserInfo.has("$ref"));
+
+        // --- Security schemes ---
+        com.fasterxml.jackson.databind.JsonNode securitySchemes =
+                root.path("components").path("securitySchemes");
+        assertFalse("securitySchemes must be present", securitySchemes.isMissingNode());
+        assertTrue("bearerAuth scheme must be defined", securitySchemes.has("bearerAuth"));
+        assertEquals("bearerAuth type must be 'http'",
+                "http", securitySchemes.path("bearerAuth").path("type").asText());
+        assertEquals("bearerAuth scheme must be 'bearer'",
+                "bearer", securitySchemes.path("bearerAuth").path("scheme").asText());
+
+        // --- requestBody required on POST operations ---
+        com.fasterxml.jackson.databind.JsonNode loginPath = root.path("paths").path("/bigdataservice/login");
+        assertFalse("login path must be present", loginPath.isMissingNode());
+        com.fasterxml.jackson.databind.JsonNode loginPost = loginPath.path("post");
+        assertFalse("login POST must be present", loginPost.isMissingNode());
+        assertTrue("login POST requestBody must be required",
+                loginPost.path("requestBody").path("required").asBoolean());
+
+        // --- Error responses (400 / 401) ---
+        com.fasterxml.jackson.databind.JsonNode loginResponses = loginPost.path("responses");
+        assertTrue("login must declare 401 response", loginResponses.has("401"));
+
+        // --- GET operations (user/info, user/permissions) ---
+        com.fasterxml.jackson.databind.JsonNode userInfoPath = root.path("paths").path("/bigdataservice/user/info");
+        assertFalse("user/info path must be present", userInfoPath.isMissingNode());
+        assertFalse("user/info must be a GET operation", userInfoPath.path("get").isMissingNode());
+
+        // --- Operation-level security (distinct from global) ---
+        com.fasterxml.jackson.databind.JsonNode fundsSecurity =
+                root.path("paths").path("/bigdataservice/funds/summary").path("post").path("security");
+        assertFalse("funds/summary must declare per-operation security", fundsSecurity.isMissingNode());
+        assertTrue("per-operation security must reference bearerAuth",
+                fundsSecurity.toString().contains("bearerAuth"));
     }
 
     /**

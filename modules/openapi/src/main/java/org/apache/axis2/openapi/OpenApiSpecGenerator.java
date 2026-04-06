@@ -27,6 +27,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.media.Content;
@@ -43,8 +44,11 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter;
@@ -74,7 +78,8 @@ public class OpenApiSpecGenerator {
 
     private final ConfigurationContext configurationContext;
     private final ServiceIntrospector serviceIntrospector;
-    private final ObjectMapper objectMapper;  // Required for Swagger OpenAPI model serialization
+    private final ObjectMapper objectMapper;  // Required for Swagger OpenAPI model serialization (JSON)
+    private final ObjectMapper yamlMapper;    // Jackson with YAMLFactory for YAML output
     private final Moshi moshi;  // Preferred for general JSON operations
     private final JsonProcessingMetrics metrics;
     private final OpenApiConfiguration configuration;
@@ -96,15 +101,24 @@ public class OpenApiSpecGenerator {
 
         // Configure Jackson for OpenAPI model serialization with HTTP/2 optimization metrics
         this.objectMapper = new ObjectMapper();
-
-        if (configuration.isPrettyPrint()) {
-            this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        } else {
-            this.objectMapper.disable(SerializationFeature.INDENT_OUTPUT);
-        }
-
+        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         this.objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        if (configuration.isPrettyPrint()) {
+            this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        }
+
+        // Configure YAML mapper (same settings, different factory)
+        YAMLFactory yamlFactory = YAMLFactory.builder()
+            .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+            .build();
+        this.yamlMapper = new ObjectMapper(yamlFactory);
+        this.yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.yamlMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        this.yamlMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        if (configuration.isPrettyPrint()) {
+            this.yamlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        }
 
         // Initialize Moshi for general JSON operations (preferred over Jackson where possible)
         this.moshi = new Moshi.Builder()
@@ -184,8 +198,22 @@ public class OpenApiSpecGenerator {
      * Generate OpenAPI specification as YAML string.
      */
     public String generateOpenApiYaml(HttpServletRequest request) {
-        // For now, return JSON - YAML conversion can be added later
-        return generateOpenApiJson(request);
+        String requestId = "openapi-yaml-" + System.currentTimeMillis();
+        try {
+            OpenAPI spec = generateOpenApiSpec(request);
+            long startTime = System.currentTimeMillis();
+            String yamlSpec = yamlMapper.writeValueAsString(spec);
+            long processingTime = System.currentTimeMillis() - startTime;
+            long specSize = yamlSpec.getBytes().length;
+            metrics.recordProcessingStart(requestId, specSize, false);
+            metrics.recordProcessingComplete(requestId, specSize, processingTime);
+            log.debug("Generated OpenAPI YAML specification (" + (specSize / 1024) + "KB) in " + processingTime + "ms");
+            return yamlSpec;
+        } catch (Exception e) {
+            metrics.recordProcessingError(requestId, e, 0);
+            log.error("Failed to generate OpenAPI YAML", e);
+            return "error: Failed to generate OpenAPI specification";
+        }
     }
 
     /**
@@ -352,6 +380,19 @@ public class OpenApiSpecGenerator {
         List<String> tags = new ArrayList<>();
         tags.add(service.getName());
         operation.setTags(tags);
+
+        // Add request body (all JSON-RPC services accept a JSON POST body)
+        RequestBody requestBody = new RequestBody();
+        requestBody.setRequired(true);
+        requestBody.setDescription("JSON request body for " + axisOperation.getName().getLocalPart());
+        Content requestContent = new Content();
+        MediaType requestMediaType = new MediaType();
+        Schema requestSchema = new Schema();
+        requestSchema.setType("object");
+        requestMediaType.setSchema(requestSchema);
+        requestContent.addMediaType("application/json", requestMediaType);
+        requestBody.setContent(requestContent);
+        operation.setRequestBody(requestBody);
 
         // Add responses
         ApiResponses responses = new ApiResponses();

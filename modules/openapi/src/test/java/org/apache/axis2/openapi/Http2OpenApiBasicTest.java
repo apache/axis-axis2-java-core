@@ -160,7 +160,7 @@ public class Http2OpenApiBasicTest extends TestCase {
         // Validate large catalog handling
         assertNotNull("Should generate large OpenAPI spec", openApi);
         assertTrue("Should document many services", openApi.getPaths().size() >= 20);
-        assertTrue("Should generate substantial JSON", jsonSpec.length() > 50000); // >50KB
+        assertTrue("Should generate substantial JSON", jsonSpec.length() > 3000); // >3KB (nulls no longer inflating output)
 
         // Performance validation
         assertTrue("Spec generation should be efficient", specTime < 2000);

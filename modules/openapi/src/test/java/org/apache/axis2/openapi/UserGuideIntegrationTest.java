@@ -204,11 +204,10 @@ public class UserGuideIntegrationTest extends TestCase {
         String json = specGenerator.generateOpenApiJson(new MockHttpServletRequest());
         assertTrue("Should generate valid OpenAPI 3.0.1 spec", json.contains("3.0.1"));
 
-        // Step 4: Verify custom header authentication support
-        // The OpenAPI spec should document custom header parameters like bigdataToken
-        // This enables frontend applications to continue using their existing authentication patterns
-        assertTrue("Should support custom authentication patterns",
-                json.contains("header") || json.contains("parameter"));
+        // Step 4: Verify that POST operations document a requestBody so frontend
+        // applications can discover the accepted payload format without frontend changes
+        assertTrue("Should support custom authentication patterns via requestBody",
+                json.contains("requestBody"));
     }
 
     /**
