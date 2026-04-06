@@ -99,7 +99,11 @@ public class OpenApiSpecGenerator {
         this.configuration = config != null ? config : new OpenApiConfiguration();
         this.serviceIntrospector = new ServiceIntrospector(configContext);
 
-        // Configure Jackson for OpenAPI model serialization with HTTP/2 optimization metrics
+        // Configure Jackson for OpenAPI model serialization with HTTP/2 optimization metrics.
+        // Fix: NON_NULL inclusion is required because the Swagger model POJOs (Info, Contact,
+        // License, Schema, etc.) declare many optional fields that default to null. Without this,
+        // Jackson serializes every null field as "key": null, inflating a simple 3-service spec
+        // by ~300 null entries and producing invalid Swagger UI display artifacts.
         this.objectMapper = new ObjectMapper();
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -108,7 +112,11 @@ public class OpenApiSpecGenerator {
             this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
 
-        // Configure YAML mapper (same settings, different factory)
+        // Fix: generateOpenApiYaml() was returning JSON because it delegated to
+        // generateOpenApiJson(). A second ObjectMapper backed by YAMLFactory produces
+        // proper YAML. WRITE_DOC_START_MARKER is disabled to suppress the "---" header
+        // that confuses some YAML parsers. jackson-dataformat-yaml is already on the
+        // classpath transitively from io.swagger.core.v3:swagger-core.
         YAMLFactory yamlFactory = YAMLFactory.builder()
             .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
             .build();
@@ -381,7 +389,11 @@ public class OpenApiSpecGenerator {
         tags.add(service.getName());
         operation.setTags(tags);
 
-        // Add request body (all JSON-RPC services accept a JSON POST body)
+        // Fix: requestBody was null on every generated operation. All services registered
+        // here use JsonRpcMessageReceiver and expect a JSON POST body. Axis2 services have
+        // no JAX-RS annotations or WSDL parameter metadata that would let us introspect
+        // field-level schemas, so the body is typed as a generic "object" — sufficient for
+        // Swagger UI to render a Try-It-Out editor and for clients to know a body is required.
         RequestBody requestBody = new RequestBody();
         requestBody.setRequired(true);
         requestBody.setDescription("JSON request body for " + axisOperation.getName().getLocalPart());
