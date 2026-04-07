@@ -67,7 +67,7 @@ class FinancialBenchmarkServiceTest {
             "annualized volatility uses nPeriodsPerYear=252 by default");
         assertEquals(1.0, resp.getWeightSum(), 1e-10, "weight_sum should be 1.0");
         assertFalse(resp.isWeightsNormalized(), "weights should not be normalized when already summing to 1.0");
-        assertTrue(resp.getMatrixOperations() == 4, "2x2 matrix = 4 operations");
+        assertEquals(4L, resp.getMatrixOperations(), "2x2 matrix = 4 operations");
     }
 
     @Test
@@ -253,7 +253,7 @@ class FinancialBenchmarkServiceTest {
 
         assertEquals("SUCCESS", resp.getStatus());
         // With zero drift and zero volatility, all paths end at initialValue
-        assertEquals(resp.getInitialValue(), resp.getMeanFinalValue(), 1.0,
+        assertEquals(req.getInitialValue(), resp.getMeanFinalValue(), 1.0,
             "zero vol, zero drift: mean should equal initialValue");
     }
 
@@ -521,8 +521,4 @@ class FinancialBenchmarkServiceTest {
         return asset;
     }
 
-    /** Expose initialValue for test assertions (not in response, but useful here). */
-    private double getInitialValue(MonteCarloRequest req) {
-        return req.getInitialValue();
-    }
 }

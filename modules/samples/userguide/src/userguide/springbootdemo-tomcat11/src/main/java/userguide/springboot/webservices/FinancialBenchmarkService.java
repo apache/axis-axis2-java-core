@@ -95,7 +95,7 @@ public class FinancialBenchmarkService {
         int n = request.getNAssets();
         if (n <= 0 || n > MAX_ASSETS) {
             String err = "n_assets=" + n + " is out of range [1, " + MAX_ASSETS + "].";
-            logger.warn(logPrefix + "validation failed: " + err);
+            logger.warn("{} validation failed: {}", logPrefix, err);
             return PortfolioVarianceResponse.failed(err);
         }
 
@@ -104,19 +104,19 @@ public class FinancialBenchmarkService {
         if (cov == null) {
             String err = "Missing or malformed \"covarianceMatrix\": provide a " + n + "×" + n +
                 " 2D array or a flat array of " + (long) n * n + " elements in row-major order.";
-            logger.warn(logPrefix + "validation failed: " + err);
+            logger.warn("{} validation failed: {}", logPrefix, err);
             return PortfolioVarianceResponse.failed(err);
         }
         if (cov.length != n) {
             String err = "covarianceMatrix row count " + cov.length + " != nAssets " + n + ".";
-            logger.warn(logPrefix + "validation failed: " + err);
+            logger.warn("{} validation failed: {}", logPrefix, err);
             return PortfolioVarianceResponse.failed(err);
         }
         for (int i = 0; i < n; i++) {
             if (cov[i] == null || cov[i].length != n) {
                 String err = "covarianceMatrix row " + i + " has " +
                     (cov[i] == null ? 0 : cov[i].length) + " columns, expected " + n + ".";
-                logger.warn(logPrefix + "validation failed: " + err);
+                logger.warn("{} validation failed: {}", logPrefix, err);
                 return PortfolioVarianceResponse.failed(err);
             }
         }
@@ -131,7 +131,7 @@ public class FinancialBenchmarkService {
             if (weightSum <= 0.0) {
                 String err = "normalizeWeights=true but weights sum to " + weightSum +
                     ". Cannot normalize a zero-weight portfolio.";
-                logger.warn(logPrefix + "validation failed: " + err);
+                logger.warn("{} validation failed: {}", logPrefix, err);
                 return PortfolioVarianceResponse.failed(err);
             }
             if (Math.abs(weightSum - 1.0) > 1e-10) {
@@ -144,7 +144,7 @@ public class FinancialBenchmarkService {
                 String err = "weights sum to " + String.format("%.8f", weightSum) +
                     ", expected 1.0 (tolerance 1e-4). " +
                     "Pass normalizeWeights=true to rescale automatically.";
-                logger.warn(logPrefix + "validation failed: " + err);
+                logger.warn("{} validation failed: {}", logPrefix, err);
                 return PortfolioVarianceResponse.failed(err);
             }
         }
@@ -346,7 +346,7 @@ public class FinancialBenchmarkService {
         int nAssets = assets.size();
         if (nAssets > MAX_ASSETS) {
             String err = "assets count " + nAssets + " exceeds maximum " + MAX_ASSETS + ".";
-            logger.warn(logPrefix + "validation failed: " + err);
+            logger.warn("{} validation failed: {}", logPrefix, err);
             return ScenarioAnalysisResponse.failed(err);
         }
 
@@ -369,7 +369,7 @@ public class FinancialBenchmarkService {
                     "Pass probTolerance to adjust validation strictness.",
                     i, asset.getAssetId(), probSum, probTolerance,
                     asset.getScenarios().size());
-                logger.warn(logPrefix + "validation failed: " + err);
+                logger.warn("{} validation failed: {}", logPrefix, err);
                 return ScenarioAnalysisResponse.failed(err);
             }
         }
