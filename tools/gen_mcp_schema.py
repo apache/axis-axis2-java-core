@@ -124,22 +124,27 @@ def parse_structs(header_text: str) -> dict[str, dict]:
     Return {struct_name: {field_name: {"c_type": ..., "has_default": bool}}}.
     Only parses typedef struct { ... } name_t; blocks.
 
-    Block and line comments are stripped from the body before field parsing
-    so that comment text containing ';' is not matched as a field.
+    Block and line comments are stripped from the FULL header text before the
+    struct regex runs so that a comment containing a '}' character (e.g.
+    ``* Defaults: {0.01, 0.05}``) does not prematurely terminate the
+    [^}]+ body capture and cause the struct to be missed entirely.
     """
     structs = {}
-    for m in _STRUCT_RE.finditer(header_text):
+    for m in _STRUCT_RE.finditer(_strip_comments(header_text)):
         body = m.group(1)
         name = m.group(2)
 
         # Warn about potential nested struct/union — body regex stops at first '}'
         # so any nested block would already be truncated, but alert the user.
+        # (Comments are already stripped from header_text before the struct regex
+        # runs, so braces inside comments will not appear here.)
         if '{' in body:
             print(f"  WARNING: struct '{name}' body contains '{{' — nested struct/union "
                   f"members are not supported and may be missing from the schema.",
                   file=sys.stderr)
 
-        # Strip comments before field parsing (F23 fix)
+        # Comments were stripped from header_text before _STRUCT_RE ran;
+        # strip again defensively in case body was extracted differently.
         clean_body = _strip_comments(body)
 
         fields = {}
@@ -204,32 +209,53 @@ def build_json_schema(struct_fields: dict) -> dict:
 # ---------------------------------------------------------------------------
 # services.xml patcher
 # ---------------------------------------------------------------------------
+def _camel_to_snake(name: str) -> str:
+    """Convert camelCase / PascalCase to snake_case.
+
+    Examples:
+      portfolioVariance  → portfolio_variance
+      monteCarlo         → monte_carlo
+      scenarioAnalysis   → scenario_analysis
+      generateTestData   → generate_test_data
+    """
+    # Insert underscore before each uppercase letter that follows a lowercase
+    # letter or digit, then lowercase everything.
+    result = re.sub(r'(?<=[a-z0-9])([A-Z])', r'_\1', name)
+    return result.lower()
+
+
 def find_request_struct(structs: dict, op_name: str,
                         prefix: str = "") -> str | None:
     """
     Heuristically find the request struct for an operation name.
 
     Tries (in order):
-      {prefix}{op_name}_request_t
-      {op_name}_request_t
-      {op_name}_req_t
-    Falls back to a case-insensitive substring search on all struct names.
+      1. {prefix}{op_name}_request_t             (as-is)
+      2. {prefix}{snake(op_name)}_request_t      (camelCase → snake_case)
+      3. {op_name}_request_t  / {op_name}_req_t  (no prefix, as-is)
+      4. {snake(op_name)}_request_t              (no prefix, snake_case)
+      5. Case-insensitive substring search on all struct names.
     """
+    snake = _camel_to_snake(op_name)
     candidates = []
     if prefix:
         candidates.append(f"{prefix}{op_name}_request_t")
+        if snake != op_name:
+            candidates.append(f"{prefix}{snake}_request_t")
     candidates += [
         f"{op_name}_request_t",
         f"{op_name}_req_t",
     ]
+    if snake != op_name:
+        candidates.append(f"{snake}_request_t")
     for c in candidates:
         if c in structs:
             return c
-    # Case-insensitive fallback
-    op_lower = op_name.lower()
-    for sname in structs:
-        if op_lower in sname.lower() and "request" in sname.lower():
-            return sname
+    # Case-insensitive fallback — check both original and snake_case op name
+    for op_lower in (op_name.lower(), snake):
+        for sname in structs:
+            if op_lower in sname.lower() and "request" in sname.lower():
+                return sname
     return None
 
 
