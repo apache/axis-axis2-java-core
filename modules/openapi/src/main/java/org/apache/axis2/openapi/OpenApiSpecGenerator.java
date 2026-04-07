@@ -665,7 +665,8 @@ public class OpenApiSpecGenerator {
      */
     private boolean getMcpBoolParam(AxisOperation operation, AxisService service,
                                     String paramName, boolean defaultValue) {
-        org.apache.axis2.description.Parameter p = operation.getParameter(paramName);
+        org.apache.axis2.description.Parameter p =
+                (operation != null) ? operation.getParameter(paramName) : null;
         if (p == null) p = service.getParameter(paramName);
         if (p != null && p.getValue() != null) {
             String v = p.getValue().toString().trim().toLowerCase(java.util.Locale.ROOT);
