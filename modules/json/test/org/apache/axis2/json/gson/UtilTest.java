@@ -33,6 +33,29 @@ import java.io.IOException;
 
 public class UtilTest {
 
+    /**
+     * Post {@code jsonString} to {@code strURL} and return a two-element array:
+     * {@code [statusCode, responseBody]}.  Unlike {@link #post}, this method
+     * does NOT throw on non-2xx status codes — callers that test error paths
+     * need the response body even when HTTP 500 is returned.
+     */
+    public static Object[] postForResponse(String jsonString, String strURL)
+            throws IOException {
+        HttpEntity stringEntity = new StringEntity(jsonString, ContentType.APPLICATION_JSON);
+        HttpPost httpPost = new HttpPost(strURL);
+        httpPost.setEntity(stringEntity);
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            int status = response.getCode();
+            HttpEntity entity = response.getEntity();
+            String body = entity != null ? EntityUtils.toString(entity, "UTF-8") : "";
+            return new Object[]{status, body};
+        } finally {
+            httpclient.close();
+        }
+    }
+
     public static String post(String jsonString, String strURL)
             throws IOException {
         HttpEntity stringEntity = new StringEntity(jsonString,ContentType.APPLICATION_JSON);

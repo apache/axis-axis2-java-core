@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
     private static final Log log = LogFactory.getLog(JsonInOnlyRPCMessageReceiver.class);
@@ -90,10 +91,13 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
             log.error(msg, e);
             throw AxisFault.makeFault(e);
         } catch (IOException e) {
-            msg = "Exception occur while encording or " +
-                    "access to the input string at the JsonRpcMessageReceiver";
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
+            // Correlation ID: full error context is logged server-side; only the
+            // opaque reference is returned to the client so malformed-request
+            // failures remain safe under penetration testing.
+            String errorRef = UUID.randomUUID().toString();
+            log.error("[errorRef=" + errorRef + "] Bad Request parsing JSON-RPC body " +
+                    "for operation '" + operation_name + "': " + e.getMessage(), e);
+            throw new AxisFault("Bad Request [errorRef=" + errorRef + "]");
         }
     }
 }
