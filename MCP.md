@@ -319,12 +319,11 @@ opt-in per-operation.
 
 ## Next Steps
 
-### Immediate — C port is now unblocked
+### C1 — complete ✅
 
-Java A2 is validated against Claude Desktop. The Axis2/C `financial_benchmark_service`
-can now implement C1 (stdio MCP mode) in parallel with any Java Track B work.
-
-See `docs/MCP.md` in the `axis-axis2-c-core` repo for the C1 plan.
+`finbench_mcp.c` + `finbench_mcp_main.c` committed to `axis-axis2-c-core`.
+Builds with `build_financial_service.sh`; installs to `/usr/local/axis2c/bin/financial-benchmark-mcp`.
+See `docs/MCP.md` in the `axis-axis2-c-core` repo for the full C implementation plan.
 
 ### Track A remaining
 
