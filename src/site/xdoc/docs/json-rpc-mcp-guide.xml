@@ -449,7 +449,7 @@ conformance checklist when extending the catalog or adding new MCP client code.<
 <tr><td><code>testMalformedJsonBodyCorrelationIdIsUuid</code></td><td>errorRef matches 8-4-4-4-12 hex UUID format</td></tr>
 <tr><td><code>testMissingOuterArrayReturnsBadRequestWithCorrelationId</code></td><td>Valid JSON but wrong envelope structure → correlated Bad Request</td></tr>
 <tr><td><code>testMalformedJsonBodyDoesNotLeakExceptionClassName</code></td><td>No "MalformedJsonException", "IOException", or "at org.apache" in response</td></tr>
-<tr><td><code>testInOnlyMalformedJsonBodyReturnsBadRequestWithCorrelationId</code></td><td>InOnly receiver applies same error hardening</td></tr>
+<tr><td><code>testInOnlyMalformedJsonBodyDoesNotLeakExceptionDetails</code></td><td>InOnly receiver returns empty body on fault (MEP semantics); no exception class name or stack trace leaked in response</td></tr>
 </table>
 
 <h3>6.5 pyRapi Authentication — test_auth.py (18 tests)</h3>

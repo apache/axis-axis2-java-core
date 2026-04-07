@@ -634,6 +634,47 @@ public class OpenApiSpecGenerator {
      * catalog is consistent with the OpenAPI spec.
      */
     /**
+     * Reads a string-valued MCP metadata parameter, checking the operation first
+     * then the service, falling back to {@code defaultValue}.
+     *
+     * <p>Callers set this in {@code services.xml}:
+     * <pre>
+     * &lt;operation name="doFoo"&gt;
+     *   &lt;parameter name="mcpDescription"&gt;Natural language description&lt;/parameter&gt;
+     * &lt;/operation&gt;
+     * </pre>
+     */
+    private String getMcpStringParam(AxisOperation operation, AxisService service,
+                                     String paramName, String defaultValue) {
+        org.apache.axis2.description.Parameter p = operation.getParameter(paramName);
+        if (p == null) p = service.getParameter(paramName);
+        if (p != null && p.getValue() != null) {
+            String v = p.getValue().toString().trim();
+            if (!v.isEmpty()) return v;
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Reads a boolean-valued MCP metadata parameter, checking the operation first
+     * then the service, falling back to {@code defaultValue}.
+     *
+     * <p>Accepts "true" / "false" (case-insensitive). Any other value is treated as
+     * {@code defaultValue}.
+     */
+    private boolean getMcpBoolParam(AxisOperation operation, AxisService service,
+                                    String paramName, boolean defaultValue) {
+        org.apache.axis2.description.Parameter p = operation.getParameter(paramName);
+        if (p == null) p = service.getParameter(paramName);
+        if (p != null && p.getValue() != null) {
+            String v = p.getValue().toString().trim().toLowerCase(java.util.Locale.ROOT);
+            if ("true".equals(v))  return true;
+            if ("false".equals(v)) return false;
+        }
+        return defaultValue;
+    }
+
+    /**
      * Generates the MCP tool catalog JSON for the {@code /openapi-mcp.json} endpoint.
      *
      * <p>Uses Jackson to build the JSON object graph, which guarantees correct
@@ -684,7 +725,17 @@ public class OpenApiSpecGenerator {
 
                     com.fasterxml.jackson.databind.node.ObjectNode toolNode = toolsArray.addObject();
                     toolNode.put("name", opName);
-                    toolNode.put("description", service.getName() + ": " + opName);
+
+                    // Description: prefer operation-level "mcpDescription" parameter,
+                    // then service-level "mcpDescription", then auto-generated fallback.
+                    // Set in services.xml:
+                    //   <operation name="doFoo">
+                    //     <parameter name="mcpDescription">Human-readable tool description</parameter>
+                    //   </operation>
+                    // or at service level for a default across all operations.
+                    String description = getMcpStringParam(operation, service, "mcpDescription",
+                            service.getName() + ": " + opName);
+                    toolNode.put("description", description);
 
                     // inputSchema: minimal MCP-compliant structure. Richer schemas are
                     // produced when services carry @McpTool annotations (future work).
@@ -706,14 +757,20 @@ public class OpenApiSpecGenerator {
                     // Whether the caller must supply a Bearer token (from doLogin).
                     toolNode.put("x-requiresAuth", requiresAuth);
 
-                    // MCP 2025-03-26 tool annotations — conservative defaults.
-                    // Override via @McpTool when richer metadata is available.
+                    // MCP 2025-03-26 tool annotations.
+                    // Tunable via services.xml parameters at operation or service level:
+                    //   mcpReadOnly    → readOnlyHint  (true for GET-equivalent operations)
+                    //   mcpDestructive → destructiveHint
+                    //   mcpIdempotent  → idempotentHint (true for pure reads / PUT-equivalent)
+                    //   mcpOpenWorld   → openWorldHint  (true for operations with side effects
+                    //                                    outside the Axis2 service boundary)
+                    // Conservative false defaults are preserved when parameters are absent.
                     com.fasterxml.jackson.databind.node.ObjectNode annotations =
                             toolNode.putObject("annotations");
-                    annotations.put("readOnlyHint", false);
-                    annotations.put("destructiveHint", false);
-                    annotations.put("idempotentHint", false);
-                    annotations.put("openWorldHint", false);
+                    annotations.put("readOnlyHint",    getMcpBoolParam(operation, service, "mcpReadOnly",    false));
+                    annotations.put("destructiveHint", getMcpBoolParam(operation, service, "mcpDestructive", false));
+                    annotations.put("idempotentHint",  getMcpBoolParam(operation, service, "mcpIdempotent",  false));
+                    annotations.put("openWorldHint",   getMcpBoolParam(operation, service, "mcpOpenWorld",   false));
                 }
             }
 

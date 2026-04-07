@@ -134,17 +134,24 @@ public class JSONRPCIntegrationTest {
     }
 
     /**
-     * The InOnly receiver (fire-and-forget) must apply the same correlation ID
-     * pattern for malformed requests — no exception leak on that path either.
+     * InOnly (fire-and-forget) operations do not return fault messages to the client —
+     * the AxisFault is caught by the Axis2 InOnly dispatch and the HTTP response is
+     * empty (identical to a successful InOnly call).  The errorRef UUID is logged
+     * server-side; clients have no observable fault body to inspect.
+     *
+     * What IS testable: nothing in the response (empty or otherwise) leaks a Java
+     * exception class name or stack trace.
      */
     @Test
-    public void testInOnlyMalformedJsonBodyReturnsBadRequestWithCorrelationId() throws Exception {
+    public void testInOnlyMalformedJsonBodyDoesNotLeakExceptionDetails() throws Exception {
         String pingUrl = server.getEndpoint("JSONPOJOService") + "ping";
         UtilTest.TestResponse result = UtilTest.postForResponse("NOT_VALID_JSON", pingUrl);
         String body = result.body;
-        Assert.assertTrue("InOnly malformed request must return 'Bad Request'",
-                body.contains("Bad Request"));
-        Assert.assertTrue("InOnly malformed request must contain an errorRef",
-                body.contains("errorRef="));
+        Assert.assertFalse("InOnly error response must not leak 'MalformedJsonException'",
+                body.contains("MalformedJsonException"));
+        Assert.assertFalse("InOnly error response must not leak 'IOException'",
+                body.contains("IOException"));
+        Assert.assertFalse("InOnly error response must not leak stack trace",
+                body.contains("at org.apache"));
     }
 }
