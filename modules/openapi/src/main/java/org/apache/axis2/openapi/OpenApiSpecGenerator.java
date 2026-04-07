@@ -754,13 +754,50 @@ public class OpenApiSpecGenerator {
                             service.getName() + ": " + opName);
                     toolNode.put("description", description);
 
-                    // inputSchema: minimal MCP-compliant structure. Richer schemas are
-                    // produced when services carry @McpTool annotations (future work).
-                    com.fasterxml.jackson.databind.node.ObjectNode schema =
-                            toolNode.putObject("inputSchema");
-                    schema.put("type", "object");
-                    schema.putObject("properties");
-                    schema.putArray("required");
+                    // inputSchema: prefer mcpInputSchema parameter (literal JSON Schema
+                    // string set in services.xml at operation or service level).
+                    // Falls back to an empty schema when absent or malformed.
+                    //
+                    // Option 1 usage (services.xml):
+                    //   <operation name="portfolioVariance">
+                    //     <parameter name="mcpInputSchema">{
+                    //       "type": "object",
+                    //       "required": ["n_assets", "weights"],
+                    //       "properties": {
+                    //         "n_assets": {"type": "integer"},
+                    //         "weights":  {"type": "array", "items": {"type": "number"}}
+                    //       }
+                    //     }</parameter>
+                    //   </operation>
+                    //
+                    // Option 3: schemas can also be written by the build-time code-gen
+                    // script (tools/gen_mcp_schema.py) which reads C header structs and
+                    // emits mcpInputSchema parameters into services.xml automatically.
+                    String mcpInputSchemaStr = getMcpStringParam(operation, service,
+                            "mcpInputSchema", null);
+                    if (mcpInputSchemaStr != null) {
+                        try {
+                            com.fasterxml.jackson.databind.JsonNode parsedSchema =
+                                    jackson.readTree(mcpInputSchemaStr);
+                            toolNode.set("inputSchema", parsedSchema);
+                        } catch (Exception parseEx) {
+                            log.warn("[MCP] Invalid mcpInputSchema JSON for operation '"
+                                    + opName + "' in service '" + service.getName()
+                                    + "' — falling back to empty schema: "
+                                    + parseEx.getMessage());
+                            com.fasterxml.jackson.databind.node.ObjectNode schema =
+                                    toolNode.putObject("inputSchema");
+                            schema.put("type", "object");
+                            schema.putObject("properties");
+                            schema.putArray("required");
+                        }
+                    } else {
+                        com.fasterxml.jackson.databind.node.ObjectNode schema =
+                                toolNode.putObject("inputSchema");
+                        schema.put("type", "object");
+                        schema.putObject("properties");
+                        schema.putArray("required");
+                    }
 
                     toolNode.put("endpoint", "POST " + path);
 

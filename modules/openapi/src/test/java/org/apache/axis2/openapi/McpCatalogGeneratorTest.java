@@ -715,6 +715,148 @@ public class McpCatalogGeneratorTest extends TestCase {
         assertFalse("openWorldHint default must be false",   annotations.path("openWorldHint").asBoolean());
     }
 
+    // ── B1: mcpInputSchema static parameter ──────────────────────────────────
+
+    /**
+     * When an operation has a {@code mcpInputSchema} parameter containing a valid
+     * JSON Schema string, that schema is embedded verbatim in the catalog tool entry.
+     * This is Option 1: explicit declaration in services.xml.
+     */
+    public void testMcpInputSchemaParamOverridesEmptySchema() throws Exception {
+        AxisService svc = new AxisService("FinancialBenchmarkService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("portfolioVariance"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpInputSchema",
+                "{\"type\":\"object\",\"required\":[\"n_assets\",\"weights\"]," +
+                "\"properties\":{\"n_assets\":{\"type\":\"integer\"}," +
+                "\"weights\":{\"type\":\"array\",\"items\":{\"type\":\"number\"}}}}"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode schema = getCatalogTools().get(0).path("inputSchema");
+        assertEquals("type must be 'object'", "object", schema.path("type").asText());
+        assertFalse("properties must be present from mcpInputSchema",
+                schema.path("properties").isMissingNode());
+        assertFalse("n_assets property must be present",
+                schema.path("properties").path("n_assets").isMissingNode());
+        assertEquals("n_assets must be integer type",
+                "integer", schema.path("properties").path("n_assets").path("type").asText());
+    }
+
+    /**
+     * The required array from the mcpInputSchema parameter must be preserved
+     * exactly — not replaced with an empty array.
+     */
+    public void testMcpInputSchemaRequiredArrayPreserved() throws Exception {
+        AxisService svc = new AxisService("FinancialBenchmarkService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("monteCarlo"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpInputSchema",
+                "{\"type\":\"object\",\"required\":[\"n_simulations\",\"n_periods\"]," +
+                "\"properties\":{\"n_simulations\":{\"type\":\"integer\"}," +
+                "\"n_periods\":{\"type\":\"integer\"}}}"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode required = getCatalogTools().get(0).path("inputSchema").path("required");
+        assertTrue("required must be an array", required.isArray());
+        assertEquals("required must have 2 entries", 2, required.size());
+        // Collect required field names
+        java.util.Set<String> reqFields = new java.util.HashSet<>();
+        for (JsonNode r : required) reqFields.add(r.asText());
+        assertTrue("n_simulations must be required", reqFields.contains("n_simulations"));
+        assertTrue("n_periods must be required",     reqFields.contains("n_periods"));
+    }
+
+    /**
+     * mcpInputSchema set at service level applies to all operations in the service
+     * that do not have their own operation-level override.
+     */
+    public void testServiceLevelMcpInputSchemaAppliesWhenNoOperationLevel() throws Exception {
+        AxisService svc = new AxisService("MetadataService");
+        svc.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpInputSchema",
+                "{\"type\":\"object\",\"properties\":{\"request_id\":{\"type\":\"string\"}}}"));
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("metadata"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode schema = getCatalogTools().get(0).path("inputSchema");
+        assertFalse("request_id property must come from service-level mcpInputSchema",
+                schema.path("properties").path("request_id").isMissingNode());
+    }
+
+    /**
+     * Operation-level mcpInputSchema takes precedence over a service-level one.
+     */
+    public void testOperationLevelMcpInputSchemaTakesPrecedenceOverServiceLevel() throws Exception {
+        AxisService svc = new AxisService("SomeService");
+        svc.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpInputSchema",
+                "{\"type\":\"object\",\"properties\":{\"service_field\":{\"type\":\"string\"}}}"));
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("specificOp"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpInputSchema",
+                "{\"type\":\"object\",\"properties\":{\"op_field\":{\"type\":\"integer\"}}}"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode props = getCatalogTools().get(0).path("inputSchema").path("properties");
+        assertFalse("op_field from operation-level schema must be present",
+                props.path("op_field").isMissingNode());
+        assertTrue("service_field must not be present when operation-level overrides",
+                props.path("service_field").isMissingNode());
+    }
+
+    /**
+     * When mcpInputSchema contains invalid JSON, the generator must log a warning
+     * and fall back to the empty schema — never throw or produce invalid JSON.
+     */
+    public void testInvalidMcpInputSchemaFallsBackToEmptySchema() throws Exception {
+        AxisService svc = new AxisService("BrokenService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("brokenOp"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpInputSchema", "NOT_VALID_JSON{{"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        // Must not throw — output must still be valid JSON
+        String json = generator.generateMcpCatalogJson(mockRequest);
+        JsonNode root = MAPPER.readTree(json);
+        assertNotNull("Output must still be valid JSON after mcpInputSchema parse failure", root);
+
+        JsonNode schema = root.path("tools").get(0).path("inputSchema");
+        assertEquals("Fallback schema must have type=object", "object",
+                schema.path("type").asText());
+        assertFalse("Fallback schema must still have properties",
+                schema.path("properties").isMissingNode());
+    }
+
+    /**
+     * When no mcpInputSchema parameter is set, the catalog emits the baseline
+     * empty schema — preserving backward compatibility for all existing services.
+     */
+    public void testAbsentMcpInputSchemaProducesEmptyBaselineSchema() throws Exception {
+        addService("LegacyService", "legacyOp");
+
+        JsonNode schema = getCatalogTools().get(0).path("inputSchema");
+        assertEquals("Absent mcpInputSchema must produce type=object", "object",
+                schema.path("type").asText());
+        assertTrue("Baseline properties must be an empty object",
+                schema.path("properties").isObject());
+        assertEquals("Baseline properties must be empty", 0,
+                schema.path("properties").size());
+        assertTrue("Baseline required must be an empty array",
+                schema.path("required").isArray());
+        assertEquals("Baseline required must be empty", 0,
+                schema.path("required").size());
+    }
+
     // ── tool list mirrors existing OpenAPI paths ──────────────────────────────
 
     /**

@@ -23,6 +23,189 @@ entirely. No other Java framework can do all three from the same service deploym
 
 ---
 
+## Immediate Track — MCP inputSchema + Axis2/C + Penguin Demo
+
+**Goal**: Complete the MCP catalog to production quality, port the catalog handler to
+Axis2/C, and run a live demo on penguin via Apache httpd. This track runs ahead of
+Phases 1–6 because it validates the MCP story end-to-end on real hardware.
+
+### Step B1 — `mcpInputSchema` static parameter support (Java + C)
+
+**Problem**: Every tool in `/openapi-mcp.json` emits `"inputSchema": {}`. Claude has to
+guess parameters. This kills usability for financial benchmark tools with 6+ fields.
+
+**Approach (dual strategy)**:
+
+1. **Option 1 — Static declaration in services.xml** (ships first, zero risk):
+   Each `<operation>` carries a `mcpInputSchema` parameter whose value is a literal
+   JSON Schema string. `OpenApiSpecGenerator.generateMcpCatalogJson()` reads it with
+   `getMcpStringParam()` and embeds it verbatim, parsing with Jackson to validate.
+   Falls back to `{}` on parse failure with a WARN log.
+
+   ```xml
+   <operation name="portfolioVariance">
+     <parameter name="mcpInputSchema">{
+       "type": "object",
+       "required": ["n_assets", "weights", "covariance_matrix"],
+       "properties": {
+         "n_assets":          {"type": "integer", "minimum": 2, "maximum": 2000},
+         "weights":           {"type": "array",   "items": {"type": "number"}},
+         "covariance_matrix": {"type": "array",   "items": {"type": "number"}},
+         "request_id":        {"type": "string"}
+       }
+     }</parameter>
+   </operation>
+   ```
+
+2. **Option 3 — Build-time code generation from C headers** (ships second):
+   A Python script (`tools/gen_mcp_schema.py`) reads Axis2/C service header files,
+   maps C struct fields to JSON Schema types, and writes `mcpInputSchema` parameters
+   directly back into `services.xml`. The C type mapping table:
+
+   | C type | JSON Schema type |
+   |--------|-----------------|
+   | `int`, `long`, `axis2_int32_t` | `"integer"` |
+   | `double`, `float` | `"number"` |
+   | `axis2_char_t *`, `char *` | `"string"` |
+   | `axis2_bool_t` | `"boolean"` |
+   | pointer-to-struct | `"object"` |
+   | array pointer + count field | `"array"` |
+
+   The script detects `_request_t` structs, infers which fields are required vs
+   optional (required = no default value set in initialiser), and outputs a
+   standards-compliant JSON Schema. Services.xml is updated in-place.
+
+   Run: `python3 tools/gen_mcp_schema.py --header financial_benchmark_service.h \
+         --services services.xml`
+
+**Java implementation**: `OpenApiSpecGenerator.generateMcpCatalogJson()` — check
+`mcpInputSchema` param before falling back to empty schema. Single method change.
+
+**Tests**: `McpCatalogGeneratorTest` — add tests for schema embedding, invalid JSON
+graceful fallback, and missing param fallback.
+
+### Step B2 — `mcpAuthScope` per-operation parameter
+
+Operation-level auth scope string embedded in catalog for MCP clients that support
+scope-based auth (e.g. `"mcpAuthScope": "read:portfolio"`). Reads via
+`getMcpStringParam()`. Omitted from tool node when absent.
+
+### Step B3 — `mcpStreaming` hint
+
+Boolean `mcpStreaming` parameter marks operations that can stream chunked responses
+(e.g. large Monte Carlo results). Adds `"x-streaming": true` to the tool node.
+Reads via `getMcpBoolParam()`.
+
+### Step C3 — MCP Resources endpoint
+
+New servlet path `GET /mcp-resources` returns a JSON array of `resource://` URIs:
+
+```json
+{
+  "resources": [
+    {"uri": "resource://axis2/openapi",      "name": "OpenAPI Spec",  "mimeType": "application/json"},
+    {"uri": "resource://axis2/field-catalog", "name": "Field Catalog", "mimeType": "application/json"}
+  ]
+}
+```
+
+Individual resource content served at `GET /mcp-resource?uri=resource://axis2/openapi`.
+Wired in `OpenApiServlet` as a new path case.
+
+---
+
+### Step D1 — Axis2/C MCP catalog handler
+
+New file: `modules/mcp/mcp_catalog_handler.c`
+
+Walks `axis2_conf_t` service map at request time — same traversal as Java's
+`axisConfig.getServices()`. Emits the identical JSON catalog format. Key functions:
+
+```c
+// Entry point registered on GET /_mcp/openapi-mcp.json
+axis2_status_t mcp_catalog_handler_invoke(
+    axis2_handler_t *handler,
+    const axutil_env_t *env,
+    struct axis2_msg_ctx *msg_ctx);
+
+// Reads axis2_op_t parameter, falls back to axis2_svc_t parameter
+static const axis2_char_t *get_mcp_param(
+    axis2_op_t *op, axis2_svc_t *svc,
+    const axutil_env_t *env,
+    const axis2_char_t *param_name,
+    const axis2_char_t *default_val);
+```
+
+Parameter reading uses `axis2_op_get_param()` / `axis2_svc_get_param()` — the same
+two-level lookup as Java. `mcpDescription`, `mcpReadOnly`, `mcpDestructive`,
+`mcpIdempotent`, `mcpInputSchema` all supported.
+
+JSON output built with `json_object_new_object()` (json-c) — no string concatenation.
+
+### Step D2 — Axis2/C correlation ID error hardening
+
+New helper: `axis2_json_secure_fault.c`
+
+```c
+axis2_char_t *axis2_json_make_secure_fault_message(
+    const axutil_env_t *env,
+    int is_parse_error);
+// Returns "Bad Request [errorRef=<uuid>]" or "Internal Server Error [errorRef=<uuid>]"
+// UUID generated from /dev/urandom (16 bytes → hex with hyphens)
+// Full context logged to axutil_log before sanitized message returned
+```
+
+Applied to `financial_benchmark_service_handler.c` JSON parse error paths and any
+`axis2_json_rpc_msg_recv` equivalent in Axis2/C.
+
+### Step D3 — Populate `mcpInputSchema` in all 5 financial benchmark operations
+
+Using Option 1 (hand-authored) immediately; Option 3 code-gen script validates against
+it. The 5 operations:
+
+| Operation | Required fields |
+|-----------|----------------|
+| `portfolioVariance` | `n_assets`, `weights`, `covariance_matrix` |
+| `monteCarlo` | `n_simulations`, `n_periods`, `initial_value`, `expected_return`, `volatility` |
+| `scenarioAnalysis` | `n_assets`, `assets` |
+| `generateTestData` | `n_assets` |
+| `metadata` | *(none — GET operation)* |
+
+### Step E — Penguin deployment
+
+1. Build `mod_axis2.so` from `axis-axis2-c-core` targeting penguin's Apache httpd
+2. `httpd.conf` fragment:
+   ```apache
+   LoadModule axis2_module modules/mod_axis2.so
+   Axis2RepoPath /opt/axis2c/repository
+   <Location /axis2>
+       SetHandler axis2_module
+   </Location>
+   ```
+3. Deploy `FinancialBenchmarkService` to repository
+4. Verify:
+   ```bash
+   curl https://penguin/axis2/_mcp/openapi-mcp.json
+   curl -X POST https://penguin/axis2/services/FinancialBenchmarkService/monteCarlo \
+        -H 'Content-Type: application/json' \
+        -d '{"monteCarlo":[{"arg0":{"n_simulations":10000,"n_periods":252,...}}]}'
+   ```
+5. Demo: MCP-aware client resolves tools from catalog, calls financial operations
+
+### Immediate Sprint Sequence
+
+```
+B1 (Java) → B1 tests → B2/B3 (Java, config-only) → C3 (Java, new servlet path)
+     ↓
+D1 (Axis2/C catalog handler) → D2 (error hardening) → D3 (services.xml schemas)
+     ↓
+Option 3 code-gen script (tools/gen_mcp_schema.py)
+     ↓
+E (Penguin deployment + demo)
+```
+
+---
+
 ## Phase 1 — Spring Boot Starter
 
 **Goal**: Reduce Axis2 + Spring Boot integration from a multi-day configuration project
