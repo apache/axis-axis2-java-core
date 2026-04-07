@@ -29,6 +29,8 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
+import org.apache.hc.core5.http.ParseException;
+
 import java.io.IOException;
 
 public class UtilTest {
@@ -49,7 +51,7 @@ public class UtilTest {
      * callers that test error paths need the response body even on HTTP 500.
      */
     public static TestResponse postForResponse(String jsonString, String strURL)
-            throws IOException {
+            throws IOException, ParseException {
         HttpEntity stringEntity = new StringEntity(jsonString, ContentType.APPLICATION_JSON);
         HttpPost httpPost = new HttpPost(strURL);
         httpPost.setEntity(stringEntity);
