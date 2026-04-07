@@ -690,7 +690,8 @@ public class McpCatalogGeneratorTest extends TestCase {
      * {@code mcpDestructive=true} maps to {@code destructiveHint: true}.
      */
     public void testMcpDestructiveParamSetsDestructiveHint() throws Exception {
-        AxisService svc = new AxisService("AdminService");
+        // Use a non-system service name — "AdminService" is filtered by isSystemService()
+        AxisService svc = new AxisService("DataManagementService");
         AxisOperation op = new InOutAxisOperation();
         op.setName(QName.valueOf("deleteAllData"));
         op.addParameter(new org.apache.axis2.description.Parameter("mcpDestructive", "true"));
