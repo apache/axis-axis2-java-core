@@ -903,6 +903,114 @@ public class OpenApiSpecGenerator {
     }
 
     /**
+     * Generate an MCP Resources listing (C3).
+     *
+     * <p>MCP Resources are read-only, browseable data items — conceptually the
+     * complement of Tools (which take actions).  Here each deployed Axis2 service
+     * becomes a resource so that an AI client can discover what services exist and
+     * fetch their WSDL or metadata without executing an operation.
+     *
+     * <p>Output shape (MCP 2025-03-26 {@code resources/list} response):
+     * <pre>
+     * {
+     *   "resources": [
+     *     {
+     *       "uri":         "axis2://services/PortfolioService",
+     *       "name":        "PortfolioService",
+     *       "description": "...",          // mcpDescription service param or auto-generated
+     *       "mimeType":    "application/json",
+     *       "metadata": {
+     *         "wsdlUrl":      "POST /services/PortfolioService?wsdl",
+     *         "operations":   ["getPortfolio", "updateWeights", ...],
+     *         "requiresAuth": true
+     *       }
+     *     }
+     *   ]
+     * }
+     * </pre>
+     *
+     * <p>System services ("Version", "AdminService", names starting with "__") are
+     * excluded, matching the tool catalog filter.
+     *
+     * @param request the incoming HTTP request (used only to determine the base URL)
+     * @return JSON string; never null.  On error returns
+     *         {@code {"resources":[],"_error":"..."}} so callers can distinguish
+     *         failure from an empty deployment.
+     */
+    public String generateMcpResourcesJson(HttpServletRequest request) {
+        try {
+            AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+            com.fasterxml.jackson.databind.ObjectMapper jackson = io.swagger.v3.core.util.Json.mapper();
+            com.fasterxml.jackson.databind.node.ObjectNode root = jackson.createObjectNode();
+            com.fasterxml.jackson.databind.node.ArrayNode resources = root.putArray("resources");
+
+            java.util.Map<String, AxisService> services = axisConfig.getServices();
+            if (services != null) {
+                for (AxisService service : services.values()) {
+                    String svcName = service.getName();
+                    if (isSystemService(svcName)) continue;
+
+                    // URI: logical identifier for the resource in the MCP protocol.
+                    // Uses the "axis2://" scheme so clients can distinguish these
+                    // resources from generic HTTP URLs.
+                    String uri = "axis2://services/" + svcName;
+
+                    // Human-readable description: service-level mcpDescription param
+                    // or auto-generated fallback.
+                    String description = getMcpStringParam(null, service, "mcpDescription",
+                            "Axis2 service: " + svcName);
+
+                    com.fasterxml.jackson.databind.node.ObjectNode resource =
+                            resources.addObject();
+                    resource.put("uri",         uri);
+                    resource.put("name",         svcName);
+                    resource.put("description",  description);
+                    resource.put("mimeType",     "application/json");
+
+                    // metadata sub-object: service-specific details for MCP clients
+                    // that want to introspect available operations before calling.
+                    com.fasterxml.jackson.databind.node.ObjectNode metadata =
+                            resource.putObject("metadata");
+                    metadata.put("wsdlUrl", "GET /services/" + svcName + "?wsdl");
+
+                    // List all non-system operation names.
+                    com.fasterxml.jackson.databind.node.ArrayNode ops = metadata.putArray("operations");
+                    java.util.Iterator<AxisOperation> opIter = service.getOperations();
+                    while (opIter != null && opIter.hasNext()) {
+                        AxisOperation op = opIter.next();
+                        if (op != null && op.getName() != null) {
+                            String opName = op.getName().getLocalPart();
+                            if (opName != null && !opName.startsWith("__")) {
+                                ops.add(opName);
+                            }
+                        }
+                    }
+
+                    // Auth requirement mirrors the tool catalog heuristic.
+                    String svcLower = svcName.toLowerCase(java.util.Locale.ROOT);
+                    boolean requiresAuth;
+                    String mcpRequiresAuthParam = getMcpStringParam(null, service,
+                            "mcpRequiresAuth", null);
+                    if (mcpRequiresAuthParam != null) {
+                        requiresAuth = !"false".equalsIgnoreCase(mcpRequiresAuthParam);
+                    } else {
+                        requiresAuth = !svcLower.equals("loginservice")
+                                    && !svcLower.equals("adminconsole");
+                    }
+                    metadata.put("requiresAuth", requiresAuth);
+                }
+            }
+
+            log.debug("Generated MCP resources JSON ({} services)", resources.size());
+            return jackson.writeValueAsString(root);
+
+        } catch (Exception e) {
+            log.error("Failed to generate MCP resources JSON", e);
+            return "{\"resources\":[],\"_error\":\"resources generation failed — see server log\"}";
+        }
+    }
+
+    /**
      * Get OpenAPI JSON processing performance statistics using moshih2 metrics.
      */
     public JsonProcessingMetrics.Statistics getProcessingStatistics() {

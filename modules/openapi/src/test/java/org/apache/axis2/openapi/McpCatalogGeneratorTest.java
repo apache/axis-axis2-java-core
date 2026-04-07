@@ -958,6 +958,96 @@ public class McpCatalogGeneratorTest extends TestCase {
                 annotations.path("openWorldHint").asBoolean());
     }
 
+    // ── C3: MCP Resources ────────────────────────────────────────────────────
+
+    public void testMcpResourcesListsDeployedService() throws Exception {
+        addService("PortfolioService", "getPortfolio");
+
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        JsonNode resources = MAPPER.readTree(json).path("resources");
+        assertEquals("one resource per service", 1, resources.size());
+
+        JsonNode r = resources.get(0);
+        assertEquals("axis2://services/PortfolioService", r.path("uri").asText());
+        assertEquals("PortfolioService", r.path("name").asText());
+        assertEquals("application/json", r.path("mimeType").asText());
+    }
+
+    public void testMcpResourcesExcludesSystemServices() throws Exception {
+        addService("PortfolioService", "getPortfolio");
+        // These must be filtered
+        axisConfig.addService(new AxisService("Version"));
+        axisConfig.addService(new AxisService("AdminService"));
+        AxisService hidden = new AxisService("__internal");
+        axisConfig.addService(hidden);
+
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        JsonNode resources = MAPPER.readTree(json).path("resources");
+        assertEquals("only PortfolioService, not system services", 1, resources.size());
+        assertEquals("PortfolioService", resources.get(0).path("name").asText());
+    }
+
+    public void testMcpResourcesIncludesOperationList() throws Exception {
+        AxisService svc = new AxisService("PortfolioService");
+        addOperation(svc, "getPortfolio");
+        addOperation(svc, "updateWeights");
+        axisConfig.addService(svc);
+
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        JsonNode ops = MAPPER.readTree(json).path("resources").get(0)
+                            .path("metadata").path("operations");
+        assertEquals("two operations listed", 2, ops.size());
+    }
+
+    public void testMcpResourcesUsesServiceLevelMcpDescription() throws Exception {
+        AxisService svc = new AxisService("PortfolioService");
+        svc.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpDescription", "Manages investment portfolios."));
+        addOperation(svc, "getPortfolio");
+        axisConfig.addService(svc);
+
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        JsonNode r = MAPPER.readTree(json).path("resources").get(0);
+        assertEquals("Manages investment portfolios.", r.path("description").asText());
+    }
+
+    public void testMcpResourcesRequiresAuthTrueForNormalService() throws Exception {
+        addService("PortfolioService", "getPortfolio");
+
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        JsonNode meta = MAPPER.readTree(json).path("resources").get(0).path("metadata");
+        assertTrue("requiresAuth must be true for non-login service",
+                meta.path("requiresAuth").asBoolean());
+    }
+
+    public void testMcpResourcesRequiresAuthFalseForLoginService() throws Exception {
+        addService("loginService", "doLogin");
+
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        JsonNode meta = MAPPER.readTree(json).path("resources").get(0).path("metadata");
+        assertFalse("requiresAuth must be false for loginService",
+                meta.path("requiresAuth").asBoolean());
+    }
+
+    public void testMcpResourcesEmptyOnNoServices() throws Exception {
+        // axisConfig has no user services at this point
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        JsonNode resources = MAPPER.readTree(json).path("resources");
+        assertTrue("resources array must be present and empty", resources.isArray());
+        assertEquals(0, resources.size());
+        assertTrue("no _error field on success",
+                MAPPER.readTree(json).path("_error").isMissingNode());
+    }
+
+    public void testMcpResourcesWsdlUrlInMetadata() throws Exception {
+        addService("PortfolioService", "getPortfolio");
+
+        String json = generator.generateMcpResourcesJson(mockRequest);
+        String wsdl = MAPPER.readTree(json).path("resources").get(0)
+                            .path("metadata").path("wsdlUrl").asText();
+        assertEquals("GET /services/PortfolioService?wsdl", wsdl);
+    }
+
     // ── B2: mcpAuthScope ─────────────────────────────────────────────────────
 
     public void testMcpAuthScopeParamAppearsAsXAuthScope() throws Exception {
