@@ -145,6 +145,19 @@ Support</a></li>
         <li><a href="openapi-rest-advanced-http2-userguide.html">HTTP/2 Performance Integration</a></li>
     </ul>
     </li>
+    <li><strong>23.4 <a href="json-rpc-mcp-guide.html">JSON-RPC MCP Integration Guide</a></strong>
+    <ul>
+        <li><a href="json-rpc-mcp-guide.html#mcp_catalog">MCP Catalog Endpoint (/openapi-mcp.json)</a></li>
+        <li><a href="json-rpc-mcp-guide.html#catalog_schema">Catalog Schema: _meta and per-tool fields</a></li>
+        <li><a href="json-rpc-mcp-guide.html#envelope">Axis2 JSON-RPC Envelope Format</a></li>
+        <li><a href="json-rpc-mcp-guide.html#auth">Two-Phase Bearer Token Authentication</a></li>
+        <li><a href="json-rpc-mcp-guide.html#error_handling">Error Handling: Correlation ID Pattern</a></li>
+        <li><a href="json-rpc-mcp-guide.html#tested_features">Unit Test Feature Coverage</a></li>
+        <li><a href="json-rpc-mcp-guide.html#not_implemented">Not Implemented / Limitations</a></li>
+        <li><a href="json-rpc-mcp-guide.html#data_api_relationship">Relationship to Data API Vision</a></li>
+        <li><a href="json-rpc-mcp-guide.html#python_compat">Python MCP Compatibility Notes</a></li>
+    </ul>
+    </li>
 </ul>
 </li>
 <li><a href="corba-deployer.html">Exposing CORBA Services as Web Services</a></li>
