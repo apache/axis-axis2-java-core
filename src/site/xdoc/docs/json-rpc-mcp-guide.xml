@@ -29,11 +29,9 @@
 
 <h1 align="center">Apache Axis2 MCP Integration Guide</h1>
 
-<p><strong>Who should read this:</strong> Developers who have written Python MCP servers
-targeting AT's RAPI/Axis2 services (rapi-mcp, alpha-knowledge-mcp, alpha-collector-mcp),
-or who have read the Data API Vision and Interface Design documents and need to understand
-what MCP capabilities are available today via Axis2 vs. what is planned for the Data API
-Phase 1 REST layer.</p>
+<p><strong>Who should read this:</strong> Developers building MCP servers or clients
+that target Axis2 JSON-RPC services and need to understand the auto-generated MCP tool
+catalog, the required envelope format, authentication flow, and current limitations.</p>
 
 <p><strong>In one sentence:</strong> Axis2 auto-generates an MCP tool catalog from its
 deployed services, accessible at <code>/openapi-mcp.json</code>, that tells MCP clients
@@ -48,7 +46,7 @@ deployed operation — no out-of-band documentation required.</p>
 <li><a href="#error_handling">5. Error Handling: Correlation ID Pattern</a></li>
 <li><a href="#tested_features">6. Features Covered by Unit Tests</a></li>
 <li><a href="#not_implemented">7. Not Implemented / Limitations</a></li>
-<li><a href="#data_api_relationship">8. Relationship to the Data API Vision</a></li>
+<li><a href="#migration_path">8. Migration Path: JSON-RPC to REST</a></li>
 <li><a href="#python_compat">9. Python MCP Compatibility Notes</a></li>
 </ul>
 
@@ -140,11 +138,11 @@ before calling any tool:</p>
       }
     },
     {
-      "name":        "getAssetCalculations",
-      "description": "GetAssetCalculationsService: getAssetCalculations",
+      "name":        "getCalculations",
+      "description": "CalculationService: getCalculations",
       "inputSchema": { "type": "object", "properties": {}, "required": [] },
-      "endpoint":                "POST /services/GetAssetCalculationsService/getAssetCalculations",
-      "x-axis2-payloadTemplate": "{\"getAssetCalculations\":[{\"arg0\":{}}]}",
+      "endpoint":                "POST /services/CalculationService/getCalculations",
+      "x-axis2-payloadTemplate": "{\"getCalculations\":[{\"arg0\":{}}]}",
       "x-requiresAuth":          true,
       "annotations": {
         "readOnlyHint":    false,
@@ -181,8 +179,8 @@ post-processor or in your Python MCP server layer.</p>
 <h2>3. The Axis2 JSON-RPC Envelope (Critical)</h2>
 
 <p>Axis2's JSON-RPC layer requires every call to use a specific three-layer envelope.
-This is the single biggest difference from conventional REST and from the Data API
-Phase 1 contract. Every Python MCP tool that calls an Axis2 service must use this format.</p>
+This is the single biggest difference from conventional REST APIs.
+Every MCP tool that calls an Axis2 service must use this format.</p>
 
 <h3>3.1 Required Envelope Structure</h3>
 
@@ -216,11 +214,9 @@ Authorization: Bearer {token}
 <code>Bad Request [errorRef=&lt;uuid&gt;]</code>. There is no partial match or helpful
 field-level error (see Section 5).</p>
 
-<h3>3.2 pyRapi Reference Implementation</h3>
+<h3>3.2 Login Payload Example</h3>
 
-<p>The canonical Python reference for this format is
-<code>pyRapi/tests/test_auth.py::TestDoLogin::test_login_sends_correct_payload</code>,
-which asserts the exact payload sent to <code>loginTokenizerService</code>:</p>
+<p>The exact payload for <code>loginService/doLogin</code>:</p>
 
 <pre>
 {
@@ -248,7 +244,7 @@ name wrapper is optional — the server dispatches by URL path alone. The payloa
 [{ "arg0": { ... parameters ... } }]
 </pre>
 
-<p>Most AT production services use <code>enableJSONOnly=false</code> (the default),
+<p>Most production deployments use <code>enableJSONOnly=false</code> (the default),
 which requires the full envelope. Check the catalog's <code>x-axis2-payloadTemplate</code>
 to see which format a specific service expects.</p>
 
@@ -256,8 +252,7 @@ to see which format a specific service expects.</p>
 <a name="auth"/>
 <h2>4. Authentication: Two-Phase Bearer Token Flow</h2>
 
-<p>Axis2 services use a two-phase auth flow. This matches the pattern in
-<code>rapi-mcp</code>'s <code>RAPIClient</code> and <code>pyRapi/auth.py</code>.</p>
+<p>Axis2 services use a two-phase auth flow:</p>
 
 <h3>Phase 1 — Obtain Token (no auth required)</h3>
 
@@ -285,10 +280,9 @@ Response:
 }
 </pre>
 
-<p>Token storage follows the pyRapi convention: JSON file at
-<code>~/.pyrapi/auth_token</code> with mode <code>0600</code>, or environment variable
-<code>AT_RAPI_MCP_AUTH_TOKEN</code>. Both patterns are tested in
-<code>pyRapi/tests/test_auth.py</code>.</p>
+<p>Token storage is implementation-specific. A common pattern is to persist the token
+as a JSON file with mode <code>0600</code> (user-only read), or pass it via an
+environment variable.</p>
 
 <h3>Phase 2 — Call Protected Services</h3>
 
@@ -344,9 +338,9 @@ contains no class names, field paths, or stack trace elements.</p>
 <h3>5.3 Python MCP Implications</h3>
 
 <p>MCP tools built against Axis2 services should surface the <code>errorRef</code>
-UUID in their error responses so users can correlate with server logs. Follow the
-<code>internal-alpha-theory-mcp</code> pattern of returning an <code>ErrorResponse</code>
-with <code>error_type</code> and <code>suggestions</code>:</p>
+UUID in their error responses so users can correlate with server logs. A recommended
+pattern is to return a structured <code>ErrorResponse</code> with <code>error_type</code>
+and <code>suggestions</code>:</p>
 
 <pre>
 from dataclasses import dataclass
@@ -439,7 +433,7 @@ conformance checklist when extending the catalog or adding new MCP client code.<
 <tr><td><code>testPayloadTemplateArrayElementHasArg0Key</code></td><td>Element has "arg0" key</td></tr>
 <tr><td><code>testPayloadTemplateArg0IsEmptyObject</code></td><td>arg0 is <code>{}</code> in template (params substituted by caller)</td></tr>
 <tr><td><code>testLoginServicePayloadTemplateHasDoLoginKey</code></td><td>loginService template has "doLogin" as root key</td></tr>
-<tr><td><code>testLoginServicePayloadTemplateCompatibleWithPyRapiFormat</code></td><td>Template structure matches pyRapi test_auth.py expected payload</td></tr>
+<tr><td><code>testLoginServicePayloadTemplateCompatibleWithExpectedFormat</code></td><td>Template structure matches expected client-side login payload format</td></tr>
 <tr><td><code>testTwoPhaseAuthFlowDocumentedInCatalog</code></td><td>loginService is public; all others require auth; both have templates</td></tr>
 <tr><td><code>testAllToolPayloadTemplatesMatchToolName</code></td><td>Every template's root key equals the tool's name field</td></tr>
 <tr><td><code>testAllNonLoginToolsRequireAuth</code></td><td>No service accidentally marked public</td></tr>
@@ -463,23 +457,6 @@ conformance checklist when extending the catalog or adding new MCP client code.<
 <tr><td><code>testInOnlyMalformedJsonBodyDoesNotLeakExceptionDetails</code></td><td>InOnly receiver returns empty body on fault (MEP semantics); no exception class name or stack trace leaked in response</td></tr>
 </table>
 
-<h3>6.5 pyRapi Authentication — test_auth.py (18 tests)</h3>
-
-<p>These Python tests document the auth contract from the client side. Any Axis2-targeting
-MCP server must satisfy the same protocol:</p>
-
-<table border="1">
-<tr><th>Test Class</th><th>Test</th><th>Feature Verified</th></tr>
-<tr><td>TestSaveToken</td><td><code>test_saves_token_to_file</code></td><td>Token persisted to <code>~/.pyrapi/auth_token</code></td></tr>
-<tr><td>TestSaveToken</td><td><code>test_file_permissions_are_600</code></td><td>Token file mode 0600 (user-only read)</td></tr>
-<tr><td>TestSaveToken</td><td><code>test_creates_directory_if_missing</code></td><td>Token directory auto-created</td></tr>
-<tr><td>TestLoadToken</td><td><code>test_returns_none_when_no_file</code></td><td>Missing token file → None (no crash)</td></tr>
-<tr><td>TestLoadToken</td><td><code>test_returns_none_on_corrupt_json</code></td><td>Corrupt token file → None (graceful)</td></tr>
-<tr><td>TestDoLogin</td><td><code>test_login_sends_correct_payload</code></td><td>Payload is <code>{"doLogin":[{"arg0":{"email":"...","credentials":"..."}}]}</code></td></tr>
-<tr><td>TestDoLogin</td><td><code>test_login_200_but_no_token_in_response</code></td><td>200 with missing token field → False (not a crash)</td></tr>
-<tr><td>TestDoLogin</td><td><code>test_login_401_invalid_credentials</code></td><td>401 → False with no token saved</td></tr>
-<tr><td>TestDoLogin</td><td><code>test_login_500_server_error</code></td><td>500 → False (server errors don't break client)</td></tr>
-</table>
 
 <!-- ============================================================ -->
 <a name="not_implemented"/>
@@ -494,7 +471,7 @@ Each item notes whether the gap is architectural (won't be added to Axis2) or de
 <tr>
   <td>Rich <code>inputSchema</code> properties</td>
   <td>Not implemented — architectural gap</td>
-  <td><code>inputSchema.properties</code> is always <code>{}</code>. Axis2 does not introspect Java parameter types into JSON Schema. The rapi-mcp and alpha-knowledge-mcp servers define full Pydantic-sourced schemas by hand. MCP clients that need parameter validation must document their schemas in the Python layer.</td>
+  <td><code>inputSchema.properties</code> is always <code>{}</code>. Axis2 does not introspect Java parameter types into JSON Schema. MCP clients that need parameter validation must define their own schemas (e.g., via Pydantic models in a Python MCP server layer).</td>
 </tr>
 <tr>
   <td>Natural language tool descriptions</td>
@@ -524,7 +501,7 @@ Each item notes whether the gap is architectural (won't be added to Axis2) or de
 <tr>
   <td>Semantic query layer (filter/sort/fields)</td>
   <td>Not applicable to Axis2</td>
-  <td>The Data API Interface Design describes a Tier 1 query semantic (<code>?filter=ops&gt;0.05&amp;sort=-ops&amp;fields=ticker,ops</code>). Axis2 JSON-RPC is operation-based — parameters are passed in <code>arg0</code>, not as query strings. <code>GetAssetCalculationsService</code> has its own parameter object but does not implement the Data API query syntax.</td>
+  <td>Axis2 JSON-RPC is operation-based — parameters are passed in <code>arg0</code>, not as query strings. A REST API layer could add uniform filter/sort/fields query semantics, but that is outside the scope of the Axis2 JSON-RPC transport.</td>
 </tr>
 <tr>
   <td>Natural key resolution (ticker → assetId)</td>
@@ -534,131 +511,66 @@ Each item notes whether the gap is architectural (won't be added to Axis2) or de
 <tr>
   <td>Cursor-based pagination</td>
   <td>Not implemented</td>
-  <td>Axis2 operations return their full result sets. The Data API Interface Design describes cursor-based pagination stable across concurrent mutations; this is a Phase 1 Data API feature, not present in Axis2.</td>
+  <td>Axis2 operations return their full result sets. Cursor-based pagination would need to be implemented in a separate REST layer.</td>
 </tr>
 <tr>
   <td>RFC 7807 Problem Details error format</td>
   <td>Not implemented — architectural gap</td>
-  <td>Axis2 returns SOAP faults (XML envelope) even for JSON-RPC errors. The Data API Interface Design specifies RFC 7807 JSON problem details with per-field validation errors. The correlation ID in Axis2 faults is the only structured information in the error response.</td>
+  <td>Axis2 returns SOAP faults (XML envelope) even for JSON-RPC errors. A REST layer could return RFC 7807 JSON problem details with per-field validation errors. The correlation ID in Axis2 faults is the only structured information in the error response.</td>
 </tr>
 <tr>
   <td>API key management</td>
   <td>Not applicable to Axis2</td>
-  <td>The Data API Vision describes API key + secret issuance with scopes, IP restrictions, and rotation. Axis2 uses email/password → Bearer token via <code>loginService</code> only. No API key model exists in Axis2.</td>
+  <td>Axis2 uses email/password → Bearer token via <code>loginService</code> only. API key + secret issuance with scopes and rotation would need to be implemented in a separate layer.</td>
 </tr>
 <tr>
   <td>Write operations (CRUD mutations)</td>
-  <td>Axis2 has write services; catalog supports them — but see notes</td>
-  <td>Axis2 write operations (position updates, scenario changes) exist as services and will appear in the catalog with <code>x-requiresAuth: true</code>. However, the Data API Vision explicitly reserves write operations for Phase 2 REST endpoints. MCP clients should treat Axis2 write operations as experimental until the canonical write path is available.</td>
-</tr>
-<tr>
-  <td>moneyball MCP integration</td>
-  <td>Not implemented</td>
-  <td><code>/home/robert/repos/moneyball/app/mcp/</code> contains only an empty <code>__init__.py</code>. No tools, no server, not connected to Axis2.</td>
-</tr>
-<tr>
-  <td>alpha-gateway-mcp routing to Axis2</td>
-  <td>Not implemented</td>
-  <td>The alpha-gateway-mcp routes intent to alpha-knowledge-mcp and alpha-collector-mcp. It does not route to Axis2 services. Adding Axis2 tools to the gateway's tool registry would enable natural language routing to RAPI operations.</td>
+  <td>Axis2 has write services; catalog supports them</td>
+  <td>Axis2 write operations exist as services and will appear in the catalog with <code>x-requiresAuth: true</code>. If your deployment also exposes a REST API layer for writes, determine which path is canonical for your use case.</td>
 </tr>
 </table>
 
 <!-- ============================================================ -->
-<a name="data_api_relationship"/>
-<h2>8. Relationship to the Data API Vision</h2>
+<a name="migration_path"/>
+<h2>8. Migration Path: JSON-RPC to REST</h2>
 
-<p>The Data API Vision document (Carlos Carneiro) distinguishes two different MCP
-transport paths. Understanding which path a given MCP tool uses determines what
-limitations apply:</p>
+<p>Organizations that deploy both Axis2 JSON-RPC services and a modern REST API layer
+will have two different MCP transport paths. Understanding which path a given MCP tool
+uses determines what limitations apply:</p>
 
 <table border="1">
-<tr><th>Aspect</th><th>Axis2 JSON-RPC (today)</th><th>Data API Phase 1 REST (Q2 2026)</th></tr>
-<tr><td>Protocol</td><td>Axis2 JSON-RPC envelope: <code>{"op":[{"arg0":{}}]}</code></td><td>Plain REST: <code>GET /api/v1/funds/{id}/assets?filter=...</code></td></tr>
-<tr><td>Tool definitions</td><td>Auto-generated from deployed Axis2 services</td><td>Auto-generated from OpenAPI 3.1 via springdoc-openapi</td></tr>
-<tr><td>Auth</td><td>email + password → Bearer token (loginService)</td><td>API key + secret → scoped JWT (new endpoint)</td></tr>
-<tr><td>Query semantics</td><td>Per-operation parameters in arg0</td><td>Tier 1: filter/sort/fields on every resource; Tier 2: /analytics/* endpoints</td></tr>
+<tr><th>Aspect</th><th>Axis2 JSON-RPC</th><th>REST API Layer</th></tr>
+<tr><td>Protocol</td><td>Axis2 JSON-RPC envelope: <code>{"op":[{"arg0":{}}]}</code></td><td>Plain REST: <code>GET /api/v1/resources/{id}?filter=...</code></td></tr>
+<tr><td>Tool definitions</td><td>Auto-generated from deployed Axis2 services</td><td>Auto-generated from OpenAPI 3.1 (e.g., via springdoc-openapi)</td></tr>
+<tr><td>Auth</td><td>email + password → Bearer token (loginService)</td><td>API key + secret → scoped JWT</td></tr>
+<tr><td>Query semantics</td><td>Per-operation parameters in arg0</td><td>Uniform filter/sort/fields on every resource</td></tr>
 <tr><td>Error format</td><td>SOAP fault with correlation ID UUID</td><td>RFC 7807 Problem Details (JSON, per-field)</td></tr>
 <tr><td>Pagination</td><td>Full result sets only</td><td>Cursor-based</td></tr>
 <tr><td>inputSchema</td><td>Always empty properties</td><td>Full JSON Schema from OpenAPI annotations</td></tr>
-<tr><td>Write support</td><td>Experimental (Axis2 write services exist)</td><td>Phase 2 (Q3 2026), after service extraction</td></tr>
-<tr><td>Calculations</td><td>Via RAPI Axis2 services (GetAssetCalculationsService)</td><td>Via RAPI proxy (Phase 1) or direct Spring injection (Phase 2)</td></tr>
-<tr><td>Field discovery</td><td>950+ fields via GetAssetFieldsService</td><td>Via /api/v1/fields endpoint (Phase 1)</td></tr>
 </table>
 
-<p><strong>Key architectural quote</strong> from the Data API Vision:</p>
-
-<blockquote>
-<p>"The Data API bypasses Axis2 for calculation reads. RAPI's Axis2 JSON-RPC was built
-for internal server-to-server calculation orchestration — and it continues serving that
-role for existing callers. The Data API consumes the same Spring service beans
-(AssetCalculationsOperations) directly via dependency injection, avoiding the Axis2
-protocol layer entirely."</p>
-</blockquote>
-
-<p>This means:</p>
-<ul>
-<li><strong>Build read MCP tools now</strong> — Portfolio screening, field discovery,
-    asset lookup, and historical reads all work today against Axis2 RAPI services. The
-    rapi-mcp server's 13 tools demonstrate the pattern at production scale.</li>
-<li><strong>Write MCP tools wait</strong> — No canonical REST write path exists yet.
-    Do not build write tools against Axis2 write operations as their behaviour will
-    diverge from the Data API write contract in Phase 2.</li>
-<li><strong>The Axis2 catalog bridges the gap</strong> — The <code>/openapi-mcp.json</code>
-    endpoint provides MCP-ready tool discovery for existing RAPI services during the
-    period before the Data API REST layer is available. It is not a replacement for the
-    Data API tool catalog; it is a stopgap for current Axis2 services.</li>
-</ul>
+<p>The Axis2 MCP catalog at <code>/openapi-mcp.json</code> provides MCP-ready tool
+discovery for existing Axis2 services. If your organization is building a REST API
+layer alongside Axis2, the catalog serves as a bridge — providing machine-readable
+tool discovery during the transition period.</p>
 
 <!-- ============================================================ -->
 <a name="python_compat"/>
 <h2>9. Python MCP Compatibility Notes</h2>
 
-<p>Quick reference for each Python project and how it interacts with Axis2:</p>
+<p>When building a Python MCP server that targets Axis2 services, keep these points in mind:</p>
 
-<h3>rapi-mcp (13 tools — /home/robert/repos/modelcontextprotocol/servers/rapi-mcp/)</h3>
 <ul>
-<li>Calls Axis2 RAPI services via <code>httpx</code> with Bearer token auth.</li>
-<li>Defines full Pydantic <code>inputSchema</code> per tool (Axis2 catalog cannot do this).</li>
-<li>Uses curated natural language descriptions (Axis2 catalog uses "ServiceName: opName").</li>
-<li>Field optimization: 24 of 184 fields selected by default (<code>get_fund_assets</code>).</li>
-<li><strong>TODO in models.py</strong>: Hardcoded auth and fund selection values — needs env-var wiring.</li>
-<li>The Axis2 MCP catalog's <code>_meta.axis2JsonRpcFormat</code> matches exactly what this
-    server's <code>RAPIClient</code> sends.</li>
-</ul>
-
-<h3>pyRapi (/home/robert/repos/pyRapi/)</h3>
-<ul>
-<li>Reference implementation of the Axis2 auth flow. <code>test_auth.py</code> is the
-    canonical source of truth for the payload format (<code>{"doLogin":[{"arg0":{...}}]}</code>).</li>
-<li>Token stored in <code>~/.pyrapi/auth_token</code> with mode 0600; or via
-    <code>AT_RAPI_MCP_AUTH_TOKEN</code> env var.</li>
-<li>The Axis2 MCP catalog's two-phase auth documentation mirrors this exactly.</li>
-</ul>
-
-<h3>internal-alpha-theory-mcp (3 servers — /home/robert/repos/internal-alpha-theory-mcp/)</h3>
-<ul>
-<li><strong>alpha-knowledge-mcp</strong>: 27 tools, SQLite backend, glossary/client/product/lifecycle data.
-    Does not call Axis2. Candidate for gateway routing to Axis2 for live portfolio data.</li>
-<li><strong>alpha-collector-mcp</strong>: 9 tools, hybrid SQLite + S3 object store with taxonomy paths.
-    Does not call Axis2.</li>
-<li><strong>alpha-gateway-mcp</strong>: Intent routing to knowledge and collector MCPs.
-    Does not currently route to Axis2. Adding Axis2 tools to its <code>RegisteredTool</code>
-    registry would enable natural language routing to RAPI portfolio operations.</li>
-<li>Response pattern: <code>ToolResponse(success, data, metadata, message)</code> and
-    <code>ErrorResponse(error, error_type, suggestions)</code>. Recommended for any new
-    MCP server that wraps Axis2.</li>
-</ul>
-
-<h3>atds_research (/home/robert/repos/atds_research/) and hermes_at (/home/robert/repos/hermes_at/)</h3>
-<ul>
-<li>Research/prototype repos. MCP integration not found in these repositories as of the
-    time this document was written.</li>
-</ul>
-
-<h3>moneyball (/home/robert/repos/moneyball/)</h3>
-<ul>
-<li>MCP directory exists (<code>app/mcp/__init__.py</code>) but is empty.
-    No tools implemented.</li>
+<li>The Axis2 catalog's <code>inputSchema.properties</code> is always empty — define full
+    Pydantic <code>inputSchema</code> per tool in your Python MCP server layer.</li>
+<li>Use curated natural language descriptions in your MCP server rather than relying on
+    the auto-generated "ServiceName: opName" default (or set <code>mcpDescription</code>
+    in services.xml).</li>
+<li>The catalog's <code>_meta.axis2JsonRpcFormat</code> documents the exact envelope format
+    your HTTP client must send.</li>
+<li>A recommended response pattern for MCP tools wrapping Axis2:
+    <code>ToolResponse(success, data, metadata, message)</code> and
+    <code>ErrorResponse(error, error_type, suggestions)</code>.</li>
 </ul>
 
 <h3>Minimal Axis2-Aware MCP Server Template</h3>

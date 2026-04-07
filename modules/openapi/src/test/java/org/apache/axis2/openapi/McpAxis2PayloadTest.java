@@ -52,10 +52,9 @@ import java.util.Map;
 /**
  * Tests focused on the Axis2 JSON-RPC payload format documented in the MCP catalog.
  *
- * <h2>Background — the pyRapi challenge</h2>
+ * <h2>Background</h2>
  *
- * <p>The Python {@code pyRapi} library (and its MCP successor {@code rapi-mcp}) demonstrate
- * that MCP clients calling Axis2 services must wrap their request body in the Axis2 JSON-RPC
+ * <p>MCP clients calling Axis2 services must wrap their request body in the Axis2 JSON-RPC
  * envelope:
  * <pre>
  *   {"operationName":[{"arg0":{&lt;params&gt;}}]}
@@ -68,19 +67,15 @@ import java.util.Map;
  *   <li>Each tool in the MCP catalog carries an {@code x-axis2-payloadTemplate} that is valid
  *       JSON in the correct Axis2 envelope format.</li>
  *   <li>The template is parseable and structurally correct (array of one {@code arg0} object).</li>
- *   <li>The loginService template matches the known working pyRapi format.</li>
+ *   <li>The loginService template matches the documented login payload format.</li>
  *   <li>Auth annotations ({@code x-requiresAuth}) correctly distinguish the public token
- *       endpoint from protected services — mirrors the two-phase auth flow in pyRapi/auth.py
- *       and rapi-mcp/server/rapi/api.py.</li>
+ *       endpoint from protected services — verifying the two-phase auth flow.</li>
  *   <li>The catalog {@code _meta} block gives MCP clients all transport conventions without
  *       requiring out-of-band documentation.</li>
  * </ul>
  *
- * <h2>Relationship to rapi-mcp (Python)</h2>
- * <p>The Python {@code rapi-mcp} server uses Bearer tokens and a flat REST payload — but that
- * server is a proxy that translates MCP tool calls into Axis2 JSON-RPC calls.  These tests
- * verify that the Java Axis2 MCP catalog provides enough information for MCP clients to make
- * the same translation themselves without an intermediary proxy.
+ * <p>These tests verify that the Axis2 MCP catalog provides enough information for MCP clients
+ * to construct correct JSON-RPC payloads without an intermediary proxy.
  */
 public class McpAxis2PayloadTest extends TestCase {
 
@@ -193,7 +188,7 @@ public class McpAxis2PayloadTest extends TestCase {
     /**
      * loginService/doLogin is the authentication entry point.
      *
-     * <p>In pyRapi the login call is:
+     * <p>The expected login payload format is:
      * <pre>
      *   {"doLogin":[{"arg0":{"email":"user@example.com","credentials":"pass"}}]}
      * </pre>
@@ -207,7 +202,7 @@ public class McpAxis2PayloadTest extends TestCase {
                 parsed.has("doLogin"));
     }
 
-    public void testLoginServicePayloadTemplateCompatibleWithPyRapiFormat() throws Exception {
+    public void testLoginServicePayloadTemplateCompatibleWithExpectedFormat() throws Exception {
         addService("loginService", "doLogin");
         String template = getFirstTool("doLogin").path("x-axis2-payloadTemplate").asText();
         JsonNode parsed = MAPPER.readTree(template);
@@ -235,7 +230,7 @@ public class McpAxis2PayloadTest extends TestCase {
      * Phase 1: call loginService (no auth) → get token.
      * Phase 2: call protected service with Bearer token.
      *
-     * <p>This mirrors the flow in pyRapi/auth.py and rapi-mcp/server/rapi/api.py.
+     * <p>This verifies the standard Axis2 two-phase Bearer token authentication pattern.
      */
     public void testTwoPhaseAuthFlowDocumentedInCatalog() throws Exception {
         // Register both the token endpoint and a protected service
@@ -299,7 +294,7 @@ public class McpAxis2PayloadTest extends TestCase {
     /**
      * The {@code _meta.authHeader} must document the Bearer scheme so MCP
      * clients know how to attach the token obtained from loginService.
-     * Mirrors the header set in rapi-mcp's RAPIClient._make_request().
+     * MCP clients use this to attach the token obtained from loginService.
      */
     public void testMetaAuthHeaderDocumentsBearerScheme() throws Exception {
         JsonNode meta = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest))

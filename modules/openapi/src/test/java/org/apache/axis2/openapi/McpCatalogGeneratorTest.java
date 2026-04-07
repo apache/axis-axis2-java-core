@@ -314,8 +314,8 @@ public class McpCatalogGeneratorTest extends TestCase {
     /**
      * The catalog root must carry a {@code _meta} object so MCP clients know
      * the Axis2 JSON-RPC transport contract without reading separate docs.
-     * Mirrors the pattern in rapi-mcp (Python) where API conventions are
-     * embedded in the tool catalog for client self-sufficiency.
+     * API conventions are embedded in the tool catalog so MCP clients are
+     * self-sufficient without requiring separate documentation.
      */
     public void testCatalogHasMetaObject() throws Exception {
         JsonNode root = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest));
@@ -361,8 +361,8 @@ public class McpCatalogGeneratorTest extends TestCase {
      * know to wrap bare JSON params in the Axis2 JSON-RPC envelope:
      * {@code {"operationName":[{"arg0":{...}}]}}.
      *
-     * <p>This is the primary challenge from pyRapi: MCP clients calling Axis2
-     * services must use this wrapping format or the call fails silently.
+     * <p>MCP clients calling Axis2 services must use this wrapping format or
+     * the call fails silently.
      */
     public void testToolHasPayloadTemplateField() throws Exception {
         addService("TestService", "testOp");
@@ -433,8 +433,7 @@ public class McpCatalogGeneratorTest extends TestCase {
 
     /**
      * Non-login services must declare {@code x-requiresAuth: true} so MCP
-     * clients know to acquire a Bearer token via loginService first — matching
-     * the auth flow pyRapi implements in pyrapi/auth.py.
+     * clients know to acquire a Bearer token via loginService first.
      */
     public void testNonLoginServiceRequiresAuth() throws Exception {
         addService("testws", "doTestws");
@@ -476,7 +475,7 @@ public class McpCatalogGeneratorTest extends TestCase {
     /**
      * Tools must carry MCP 2025 {@code annotations} for client-side safety
      * hints (readOnlyHint, destructiveHint, idempotentHint, openWorldHint).
-     * Matches the annotations pattern in internal-alpha-theory-mcp.
+     * Follows the MCP 2025-03-26 specification for tool annotations.
      */
     public void testToolHasAnnotationsField() throws Exception {
         addService("TestService", "testOp");
@@ -571,18 +570,18 @@ public class McpCatalogGeneratorTest extends TestCase {
      * This is the primary way to make tool descriptions useful to LLMs.
      */
     public void testOperationLevelMcpDescriptionOverridesDefault() throws Exception {
-        AxisService svc = new AxisService("GetAssetCalculationsService");
+        AxisService svc = new AxisService("CalculationService");
         AxisOperation op = new InOutAxisOperation();
-        op.setName(QName.valueOf("getAssetCalculations"));
+        op.setName(QName.valueOf("getCalculations"));
         op.addParameter(new org.apache.axis2.description.Parameter(
                 "mcpDescription",
-                "Get calculated portfolio metrics (OPS, PWR, Kelly) for assets in a fund."));
+                "Get calculated metrics for items in a dataset."));
         svc.addOperation(op);
         axisConfig.addService(svc);
 
         JsonNode tool = getCatalogTools().get(0);
         assertEquals("Operation-level mcpDescription must be used as tool description",
-                "Get calculated portfolio metrics (OPS, PWR, Kelly) for assets in a fund.",
+                "Get calculated metrics for items in a dataset.",
                 tool.path("description").asText());
     }
 
@@ -642,14 +641,14 @@ public class McpCatalogGeneratorTest extends TestCase {
     /**
      * When a service sets {@code mcpReadOnly=true}, the catalog must publish
      * {@code readOnlyHint: true} for all its operations.  Read-only services
-     * (GetAsset*, Search*) should set this so MCP hosts can safely auto-approve
-     * them without human confirmation.
+     * should set this so MCP hosts can safely auto-approve them without human
+     * confirmation.
      */
     public void testServiceLevelMcpReadOnlySetsTrueOnAnnotation() throws Exception {
-        AxisService svc = new AxisService("GetAssetCalculationsService");
+        AxisService svc = new AxisService("ReadOnlyDataService");
         svc.addParameter(new org.apache.axis2.description.Parameter("mcpReadOnly", "true"));
         AxisOperation op = new InOutAxisOperation();
-        op.setName(QName.valueOf("getAssetCalculations"));
+        op.setName(QName.valueOf("getData"));
         svc.addOperation(op);
         axisConfig.addService(svc);
 
