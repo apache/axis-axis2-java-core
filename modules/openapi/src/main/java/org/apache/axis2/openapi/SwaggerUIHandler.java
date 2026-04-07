@@ -206,6 +206,9 @@ public class SwaggerUIHandler {
 
         addSecurityHeaders(response);
         addCorsHeaders(response);
+        // MCP catalog must not be cached: service list changes on deployment and
+        // a stale catalog causes MCP clients to attempt calls to unknown tools.
+        response.setHeader("Cache-Control", "no-cache, no-store");
 
         try {
             String mcpJson = specGenerator.generateMcpCatalogJson(request);

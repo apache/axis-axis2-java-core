@@ -166,7 +166,7 @@ public class McpCatalogHandlerTest extends TestCase {
         assertTrue("processPayment tool must be in catalog", found);
     }
 
-    // ── security headers (mirrors OpenAPI JSON endpoint) ─────────────────────
+    // ── security headers ──────────────────────────────────────────────────────
 
     public void testMcpCatalogHasSecurityHeadersIfImplemented() throws Exception {
         handler.handleMcpCatalogRequest(mockRequest, mockResponse);
@@ -176,6 +176,98 @@ public class McpCatalogHandlerTest extends TestCase {
         assertEquals(200, mockResponse.getStatus());
         JsonNode root = MAPPER.readTree(mockResponse.getWriterContent());
         assertTrue(root.has("tools"));
+    }
+
+    /**
+     * The MCP catalog must include Cache-Control: no-cache so that MCP clients
+     * always fetch a fresh catalog (service list can change after deployment).
+     * Stale catalogs expose clients to "unknown tool" errors.
+     */
+    public void testMcpCatalogHasCacheControlNoCache() throws Exception {
+        handler.handleMcpCatalogRequest(mockRequest, mockResponse);
+        String cc = mockResponse.getHeader("Cache-Control");
+        assertNotNull("Cache-Control header must be set", cc);
+        assertTrue("Cache-Control must contain no-cache or no-store",
+                cc.contains("no-cache") || cc.contains("no-store"));
+    }
+
+    /**
+     * X-Content-Type-Options: nosniff prevents MIME-type sniffing by browsers
+     * and some MCP client implementations that embed a WebView.
+     */
+    public void testMcpCatalogHasXContentTypeOptionsNoSniff() throws Exception {
+        handler.handleMcpCatalogRequest(mockRequest, mockResponse);
+        String xcto = mockResponse.getHeader("X-Content-Type-Options");
+        assertNotNull("X-Content-Type-Options must be set", xcto);
+        assertEquals("nosniff", xcto);
+    }
+
+    /**
+     * CORS Allow-Methods must include GET — the catalog endpoint is a GET-only
+     * resource. MCP clients POST to the individual service endpoints listed in
+     * the catalog, not to the catalog URL itself.
+     */
+    public void testMcpCatalogCorsMethodsIncludesGet() throws Exception {
+        handler.handleMcpCatalogRequest(mockRequest, mockResponse);
+        String methods = mockResponse.getHeader("Access-Control-Allow-Methods");
+        assertNotNull("Access-Control-Allow-Methods must be set", methods);
+        assertTrue("CORS methods must include GET", methods.contains("GET"));
+    }
+
+    // ── new catalog fields reflected in handler response ──────────────────────
+
+    /**
+     * The handler response body must contain the {@code _meta} object that
+     * documents the Axis2 JSON-RPC transport contract.
+     */
+    public void testMcpCatalogBodyHasMetaObject() throws Exception {
+        handler.handleMcpCatalogRequest(mockRequest, mockResponse);
+        JsonNode root = MAPPER.readTree(mockResponse.getWriterContent());
+        assertFalse("Response body must contain _meta", root.path("_meta").isMissingNode());
+        assertTrue("_meta must be an object", root.path("_meta").isObject());
+    }
+
+    public void testMcpCatalogMetaDocumentsAxis2Format() throws Exception {
+        handler.handleMcpCatalogRequest(mockRequest, mockResponse);
+        JsonNode meta = MAPPER.readTree(mockResponse.getWriterContent()).path("_meta");
+        assertFalse("_meta.axis2JsonRpcFormat must be present",
+                meta.path("axis2JsonRpcFormat").isMissingNode());
+        String fmt = meta.path("axis2JsonRpcFormat").asText();
+        assertTrue("Format string must contain 'arg0'", fmt.contains("arg0"));
+    }
+
+    /**
+     * Tools served via the HTTP handler must carry the payload template and
+     * auth annotation — verifies the full stack from handler to generator.
+     */
+    public void testMcpCatalogToolsHavePayloadTemplateAndAuth() throws Exception {
+        // Register a service to get at least one tool
+        AxisConfiguration axisConfig = new AxisConfiguration();
+        AxisService svc = new AxisService("InventoryService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(javax.xml.namespace.QName.valueOf("getStock"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
+        SwaggerUIHandler h = new SwaggerUIHandler(configCtx);
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        h.handleMcpCatalogRequest(mockRequest, resp);
+
+        JsonNode tools = MAPPER.readTree(resp.getWriterContent()).path("tools");
+        assertTrue("At least one tool must be present", tools.size() > 0);
+
+        JsonNode tool = null;
+        for (JsonNode t : tools) {
+            if ("getStock".equals(t.path("name").asText())) { tool = t; break; }
+        }
+        assertNotNull("getStock tool must appear in catalog", tool);
+        assertFalse("Tool must have x-axis2-payloadTemplate",
+                tool.path("x-axis2-payloadTemplate").isMissingNode());
+        assertFalse("Tool must have x-requiresAuth",
+                tool.path("x-requiresAuth").isMissingNode());
+        assertFalse("Tool must have annotations",
+                tool.path("annotations").isMissingNode());
     }
 
     // ── mocks ─────────────────────────────────────────────────────────────────

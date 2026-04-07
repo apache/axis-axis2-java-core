@@ -303,6 +303,224 @@ public class McpCatalogGeneratorTest extends TestCase {
         }
     }
 
+    // ── catalog _meta ─────────────────────────────────────────────────────────
+
+    /**
+     * The catalog root must carry a {@code _meta} object so MCP clients know
+     * the Axis2 JSON-RPC transport contract without reading separate docs.
+     * Mirrors the pattern in rapi-mcp (Python) where API conventions are
+     * embedded in the tool catalog for client self-sufficiency.
+     */
+    public void testCatalogHasMetaObject() throws Exception {
+        JsonNode root = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest));
+        assertFalse("_meta must be present in catalog root",
+                root.path("_meta").isMissingNode());
+        assertTrue("_meta must be an object", root.path("_meta").isObject());
+    }
+
+    public void testMetaHasAxis2JsonRpcFormat() throws Exception {
+        JsonNode meta = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest)).path("_meta");
+        assertFalse("_meta.axis2JsonRpcFormat must be present",
+                meta.path("axis2JsonRpcFormat").isMissingNode());
+        String fmt = meta.path("axis2JsonRpcFormat").asText();
+        assertTrue("Format must contain operationName placeholder", fmt.contains("operationName"));
+        assertTrue("Format must contain arg0 wrapper", fmt.contains("arg0"));
+    }
+
+    public void testMetaHasContentType() throws Exception {
+        JsonNode meta = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest)).path("_meta");
+        assertEquals("application/json", meta.path("contentType").asText());
+    }
+
+    public void testMetaHasAuthHeaderField() throws Exception {
+        JsonNode meta = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest)).path("_meta");
+        String authHeader = meta.path("authHeader").asText();
+        assertTrue("authHeader must describe Bearer scheme",
+                authHeader.contains("Bearer"));
+    }
+
+    public void testMetaHasTokenEndpoint() throws Exception {
+        JsonNode meta = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest)).path("_meta");
+        String tokenEndpoint = meta.path("tokenEndpoint").asText();
+        assertTrue("tokenEndpoint must reference loginService",
+                tokenEndpoint.contains("loginService"));
+        assertTrue("tokenEndpoint must start with POST",
+                tokenEndpoint.startsWith("POST "));
+    }
+
+    // ── x-axis2-payloadTemplate ───────────────────────────────────────────────
+
+    /**
+     * Every tool must carry an {@code x-axis2-payloadTemplate} so MCP clients
+     * know to wrap bare JSON params in the Axis2 JSON-RPC envelope:
+     * {@code {"operationName":[{"arg0":{...}}]}}.
+     *
+     * <p>This is the primary challenge from pyRapi: MCP clients calling Axis2
+     * services must use this wrapping format or the call fails silently.
+     */
+    public void testToolHasPayloadTemplateField() throws Exception {
+        addService("TestService", "testOp");
+        JsonNode tool = getCatalogTools().get(0);
+        assertFalse("x-axis2-payloadTemplate must be present",
+                tool.path("x-axis2-payloadTemplate").isMissingNode());
+    }
+
+    public void testPayloadTemplateContainsOperationName() throws Exception {
+        addService("TestService", "doSomething");
+        JsonNode tool = getCatalogTools().get(0);
+        String template = tool.path("x-axis2-payloadTemplate").asText();
+        assertTrue("Payload template must contain the operation name",
+                template.contains("doSomething"));
+    }
+
+    public void testPayloadTemplateIsValidJson() throws Exception {
+        addService("TestService", "processData");
+        JsonNode tool = getCatalogTools().get(0);
+        String template = tool.path("x-axis2-payloadTemplate").asText();
+        // The template itself must be parseable JSON
+        JsonNode parsed = MAPPER.readTree(template);
+        assertNotNull("Payload template must be valid JSON", parsed);
+    }
+
+    public void testPayloadTemplateOperationNameIsTopLevelKey() throws Exception {
+        addService("OrderService", "placeOrder");
+        JsonNode tool = getCatalogTools().get(0);
+        String template = tool.path("x-axis2-payloadTemplate").asText();
+        JsonNode parsed = MAPPER.readTree(template);
+        assertTrue("Operation name must be top-level key in payload template",
+                parsed.has("placeOrder"));
+    }
+
+    public void testPayloadTemplateValueIsArray() throws Exception {
+        addService("OrderService", "placeOrder");
+        JsonNode tool = getCatalogTools().get(0);
+        String template = tool.path("x-axis2-payloadTemplate").asText();
+        JsonNode parsed = MAPPER.readTree(template);
+        assertTrue("Top-level value in payload template must be an array",
+                parsed.path("placeOrder").isArray());
+    }
+
+    public void testPayloadTemplateArrayHasArg0Object() throws Exception {
+        addService("OrderService", "placeOrder");
+        JsonNode tool = getCatalogTools().get(0);
+        String template = tool.path("x-axis2-payloadTemplate").asText();
+        JsonNode parsed = MAPPER.readTree(template);
+        JsonNode arr = parsed.path("placeOrder");
+        assertEquals("Payload template array must have exactly one element", 1, arr.size());
+        assertFalse("Array element must have 'arg0' key",
+                arr.get(0).path("arg0").isMissingNode());
+    }
+
+    public void testPayloadTemplatesDistinctAcrossOperations() throws Exception {
+        AxisService svc = new AxisService("CalcService");
+        addOperation(svc, "add");
+        addOperation(svc, "subtract");
+        axisConfig.addService(svc);
+
+        JsonNode tools = getCatalogTools();
+        java.util.Set<String> templates = new java.util.HashSet<>();
+        for (JsonNode t : tools) templates.add(t.path("x-axis2-payloadTemplate").asText());
+        assertEquals("Each operation must have a distinct payload template", 2, templates.size());
+    }
+
+    // ── x-requiresAuth ────────────────────────────────────────────────────────
+
+    /**
+     * Non-login services must declare {@code x-requiresAuth: true} so MCP
+     * clients know to acquire a Bearer token via loginService first — matching
+     * the auth flow pyRapi implements in pyrapi/auth.py.
+     */
+    public void testNonLoginServiceRequiresAuth() throws Exception {
+        addService("testws", "doTestws");
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("Protected services must have x-requiresAuth: true",
+                tool.path("x-requiresAuth").asBoolean());
+    }
+
+    public void testLoginServiceDoesNotRequireAuth() throws Exception {
+        addService("loginService", "doLogin");
+        JsonNode tool = getCatalogTools().get(0);
+        assertFalse("loginService must have x-requiresAuth: false",
+                tool.path("x-requiresAuth").asBoolean());
+    }
+
+    public void testLoginServiceCaseInsensitive() throws Exception {
+        addService("LoginService", "doLogin");  // capital L
+        JsonNode tool = getCatalogTools().get(0);
+        assertFalse("loginService check must be case-insensitive",
+                tool.path("x-requiresAuth").asBoolean());
+    }
+
+    public void testFinancialServiceRequiresAuth() throws Exception {
+        addService("FinancialBenchmarkService", "portfolioVariance");
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("FinancialBenchmarkService must require auth",
+                tool.path("x-requiresAuth").asBoolean());
+    }
+
+    public void testBigDataServiceRequiresAuth() throws Exception {
+        addService("BigDataH2Service", "processBigDataSet");
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("BigDataH2Service must require auth",
+                tool.path("x-requiresAuth").asBoolean());
+    }
+
+    // ── annotations (MCP 2025-03-26) ─────────────────────────────────────────
+
+    /**
+     * Tools must carry MCP 2025 {@code annotations} for client-side safety
+     * hints (readOnlyHint, destructiveHint, idempotentHint, openWorldHint).
+     * Matches the annotations pattern in internal-alpha-theory-mcp.
+     */
+    public void testToolHasAnnotationsField() throws Exception {
+        addService("TestService", "testOp");
+        JsonNode tool = getCatalogTools().get(0);
+        assertFalse("annotations must be present on each tool",
+                tool.path("annotations").isMissingNode());
+        assertTrue("annotations must be an object",
+                tool.path("annotations").isObject());
+    }
+
+    public void testAnnotationsHasReadOnlyHint() throws Exception {
+        addService("TestService", "testOp");
+        JsonNode annotations = getCatalogTools().get(0).path("annotations");
+        assertFalse("annotations.readOnlyHint must be present",
+                annotations.path("readOnlyHint").isMissingNode());
+        assertTrue("annotations.readOnlyHint must be boolean",
+                annotations.path("readOnlyHint").isBoolean());
+    }
+
+    public void testAnnotationsHasDestructiveHint() throws Exception {
+        addService("TestService", "testOp");
+        JsonNode annotations = getCatalogTools().get(0).path("annotations");
+        assertFalse("annotations.destructiveHint must be present",
+                annotations.path("destructiveHint").isMissingNode());
+    }
+
+    public void testAnnotationsHasIdempotentHint() throws Exception {
+        addService("TestService", "testOp");
+        JsonNode annotations = getCatalogTools().get(0).path("annotations");
+        assertFalse("annotations.idempotentHint must be present",
+                annotations.path("idempotentHint").isMissingNode());
+    }
+
+    public void testAnnotationsHasOpenWorldHint() throws Exception {
+        addService("TestService", "testOp");
+        JsonNode annotations = getCatalogTools().get(0).path("annotations");
+        assertFalse("annotations.openWorldHint must be present",
+                annotations.path("openWorldHint").isMissingNode());
+    }
+
+    public void testAllAnnotationHintsAreBooleans() throws Exception {
+        addService("TestService", "testOp");
+        JsonNode annotations = getCatalogTools().get(0).path("annotations");
+        String[] hints = {"readOnlyHint", "destructiveHint", "idempotentHint", "openWorldHint"};
+        for (String hint : hints) {
+            assertTrue("annotations." + hint + " must be a boolean value",
+                    annotations.path(hint).isBoolean());
+        }
+    }
+
     // ── tool list mirrors existing OpenAPI paths ──────────────────────────────
 
     /**

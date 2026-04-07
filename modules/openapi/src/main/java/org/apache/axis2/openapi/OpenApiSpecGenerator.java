@@ -649,6 +649,19 @@ public class OpenApiSpecGenerator {
             com.fasterxml.jackson.databind.ObjectMapper jackson =
                     new com.fasterxml.jackson.databind.ObjectMapper();
             com.fasterxml.jackson.databind.node.ObjectNode root = jackson.createObjectNode();
+
+            // Catalog-level metadata so MCP clients understand the transport layer.
+            // Axis2 JSON-RPC requires every call to be wrapped as:
+            //   {"<operationName>":[{"arg0":{<params>}}]}
+            // This is mandated by JsonUtils.invokeServiceClass() in axis2-json.
+            // The loginService/doLogin operation is the token endpoint; all other
+            // operations require "Authorization: Bearer <token>" in the request header.
+            com.fasterxml.jackson.databind.node.ObjectNode meta = root.putObject("_meta");
+            meta.put("axis2JsonRpcFormat", "{\"<operationName>\":[{\"arg0\":{<params>}}]}");
+            meta.put("contentType", "application/json");
+            meta.put("authHeader", "Authorization: Bearer <token>");
+            meta.put("tokenEndpoint", "POST /services/loginService/doLogin");
+
             com.fasterxml.jackson.databind.node.ArrayNode toolsArray = root.putArray("tools");
 
             Iterator<AxisService> services = axisConfig.getServices().values().iterator();
@@ -656,6 +669,10 @@ public class OpenApiSpecGenerator {
                 AxisService service = services.next();
                 if (isSystemService(service)) continue;
                 if (!shouldIncludeService(service)) continue;
+
+                // loginService is the unauthenticated token endpoint; all others require auth.
+                String svcLower = service.getName().toLowerCase(java.util.Locale.ROOT);
+                boolean requiresAuth = !svcLower.contains("login") && !svcLower.equals("adminconsole");
 
                 Iterator<AxisOperation> operations = service.getOperations();
                 while (operations.hasNext()) {
@@ -678,6 +695,25 @@ public class OpenApiSpecGenerator {
                     schema.putArray("required");
 
                     toolNode.put("endpoint", "POST " + path);
+
+                    // Axis2 JSON-RPC payload template.  MCP clients must wrap the call
+                    // body in this envelope — the bare {"field":value} object goes inside
+                    // "arg0".  Example for portfolioVariance:
+                    //   {"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],...}}]}
+                    toolNode.put("x-axis2-payloadTemplate",
+                            "{\"" + opName + "\":[{\"arg0\":{}}]}");
+
+                    // Whether the caller must supply a Bearer token (from doLogin).
+                    toolNode.put("x-requiresAuth", requiresAuth);
+
+                    // MCP 2025-03-26 tool annotations — conservative defaults.
+                    // Override via @McpTool when richer metadata is available.
+                    com.fasterxml.jackson.databind.node.ObjectNode annotations =
+                            toolNode.putObject("annotations");
+                    annotations.put("readOnlyHint", false);
+                    annotations.put("destructiveHint", false);
+                    annotations.put("idempotentHint", false);
+                    annotations.put("openWorldHint", false);
                 }
             }
 
