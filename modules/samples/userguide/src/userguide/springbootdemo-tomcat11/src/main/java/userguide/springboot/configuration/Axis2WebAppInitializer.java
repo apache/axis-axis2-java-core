@@ -21,10 +21,11 @@ package userguide.springboot.configuration;
  
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.axis2.deployment.WarBasedAxisConfigurator;
 import org.apache.axis2.transport.http.AxisServlet;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.annotation.Configuration; 
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;   
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.core.annotation.Order;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import jakarta.servlet.ServletContext; 
-import jakarta.servlet.ServletRegistration; 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 
 import java.util.Set; 
  
@@ -69,12 +70,21 @@ public class Axis2WebAppInitializer implements ServletContextInitializer {
         ServletRegistration.Dynamic dispatcher = container.addServlet(
           "AxisServlet", new AxisServlet());
         dispatcher.setLoadOnStartup(1);
+
+        // Explicitly set the Axis2 repository path so WarBasedAxisConfigurator finds
+        // WEB-INF/services/*.aar on both Tomcat and WildFly (bypasses getRealPath() VFS issues).
+        String webInfPath = container.getRealPath("/WEB-INF");
+        logger.warn("addAxis2Servlet: axis2.repository.path = " + webInfPath);
+        if (webInfPath != null) {
+            dispatcher.setInitParameter(WarBasedAxisConfigurator.PARAM_AXIS2_REPOSITORY_PATH, webInfPath);
+        }
+
         Set<String> mappingConflicts = dispatcher.addMapping(SERVICES_MAPPING);
-        if (!mappingConflicts.isEmpty()) { 
-            for (String s : mappingConflicts) { 
-                logger.error("Mapping conflict: " + s); 
-            } 
-            throw new IllegalStateException("'AxisServlet' could not be mapped to '" + SERVICES_MAPPING + "'"); 
+        if (!mappingConflicts.isEmpty()) {
+            for (String s : mappingConflicts) {
+                logger.error("Mapping conflict: " + s);
+            }
+            throw new IllegalStateException("'AxisServlet' could not be mapped to '" + SERVICES_MAPPING + "'");
         }
     }
 

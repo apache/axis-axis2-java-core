@@ -40,7 +40,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <spring-boot.version>3.4.3</spring-boot.version>
         <axis2.version>2.0.1-SNAPSHOT</axis2.version>
     </properties>
@@ -366,6 +366,9 @@
                                 <jar jarfile="${project.build.directory}/deploy/axis2-json-api/WEB-INF/services/BigDataH2Service.aar">
                                     <metainf file="resources-axis2/bigdata_h2_resources/services.xml"/>
                                 </jar>
+                                <jar jarfile="${project.build.directory}/deploy/axis2-json-api/WEB-INF/services/FinancialBenchmarkService.aar">
+                                    <metainf file="resources-axis2/finbench_resources/services.xml"/>
+                                </jar>
                                 <copy todir="${project.build.directory}/deploy/axis2-json-api/WEB-INF/conf">
                                     <fileset dir="resources-axis2/conf">
                                         <include name="axis2.xml"/>
@@ -384,6 +387,9 @@
                                 </jar>
                                 <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/BigDataH2Service.aar">
                                     <metainf file="resources-axis2/bigdata_h2_resources/services.xml"/>
+                                </jar>
+                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/FinancialBenchmarkService.aar">
+                                    <metainf file="resources-axis2/finbench_resources/services.xml"/>
                                 </jar>
                                 <copy todir="${project.build.directory}/exploded/WEB-INF/conf">
                                     <fileset dir="resources-axis2/conf">

@@ -28,14 +28,18 @@ Tested with: **Tomcat 11.0.20** · **OpenJDK 21** · **Spring Boot 3.4.3**
 
 ## Services
 
-| Service | Path | Auth |
-|---------|------|------|
-| `LoginService.login` | `POST /axis2-json-api/services/LoginService` | None (public) |
-| `TestwsService.testws` | `POST /axis2-json-api/services/TestwsService` | Bearer token |
-| `BigDataH2Service.processBigDataSet` | `POST /axis2-json-api/services/BigDataH2Service` | None (public) |
-| OpenAPI spec (JSON) | `GET /axis2-json-api/openapi.json` | None |
-| OpenAPI spec (YAML) | `GET /axis2-json-api/openapi.yaml` | None |
-| Swagger UI | `GET /axis2-json-api/swagger-ui` | None |
+| Service | Operation | Path | Auth |
+|---------|-----------|------|------|
+| `loginService` | `doLogin` | `POST /axis2-json-api/services/loginService` | None (public) |
+| `testws` | `doTestws` | `POST /axis2-json-api/services/testws` | Bearer token |
+| `BigDataH2Service` | `processBigDataSet` | `POST /axis2-json-api/services/BigDataH2Service` | Bearer token |
+| `FinancialBenchmarkService` | `portfolioVariance` | `POST /axis2-json-api/services/FinancialBenchmarkService` | Bearer token |
+| `FinancialBenchmarkService` | `monteCarlo` | `POST /axis2-json-api/services/FinancialBenchmarkService` | Bearer token |
+| `FinancialBenchmarkService` | `scenarioAnalysis` | `POST /axis2-json-api/services/FinancialBenchmarkService` | Bearer token |
+| OpenAPI spec (JSON) | — | `GET /axis2-json-api/openapi.json` | None |
+| OpenAPI spec (YAML) | — | `GET /axis2-json-api/openapi.yaml` | None |
+| Swagger UI | — | `GET /axis2-json-api/swagger-ui` | None |
+| OpenAPI MCP | — | `GET /axis2-json-api/openapi-mcp.json` | None |
 
 ---
 
@@ -86,46 +90,75 @@ curl http://localhost:8080/axis2-json-api/swagger-ui
 ### 2. Login (get Bearer token)
 
 ```bash
-curl -s -X POST http://localhost:8080/axis2-json-api/services/LoginService \
+curl -s -X POST http://localhost:8080/axis2-json-api/services/loginService \
   -H 'Content-Type: application/json' \
-  -d '{"login":[{"request":{"email":"user@example.com","credentials":"password"}}]}'
+  -d '{"doLogin":[{"arg0":{"email":"java-dev@axis.apache.org","credentials":"userguide"}}]}'
 ```
 
-Response: `{"loginResponse":{"token":"<JWT>","status":"OK"}}`
+Response: `{"response":{"token":"<TOKEN>","uuid":"<UUID>","status":"OK"}}`
 
-### 3. Call protected service
+### 3. Call protected service (testws)
+
+`messagein` must pass ESAPI `SafeString` validation (`[A-Za-z0-9.,\-_ ]*` — no `+` or special
+characters).
 
 ```bash
-TOKEN="<JWT from step 2>"
-curl -s -X POST http://localhost:8080/axis2-json-api/services/TestwsService \
+TOKEN="<token from step 2>"
+curl -s -X POST http://localhost:8080/axis2-json-api/services/testws \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $TOKEN" \
-  -d '{"testws":[{"request":{"name":"World"}}]}'
+  -d '{"doTestws":[{"arg0":{"messagein":"hello world"}}]}'
 ```
 
-### 4. Call public BigData service
+### 4. Call BigData service
 
-Required fields: `datasetId` (non-empty string) and `datasetSize` (bytes). Size determines
-processing path: <10MB → standard, 10–50MB → multiplexing, >50MB → streaming.
+`datasetSize` is in bytes. Size determines processing path: <10 MB → standard,
+10–50 MB → multiplexing, >50 MB → streaming. Use at least 1 000 000 to get populated results.
 
 ```bash
 curl -s -X POST http://localhost:8080/axis2-json-api/services/BigDataH2Service \
   -H 'Content-Type: application/json' \
-  -d '{"processBigDataSet":[{"request":{"datasetId":"test-dataset-001","datasetSize":1048576}}]}'
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"processBigDataSet":[{"arg0":{"datasetId":"test-001","datasetSize":1000000,"processingMode":"streaming","enableMemoryOptimization":true,"analyticsType":"summary"}}]}'
 ```
 
-Response includes `processedRecordCount`, `http2Optimized`, `memoryOptimized`, and (for <10MB
-datasets) a `processedRecords` array.
+Response includes `processedRecordCount`, `http2Optimized`, `memoryOptimized`, and a
+`processedRecords` array.
+
+### 5. Financial Benchmark Service
+
+```bash
+# Portfolio variance — O(n²) covariance matrix
+curl -s -X POST http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],"covarianceMatrix":[[0.04,0.006],[0.006,0.09]],"normalizeWeights":false,"nPeriodsPerYear":252}}]}'
+
+# Monte Carlo VaR — GBM simulation
+curl -s -X POST http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"monteCarlo":[{"arg0":{"nSimulations":10000,"nPeriods":252,"initialValue":100.0,"expectedReturn":0.08,"volatility":0.20,"nPeriodsPerYear":252,"randomSeed":42}}]}'
+
+# Scenario analysis — probability-weighted expected return
+curl -s -X POST http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"scenarioAnalysis":[{"arg0":{"assets":[{"assetId":1,"currentPrice":100.0,"positionSize":100,"scenarios":[{"price":120.0,"probability":0.3},{"price":100.0,"probability":0.5},{"price":75.0,"probability":0.2}]}],"useHashLookup":true,"probTolerance":0.001}}]}'
+```
 
 ---
 
 ## Axis2 JSON-RPC request format
 
-The top-level key is the **operation name**, and the body is wrapped in an array:
+The top-level key is the **operation name**, and the value is an array containing one object
+whose key is the argument name (conventionally `arg0`) and whose value is the request POJO:
 
 ```json
-{ "operationName": [{ "request": { ...fields... } }] }
+{ "operationName": [{ "arg0": { ...fields... } }] }
 ```
+
+This is mandated by `JsonUtils.invokeServiceClass()` in the `axis2-json` module.
 
 ---
 
@@ -135,7 +168,12 @@ The top-level key is the **operation name**, and the body is wrapped in an array
   `SpringApplication.run()`. Spring Boot only provides configuration; Tomcat is the server.
 - **No `DispatcherServlet`** — `@GetMapping` annotations are dead code in this module. OpenAPI
   endpoints are served by `OpenApiServlet`, a plain `HttpServlet` registered directly in
-  `Axis2WebAppInitializer` at `/openapi.json`, `/openapi.yaml`, and `/swagger-ui`.
+  `Axis2WebAppInitializer` at `/openapi.json`, `/openapi.yaml`, `/swagger-ui`, and
+  `/openapi-mcp.json`.
+- **Axis2 repository path** — `Axis2WebAppInitializer` explicitly sets the
+  `axis2.repository.path` servlet init parameter using `ServletContext.getRealPath("/WEB-INF")`.
+  This is required on both Tomcat and WildFly to ensure `WarBasedAxisConfigurator` finds the
+  `WEB-INF/services/*.aar` archives reliably, bypassing any VFS or lazy-init timing issues.
 - **OpenAPI module** — `axis2-openapi-<version>.jar` is copied to
   `WEB-INF/modules/openapi-<version>.mar` by the Maven build. It must be present for
   `GET /openapi.*` and `GET /swagger-ui` to work.
@@ -144,14 +182,15 @@ The top-level key is the **operation name**, and the body is wrapped in an array
 
 ---
 
-## Relationship to `springbootdemo` (WildFly)
+## Relationship to `springbootdemo-wildfly`
 
-`springbootdemo-tomcat11` is derived from `springbootdemo` (which targets WildFly). The two
-modules share the same service logic but differ in:
+`springbootdemo-tomcat11` and `springbootdemo-wildfly` share all Java source and resources
+via `build-helper-maven-plugin`. The only differences are container-specific:
 
-| Aspect | `springbootdemo` (WildFly) | `springbootdemo-tomcat11` |
-|--------|---------------------------|--------------------------|
-| Server | WildFly / embedded Undertow | Apache Tomcat 11 |
+| Aspect | `springbootdemo-tomcat11` | `springbootdemo-wildfly` |
+|--------|--------------------------|--------------------------|
+| Server | Apache Tomcat 11 | WildFly 32+ (Undertow) |
+| Tested on | Tomcat 11.0.20 / Java 21 | WildFly 39 / Java 25 |
+| WAR output | `target/deploy/axis2-json-api/` (no `.war` suffix) | `target/deploy/axis2-json-api/` |
+| Extra WEB-INF files | — | `jboss-deployment-structure.xml`, `jboss-web.xml`, `beans.xml` |
 | Context path | `/axis2-json-api` | `/axis2-json-api` |
-| OpenAPI routing | `OpenApiServlet` via `Axis2WebAppInitializer` | Same |
-| H2 BigData service | Yes | Yes |
