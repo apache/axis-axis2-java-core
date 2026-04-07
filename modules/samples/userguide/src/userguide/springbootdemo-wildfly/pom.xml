@@ -30,8 +30,7 @@
     src/main/webapp/WEB-INF/jboss-web.xml
 
   Build:   mvn package -DskipTests
-  Deploy:  rsync -a -delete target/deploy/axis2-json-api/ ~/wildfly/standalone/deployments/axis2-json-api.war/
-           touch ~/wildfly/standalone/deployments/axis2-json-api.war.dodeploy
+  Deploy:  see README.md (rsync + touch .dodeploy)
   JDK:     Compiled at Java 21 source level; tested on OpenJDK 21 and OpenJDK 25.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -311,7 +310,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5</artifactId>
-            <version>5.3.3</version>
+            <version>5.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
