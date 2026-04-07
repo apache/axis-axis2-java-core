@@ -29,8 +29,10 @@
     src/main/webapp/WEB-INF/jboss-deployment-structure.xml
     src/main/webapp/WEB-INF/jboss-web.xml
 
-  Build:   mvn package -f pom.xml
-  Deploy:  cp target/axis2-json-api.war ~/wildfly/standalone/deployments/
+  Build:   mvn package -DskipTests
+  Deploy:  rsync -a --delete target/deploy/axis2-json-api/ ~/wildfly/standalone/deployments/axis2-json-api.war/
+           touch ~/wildfly/standalone/deployments/axis2-json-api.war.dodeploy
+  JDK:     Compiled at Java 21 source level; tested on OpenJDK 21 and OpenJDK 25.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
