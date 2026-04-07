@@ -703,6 +703,23 @@ public class OpenApiSpecGenerator {
             meta.put("authHeader", "Authorization: Bearer <token>");
             meta.put("tokenEndpoint", "POST /services/loginService/doLogin");
 
+            // Optional: natural key (ticker → assetId) resolution endpoint.
+            // Set axis2.xml global parameter "mcpTickerResolveService" to the
+            // "ServiceName/operationName" of the ticker lookup operation, e.g.:
+            //   <parameter name="mcpTickerResolveService">
+            //     TickerLookupService/resolveTicker
+            //   </parameter>
+            // Omitted from _meta when not configured so deployments without a
+            // ticker service don't expose a misleading endpoint reference.
+            org.apache.axis2.description.Parameter tickerParam =
+                    axisConfig.getParameter("mcpTickerResolveService");
+            if (tickerParam != null && tickerParam.getValue() != null) {
+                String tickerSvcOp = tickerParam.getValue().toString().trim();
+                if (!tickerSvcOp.isEmpty()) {
+                    meta.put("tickerResolveEndpoint", "POST /services/" + tickerSvcOp);
+                }
+            }
+
             com.fasterxml.jackson.databind.node.ArrayNode toolsArray = root.putArray("tools");
 
             Iterator<AxisService> services = axisConfig.getServices().values().iterator();

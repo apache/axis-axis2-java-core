@@ -521,6 +521,42 @@ public class McpCatalogGeneratorTest extends TestCase {
         }
     }
 
+    // ── A3: tickerResolveEndpoint in _meta ───────────────────────────────────
+
+    /**
+     * When the global axis2 parameter {@code mcpTickerResolveService} is set,
+     * {@code _meta.tickerResolveEndpoint} must appear with the expected prefix.
+     * This lets MCP clients discover the ticker→assetId resolution service
+     * without out-of-band documentation.
+     */
+    public void testTickerResolveEndpointPresentWhenConfigured() throws Exception {
+        axisConfig.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpTickerResolveService", "TickerLookupService/resolveTicker"));
+
+        JsonNode meta = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest))
+                .path("_meta");
+        assertFalse("tickerResolveEndpoint must appear when mcpTickerResolveService is set",
+                meta.path("tickerResolveEndpoint").isMissingNode());
+        assertTrue("tickerResolveEndpoint must start with 'POST /services/'",
+                meta.path("tickerResolveEndpoint").asText().startsWith("POST /services/"));
+        assertTrue("tickerResolveEndpoint must contain the configured service/op name",
+                meta.path("tickerResolveEndpoint").asText()
+                        .contains("TickerLookupService/resolveTicker"));
+    }
+
+    /**
+     * When {@code mcpTickerResolveService} is not configured, the catalog must
+     * not include {@code tickerResolveEndpoint} at all — deployments without a
+     * ticker service should not expose a misleading field.
+     */
+    public void testTickerResolveEndpointAbsentWhenNotConfigured() throws Exception {
+        // No mcpTickerResolveService parameter added
+        JsonNode meta = MAPPER.readTree(generator.generateMcpCatalogJson(mockRequest))
+                .path("_meta");
+        assertTrue("tickerResolveEndpoint must be absent when mcpTickerResolveService not set",
+                meta.path("tickerResolveEndpoint").isMissingNode());
+    }
+
     // ── A1: mcpDescription parameter ─────────────────────────────────────────
 
     /**
