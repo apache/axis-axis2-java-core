@@ -945,60 +945,58 @@ public class OpenApiSpecGenerator {
             com.fasterxml.jackson.databind.node.ArrayNode resources = root.putArray("resources");
 
             java.util.Map<String, AxisService> services = axisConfig.getServices();
-            if (services != null) {
-                for (AxisService service : services.values()) {
-                    String svcName = service.getName();
-                    if (isSystemService(svcName)) continue;
+            for (AxisService service : services.values()) {
+                String svcName = service.getName();
+                if (isSystemService(svcName)) continue;
 
-                    // URI: logical identifier for the resource in the MCP protocol.
-                    // Uses the "axis2://" scheme so clients can distinguish these
-                    // resources from generic HTTP URLs.
-                    String uri = "axis2://services/" + svcName;
+                // URI: logical identifier for the resource in the MCP protocol.
+                // Uses the "axis2://" scheme so clients can distinguish these
+                // resources from generic HTTP URLs.
+                String uri = "axis2://services/" + svcName;
 
-                    // Human-readable description: service-level mcpDescription param
-                    // or auto-generated fallback.
-                    String description = getMcpStringParam(null, service, "mcpDescription",
-                            "Axis2 service: " + svcName);
+                // Human-readable description: service-level mcpDescription param
+                // or auto-generated fallback.
+                String description = getMcpStringParam(null, service, "mcpDescription",
+                        "Axis2 service: " + svcName);
 
-                    com.fasterxml.jackson.databind.node.ObjectNode resource =
-                            resources.addObject();
-                    resource.put("uri",         uri);
-                    resource.put("name",         svcName);
-                    resource.put("description",  description);
-                    resource.put("mimeType",     "application/json");
+                com.fasterxml.jackson.databind.node.ObjectNode resource =
+                        resources.addObject();
+                resource.put("uri",         uri);
+                resource.put("name",         svcName);
+                resource.put("description",  description);
+                resource.put("mimeType",     "application/json");
 
-                    // metadata sub-object: service-specific details for MCP clients
-                    // that want to introspect available operations before calling.
-                    com.fasterxml.jackson.databind.node.ObjectNode metadata =
-                            resource.putObject("metadata");
-                    metadata.put("wsdlUrl", "GET /services/" + svcName + "?wsdl");
+                // metadata sub-object: service-specific details for MCP clients
+                // that want to introspect available operations before calling.
+                com.fasterxml.jackson.databind.node.ObjectNode metadata =
+                        resource.putObject("metadata");
+                metadata.put("wsdlUrl", "GET /services/" + svcName + "?wsdl");
 
-                    // List all non-system operation names.
-                    com.fasterxml.jackson.databind.node.ArrayNode ops = metadata.putArray("operations");
-                    java.util.Iterator<AxisOperation> opIter = service.getOperations();
-                    while (opIter != null && opIter.hasNext()) {
-                        AxisOperation op = opIter.next();
-                        if (op != null && op.getName() != null) {
-                            String opName = op.getName().getLocalPart();
-                            if (opName != null && !opName.startsWith("__")) {
-                                ops.add(opName);
-                            }
+                // List all non-system operation names.
+                com.fasterxml.jackson.databind.node.ArrayNode ops = metadata.putArray("operations");
+                java.util.Iterator<AxisOperation> opIter = service.getOperations();
+                while (opIter.hasNext()) {
+                    AxisOperation op = opIter.next();
+                    if (op != null && op.getName() != null) {
+                        String opName = op.getName().getLocalPart();
+                        if (opName != null && !opName.startsWith("__")) {
+                            ops.add(opName);
                         }
                     }
-
-                    // Auth requirement mirrors the tool catalog heuristic.
-                    String svcLower = svcName.toLowerCase(java.util.Locale.ROOT);
-                    boolean requiresAuth;
-                    String mcpRequiresAuthParam = getMcpStringParam(null, service,
-                            "mcpRequiresAuth", null);
-                    if (mcpRequiresAuthParam != null) {
-                        requiresAuth = !"false".equalsIgnoreCase(mcpRequiresAuthParam);
-                    } else {
-                        requiresAuth = !svcLower.equals("loginservice")
-                                    && !svcLower.equals("adminconsole");
-                    }
-                    metadata.put("requiresAuth", requiresAuth);
                 }
+
+                // Auth requirement mirrors the tool catalog heuristic.
+                String svcLower = svcName.toLowerCase(java.util.Locale.ROOT);
+                boolean requiresAuth;
+                String mcpRequiresAuthParam = getMcpStringParam(null, service,
+                        "mcpRequiresAuth", null);
+                if (mcpRequiresAuthParam != null) {
+                    requiresAuth = !"false".equalsIgnoreCase(mcpRequiresAuthParam);
+                } else {
+                    requiresAuth = !svcLower.equals("loginservice")
+                                && !svcLower.equals("adminconsole");
+                }
+                metadata.put("requiresAuth", requiresAuth);
             }
 
             log.debug("Generated MCP resources JSON ({} services)", resources.size());
