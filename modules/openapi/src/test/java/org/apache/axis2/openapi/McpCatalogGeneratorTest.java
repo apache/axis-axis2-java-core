@@ -252,6 +252,12 @@ public class McpCatalogGeneratorTest extends TestCase {
         String json = generator.generateMcpCatalogJson(mockRequest);
         JsonNode root = MAPPER.readTree(json);
         assertNotNull("JSON with escaped quotes must be parseable", root);
+
+        // x-axis2-payloadTemplate must also be parseable JSON (Critical F1 regression guard)
+        String template = root.path("tools").get(0).path("x-axis2-payloadTemplate").asText();
+        JsonNode parsedTemplate = MAPPER.readTree(template);
+        assertNotNull("x-axis2-payloadTemplate must be valid JSON even when op name has quotes",
+                parsedTemplate);
     }
 
     public void testServiceNameWithBackslashIsEscaped() throws Exception {
@@ -282,6 +288,12 @@ public class McpCatalogGeneratorTest extends TestCase {
                 json.contains("\t"));
         JsonNode root = MAPPER.readTree(json);   // still parseable
         assertNotNull(root);
+
+        // x-axis2-payloadTemplate must also survive control characters
+        String template = root.path("tools").get(0).path("x-axis2-payloadTemplate").asText();
+        JsonNode parsedTemplate = MAPPER.readTree(template);
+        assertNotNull("x-axis2-payloadTemplate must be valid JSON when op name has control chars",
+                parsedTemplate);
     }
 
     // ── catalog request is null-safe ──────────────────────────────────────────
@@ -289,18 +301,12 @@ public class McpCatalogGeneratorTest extends TestCase {
     public void testGenerateMcpCatalogWithNullRequestDoesNotThrow() throws Exception {
         addService("TestService", "testOp");
 
-        // null request is passed — generator should handle it gracefully
-        // (request is not used by generateMcpCatalogJson; it only introspects AxisConfig)
-        try {
-            String json = generator.generateMcpCatalogJson(null);
-            assertNotNull(json);
-            JsonNode root = MAPPER.readTree(json);
-            assertTrue(root.has("tools"));
-        } catch (NullPointerException e) {
-            // Acceptable if the method does not guard against null — document behaviour
-            System.out.println("INFO: generateMcpCatalogJson(null) throws NPE — " +
-                    "callers must ensure request is non-null");
-        }
+        // generateMcpCatalogJson() does not use the HttpServletRequest parameter at all —
+        // it only introspects AxisConfig.  Null must not throw; the catalog must be valid.
+        String json = generator.generateMcpCatalogJson(null);
+        assertNotNull("generateMcpCatalogJson(null) must return non-null", json);
+        JsonNode root = MAPPER.readTree(json);
+        assertTrue("generateMcpCatalogJson(null) result must have 'tools'", root.has("tools"));
     }
 
     // ── catalog _meta ─────────────────────────────────────────────────────────
@@ -890,6 +896,66 @@ public class McpCatalogGeneratorTest extends TestCase {
             assertTrue("MCP tool path '" + mcpPath + "' must appear in OpenAPI paths",
                     openApiPaths.contains(mcpPath));
         }
+    }
+
+    /**
+     * F13: An empty-string mcpInputSchema parameter (trimmed to "")
+     * must be treated identically to an absent parameter — produces the
+     * empty baseline schema without throwing or logging a parse error.
+     */
+    public void testEmptyStringMcpInputSchemaProducesBaselineSchema() throws Exception {
+        AxisService svc = new AxisService("TestService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("doOp"));
+        op.addParameter(new org.apache.axis2.description.Parameter("mcpInputSchema", ""));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode schema = getCatalogTools().get(0).path("inputSchema");
+        // getMcpStringParam returns null for empty string → empty baseline
+        assertEquals("Empty mcpInputSchema must produce type=object", "object",
+                schema.path("type").asText());
+        assertTrue("Empty mcpInputSchema must produce empty properties",
+                schema.path("properties").isObject());
+        assertTrue("Empty mcpInputSchema must produce empty required array",
+                schema.path("required").isArray());
+    }
+
+    /**
+     * F15: A service whose name *contains* "login" but is NOT the login service
+     * must still require auth.  The heuristic must use exact match, not substring.
+     */
+    public void testLoginHistoryServiceRequiresAuth() throws Exception {
+        addService("LoginHistoryService", "getLoginHistory");
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("LoginHistoryService must require auth (exact-match heuristic, not substring)",
+                tool.path("x-requiresAuth").asBoolean());
+    }
+
+    /**
+     * F15 (inverse): exact match "loginService" (case-insensitive) still exempts.
+     */
+    public void testExactLoginServiceNameDoesNotRequireAuth() throws Exception {
+        addService("loginService", "doLogin");
+        JsonNode tool = getCatalogTools().get(0);
+        assertFalse("loginService (exact match) must not require auth",
+                tool.path("x-requiresAuth").asBoolean());
+    }
+
+    /**
+     * F18: mcpOpenWorld=true must set openWorldHint: true in annotations.
+     */
+    public void testMcpOpenWorldParamSetsOpenWorldHint() throws Exception {
+        AxisService svc = new AxisService("NotificationService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("sendAlert"));
+        op.addParameter(new org.apache.axis2.description.Parameter("mcpOpenWorld", "true"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode annotations = getCatalogTools().get(0).path("annotations");
+        assertTrue("openWorldHint must be true when mcpOpenWorld=true",
+                annotations.path("openWorldHint").asBoolean());
     }
 
     // ── helpers ─────────────────────────────────────────────────────────────

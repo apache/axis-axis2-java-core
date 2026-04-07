@@ -646,7 +646,8 @@ public class OpenApiSpecGenerator {
      */
     private String getMcpStringParam(AxisOperation operation, AxisService service,
                                      String paramName, String defaultValue) {
-        org.apache.axis2.description.Parameter p = operation.getParameter(paramName);
+        org.apache.axis2.description.Parameter p =
+                (operation != null) ? operation.getParameter(paramName) : null;
         if (p == null) p = service.getParameter(paramName);
         if (p != null && p.getValue() != null) {
             String v = p.getValue().toString().trim();
@@ -670,6 +671,10 @@ public class OpenApiSpecGenerator {
             String v = p.getValue().toString().trim().toLowerCase(java.util.Locale.ROOT);
             if ("true".equals(v))  return true;
             if ("false".equals(v)) return false;
+            if (!v.isEmpty()) {
+                log.warn("[MCP] Unrecognised boolean value '" + p.getValue().toString().trim()
+                        + "' for parameter '" + paramName + "' — using default " + defaultValue);
+            }
         }
         return defaultValue;
     }
@@ -687,8 +692,11 @@ public class OpenApiSpecGenerator {
         try {
             AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
 
-            com.fasterxml.jackson.databind.ObjectMapper jackson =
-                    new com.fasterxml.jackson.databind.ObjectMapper();
+            // Re-use the swagger-core Jackson instance: already configured with
+            // NON_NULL, WRITE_DATES_AS_TIMESTAMPS=false, FAIL_ON_EMPTY_BEANS=false
+            // and available on the classpath — avoids allocating a new ObjectMapper
+            // per request (ObjectMapper construction is expensive due to module scanning).
+            com.fasterxml.jackson.databind.ObjectMapper jackson = io.swagger.v3.core.util.Json.mapper();
             com.fasterxml.jackson.databind.node.ObjectNode root = jackson.createObjectNode();
 
             // Catalog-level metadata so MCP clients understand the transport layer.
@@ -715,8 +723,16 @@ public class OpenApiSpecGenerator {
                     axisConfig.getParameter("mcpTickerResolveService");
             if (tickerParam != null && tickerParam.getValue() != null) {
                 String tickerSvcOp = tickerParam.getValue().toString().trim();
+                // Validate format: must be "ServiceName/operationName" — each segment
+                // is an XML NCName (word chars, dots, hyphens).  Reject anything else
+                // to prevent a misconfigured path-traversal value reaching MCP clients.
                 if (!tickerSvcOp.isEmpty()) {
-                    meta.put("tickerResolveEndpoint", "POST /services/" + tickerSvcOp);
+                    if (tickerSvcOp.matches("[\\w.\\-]+/[\\w.\\-]+")) {
+                        meta.put("tickerResolveEndpoint", "POST /services/" + tickerSvcOp);
+                    } else {
+                        log.warn("[MCP] Ignoring invalid mcpTickerResolveService value '"
+                                + tickerSvcOp + "' — expected ServiceName/operationName");
+                    }
                 }
             }
 
@@ -728,9 +744,20 @@ public class OpenApiSpecGenerator {
                 if (isSystemService(service)) continue;
                 if (!shouldIncludeService(service)) continue;
 
-                // loginService is the unauthenticated token endpoint; all others require auth.
+                // Prefer explicit mcpRequiresAuth parameter; fall back to name heuristic
+                // only when the parameter is absent.  The heuristic uses exact match on
+                // "loginservice" (case-insensitive) and "adminconsole" to avoid false
+                // positives for services like "LoginHistoryService" or "CatalogLoginRecords".
                 String svcLower = service.getName().toLowerCase(java.util.Locale.ROOT);
-                boolean requiresAuth = !svcLower.contains("login") && !svcLower.equals("adminconsole");
+                boolean requiresAuth;
+                String mcpRequiresAuthParam = getMcpStringParam(
+                        null, service, "mcpRequiresAuth", null);
+                if (mcpRequiresAuthParam != null) {
+                    requiresAuth = !"false".equalsIgnoreCase(mcpRequiresAuthParam);
+                } else {
+                    requiresAuth = !svcLower.equals("loginservice")
+                            && !svcLower.equals("adminconsole");
+                }
 
                 Iterator<AxisOperation> operations = service.getOperations();
                 while (operations.hasNext()) {
@@ -805,8 +832,24 @@ public class OpenApiSpecGenerator {
                     // body in this envelope — the bare {"field":value} object goes inside
                     // "arg0".  Example for portfolioVariance:
                     //   {"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],...}}]}
-                    toolNode.put("x-axis2-payloadTemplate",
-                            "{\"" + opName + "\":[{\"arg0\":{}}]}");
+                    //
+                    // Built via Jackson tree API (not string concatenation) so that opName
+                    // values containing JSON-special chars (", \, control chars) are
+                    // correctly escaped.  jackson.writeValueAsString() cannot throw here
+                    // because the tree is well-formed by construction.
+                    try {
+                        com.fasterxml.jackson.databind.node.ObjectNode tmpl =
+                                jackson.createObjectNode();
+                        tmpl.putArray(opName).addObject().putObject("arg0");
+                        toolNode.put("x-axis2-payloadTemplate",
+                                jackson.writeValueAsString(tmpl));
+                    } catch (com.fasterxml.jackson.core.JsonProcessingException jpe) {
+                        // Cannot happen for a well-formed Jackson node tree; fall back
+                        // to a safe static placeholder so the tool node is still usable.
+                        log.warn("[MCP] Failed to serialize payloadTemplate for '"
+                                + opName + "': " + jpe.getMessage());
+                        toolNode.put("x-axis2-payloadTemplate", "{}");
+                    }
 
                     // Whether the caller must supply a Bearer token (from doLogin).
                     toolNode.put("x-requiresAuth", requiresAuth);
@@ -833,7 +876,9 @@ public class OpenApiSpecGenerator {
 
         } catch (Exception e) {
             log.error("Failed to generate MCP catalog JSON", e);
-            return "{\"tools\":[]}";
+            // Return a distinct error shape so callers can distinguish generation failure
+            // from a legitimate empty catalog (no services deployed).
+            return "{\"tools\":[],\"_error\":\"catalog generation failed — see server log\"}";
         }
     }
 
