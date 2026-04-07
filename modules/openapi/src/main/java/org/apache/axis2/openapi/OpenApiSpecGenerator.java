@@ -855,6 +855,25 @@ public class OpenApiSpecGenerator {
                     // Whether the caller must supply a Bearer token (from doLogin).
                     toolNode.put("x-requiresAuth", requiresAuth);
 
+                    // B2 — mcpAuthScope: optional OAuth2 / custom scope string.
+                    // When present, MCP clients that support fine-grained auth can
+                    // request just this scope rather than a full-access token.
+                    // Declared at operation OR service level (operation wins).
+                    // Example services.xml:  <parameter name="mcpAuthScope">read:portfolio</parameter>
+                    String authScope = getMcpStringParam(operation, service, "mcpAuthScope", null);
+                    if (authScope != null) {
+                        toolNode.put("x-authScope", authScope);
+                    }
+
+                    // B3 — mcpStreaming: signals that this operation returns a stream
+                    // (chunked JSON, SSE, or long-poll) rather than a single response.
+                    // MCP clients that support progressive rendering can use this hint
+                    // to display partial results as they arrive.
+                    // Example services.xml:  <parameter name="mcpStreaming">true</parameter>
+                    if (getMcpBoolParam(operation, service, "mcpStreaming", false)) {
+                        toolNode.put("x-streaming", true);
+                    }
+
                     // MCP 2025-03-26 tool annotations.
                     // Tunable via services.xml parameters at operation or service level:
                     //   mcpReadOnly    → readOnlyHint  (true for GET-equivalent operations)

@@ -958,6 +958,114 @@ public class McpCatalogGeneratorTest extends TestCase {
                 annotations.path("openWorldHint").asBoolean());
     }
 
+    // ── B2: mcpAuthScope ─────────────────────────────────────────────────────
+
+    public void testMcpAuthScopeParamAppearsAsXAuthScope() throws Exception {
+        AxisService svc = new AxisService("PortfolioService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("readPositions"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpAuthScope", "read:portfolio"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertEquals("x-authScope must reflect mcpAuthScope param",
+                "read:portfolio", tool.path("x-authScope").asText());
+    }
+
+    public void testAbsentMcpAuthScopeProducesNoXAuthScopeField() throws Exception {
+        addService("PortfolioService", "readPositions");
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("x-authScope must be absent when mcpAuthScope not set",
+                tool.path("x-authScope").isMissingNode());
+    }
+
+    public void testServiceLevelMcpAuthScopeAppliedWhenNoOperationLevel() throws Exception {
+        AxisService svc = new AxisService("PortfolioService");
+        svc.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpAuthScope", "read:global"));
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("readPositions"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertEquals("service-level mcpAuthScope must apply when op level absent",
+                "read:global", tool.path("x-authScope").asText());
+    }
+
+    public void testOperationLevelMcpAuthScopeOverridesServiceLevel() throws Exception {
+        AxisService svc = new AxisService("PortfolioService");
+        svc.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpAuthScope", "read:global"));
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("writePositions"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpAuthScope", "write:portfolio"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertEquals("operation-level mcpAuthScope must override service level",
+                "write:portfolio", tool.path("x-authScope").asText());
+    }
+
+    // ── B3: mcpStreaming ──────────────────────────────────────────────────────
+
+    public void testMcpStreamingParamSetsXStreamingTrue() throws Exception {
+        AxisService svc = new AxisService("FeedService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("streamPrices"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpStreaming", "true"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("x-streaming must be true when mcpStreaming=true",
+                tool.path("x-streaming").asBoolean());
+    }
+
+    public void testAbsentMcpStreamingProducesNoXStreamingField() throws Exception {
+        addService("FeedService", "getSnapshot");
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("x-streaming field must be absent when mcpStreaming not set",
+                tool.path("x-streaming").isMissingNode());
+    }
+
+    public void testMcpStreamingFalseProducesNoXStreamingField() throws Exception {
+        // mcpStreaming=false is the default; field must be suppressed (not emitted as false)
+        // to keep the catalog compact — clients treat absence as non-streaming.
+        AxisService svc = new AxisService("FeedService");
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("getSnapshot"));
+        op.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpStreaming", "false"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("x-streaming must be absent when mcpStreaming=false",
+                tool.path("x-streaming").isMissingNode());
+    }
+
+    public void testServiceLevelMcpStreamingApplied() throws Exception {
+        AxisService svc = new AxisService("FeedService");
+        svc.addParameter(new org.apache.axis2.description.Parameter(
+                "mcpStreaming", "true"));
+        AxisOperation op = new InOutAxisOperation();
+        op.setName(QName.valueOf("streamPrices"));
+        svc.addOperation(op);
+        axisConfig.addService(svc);
+
+        JsonNode tool = getCatalogTools().get(0);
+        assertTrue("service-level mcpStreaming must apply when op level absent",
+                tool.path("x-streaming").asBoolean());
+    }
+
     // ── helpers ─────────────────────────────────────────────────────────────
 
     private void addService(String serviceName, String operationName) throws Exception {
