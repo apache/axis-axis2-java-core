@@ -74,7 +74,7 @@ public class Axis2WebAppInitializer implements ServletContextInitializer {
         // Explicitly set the Axis2 repository path so WarBasedAxisConfigurator finds
         // WEB-INF/services/*.aar on both Tomcat and WildFly (bypasses getRealPath() VFS issues).
         String webInfPath = container.getRealPath("/WEB-INF");
-        logger.warn("addAxis2Servlet: axis2.repository.path = " + webInfPath);
+        logger.info("addAxis2Servlet: axis2.repository.path = " + webInfPath);
         if (webInfPath != null) {
             dispatcher.setInitParameter(WarBasedAxisConfigurator.PARAM_AXIS2_REPOSITORY_PATH, webInfPath);
         }

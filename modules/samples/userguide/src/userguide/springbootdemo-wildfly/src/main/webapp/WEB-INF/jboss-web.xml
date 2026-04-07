@@ -1,12 +1,14 @@
-<?xml version="1.0"?>
-<!DOCTYPE jboss-web PUBLIC
-   "-//JBoss//DTD Web Application 5.0//EN"
-   "http://www.jboss.org/j2ee/dtd/jboss-web_5_0.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Context root for WildFly deployment.
   WAR filename (axis2-json-api.war) sets the context to /axis2-json-api by default.
   Uncomment <context-root> below to override (e.g. to deploy as root context).
+
+  Schema: jboss-web_15_1.xsd (WildFly 32+ / Jakarta EE 10+).
 -->
-<jboss-web>
+<jboss-web xmlns="urn:jboss:jakartaee:1.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="urn:jboss:jakartaee:1.0 https://www.jboss.org/schema/jbossas/jboss-web_15_1.xsd"
+           version="15.1">
     <!-- <context-root>/</context-root> -->
 </jboss-web>
