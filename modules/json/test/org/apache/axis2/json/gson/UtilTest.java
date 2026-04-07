@@ -33,26 +33,32 @@ import java.io.IOException;
 
 public class UtilTest {
 
+    /** Immutable holder for an HTTP response used in error-path tests. */
+    public static class TestResponse {
+        public final int statusCode;
+        public final String body;
+        public TestResponse(int statusCode, String body) {
+            this.statusCode = statusCode;
+            this.body = body;
+        }
+    }
+
     /**
-     * Post {@code jsonString} to {@code strURL} and return a two-element array:
-     * {@code [statusCode, responseBody]}.  Unlike {@link #post}, this method
-     * does NOT throw on non-2xx status codes — callers that test error paths
-     * need the response body even when HTTP 500 is returned.
+     * Post {@code jsonString} to {@code strURL} and return the full response.
+     * Unlike {@link #post}, this method does NOT throw on non-2xx status codes —
+     * callers that test error paths need the response body even on HTTP 500.
      */
-    public static Object[] postForResponse(String jsonString, String strURL)
+    public static TestResponse postForResponse(String jsonString, String strURL)
             throws IOException {
         HttpEntity stringEntity = new StringEntity(jsonString, ContentType.APPLICATION_JSON);
         HttpPost httpPost = new HttpPost(strURL);
         httpPost.setEntity(stringEntity);
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        try {
-            CloseableHttpResponse response = httpclient.execute(httpPost);
+        try (CloseableHttpClient httpclient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpclient.execute(httpPost)) {
             int status = response.getCode();
             HttpEntity entity = response.getEntity();
             String body = entity != null ? EntityUtils.toString(entity, "UTF-8") : "";
-            return new Object[]{status, body};
-        } finally {
-            httpclient.close();
+            return new TestResponse(status, body);
         }
     }
 

@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.UUID;
 
 public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
     private static final Log log = LogFactory.getLog(JsonInOnlyRPCMessageReceiver.class);
@@ -71,7 +70,6 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
     }
 
     public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name, String enableJSONOnly) throws AxisFault {
-        String msg;
         Class implClass = serviceObj.getClass();
         Method[] allMethods = implClass.getDeclaredMethods();
         Method method = JsonUtils.getOpMethod(operation_name, allMethods);
@@ -79,25 +77,10 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
         try {
             int paramCount = paramClasses.length;
             JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount, enableJSONOnly);
-        } catch (IllegalAccessException e) {
-            msg = "Does not have access to " +
-                    "the definition of the specified class, field, method or constructor";
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
-
-        } catch (InvocationTargetException e) {
-            msg = "Exception occurred while trying to invoke service method " +
-                    (method != null ? method.getName() : "null");
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw JsonUtils.createSecureFault(e, operation_name, false);
         } catch (IOException e) {
-            // Correlation ID: full error context is logged server-side; only the
-            // opaque reference is returned to the client so malformed-request
-            // failures remain safe under penetration testing.
-            String errorRef = UUID.randomUUID().toString();
-            log.error("[errorRef=" + errorRef + "] Bad Request parsing JSON-RPC body " +
-                    "for operation '" + operation_name + "': " + e.getMessage(), e);
-            throw new AxisFault("Bad Request [errorRef=" + errorRef + "]");
+            throw JsonUtils.createSecureFault(e, operation_name, true);
         }
     }
 }

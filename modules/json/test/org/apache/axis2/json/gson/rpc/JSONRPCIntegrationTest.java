@@ -63,8 +63,8 @@ public class JSONRPCIntegrationTest {
     @Test
     public void testMalformedJsonBodyReturnsBadRequest() throws Exception {
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "echoPerson";
-        Object[] result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
-        String body = (String) result[1];
+        UtilTest.TestResponse result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
+        String body = result.body;
         Assert.assertTrue("Response must contain 'Bad Request' for malformed JSON body",
                 body.contains("Bad Request"));
     }
@@ -77,8 +77,8 @@ public class JSONRPCIntegrationTest {
     @Test
     public void testMalformedJsonBodyIncludesCorrelationId() throws Exception {
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "echoPerson";
-        Object[] result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
-        String body = (String) result[1];
+        UtilTest.TestResponse result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
+        String body = result.body;
         Assert.assertTrue("Response must contain 'errorRef=' correlation ID",
                 body.contains("errorRef="));
     }
@@ -91,8 +91,8 @@ public class JSONRPCIntegrationTest {
     @Test
     public void testMalformedJsonBodyCorrelationIdIsUuid() throws Exception {
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "echoPerson";
-        Object[] result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
-        String body = (String) result[1];
+        UtilTest.TestResponse result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
+        String body = result.body;
         Assert.assertTrue("errorRef in fault must be a UUID",
                 UUID_PATTERN.matcher(body).find());
     }
@@ -107,8 +107,8 @@ public class JSONRPCIntegrationTest {
         // Valid JSON but wrong envelope: missing the [{...}] wrapper
         String badEnvelope = "{\"echoPerson\":{\"name\":\"Simon\"}}";
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "echoPerson";
-        Object[] result = UtilTest.postForResponse(badEnvelope, echoPersonUrl);
-        String body = (String) result[1];
+        UtilTest.TestResponse result = UtilTest.postForResponse(badEnvelope, echoPersonUrl);
+        String body = result.body;
         Assert.assertTrue("Wrong-envelope request must return 'Bad Request'",
                 body.contains("Bad Request"));
         Assert.assertTrue("Wrong-envelope response must contain an errorRef",
@@ -123,8 +123,8 @@ public class JSONRPCIntegrationTest {
     @Test
     public void testMalformedJsonBodyDoesNotLeakExceptionClassName() throws Exception {
         String echoPersonUrl = server.getEndpoint("JSONPOJOService") + "echoPerson";
-        Object[] result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
-        String body = (String) result[1];
+        UtilTest.TestResponse result = UtilTest.postForResponse("NOT_VALID_JSON", echoPersonUrl);
+        String body = result.body;
         Assert.assertFalse("Response must not leak 'MalformedJsonException'",
                 body.contains("MalformedJsonException"));
         Assert.assertFalse("Response must not leak 'IOException'",
@@ -140,8 +140,8 @@ public class JSONRPCIntegrationTest {
     @Test
     public void testInOnlyMalformedJsonBodyReturnsBadRequestWithCorrelationId() throws Exception {
         String pingUrl = server.getEndpoint("JSONPOJOService") + "ping";
-        Object[] result = UtilTest.postForResponse("NOT_VALID_JSON", pingUrl);
-        String body = (String) result[1];
+        UtilTest.TestResponse result = UtilTest.postForResponse("NOT_VALID_JSON", pingUrl);
+        String body = result.body;
         Assert.assertTrue("InOnly malformed request must return 'Bad Request'",
                 body.contains("Bad Request"));
         Assert.assertTrue("InOnly malformed request must contain an errorRef",

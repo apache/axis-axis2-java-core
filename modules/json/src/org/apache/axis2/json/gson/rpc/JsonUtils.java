@@ -25,9 +25,12 @@ import org.apache.commons.logging.Log;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
+import org.apache.axis2.AxisFault;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 
 public class JsonUtils {
@@ -83,6 +86,33 @@ public class JsonUtils {
 
         return  operation.invoke(service, methodParam);
 
+    }
+
+    /**
+     * Build a secure {@link AxisFault} for any unexpected failure in the JSON-RPC
+     * message receivers.  The full context is logged server-side under an opaque
+     * correlation ID; only {@code "Bad Request [errorRef=<uuid>]"} or
+     * {@code "Internal Server Error [errorRef=<uuid>]"} is returned to the caller.
+     * This prevents information disclosure under penetration testing (CWE-209).
+     *
+     * @param e             the caught exception
+     * @param operationName the Axis2 operation being dispatched (may be null)
+     * @param isParsingError {@code true} for malformed-input IOExceptions,
+     *                       {@code false} for internal reflection/invocation failures
+     * @return an AxisFault safe to send to the client
+     */
+    static AxisFault createSecureFault(Exception e, String operationName, boolean isParsingError) {
+        String errorRef = UUID.randomUUID().toString();
+        String opDisplay = operationName != null ? operationName : "<unknown>";
+        if (isParsingError) {
+            log.error("[errorRef=" + errorRef + "] Bad Request parsing JSON-RPC body " +
+                    "for operation '" + opDisplay + "': " + e.getMessage(), e);
+            return new AxisFault("Bad Request [errorRef=" + errorRef + "]");
+        } else {
+            log.error("[errorRef=" + errorRef + "] Internal error invoking operation '" +
+                    opDisplay + "': " + e.getMessage(), e);
+            return new AxisFault("Internal Server Error [errorRef=" + errorRef + "]");
+        }
     }
 
     public static Method getOpMethod(String methodName, Method[] methodSet) {
