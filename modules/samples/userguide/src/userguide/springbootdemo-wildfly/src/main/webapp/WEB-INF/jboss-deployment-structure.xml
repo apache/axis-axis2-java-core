@@ -1,34 +1,17 @@
 <jboss-deployment-structure>
-    <deployment>
-        <exclude-subsystems>
-            <!-- RESTEasy conflicts with Spring MVC / Axis2 servlet dispatch -->
-            <subsystem name="jaxrs" />
-            <!-- WildFly logging conflicts with our bundled Log4j2 + SLF4J -->
-            <subsystem name="logging" />
-            <!-- No persistence.xml; prevent WildFly JPA subsystem from activating -->
-            <subsystem name="jpa" />
-            <!-- Spring handles its own bean validation -->
-            <subsystem name="bean-validation" />
-            <!-- Prevent Weld CDI from trying to manage Spring beans -->
-            <subsystem name="cdi" />
-        </exclude-subsystems>
+   <deployment>
         <exclusions>
-            <module name="org.apache.log4j" />
-            <module name="org.apache.commons.logging" />
-            <module name="org.jboss.logging" />
-            <module name="org.jboss.logging.jul-to-slf4j-stub" />
-            <module name="org.jboss.logmanager" />
-            <module name="org.jboss.logmanager.log4j" />
-            <module name="org.slf4j" />
-            <module name="org.slf4j.impl" />
-            <!-- Prevent WildFly's hibernate-validator-cdi interceptor from activating;
-                 its ValidationInterceptor needs an @Inject Validator that doesn't exist
-                 in a Spring Boot deployment. Spring handles bean validation itself. -->
-            <module name="org.hibernate.validator.cdi" />
+            <module name="org.apache.logging.log4j.api" />
         </exclusions>
         <dependencies>
-            <!-- Required by some Axis2 internals that use sun.misc.Unsafe -->
-            <module name="jdk.unsupported" slot="main" export="true" />
+	    <system export="true">
+                <paths>
+                    <path name="org/w3c/dom/css"/>
+                </paths>
+            </system>
+            <module name="org.bouncycastle" slot="main" export="true" />
+            <module name="jdk.unsupported" />
+	    <module name="jdk.net" />
         </dependencies>
     </deployment>
 </jboss-deployment-structure>
