@@ -1,6 +1,6 @@
 # MCP Examples: Financial Services on Axis2/Java + WildFly
 
-**BLUF**: Apache Axis2/Java serves the same financial calculations as Axis2/C —
+**Summary**: Apache Axis2/Java serves the same financial calculations as Axis2/C —
 portfolio variance, Monte Carlo VaR, scenario analysis — over JSON on WildFly 32
 with Spring Security JWT authentication. This document shows the same live demos
 as the Axis2/C `MCP_EXAMPLES.md`, run against the Java implementation, with
@@ -410,7 +410,17 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
        "nPeriodsPerYear":252}}]}'
 ```
 
-**Results (real output, 2026-04-08):**
+**European candidate response:**
+```json
+{"response": {"var95": 237481, "var99": 340245, "cvar95": 300412, "probProfit": 0.643, "maxDrawdown": 0.610, "calcTimeUs": 1360351}}
+```
+
+**Japanese candidate response:**
+```json
+{"response": {"var95": 221367, "var99": 322087, "cvar95": 282371, "probProfit": 0.656, "maxDrawdown": 0.555, "calcTimeUs": 1364834}}
+```
+
+**Results summary (2026-04-08):**
 
 | | Before (5 names) | + European semi | + Japanese peer |
 |---|---|---|---|
@@ -517,7 +527,9 @@ which is fast enough for interactive use.
 
 All measurements from 2026-04-08, same machine (Linux, 32 GB RAM).
 Timings are server-reported `calcTimeUs` — pure computation time, no
-transport overhead.
+transport overhead. Monte Carlo timings vary ±5% across runs due to JIT
+warmup and GC; values below are from the Demo 3 convergence runs (JIT-warm
+steady state).
 
 | Benchmark | Axis2/C | Axis2/Java | Ratio |
 |-----------|---------|------------|-------|
@@ -525,7 +537,7 @@ transport overhead.
 | portfolioVariance (500 assets) | 232 μs | 660 μs | 2.8x |
 | monteCarlo (1K × 252) | 6 ms | 13 ms | 2.1x |
 | monteCarlo (10K × 252) | 66 ms | 136 ms | 2.1x |
-| monteCarlo (100K × 252) | 716 ms | 1,370 ms | 1.9x |
+| monteCarlo (100K × 252) | 716 ms | 1,366 ms | 1.9x |
 | monteCarlo (1M × 252) | 6.6 sec | 13.8 sec | 2.1x |
 | MC throughput (sims/sec) | ~150K | ~73K | 2.1x |
 | Peak memory (500-asset PV) | ~193 MB | 229 MB | 1.2x |
@@ -535,14 +547,14 @@ transport overhead.
 ### When to use which
 
 - **Axis2/C**: Edge devices, Android (1-2 GB RAM), IoT gateways, latency-critical
-  paths, environments where JVM overhead is unacceptable. Sub-millisecond portfolio
-  variance at 500 assets. Startup in milliseconds.
+  paths, environments where a JVM cannot run or its memory overhead is unacceptable.
+  Sub-millisecond portfolio variance at 500 assets. Startup in milliseconds.
 
-- **Axis2/Java**: Enterprise deployment on WildFly/Tomcat, existing Java shops,
-  environments with Spring Security/JWT/mTLS requirements, integration with Java
-  ecosystem (Hibernate, JPA, FactSet SDKs). 2x slower on Monte Carlo but still
-  fast enough for interactive use (1.4 sec for 100K paths). Rich deployment
-  tooling (WAR, Spring Boot, OpenAPI/Swagger UI, MCP bridge).
+- **Axis2/Java**: Standard Java EE/Jakarta EE deployment on WildFly or Tomcat,
+  teams with existing Java infrastructure, environments requiring Spring Security
+  (JWT/mTLS), or integration with Java-based data providers. 2x slower on Monte
+  Carlo but still interactive (1.4 sec for 100K paths). Deploys as a standard WAR
+  with OpenAPI/Swagger UI and MCP bridge included.
 
 Both implement the same MCP tool schemas. An AI assistant configured with
 either backend gets the same financial capabilities — the same questions
@@ -572,7 +584,7 @@ See `WILDFLY32_DEPLOY_STATE.md` in the Axis2/C repo for the full deployment
 walkthrough. Key points:
 
 - WildFly 32.0.1.Final with `--add-modules=java.se` in `standalone.conf`
-- `jboss-deployment-structure.xml` from dptv2 (includes `jdk.net` module dependency)
+- `jboss-deployment-structure.xml` from production deployment template (includes `jdk.net` module dependency)
 - `beans.xml` with `bean-discovery-mode="none"` (satisfies Weld without CDI scanning)
 - Spring Boot 3.4.3 starts in ~0.9 seconds inside WildFly
 - WAR: `axis2-json-api-0.0.1-SNAPSHOT.war`
