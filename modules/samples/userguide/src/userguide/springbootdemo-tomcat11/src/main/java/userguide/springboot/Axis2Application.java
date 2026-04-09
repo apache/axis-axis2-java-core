@@ -351,9 +351,27 @@ public class Axis2Application extends SpringBootServletInitializer {
         // mTLS requests arrive on port 8443; Tomcat enforces certificateVerification=required
         // so any request reaching this matcher has already passed the TLS client cert check.
         class MtlsRequestMatcher implements RequestMatcher {
+            private static final String[] EXCLUDED_PATHS = {
+                "/services/loginservice",   // Login must work without client cert
+                "/openapi.json",            // OpenAPI docs are public
+                "/openapi.yaml",
+                "/swagger-ui",
+                "/openapi-mcp.json"         // MCP catalog is public
+            };
+
             @Override
             public boolean matches(HttpServletRequest request) {
-                return request.getLocalPort() == 8443;
+                if (request.getLocalPort() != 8443) {
+                    return false;
+                }
+                // Let login and OpenAPI paths fall through to their own chains
+                String uri = request.getRequestURI().toLowerCase();
+                for (String excluded : EXCLUDED_PATHS) {
+                    if (uri.contains(excluded)) {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
 
@@ -365,12 +383,16 @@ public class Axis2Application extends SpringBootServletInitializer {
         @Bean(name = "springSecurityFilterChainMtls")
         @Order(2)
         public SecurityFilterChain springSecurityFilterChainMtls() throws Exception {
-            // No JWT, no POST-only restriction. X509 filter sets authentication from the
-            // client cert; filterSecurityInterceptor passes any authenticated principal.
+            // HTTPS port 8443: accepts both X.509 client certs (mTLS) and JWT Bearer tokens.
+            // X509 filter runs first — if a client cert is present, it sets authentication.
+            // If no cert, X509 filter is a no-op and JWT filter handles Bearer token auth.
+            // This allows HTTPS-only deployments where login returns a JWT used for
+            // subsequent service calls on the same port.
             return new DefaultSecurityFilterChain(
                     new MtlsRequestMatcher(),
                     headerWriterFilter(),
                     x509AuthenticationFilter(),
+                    jwtAuthenticationFilter(),
                     requestAndResponseValidatorFilter(),
                     sessionManagementFilter(),
                     filterSecurityInterceptor());
