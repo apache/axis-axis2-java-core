@@ -23,10 +23,10 @@ entirely. No other Java framework can do all three from the same service deploym
 
 ---
 
-## Immediate Track — MCP inputSchema + Axis2/C + Penguin Demo
+## Immediate Track — MCP inputSchema + Axis2/C + Apache httpd Demo
 
 **Goal**: Complete the MCP catalog to production quality, port the catalog handler to
-Axis2/C, and run a live demo on penguin via Apache httpd. This track runs ahead of
+Axis2/C, and run a live demo on Apache httpd with mod_axis2. This track runs ahead of
 Phases 1–6 because it validates the MCP story end-to-end on real hardware.
 
 ### Step B1 — `mcpInputSchema` static parameter support (Java + C)
@@ -171,9 +171,9 @@ it. The 5 operations:
 | `generateTestData` | `n_assets` |
 | `metadata` | *(none — GET operation)* |
 
-### Step E — Penguin deployment
+### Step E — Apache httpd deployment
 
-1. Build `mod_axis2.so` from `axis-axis2-c-core` targeting penguin's Apache httpd
+1. Build `mod_axis2.so` from `axis-axis2-c-core` targeting the host's Apache httpd
 2. `httpd.conf` fragment:
    ```apache
    LoadModule axis2_module modules/mod_axis2.so
@@ -185,8 +185,8 @@ it. The 5 operations:
 3. Deploy `FinancialBenchmarkService` to repository
 4. Verify:
    ```bash
-   curl https://penguin/axis2/_mcp/openapi-mcp.json
-   curl -X POST https://penguin/axis2/services/FinancialBenchmarkService/monteCarlo \
+   curl https://localhost/axis2/_mcp/openapi-mcp.json
+   curl -X POST https://localhost/axis2/services/FinancialBenchmarkService/monteCarlo \
         -H 'Content-Type: application/json' \
         -d '{"monteCarlo":[{"arg0":{"n_simulations":10000,"n_periods":252,...}}]}'
    ```
@@ -340,9 +340,9 @@ Phase 1 (starter) — OpenAPI endpoints auto-registered via starter autoconfigur
 JSON-RPC path and a new REST path, with proper HTTP method semantics and
 resource-oriented URLs.
 
-**Problem today**: RAPI's service URLs (`POST /services/getAssetCalculationsService/
-doGetAssetCalculationsJob`) are JSON-RPC over HTTP. New consumers (Data API, React
-frontend, MCP agents) expect `GET /api/v1/funds/{id}/calculations`. Axis2 has REST
+**Problem today**: Existing Axis2 service URLs (`POST /services/calculationService/
+doCalculationJob`) are JSON-RPC over HTTP. New consumers (REST APIs, React
+frontends, MCP agents) expect `GET /api/v1/resources/{id}/calculations`. Axis2 has REST
 dispatch capability in `axis2.xml` but it has never been activated or documented for
 modern Spring Boot deployments.
 
@@ -395,8 +395,8 @@ modern Spring Boot deployments.
 
 ### Deliverable
 Existing Axis2 services add `@RestMapping` annotations and are immediately available
-as REST endpoints alongside their JSON-RPC paths. RAPI services can be exposed to Data
-API consumers without rewriting or duplicating service logic.
+as REST endpoints alongside their JSON-RPC paths. Existing JSON-RPC services can be
+exposed to REST and MCP consumers without rewriting or duplicating service logic.
 
 ### Dependency
 Phase 1 (starter registers both dispatchers), Phase 2 (REST paths appear in OpenAPI
@@ -574,7 +574,7 @@ understand the multi-protocol positioning, and have concrete migration guides.
      reference implementation in the distribution
    - README updated to reflect starter usage once Phase 1 ships
 
-4. **Migration guide: RAPI JSON-RPC → Dual-Protocol**
+4. **Migration guide: JSON-RPC → Dual-Protocol**
    - Step-by-step: add `@RestMapping` annotations, enable REST dispatcher, verify
      both paths, update OpenAPI spec, expose MCP tools
    - Targets teams running Axis2 JSON-RPC who want REST and MCP without rewriting
@@ -608,7 +608,7 @@ Claude Desktop / AI agent  →  MCP (native transport, Phase 6)
                                          ↓
 Data API / React frontend  →  REST (Phase 3)    ──►  Axis2 Service
                                          ↑           (one implementation)
-Existing RAPI callers      →  JSON-RPC (unchanged)
+Existing JSON-RPC callers  →  JSON-RPC (unchanged)
 ```
 
 With OpenAPI spec and MCP tool definitions auto-generated (Phase 2) and a Spring Boot
