@@ -39,7 +39,7 @@ springbootdemo-tomcat11 base URL: https://localhost:8443/axis2-json-api
 
 springbootdemo-wildfly base URL: http://localhost:8080/axis2-json-api
   - LoginService                (JWT auth)
-  - FinancialBenchmarkService   (portfolioVariance, monteCarlo, scenarioAnalysis)
+  - FinancialBenchmarkService   (portfolioVariance, monteCarlo VaR, scenarioAnalysis)
   - BigDataH2Service            (HTTP/2 streaming)
   Deployed and validated on WildFly 32.0.1 (2026-04-09)
 ```

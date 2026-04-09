@@ -169,6 +169,13 @@ just wrapped in `tools/call` JSON-RPC as shown above.)
 
 ### Monte Carlo VaR — 100K simulations
 
+Monte Carlo Value at Risk estimates portfolio loss at a given confidence
+level by simulating thousands of random price paths using Geometric
+Brownian Motion: `S(t+dt) = S(t) × exp((μ − σ²/2)·dt + σ·√dt·Z)` where
+Z ~ N(0,1). Run 100,000 paths, sort the terminal values, read off the
+1st percentile loss — that's your 99% VaR. Production risk systems run
+this nightly for regulatory capital calculations.
+
 ```bash
 curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
