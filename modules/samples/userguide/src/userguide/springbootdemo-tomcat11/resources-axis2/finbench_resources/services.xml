@@ -27,6 +27,20 @@
     <parameter name="enableJSONOnly">true</parameter>
     <parameter name="disableSOAP">true</parameter>
     <operation name="portfolioVariance">
+        <parameter name="mcpDescription">Calculate portfolio variance using O(n²) covariance matrix multiplication. Returns variance, volatility, annualized volatility. Supports up to 2000 assets with optional weight normalization and custom annualization periods (252 for equity, 365 for crypto, 12 for monthly).</parameter>
+        <parameter name="mcpInputSchema">{
+          "type": "object",
+          "required": ["nAssets", "weights", "covarianceMatrix"],
+          "properties": {
+            "nAssets":            {"type": "integer", "minimum": 2, "maximum": 2000, "description": "Number of assets in the portfolio"},
+            "weights":            {"type": "array", "items": {"type": "number"}, "description": "Portfolio weights. Must sum to 1.0 unless normalizeWeights=true"},
+            "covarianceMatrix":   {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "n×n covariance matrix (2D array)"},
+            "covarianceMatrixFlat": {"type": "array", "items": {"type": "number"}, "description": "Alternative: flattened n×n covariance matrix (row-major, length = nAssets²)"},
+            "normalizeWeights":   {"type": "boolean", "default": false, "description": "Rescale weights to sum to 1.0"},
+            "nPeriodsPerYear":    {"type": "integer", "default": 252, "description": "Trading periods for annualizing. 252=equity, 365=crypto, 12=monthly"},
+            "requestId":          {"type": "string", "description": "Optional request ID echoed in response for tracing"}
+          }
+        }</parameter>
         <messageReceivers>
             <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
                 class="org.apache.axis2.json.moshi.rpc.JsonRpcMessageReceiver"/>
@@ -35,6 +49,22 @@
         </messageReceivers>
     </operation>
     <operation name="monteCarlo">
+        <parameter name="mcpDescription">Monte Carlo VaR simulation using Geometric Brownian Motion. Returns VaR at caller-specified percentiles, CVaR (expected shortfall), max drawdown, probability of profit, and throughput metrics. All parameters have sensible defaults — an empty request body is valid.</parameter>
+        <parameter name="mcpInputSchema">{
+          "type": "object",
+          "required": [],
+          "properties": {
+            "nSimulations":    {"type": "integer", "default": 10000, "maximum": 1000000, "description": "Number of simulation paths (max 1M)"},
+            "nPeriods":        {"type": "integer", "default": 252, "description": "Time steps per path (252 = 1 trading year)"},
+            "initialValue":    {"type": "number",  "default": 1000000, "description": "Starting portfolio value in currency units"},
+            "expectedReturn":  {"type": "number",  "default": 0.08, "description": "Annualized expected return (0.08 = 8%)"},
+            "volatility":      {"type": "number",  "default": 0.20, "description": "Annualized volatility (0.20 = 20%)"},
+            "randomSeed":      {"type": "integer", "default": 0, "description": "RNG seed for reproducibility. 0 = non-deterministic"},
+            "nPeriodsPerYear": {"type": "integer", "default": 252, "description": "Periods per year for GBM dt calculation"},
+            "percentiles":     {"type": "array", "items": {"type": "number"}, "default": [0.01, 0.05], "description": "VaR percentiles, e.g. [0.01, 0.05] for 99% and 95%"},
+            "requestId":       {"type": "string", "description": "Optional request ID echoed in response"}
+          }
+        }</parameter>
         <messageReceivers>
             <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
                 class="org.apache.axis2.json.moshi.rpc.JsonRpcMessageReceiver"/>
@@ -43,6 +73,32 @@
         </messageReceivers>
     </operation>
     <operation name="scenarioAnalysis">
+        <parameter name="mcpDescription">Probability-weighted scenario analysis with hash table vs linear scan benchmarking. Computes expected return, upside potential, downside risk across user-defined price scenarios per asset.</parameter>
+        <parameter name="mcpInputSchema">{
+          "type": "object",
+          "required": ["assets"],
+          "properties": {
+            "assets": {"type": "array", "description": "Portfolio assets with scenario prices and probabilities", "items": {
+              "type": "object",
+              "required": ["assetId", "currentPrice", "positionSize", "scenarios"],
+              "properties": {
+                "assetId":      {"type": "integer", "description": "Unique asset identifier"},
+                "currentPrice": {"type": "number",  "description": "Current market price (must be > 0)"},
+                "positionSize": {"type": "number",  "description": "Number of shares/units held"},
+                "scenarios":    {"type": "array", "description": "Price scenarios with probabilities (must sum to 1.0)", "items": {
+                  "type": "object",
+                  "properties": {
+                    "price":       {"type": "number", "description": "Scenario price"},
+                    "probability": {"type": "number", "description": "Scenario probability (0-1)"}
+                  }
+                }}
+              }
+            }},
+            "useHashLookup":  {"type": "boolean", "default": true, "description": "Use HashMap for O(1) lookups vs ArrayList O(n) scan"},
+            "probTolerance":  {"type": "number",  "default": 0.0001, "description": "Tolerance for probability sum validation"},
+            "requestId":      {"type": "string",  "description": "Optional request ID echoed in response"}
+          }
+        }</parameter>
         <messageReceivers>
             <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
                 class="org.apache.axis2.json.moshi.rpc.JsonRpcMessageReceiver"/>

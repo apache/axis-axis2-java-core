@@ -23,6 +23,16 @@
     <parameter name="ServiceObjectSupplier">org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier</parameter>
     <parameter name="SpringBeanName">loginService</parameter>
     <operation name="doLogin">
+        <parameter name="mcpDescription">Authenticate and obtain a JWT Bearer token. The token is required in the Authorization header for all subsequent service calls.</parameter>
+        <parameter name="mcpRequiresAuth">false</parameter>
+        <parameter name="mcpInputSchema">{
+          "type": "object",
+          "required": ["email", "credentials"],
+          "properties": {
+            "email":       {"type": "string", "description": "User email address"},
+            "credentials": {"type": "string", "description": "User password"}
+          }
+        }</parameter>
         <messageReceivers>
             <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
                 class="org.apache.axis2.json.moshi.rpc.JsonRpcMessageReceiver"  />

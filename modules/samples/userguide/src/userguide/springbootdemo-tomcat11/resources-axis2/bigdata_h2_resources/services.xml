@@ -75,6 +75,15 @@
                 - Multiplexing for 10-50MB datasets
                 - Standard for &lt;10MB datasets
             </description>
+            <parameter name="mcpDescription">Process large JSON datasets with HTTP/2 streaming optimization. Automatically selects processing mode based on dataset size. Returns processing metrics including throughput, memory usage, and transport statistics.</parameter>
+            <parameter name="mcpInputSchema">{
+              "type": "object",
+              "required": ["datasetId", "datasetSize"],
+              "properties": {
+                "datasetId":   {"type": "string",  "description": "Unique dataset identifier for tracking"},
+                "datasetSize": {"type": "integer", "description": "Dataset size in bytes (determines processing mode: streaming for 50MB+, multiplexing for 10-50MB, standard for <10MB)"}
+              }
+            }</parameter>
 
             <!-- HTTP/2 Operation Configuration -->
             <parameter name="enableHTTP2Streaming">true</parameter>
