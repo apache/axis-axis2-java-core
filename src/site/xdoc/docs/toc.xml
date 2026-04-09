@@ -158,6 +158,24 @@ Support</a></li>
         <li><a href="json-rpc-mcp-guide.html#python_compat">Python MCP Compatibility Notes</a></li>
     </ul>
     </li>
+    <li><strong>23.5 <a href="mcp-architecture.html">MCP Architecture — Multi-Protocol Design</a></strong>
+    <ul>
+        <li><a href="mcp-architecture.html#current-state-2026-04-09">Current State</a></li>
+        <li><a href="mcp-architecture.html#track-a--openapi-driven-mcp-bridge">Track A: OpenAPI-Driven MCP Bridge</a></li>
+        <li><a href="mcp-architecture.html#track-b--native-mcp-transport-axis2-transport-mcp">Track B: Native MCP Transport</a></li>
+        <li><a href="mcp-architecture.html#security-architecture">Security Architecture (mTLS + X.509)</a></li>
+        <li><a href="mcp-architecture.html#key-design-decisions">Key Design Decisions</a></li>
+    </ul>
+    </li>
+    <li><strong>23.6 <a href="mcp-examples.html">MCP Examples — Financial Services Benchmarks</a></strong>
+    <ul>
+        <li><a href="mcp-examples.html#live-examples-tested-on-wildfly-32-0-1-final-2026-04-08">Live Examples (WildFly 32)</a></li>
+        <li><a href="mcp-examples.html#demo-1-stress-test--what-if-correlations-spike">Demo 1: Stress Test</a></li>
+        <li><a href="mcp-examples.html#demo-2-pre-trade-risk--should-i-add-this-name">Demo 2: Pre-Trade Risk</a></li>
+        <li><a href="mcp-examples.html#demo-3-convergence--how-much-compute-do-i-actually-need">Demo 3: Convergence</a></li>
+        <li><a href="mcp-examples.html#full-performance-summary">Full Performance Summary (C vs Java)</a></li>
+    </ul>
+    </li>
 </ul>
 </li>
 <li><a href="corba-deployer.html">Exposing CORBA Services as Web Services</a></li>

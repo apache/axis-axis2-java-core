@@ -1,13 +1,6 @@
----
-type: architecture
-created: 2026-04-06
-last-verified: 2026-04-06
-status: Active — A1/A2/A3 complete, mTLS validated
----
-
 # MCP Support for Apache Axis2/Java
 
-**BLUF**: Axis2/Java gains MCP (Model Context Protocol) support in two phases. Phase A
+**Summary**: Axis2/Java gains MCP (Model Context Protocol) support in two phases. Phase A
 (practical, immediate) wraps an existing Axis2 deployment with a bridge that reads
 `/openapi-mcp.json` and proxies MCP `tools/call` to Axis2 over HTTPS+mTLS. Phase B (native,
 novel Apache contribution) implements `axis2-transport-mcp` so Axis2 speaks MCP
@@ -20,7 +13,7 @@ modelcontextprotocol.io.
 
 ---
 
-## Current State (2026-04-06)
+## Current State (2026-04-09)
 
 ### What exists today
 
@@ -37,13 +30,18 @@ modelcontextprotocol.io.
 | A4 HTTP/SSE transport | ❌ Not started | Post-demo, deferred |
 | `axis2-transport-mcp` native | ❌ Not started | Track B — novel Apache contribution |
 
-### Reference implementation
+### Reference implementations
 
 ```
 springbootdemo-tomcat11 base URL: https://localhost:8443/axis2-json-api
-Services deployed:
   - LoginService      (auth, port 8080 only)
   - BigDataH2Service  (streaming/multiplexing demo, accessible via mTLS on 8443)
+
+springbootdemo-wildfly base URL: http://localhost:8080/axis2-json-api
+  - LoginService                (JWT auth)
+  - FinancialBenchmarkService   (portfolioVariance, monteCarlo, scenarioAnalysis)
+  - BigDataH2Service            (HTTP/2 streaming)
+  Deployed and validated on WildFly 32.0.1 (2026-04-09)
 ```
 
 `BigDataH2Service` request format (confirmed working via MCP bridge):
@@ -142,14 +140,27 @@ Client presents cert → Tomcat TLS handshake (certificateVerification=required)
 {
   "tools": [
     {
-      "name": "processBigDataSet",
-      "description": "BigDataH2Service: processBigDataSet",
-      "inputSchema": { "type": "object", "properties": {}, "required": [] },
-      "endpoint": "POST /services/BigDataH2Service/processBigDataSet"
+      "name": "portfolioVariance",
+      "description": "Calculate portfolio variance using O(n²) covariance matrix...",
+      "inputSchema": {
+        "type": "object",
+        "required": ["nAssets", "weights", "covarianceMatrix"],
+        "properties": {
+          "nAssets":          {"type": "integer", "minimum": 2, "maximum": 2000},
+          "weights":          {"type": "array", "items": {"type": "number"}},
+          "covarianceMatrix": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}},
+          "normalizeWeights": {"type": "boolean", "default": false},
+          "nPeriodsPerYear":  {"type": "integer", "default": 252}
+        }
+      },
+      "endpoint": "POST /services/FinancialBenchmarkService/portfolioVariance"
     }
   ]
 }
 ```
+
+Tool schemas are populated via `mcpInputSchema` parameters in
+`services.xml` — parsed by `generateMcpCatalogJson()` at runtime.
 
 **Routing**: `OpenApiServlet.java` dispatches `uri.endsWith("/openapi-mcp.json")` to
 `handler.handleMcpCatalogRequest()`. `Axis2WebAppInitializer.java` maps the path.
@@ -329,7 +340,7 @@ See `docs/MCP.md` in the `axis-axis2-c-core` repo for the full C implementation 
 
 | Step | Work | Notes |
 |------|------|-------|
-| `@McpTool` annotation | Richer `inputSchema` in `/openapi-mcp.json` | Currently all tools return empty properties `{}` |
+| `mcpInputSchema` in services.xml | ✅ Done | All financial benchmark tools + login have full parameter schemas |
 | A4 HTTP/SSE | Persistent bridge server mode | Required for production, additive |
 
 ### Track B
@@ -338,9 +349,9 @@ See `docs/MCP.md` in the `axis-axis2-c-core` repo for the full C implementation 
 2. stdio transport first (B1) — validates JSON-RPC 2.0 ↔ MessageContext translation
 3. HTTP/SSE transport (B2) — reuses Axis2 HTTP infrastructure
 
-### Penguin demo
+### Axis2/C deployment
 
-`build_financial_service.sh` in `axis-axis2-c-core` needs to be run on the Penguin
+`build_financial_service.sh` in `axis-axis2-c-core` needs to be run on the target
 host after Axis2/C is installed. The service is committed and compiles clean — the
 script is the only remaining deployment step.
 
