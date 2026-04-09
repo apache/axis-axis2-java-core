@@ -373,28 +373,9 @@
                                 <copy file="${settings.localRepository}/org/apache/axis2/axis2-openapi/${axis2.version}/axis2-openapi-${axis2.version}.jar"
                                       tofile="${project.build.directory}/deploy/axis2-json-api/WEB-INF/modules/openapi-${axis2.version}.mar"
                                       overwrite="true"/>
-                                <unzip src="${project.build.directory}/axis2-json-api-0.0.1-SNAPSHOT.war" dest="${project.build.directory}/exploded"/>
-                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/Login.aar">
-                                    <metainf file="resources-axis2/login_resources/services.xml"/>
-                                </jar>
-                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/testws.aar">
-                                    <metainf file="resources-axis2/test_service_resources/services.xml"/>
-                                </jar>
-                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/BigDataH2Service.aar">
-                                    <metainf file="resources-axis2/bigdata_h2_resources/services.xml"/>
-                                </jar>
-                                <jar jarfile="${project.build.directory}/exploded/WEB-INF/services/FinancialBenchmarkService.aar">
-                                    <metainf file="resources-axis2/finbench_resources/services.xml"/>
-                                </jar>
-                                <copy todir="${project.build.directory}/exploded/WEB-INF/conf">
-                                    <fileset dir="resources-axis2/conf">
-                                        <include name="axis2.xml"/>
-                                    </fileset>
-                                </copy>
-                                <mkdir dir="${project.build.directory}/exploded/WEB-INF/modules"/>
-                                <copy file="${settings.localRepository}/org/apache/axis2/axis2-openapi/${axis2.version}/axis2-openapi-${axis2.version}.jar"
-                                      tofile="${project.build.directory}/exploded/WEB-INF/modules/openapi-${axis2.version}.mar"
-                                      overwrite="true"/>
+                                <!-- The exploded WAR is at target/deploy/axis2-json-api/ (produced by
+                                     maven-war-plugin's exploded goal). No separate unzip step needed.
+                                     For Tomcat deployment, copy this directory to webapps/axis2-json-api. -->
                             </target>
                         </configuration>
                         <goals>
