@@ -26,14 +26,27 @@
 <h1>Welcome to Apache Axis2/Java</h1>
 <p>Apache Axis2&#x2122; is a Web Services JSON / SOAP / WSDL engine, the successor to the
 widely used <a href=
-"http://ws.apache.org/axis/">Apache Axis</a> SOAP stack.
+"http://ws.apache.org/axis/">Apache Axis</a> SOAP stack. Axis2 serves
+the same business logic through multiple protocols simultaneously &#x2014;
+JSON-RPC, REST, and <a href="docs/mcp-architecture.html">MCP (Model Context Protocol)</a>
+&#x2014; from a single service deployment.
 There are two implementations
 of the Apache Axis2 Web services engine - Apache Axis2/Java and
-Apache Axis2/C</p>
+Apache Axis2/C.</p>
 <p>While you will find all the information on Apache Axis2/Java
 here, you can visit the <a href=
 "http://axis.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
-Web site for Axis2/C implementation information.</p>
+Web site for Axis2/C implementation information.
+<strong>Apache Axis2/C 2.0.0 has been released</strong> &#x2014; the first
+release since 1.6.0 (2009). Axis2/C 2.0.0 adds HTTP/2 transport via
+Apache httpd, JSON support via json-c, OpenAPI spec generation, and
+an MCP stdio server with
+the same tool schemas as Axis2/Java &#x2014; enabling AI assistants to call
+native C services on edge devices, Android phones, and IoT gateways
+where a JVM cannot run. The same MCP client connects to both Axis2/Java
+(enterprise) and Axis2/C (embedded) with identical protocol and identical
+results. See the
+<a href="http://axis.apache.org/axis2/c/">Axis2/C site</a> for details.</p>
 <p>Apache Axis2, Axis2, Apache, the Apache feather logo, and the Apache Axis2 project logo are trademarks of The Apache Software Foundation.</p>
 <h3><em>Why Apache Axis2:</em></h3>
 <p>A new architecture for Axis2 was introduced during the August
@@ -164,6 +177,17 @@ build POJO based services that receive and return JSON.</p>
 supports automatic generation of <a href=
 "https://spec.openapis.org/oas/latest.html">OpenAPI 3.0</a> specifications for REST and JSON services, with integrated <a href=
 "https://swagger.io/tools/swagger-ui/">Swagger UI</a> for interactive API documentation and testing, enabling modern API development workflows.</p>
+</li>
+<li>
+<p style="margin-bottom: 0in"><strong>MCP support</strong> - Axis2
+supports <a href="https://modelcontextprotocol.io/">Model Context Protocol</a> (MCP),
+enabling AI assistants (Claude, custom agents) to discover and call Axis2 services
+as tools. The <a href="docs/json-rpc-mcp-guide.html">MCP tool catalog</a> is
+auto-generated from deployed services at <code>/openapi-mcp.json</code> with full
+parameter schemas, types, and defaults. An <a href="docs/mcp-architecture.html">MCP
+bridge</a> (stdio JAR) connects Claude Desktop to any Axis2 deployment over
+HTTPS+mTLS. See <a href="docs/mcp-examples.html">live benchmark examples</a> with
+performance data.</p>
 </li>
 <li>
 <p style="margin-bottom: 0in"><strong>Composition and
