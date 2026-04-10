@@ -57,7 +57,7 @@ import java.nio.charset.StandardCharsets;
  * <p>Notifications (messages without an {@code id} field) are silently consumed
  * with no response, as required by JSON-RPC 2.0.
  */
-public class McpStdioServer {
+public class McpStdioServer implements java.io.Closeable {
 
     private static final String PROTOCOL_VERSION = "2024-11-05";
     private static final String SERVER_NAME = "axis2-mcp-bridge";
@@ -280,5 +280,10 @@ public class McpStdioServer {
     private void writeLine(String json) {
         out.println(json);
         out.flush();
+    }
+
+    @Override
+    public void close() throws IOException {
+        httpClient.close();
     }
 }

@@ -88,11 +88,13 @@ public class McpBridgeMain {
                     keystorePath, keystorePass.toCharArray(),
                     truststorePath, truststorePass.toCharArray());
 
-            ToolRegistry registry = new ToolRegistry(baseUrl, mapper, sslContext);
-            registry.load();
+            try (ToolRegistry registry = new ToolRegistry(baseUrl, mapper, sslContext)) {
+                registry.load();
 
-            McpStdioServer server = new McpStdioServer(baseUrl, registry, mapper, sslContext);
-            server.run();
+                try (McpStdioServer server = new McpStdioServer(baseUrl, registry, mapper, sslContext)) {
+                    server.run();
+                }
+            }
 
         } catch (Exception e) {
             System.err.println("[axis2-mcp-bridge] Fatal: " + e.getMessage());

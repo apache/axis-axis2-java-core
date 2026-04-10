@@ -47,7 +47,7 @@ import java.util.Map;
  * It is fetched once at startup; restart the bridge to pick up newly deployed
  * services.
  */
-public class ToolRegistry {
+public class ToolRegistry implements java.io.Closeable {
 
     private final String baseUrl;
     private final ObjectMapper mapper;
@@ -140,4 +140,9 @@ public class ToolRegistry {
     public List<McpTool> getTools() { return tools; }
 
     public McpTool getTool(String name) { return toolMap.get(name); }
+
+    @Override
+    public void close() throws IOException {
+        httpClient.close();
+    }
 }
