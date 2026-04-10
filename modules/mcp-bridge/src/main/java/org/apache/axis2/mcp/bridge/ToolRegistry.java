@@ -21,13 +21,18 @@ package org.apache.axis2.mcp.bridge;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.util.Timeout;
+
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -46,7 +51,7 @@ public class ToolRegistry {
 
     private final String baseUrl;
     private final ObjectMapper mapper;
-    private final HttpClient httpClient;
+    private final CloseableHttpClient httpClient;
 
     private List<McpTool> tools = Collections.emptyList();
     private Map<String, McpTool> toolMap = Collections.emptyMap();
@@ -54,37 +59,56 @@ public class ToolRegistry {
     public ToolRegistry(String baseUrl, ObjectMapper mapper, SSLContext sslContext) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
         this.mapper = mapper;
-        HttpClient.Builder builder = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10));
+        this.httpClient = buildHttpClient(sslContext);
+    }
+
+    private static CloseableHttpClient buildHttpClient(SSLContext sslContext) {
+        HttpClientConnectionManager connManager;
         if (sslContext != null) {
-            builder.sslContext(sslContext);
+            connManager = PoolingHttpClientConnectionManagerBuilder.create()
+                    .setSSLSocketFactory(SSLConnectionSocketFactoryBuilder.create()
+                            .setSslContext(sslContext)
+                            .build())
+                    .setMaxConnTotal(10)
+                    .setMaxConnPerRoute(10)
+                    .build();
+        } else {
+            connManager = PoolingHttpClientConnectionManagerBuilder.create()
+                    .setMaxConnTotal(10)
+                    .setMaxConnPerRoute(10)
+                    .build();
         }
-        this.httpClient = builder.build();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(Timeout.ofSeconds(10))
+                .setResponseTimeout(Timeout.ofSeconds(15))
+                .build();
+        return HttpClients.custom()
+                .setConnectionManager(connManager)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
     }
 
     /**
      * Fetches {@code /openapi-mcp.json} and builds the tool registry.
      * Logs to stderr; does not throw on partial failure (empty catalog is valid).
      */
-    public void load() throws IOException, InterruptedException {
+    public void load() throws IOException {
         String catalogUrl = baseUrl + "/openapi-mcp.json";
         System.err.println("[axis2-mcp-bridge] Loading tool catalog from: " + catalogUrl);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(catalogUrl))
-                .header("Accept", "application/json")
-                .timeout(Duration.ofSeconds(15))
-                .GET()
-                .build();
+        HttpGet httpGet = new HttpGet(catalogUrl);
+        httpGet.setHeader("Accept", "application/json");
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        String responseBody = httpClient.execute(httpGet, response -> {
+            int status = response.getCode();
+            if (status != 200) {
+                throw new IOException("Tool catalog fetch failed: HTTP " + status
+                        + " from " + catalogUrl);
+            }
+            return EntityUtils.toString(response.getEntity());
+        });
 
-        if (response.statusCode() != 200) {
-            throw new IOException("Tool catalog fetch failed: HTTP " + response.statusCode()
-                    + " from " + catalogUrl);
-        }
-
-        JsonNode root = mapper.readTree(response.body());
+        JsonNode root = mapper.readTree(responseBody);
         JsonNode toolsNode = root.path("tools");
 
         if (!toolsNode.isArray()) {

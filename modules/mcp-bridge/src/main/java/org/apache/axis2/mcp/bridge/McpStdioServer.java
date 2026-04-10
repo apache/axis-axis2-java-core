@@ -23,17 +23,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.util.Timeout;
+
 import javax.net.ssl.SSLContext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 
 /**
  * MCP stdio server: reads JSON-RPC 2.0 requests from stdin, writes responses
@@ -59,21 +66,42 @@ public class McpStdioServer {
     private final String baseUrl;
     private final ToolRegistry registry;
     private final ObjectMapper mapper;
-    private final HttpClient httpClient;
+    private final CloseableHttpClient httpClient;
     private final PrintStream out;
 
     public McpStdioServer(String baseUrl, ToolRegistry registry, ObjectMapper mapper, SSLContext sslContext) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
         this.registry = registry;
         this.mapper = mapper;
-        HttpClient.Builder builder = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10));
-        if (sslContext != null) {
-            builder.sslContext(sslContext);
-        }
-        this.httpClient = builder.build();
+        this.httpClient = buildHttpClient(sslContext);
         // stdout must be raw bytes in UTF-8; replace the default PrintStream
         this.out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+    }
+
+    private static CloseableHttpClient buildHttpClient(SSLContext sslContext) {
+        HttpClientConnectionManager connManager;
+        if (sslContext != null) {
+            connManager = PoolingHttpClientConnectionManagerBuilder.create()
+                    .setSSLSocketFactory(SSLConnectionSocketFactoryBuilder.create()
+                            .setSslContext(sslContext)
+                            .build())
+                    .setMaxConnTotal(20)
+                    .setMaxConnPerRoute(20)
+                    .build();
+        } else {
+            connManager = PoolingHttpClientConnectionManagerBuilder.create()
+                    .setMaxConnTotal(20)
+                    .setMaxConnPerRoute(20)
+                    .build();
+        }
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(Timeout.ofSeconds(10))
+                .setResponseTimeout(Timeout.ofSeconds(60))
+                .build();
+        return HttpClients.custom()
+                .setConnectionManager(connManager)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
     }
 
     /**
@@ -136,9 +164,6 @@ public class McpStdioServer {
         } catch (IllegalArgumentException e) {
             // Invalid params: unknown tool name, missing required param, etc.
             writeError(id, -32602, "Invalid params: " + e.getMessage());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            writeError(id, -32000, "Server error during tool call: " + e.getMessage());
         } catch (IOException e) {
             writeError(id, -32000, "Server error during tool call: " + e.getMessage());
         } catch (Exception e) {
@@ -183,7 +208,7 @@ public class McpStdioServer {
 
     // ── tools/call ──────────────────────────────────────────────────────────
 
-    private ObjectNode buildToolsCallResult(JsonNode params) throws IOException, InterruptedException {
+    private ObjectNode buildToolsCallResult(JsonNode params) throws IOException {
         String toolName = params.path("name").asText(null);
         if (toolName == null || toolName.isEmpty()) {
             throw new IllegalArgumentException("tools/call missing required param 'name'");
@@ -210,7 +235,7 @@ public class McpStdioServer {
      * POST to the Axis2 endpoint. Wraps MCP arguments in the Axis2 JSON-RPC
      * request envelope: {@code {operationName: [arguments]}}.
      */
-    private String callAxis2(McpTool tool, JsonNode arguments) throws IOException, InterruptedException {
+    private String callAxis2(McpTool tool, JsonNode arguments) throws IOException {
         String url = baseUrl + tool.getPath();
 
         // Axis2 JSON-RPC envelope: {"operationName": [arguments]}
@@ -222,16 +247,14 @@ public class McpStdioServer {
         System.err.println("[axis2-mcp-bridge] Calling: POST " + url);
         System.err.println("[axis2-mcp-bridge] Body: " + requestBody);
 
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .timeout(Duration.ofSeconds(60))
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
-                .build();
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
-        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-        System.err.println("[axis2-mcp-bridge] Response: HTTP " + response.statusCode());
-        return response.body();
+        return httpClient.execute(httpPost, response -> {
+            int status = response.getCode();
+            System.err.println("[axis2-mcp-bridge] Response: HTTP " + status);
+            return EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+        });
     }
 
     // ── JSON-RPC 2.0 response helpers ───────────────────────────────────────
