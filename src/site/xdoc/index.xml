@@ -55,7 +55,7 @@ that serves JSON-RPC, REST+OpenAPI, and
 <a href="docs/mcp-architecture.html">MCP</a> from a single service class &#x2014;
 no code duplication, no wrapper layers. Add the
 <a href="docs/spring-boot-starter.html">Spring Boot Starter</a> dependency and
-your services are live on Tomcat 11 or WildFly 32/39 with OpenJDK 21 or 25.</p>
+your services are live on Tomcat 11 or WildFly 32/39 with OpenJDK 17, 21, or 25.</p>
 
 <p>The architecture that made this possible was designed at the August 2004 Summit
 in Colombo, Sri Lanka. Its handler chain &#x2014; a pipeline of phases that

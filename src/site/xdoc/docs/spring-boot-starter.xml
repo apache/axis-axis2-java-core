@@ -87,10 +87,16 @@ long-running, stateful service deployments typical of Axis2 workloads:</p>
 
 <table border="1">
 <tr><th>Container</th><th>JDK</th><th>Tested</th></tr>
-<tr><td>Apache Tomcat 11</td><td>OpenJDK 21, OpenJDK 25</td><td>Yes</td></tr>
-<tr><td>WildFly 32</td><td>OpenJDK 21</td><td>Yes</td></tr>
-<tr><td>WildFly 39</td><td>OpenJDK 25</td><td>Yes</td></tr>
+<tr><td>Apache Tomcat 11</td><td>OpenJDK 17, 21, 25</td><td>Yes (21/25 live-tested; 17 is the minimum supported by Tomcat 11 and Spring Boot 3.x)</td></tr>
+<tr><td>WildFly 32</td><td>OpenJDK 17, 21</td><td>Yes (DPTv2 ran in production on WildFly 32 + OpenJDK 17)</td></tr>
+<tr><td>WildFly 39</td><td>OpenJDK 21, 25</td><td>Yes (live-tested with OpenJDK 25)</td></tr>
 </table>
+
+<p><strong>Minimum JDK version: OpenJDK 17.</strong> Axis2 core and the starter
+compile and pass CI tests with <code>-Dmaven.compiler.release=17</code>.
+Spring Boot 3.x and Tomcat 11 both require Java 17 as a minimum. The sample
+applications target Java 21 source level but Axis2 itself imposes no version
+above 17.</p>
 
 <p>Other Jakarta EE 9+ containers (WebSphere Liberty, Payara) should work but
 are not tested.</p>

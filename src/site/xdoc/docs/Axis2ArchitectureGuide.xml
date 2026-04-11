@@ -178,10 +178,10 @@ dependency and your services are live. See
 class-loading and JNDI subsystems.</td>
 </tr>
 <tr>
-<td><strong>OpenJDK 21 / 25</strong></td>
-<td>Fully tested on the current LTS and latest OpenJDK releases.
-Virtual threads (Project Loom) are supported for high-concurrency
-deployments.</td>
+<td><strong>OpenJDK 17 / 21 / 25</strong></td>
+<td>Java 17 is the minimum (required by Spring Boot 3.x and Tomcat 11).
+Tested on 17, 21, and 25. The CI builds with
+<code>-Dmaven.compiler.release=17</code>.</td>
 </tr>
 </table>
 
