@@ -38,7 +38,6 @@ import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
 import org.apache.axis2.dataretrieval.WSDL11SupplierTemplate;
-import org.apache.axis2.dataretrieval.WSDL20SupplierTemplate;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.ExcludeInfo;
@@ -1820,9 +1819,7 @@ public class AxisService extends AxisDescription {
         WSDLSupplier supplier = getUserDefinedWSDLSupplier("wsdl2");
         if(supplier == null){
             supplier = (WSDLSupplier) getParameterValue(Constants.WSDL_SUPPLIER_PARAM);    
-            if(supplier instanceof WSDL20SupplierTemplate){
-                ((WSDL20SupplierTemplate)supplier).init(this);
-            }
+            // WSDL 2.0 supplier template support removed
         }                
         if (supplier != null) {
             Object wsdlContent = supplier.getWSDL(this);
@@ -3453,9 +3450,7 @@ public class AxisService extends AxisDescription {
             if(para != null){            
                 try {
                     wsdlSupplier = (WSDLSupplier) Class.forName((String) para.getValue()).newInstance() ;
-                    if( wsdlSupplier instanceof WSDL20SupplierTemplate){
-                        ((WSDL20SupplierTemplate)wsdlSupplier).init(this);                       
-                    }
+                    // WSDL 2.0 supplier template support removed
                 } catch (Exception e) {    
                     System.err.println("Following exception occurred when generating WSDL using "+ para );
                     e.printStackTrace();

@@ -24,8 +24,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.WSDL20DefaultValueHolder;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.util.WSDL20Util;
 
+import javax.xml.namespace.QName;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -124,7 +124,7 @@ public class URLTemplatingUtil {
 
         if (separator > -1) {
             replacedQuery = URIEncoderDecoder.quoteIllegal(
-                    WSDL20Util.applyURITemplating(messageContext, httpLocation, detach),
+                    applyURITemplating(messageContext, httpLocation, detach),
                     WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
 
         }
@@ -154,6 +154,83 @@ public class URLTemplatingUtil {
         }
 
         return targetURL;
+    }
+
+    /**
+     * Applies URI templating by replacing {name} placeholders in the raw URL
+     * with values extracted from the SOAP body elements.
+     *
+     * @param messageContext - The MessageContext of the request
+     * @param rawURLString   - The raw URL containing {name} templates
+     * @param detach         - Whether to detach matched elements from the envelope
+     * @return - String with templated values replaced
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    private static String applyURITemplating(MessageContext messageContext, String rawURLString,
+                                             boolean detach) throws AxisFault {
+        OMElement firstElement;
+        if (detach) {
+            firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+        } else {
+            firstElement =
+                    messageContext.getEnvelope().getBody().getFirstElement().cloneOMElement();
+        }
+
+        String result = rawURLString;
+        int start;
+        while ((start = result.indexOf('{')) != -1) {
+            int end = result.indexOf('}', start);
+            if (end == -1) {
+                break;
+            }
+            String name = result.substring(start + 1, end);
+            String value = getOMElementValue(name, firstElement);
+            try {
+                // Determine if this template is in the query part or path part
+                int queryStart = result.indexOf('?');
+                String legalChars;
+                if (queryStart != -1 && start > queryStart) {
+                    String qpSep = (String) messageContext.getProperty(
+                            WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+                    if (qpSep == null) {
+                        qpSep = WSDL20DefaultValueHolder
+                                .ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT;
+                    }
+                    legalChars = WSDL2Constants.LEGAL_CHARACTERS_IN_QUERY
+                            .replaceAll(qpSep, "");
+                } else {
+                    legalChars = WSDL2Constants.LEGAL_CHARACTERS_IN_PATH;
+                }
+                value = URIEncoderDecoder.quoteIllegal(value, legalChars);
+            } catch (UnsupportedEncodingException e) {
+                throw new AxisFault("Unable to encode URI template value");
+            }
+            result = result.substring(0, start) + value + result.substring(end + 1);
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves the text value of a child element by local name.
+     *
+     * @param elementName   - The local name of the required element
+     * @param parentElement - The parent element to search in
+     * @return - The text value of the element, or empty string if not found
+     */
+    private static String getOMElementValue(String elementName, OMElement parentElement) {
+        Iterator children = parentElement.getChildElements();
+        while (children.hasNext()) {
+            OMElement child = (OMElement) children.next();
+            QName qName = child.getQName();
+            if (elementName.equals(qName.getLocalPart())) {
+                child.detach();
+                if (parentElement.getFirstOMChild() == null && parentElement.getParent() != null) {
+                    parentElement.detach();
+                }
+                return child.getText();
+            }
+        }
+        return "";
     }
 
 }

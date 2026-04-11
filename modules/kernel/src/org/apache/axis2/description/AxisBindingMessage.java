@@ -26,7 +26,6 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.util.WSDL20Util;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
@@ -162,9 +161,6 @@ public class AxisBindingMessage extends AxisDescription {
             bindingMessageElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":"
                             + this.name));
-
-            WSDL20Util.extractWSDL20SoapFaultInfo(options,
-                    bindingMessageElement, omFactory, wsoap);
 
             Integer code = (Integer) this.options
                     .get(WSDL2Constants.ATTR_WHTTP_CODE);

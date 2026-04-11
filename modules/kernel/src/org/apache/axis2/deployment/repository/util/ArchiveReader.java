@@ -40,7 +40,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -263,11 +262,6 @@ public class ArchiveReader implements DeploymentConstants {
                     ((WSDL11ToAllAxisServicesBuilder) axisServiceBuilder).setDocumentBaseUri(
                             serviceArchiveFile.getCanonicalFile().toURI().toString());
 
-                } else if (axisServiceBuilder instanceof WSDL20ToAllAxisServicesBuilder) {
-                    // trying to use the jar scheme as the base URI. I think this can be used to handle
-                    // wsdl 1.1 as well without using a custom URI resolver. Need to look at it later.
-                    axisServiceBuilder.setBaseUri(
-                            "jar:" + serviceArchiveFile.toURI() + "!/" + baseURI);
                 }
             } else {
                 if (serviceArchiveFile != null) {
@@ -282,8 +276,6 @@ public class ArchiveReader implements DeploymentConstants {
             }
             if (axisServiceBuilder instanceof WSDL11ToAllAxisServicesBuilder) {
                 return ((WSDL11ToAllAxisServicesBuilder) axisServiceBuilder).populateAllServices();
-            } else if (axisServiceBuilder instanceof WSDL20ToAllAxisServicesBuilder) {
-                return ((WSDL20ToAllAxisServicesBuilder) axisServiceBuilder).populateAllServices();
             }
         } catch (AxisFault axisFault) {
             log.info("Trouble processing wsdl file :" + axisFault.getMessage());
@@ -377,10 +369,8 @@ public class ArchiveReader implements DeploymentConstants {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder;
                             if (WSDL2Constants.WSDL_NAMESPACE
                                     .equals(documentElementNS.getNamespaceURI())) {
-                                // we have a WSDL 2.0 document here.
-                                wsdlToAxisServiceBuilder = new WSDL20ToAllAxisServicesBuilder(
-                                        new ByteArrayInputStream(out.toByteArray()));
-                                wsdlToAxisServiceBuilder.setBaseUri(entryName);
+                                throw new DeploymentException(
+                                        "WSDL 2.0 is no longer supported");
                             } else if (Constants.NS_URI_WSDL11.
                                     equals(documentElementNS.getNamespaceURI())) {
                                 wsdlToAxisServiceBuilder = new WSDL11ToAllAxisServicesBuilder(
@@ -479,9 +469,8 @@ public class ArchiveReader implements DeploymentConstants {
                     WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder;
                     if (WSDL2Constants.WSDL_NAMESPACE
                             .equals(documentElementNS.getNamespaceURI())) {
-                        // we have a WSDL 2.0 document here.
-                        in2 = new FileInputStream(file1);
-                        wsdlToAxisServiceBuilder = new WSDL20ToAllAxisServicesBuilder(in2);
+                        throw new DeploymentException(
+                                "WSDL 2.0 is no longer supported");
                     } else if (Constants.NS_URI_WSDL11.
                             equals(documentElementNS.getNamespaceURI())) {
                         in2 = new FileInputStream(file1);
