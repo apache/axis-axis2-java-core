@@ -81,7 +81,7 @@
               "required": ["datasetId", "datasetSize"],
               "properties": {
                 "datasetId":   {"type": "string",  "description": "Unique dataset identifier for tracking"},
-                "datasetSize": {"type": "integer", "description": "Dataset size in bytes (determines processing mode: streaming for 50MB+, multiplexing for 10-50MB, standard for <10MB)"}
+                "datasetSize": {"type": "integer", "description": "Dataset size in bytes (determines processing mode: streaming for 50MB+, multiplexing for 10-50MB, standard for under 10MB)"}
               }
             }</parameter>
 

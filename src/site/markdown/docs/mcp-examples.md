@@ -27,11 +27,15 @@ framing) is excluded. The computation comparison is apples-to-apples.
 
 ## Authentication
 
+All examples use **HTTPS/HTTP2 on port 8443**. WildFly uses a self-signed certificate,
+so `-k` skips certificate verification. Tomcat uses mTLS with CA-signed client certs
+(see `mcp-architecture.md` for PKI details).
+
 Axis2/Java requires JWT authentication via Spring Security. All financial service
 calls need a `Bearer` token obtained from the login endpoint:
 
 ```bash
-TOKEN=$(curl -s http://localhost:8080/axis2-json-api/services/loginService \
+TOKEN=$(curl -s --http2 -k https://localhost:8443/axis2-json-api/services/loginService \
   -H 'Content-Type: application/json' \
   -d '{"doLogin":[{"arg0":{"email":"java-dev@axis.apache.org","credentials":"userguide"}}]}' \
   | python3 -c "import sys,json; print(json.load(sys.stdin)['response']['token'])")
@@ -71,7 +75,7 @@ client sees only standard MCP JSON-RPC.
     "axis2-java-finbench": {
       "command": "java",
       "args": ["-jar", "/path/to/axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar",
-               "--base-url", "http://localhost:8080/axis2-json-api"]
+               "--base-url", "https://localhost:8443/axis2-json-api"]
     }
   }
 }
@@ -82,7 +86,7 @@ client sees only standard MCP JSON-RPC.
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{
   "name":"portfolioVariance","arguments":{...}}}' \
     | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar \
-        --base-url http://localhost:8080/axis2-json-api
+        --base-url https://localhost:8443/axis2-json-api
 ```
 
 All curl examples below include paired MCP stdio equivalents.
@@ -94,7 +98,7 @@ All curl examples below include paired MCP stdio equivalents.
 ### Portfolio Variance — 5 assets
 
 ```bash
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"portfolioVariance":[{"arg0":{
     "nAssets": 5,
@@ -128,7 +132,7 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
 **MCP stdio equivalent:**
 ```bash
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"portfolioVariance","arguments":{"nAssets":5,"weights":[0.25,0.25,0.20,0.15,0.15],"covarianceMatrix":[[0.0691,0.0313,0.0457,0.0272,-0.0035],[0.0313,0.0976,0.0591,0.0408,0.0058],[0.0457,0.0591,0.1207,0.0437,-0.0086],[0.0272,0.0408,0.0437,0.0638,0.0015],[-0.0035,0.0058,-0.0086,0.0015,0.0303]],"normalizeWeights":true}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url http://localhost:8080/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 ### Portfolio Variance — 500 assets
@@ -147,7 +151,7 @@ for i in range(n):
 print(json.dumps({'portfolioVariance':[{'arg0':{'nAssets':n,'weights':w,'covarianceMatrix':c}}]}))" \
   > /tmp/pv500.json
 
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d @/tmp/pv500.json
 ```
@@ -178,7 +182,7 @@ Z ~ N(0,1). Run 100,000 paths, sort the terminal values, read off the
 this nightly for regulatory capital calculations.
 
 ```bash
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"monteCarlo":[{"arg0":{
     "nSimulations": 100000,
@@ -210,7 +214,7 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
 **MCP stdio equivalent:**
 ```bash
 echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"monteCarlo","arguments":{"nSimulations":100000,"nPeriods":252,"initialValue":1000000,"expectedReturn":0.10,"volatility":0.198,"nPeriodsPerYear":252}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url http://localhost:8080/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 ---
@@ -228,7 +232,7 @@ payload. The bridge handles the Axis2 JSON-RPC wrapping transparently.
 **Step 1 — Baseline:**
 
 ```bash
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"portfolioVariance":[{"arg0":{
     "nAssets": 5,
@@ -259,7 +263,7 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
 **Step 2 — Stressed (all pairwise correlations → 0.8):**
 
 ```bash
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"portfolioVariance":[{"arg0":{
     "nAssets": 5,
@@ -290,7 +294,7 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
 **Step 3 — Monte Carlo on stressed portfolio (100K paths):**
 
 ```bash
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"monteCarlo":[{"arg0":{
     "nSimulations": 100000,
@@ -321,7 +325,7 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
 **MCP stdio equivalent (stressed MC):**
 ```bash
 echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"monteCarlo","arguments":{"nSimulations":100000,"nPeriods":252,"initialValue":1000000,"expectedReturn":0.10,"volatility":0.255,"nPeriodsPerYear":252}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url http://localhost:8080/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 **Comparison — Axis2/C vs Axis2/Java (same inputs, same day):**
@@ -355,7 +359,7 @@ as Live Examples).
 **Candidate A — European semi (vol 44%, ρ = 0.68 to tech):**
 
 ```bash
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"portfolioVariance":[{"arg0":{
     "nAssets": 6,
@@ -379,7 +383,7 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
 **Candidate B — Japanese peer (vol 38%, ρ = 0.31 to US tech):**
 
 ```bash
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"portfolioVariance":[{"arg0":{
     "nAssets": 6,
@@ -404,14 +408,14 @@ curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService 
 
 ```bash
 # European candidate (vol 21.1%)
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"monteCarlo":[{"arg0":{"nSimulations":100000,"nPeriods":252,
        "initialValue":1000000,"expectedReturn":0.10,"volatility":0.211,
        "nPeriodsPerYear":252}}]}'
 
 # Japanese candidate (vol 20.1%)
-curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
   -d '{"monteCarlo":[{"arg0":{"nSimulations":100000,"nPeriods":252,
        "initialValue":1000000,"expectedReturn":0.10,"volatility":0.201,
@@ -459,7 +463,7 @@ Run `monteCarlo` at 1K, 10K, 100K, and 1M paths:
 
 ```bash
 for N in 1000 10000 100000 1000000; do
-  curl -s http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+  curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
     -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
     -d "{\"monteCarlo\":[{\"arg0\":{\"nSimulations\":$N,\"nPeriods\":252,
          \"initialValue\":1000000,\"expectedReturn\":0.10,\"volatility\":0.198,
@@ -470,7 +474,7 @@ done
 **MCP stdio equivalent (example for 100K):**
 ```bash
 echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"monteCarlo","arguments":{"nSimulations":100000,"nPeriods":252,"initialValue":1000000,"expectedReturn":0.10,"volatility":0.198,"nPeriodsPerYear":252}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url http://localhost:8080/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 **Axis2/Java results (2026-04-08):**
@@ -575,7 +579,7 @@ produce the same answers. The choice is deployment context, not functionality.
 Axis2/Java exposes an MCP tool catalog at:
 
 ```
-GET http://localhost:8080/axis2-json-api/openapi-mcp.json
+GET https://localhost:8443/axis2-json-api/openapi-mcp.json
 ```
 
 This endpoint returns the same tool schema structure that Claude Desktop
@@ -583,6 +587,101 @@ and other MCP clients consume. The three financial tools (`portfolioVariance`,
 `monteCarlo`, `scenarioAnalysis`) are described with full input schemas,
 parameter types, constraints, and defaults — identical in capability to the
 Axis2/C MCP stdio server.
+
+---
+
+## Container/JDK Testing Matrix
+
+MCP bridge and OpenAPI endpoints need validation across all supported containers
+and JDK versions before the 2.0.1 release:
+
+| Container | JDK | MCP Bridge | OpenAPI/Swagger UI | Status |
+|-----------|-----|------------|-------------------|--------|
+| WildFly 32 | OpenJDK 21 | ✅ Tested | ✅ Tested | Validated |
+| WildFly 39 | OpenJDK 25 | ✅ Tested | ✅ Tested | Validated |
+| Tomcat 11 | OpenJDK 21 | ✅ Tested | ✅ Tested | Validated |
+| Tomcat 11 | OpenJDK 25 | ✅ Tested | ✅ Tested | Validated |
+
+All four container/JDK combinations negotiate HTTP/2 via ALPN over TLS.
+
+---
+
+## Build and Deploy
+
+### WildFly
+
+Full build, deploy, and test instructions are in
+`modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md`.
+Quick start:
+
+```bash
+cd modules/samples/userguide/src/userguide/springbootdemo-wildfly
+mvn -Dmaven.test.skip.exec clean install
+
+# Deploy exploded WAR to WildFly
+rsync -a --delete target/deploy/axis2-json-api/ ~/wildfly/standalone/deployments/axis2-json-api.war/
+touch ~/wildfly/standalone/deployments/axis2-json-api.war.dodeploy
+```
+
+### Tomcat 11
+
+Full build, deploy, and test instructions are in
+`modules/samples/userguide/src/userguide/springbootdemo-tomcat11/README.md`.
+Quick start:
+
+```bash
+cd modules/samples/userguide/src/userguide/springbootdemo-tomcat11
+mvn -Dmaven.test.skip.exec clean install
+
+# Deploy exploded WAR to Tomcat
+cp -r target/deploy/axis2-json-api /path/to/tomcat/webapps/
+```
+
+### Verify all endpoints after deploy
+
+**Tomcat 11** (HTTPS/HTTP2 on port 8443 with mTLS):
+
+```bash
+CERTS=/path/to/axis-axis2-java-core/certs
+CURL_MTLS="curl -s --http2 --cert $CERTS/client.crt --key $CERTS/client.key --cacert $CERTS/ca.crt"
+
+# OpenAPI and MCP (no auth required, but mTLS handshake still needed)
+$CURL_MTLS https://localhost:8443/axis2-json-api/openapi.json
+$CURL_MTLS https://localhost:8443/axis2-json-api/openapi.yaml
+$CURL_MTLS https://localhost:8443/axis2-json-api/openapi-mcp.json
+$CURL_MTLS https://localhost:8443/axis2-json-api/swagger-ui
+
+# Login
+TOKEN=$($CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/loginService \
+  -H 'Content-Type: application/json' \
+  -d '{"doLogin":[{"arg0":{"email":"java-dev@axis.apache.org","credentials":"userguide"}}]}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['response']['token'])")
+
+# Financial benchmark
+$CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
+  -d '{"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],"covarianceMatrix":[[0.04,0.006],[0.006,0.09]]}}]}'
+```
+
+**WildFly 32/39** (HTTPS/HTTP2 on port 8443 with self-signed cert, JWT auth):
+
+```bash
+# OpenAPI and MCP
+curl -s --http2 -k https://localhost:8443/axis2-json-api/openapi.json
+curl -s --http2 -k https://localhost:8443/axis2-json-api/openapi-mcp.json
+
+# Login + financial benchmark
+TOKEN=$(curl -s --http2 -k https://localhost:8443/axis2-json-api/services/loginService \
+  -H 'Content-Type: application/json' \
+  -d '{"doLogin":[{"arg0":{"email":"java-dev@axis.apache.org","credentials":"userguide"}}]}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['response']['token'])")
+
+curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" \
+  -d '{"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],"covarianceMatrix":[[0.04,0.006],[0.006,0.09]]}}]}'
+```
+
+See the sample READMEs for the complete test flow covering all services.
 
 ---
 

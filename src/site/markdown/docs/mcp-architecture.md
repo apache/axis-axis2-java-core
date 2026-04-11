@@ -32,12 +32,16 @@ modelcontextprotocol.io.
 
 ### Reference implementations
 
+Build, deploy, and test instructions for each container are in the sample READMEs:
+- **Tomcat 11**: `modules/samples/userguide/src/userguide/springbootdemo-tomcat11/README.md`
+- **WildFly 32/39**: `modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md`
+
 ```
 springbootdemo-tomcat11 base URL: https://localhost:8443/axis2-json-api
   - LoginService      (auth, port 8080 only)
   - BigDataH2Service  (streaming/multiplexing demo, accessible via mTLS on 8443)
 
-springbootdemo-wildfly base URL: http://localhost:8080/axis2-json-api
+springbootdemo-wildfly base URL: https://localhost:8443/axis2-json-api
   - LoginService                (JWT auth)
   - FinancialBenchmarkService   (portfolioVariance, monteCarlo VaR, scenarioAnalysis)
   - BigDataH2Service            (HTTP/2 streaming)
@@ -330,12 +334,6 @@ opt-in per-operation.
 
 ## Next Steps
 
-### C1 — complete ✅
-
-`finbench_mcp.c` + `finbench_mcp_main.c` committed to `axis-axis2-c-core`.
-Builds with `build_financial_service.sh`; installs to `/usr/local/axis2c/bin/financial-benchmark-mcp`.
-See `docs/MCP.md` in the `axis-axis2-c-core` repo for the full C implementation plan.
-
 ### Track A remaining
 
 | Step | Work | Notes |
@@ -349,11 +347,16 @@ See `docs/MCP.md` in the `axis-axis2-c-core` repo for the full C implementation 
 2. stdio transport first (B1) — validates JSON-RPC 2.0 ↔ MessageContext translation
 3. HTTP/SSE transport (B2) — reuses Axis2 HTTP infrastructure
 
-### Axis2/C deployment
+### Testing matrix
 
-`build_financial_service.sh` in `axis-axis2-c-core` needs to be run on the target
-host after Axis2/C is installed. The service is committed and compiles clean — the
-script is the only remaining deployment step.
+MCP and OpenAPI support needs validation across the full container/JDK matrix:
+
+| Container | JDK | MCP | OpenAPI | Status |
+|-----------|-----|-----|---------|--------|
+| WildFly 32 | OpenJDK 21 | ✅ | ✅ | Validated |
+| WildFly 39 | OpenJDK 25 | ✅ | ✅ | Validated |
+| Tomcat 11 | OpenJDK 21 | ✅ | ✅ | Validated |
+| Tomcat 11 | OpenJDK 25 | ✅ | ✅ | Validated |
 
 ---
 

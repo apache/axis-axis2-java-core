@@ -81,19 +81,30 @@ reason. Do not rename the directory before copying to `webapps/`.
 
 ## Test flow
 
-### 1. Verify OpenAPI docs
+All tests use **HTTPS/HTTP2 on port 8443** with mTLS client certificates. The Tomcat connector
+requires `certificateVerification="required"` — plain HTTP is not available.
+
+Set up the cert variables first:
 
 ```bash
-curl http://localhost:8080/axis2-json-api/openapi.json
-curl http://localhost:8080/axis2-json-api/openapi.yaml
+CERTS=/path/to/axis-axis2-java-core/certs
+CURL_MTLS="curl -s --http2 --cert $CERTS/client.crt --key $CERTS/client.key --cacert $CERTS/ca.crt"
+```
+
+### 1. Verify OpenAPI and MCP endpoints
+
+```bash
+$CURL_MTLS https://localhost:8443/axis2-json-api/openapi.json
+$CURL_MTLS https://localhost:8443/axis2-json-api/openapi.yaml
+$CURL_MTLS https://localhost:8443/axis2-json-api/openapi-mcp.json
 # Interactive UI:
-curl http://localhost:8080/axis2-json-api/swagger-ui
+$CURL_MTLS https://localhost:8443/axis2-json-api/swagger-ui
 ```
 
 ### 2. Login (get Bearer token)
 
 ```bash
-curl -s -X POST http://localhost:8080/axis2-json-api/services/loginService \
+$CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/loginService \
   -H 'Content-Type: application/json' \
   -d '{"doLogin":[{"arg0":{"email":"java-dev@axis.apache.org","credentials":"userguide"}}]}'
 ```
@@ -107,7 +118,7 @@ characters).
 
 ```bash
 TOKEN="<token from step 2>"
-curl -s -X POST http://localhost:8080/axis2-json-api/services/testws \
+$CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/testws \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"doTestws":[{"arg0":{"messagein":"hello world"}}]}'
@@ -115,11 +126,11 @@ curl -s -X POST http://localhost:8080/axis2-json-api/services/testws \
 
 ### 4. Call BigData service
 
-`datasetSize` is in bytes. Size determines processing path: <10 MB → standard,
+`datasetSize` is in bytes. Size determines processing path: under 10 MB → standard,
 10–50 MB → multiplexing, >50 MB → streaming. Use at least 1 000 000 to get populated results.
 
 ```bash
-curl -s -X POST http://localhost:8080/axis2-json-api/services/BigDataH2Service \
+$CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/BigDataH2Service \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"processBigDataSet":[{"arg0":{"datasetId":"test-001","datasetSize":1000000,"processingMode":"streaming","enableMemoryOptimization":true,"analyticsType":"summary"}}]}'
@@ -132,19 +143,19 @@ Response includes `processedRecordCount`, `http2Optimized`, `memoryOptimized`, a
 
 ```bash
 # Portfolio variance — O(n²) covariance matrix
-curl -s -X POST http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+$CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],"covarianceMatrix":[[0.04,0.006],[0.006,0.09]],"normalizeWeights":false,"nPeriodsPerYear":252}}]}'
 
 # Monte Carlo VaR — GBM simulation
-curl -s -X POST http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+$CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"monteCarlo":[{"arg0":{"nSimulations":10000,"nPeriods":252,"initialValue":100.0,"expectedReturn":0.08,"volatility":0.20,"nPeriodsPerYear":252,"randomSeed":42}}]}'
 
 # Scenario analysis — probability-weighted expected return
-curl -s -X POST http://localhost:8080/axis2-json-api/services/FinancialBenchmarkService \
+$CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"scenarioAnalysis":[{"arg0":{"assets":[{"assetId":1,"currentPrice":100.0,"positionSize":100,"scenarios":[{"price":120.0,"probability":0.3},{"price":100.0,"probability":0.5},{"price":75.0,"probability":0.2}]}],"useHashLookup":true,"probTolerance":0.001}}]}'

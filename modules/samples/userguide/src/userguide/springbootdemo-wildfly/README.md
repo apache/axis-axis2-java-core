@@ -22,7 +22,7 @@
 Axis2 JSON-RPC services deployed as a WAR in **WildFly** (Undertow), using Spring Boot 3.x as
 a configuration framework only — there is no embedded container.
 
-Tested with: **WildFly 39.0.1.Final** · **OpenJDK 25** · **Spring Boot 3.4.3**
+Tested with: **WildFly 32.0.1.Final** (OpenJDK 21) · **WildFly 39.0.1.Final** (OpenJDK 25) · **Spring Boot 3.4.3**
 
 All Java source is shared from `../springbootdemo-tomcat11/src/main/java` via
 `build-helper-maven-plugin`. This module only adds WildFly-specific WEB-INF descriptors.
@@ -146,7 +146,77 @@ retried by a new WildFly instance — it must be removed.
 
 ## Test flow
 
-See `../springbootdemo-tomcat11/README.md` for the full curl-based test sequence; it applies
-identically to WildFly (same context path, same JSON-RPC format, same credentials).
+All tests use **HTTPS/HTTP2 on port 8443**. WildFly uses a self-signed certificate
+(`generate-self-signed-certificate-host="localhost"`), so `-k` is needed to skip
+certificate verification.
 
-The only difference: use port `8080` on WildFly (same default as Tomcat 11).
+```bash
+CURL_H2="curl -s --http2 -k"
+```
+
+### 1. Verify OpenAPI and MCP endpoints
+
+```bash
+$CURL_H2 https://localhost:8443/axis2-json-api/openapi.json
+$CURL_H2 https://localhost:8443/axis2-json-api/openapi.yaml
+$CURL_H2 https://localhost:8443/axis2-json-api/openapi-mcp.json
+# Interactive UI:
+$CURL_H2 https://localhost:8443/axis2-json-api/swagger-ui
+```
+
+### 2. Login (get Bearer token)
+
+```bash
+$CURL_H2 -X POST https://localhost:8443/axis2-json-api/services/loginService \
+  -H 'Content-Type: application/json' \
+  -d '{"doLogin":[{"arg0":{"email":"java-dev@axis.apache.org","credentials":"userguide"}}]}'
+```
+
+Response: `{"response":{"token":"<TOKEN>","uuid":"<UUID>","status":"OK"}}`
+
+### 3. Call protected service (testws)
+
+`messagein` must pass ESAPI `SafeString` validation (`[A-Za-z0-9.,\-_ ]*` — no `+` or special
+characters).
+
+```bash
+TOKEN="<token from step 2>"
+$CURL_H2 -X POST https://localhost:8443/axis2-json-api/services/testws \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"doTestws":[{"arg0":{"messagein":"hello world"}}]}'
+```
+
+### 4. Call BigData service
+
+`datasetSize` is in bytes. Size determines processing path: under 10 MB → standard,
+10–50 MB → multiplexing, >50 MB → streaming. Use at least 1 000 000 to get populated results.
+
+```bash
+$CURL_H2 -X POST https://localhost:8443/axis2-json-api/services/BigDataH2Service \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"processBigDataSet":[{"arg0":{"datasetId":"test-001","datasetSize":1000000,"processingMode":"streaming","enableMemoryOptimization":true,"analyticsType":"summary"}}]}'
+```
+
+### 5. Financial Benchmark Service
+
+```bash
+# Portfolio variance — O(n²) covariance matrix
+$CURL_H2 -X POST https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],"covarianceMatrix":[[0.04,0.006],[0.006,0.09]],"normalizeWeights":false,"nPeriodsPerYear":252}}]}'
+
+# Monte Carlo VaR — GBM simulation
+$CURL_H2 -X POST https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"monteCarlo":[{"arg0":{"nSimulations":10000,"nPeriods":252,"initialValue":100.0,"expectedReturn":0.08,"volatility":0.20,"nPeriodsPerYear":252,"randomSeed":42}}]}'
+
+# Scenario analysis — probability-weighted expected return
+$CURL_H2 -X POST https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"scenarioAnalysis":[{"arg0":{"assets":[{"assetId":1,"currentPrice":100.0,"positionSize":100,"scenarios":[{"price":120.0,"probability":0.3},{"price":100.0,"probability":0.5},{"price":75.0,"probability":0.2}]}],"useHashLookup":true,"probTolerance":0.001}}]}'
+```

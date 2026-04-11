@@ -33,6 +33,12 @@
 that target Axis2 JSON-RPC services and need to understand the auto-generated MCP tool
 catalog, the required envelope format, authentication flow, and current limitations.</p>
 
+<p><strong>Quick start:</strong> For step-by-step build, deploy, and test instructions
+(including curl commands for every endpoint), see the sample READMEs:
+<code>modules/samples/userguide/src/userguide/springbootdemo-tomcat11/README.md</code> (Tomcat 11)
+and <code>modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md</code>
+(WildFly 32/39).</p>
+
 <p><strong>In one sentence:</strong> Axis2 auto-generates an MCP tool catalog from its
 deployed services, accessible at <code>/openapi-mcp.json</code>, that tells MCP clients
 the exact JSON-RPC envelope format, auth requirements, and endpoint URL for every
@@ -138,16 +144,26 @@ before calling any tool:</p>
       }
     },
     {
-      "name":        "getCalculations",
-      "description": "CalculationService: getCalculations",
-      "inputSchema": { "type": "object", "properties": {}, "required": [] },
-      "endpoint":                "POST /services/CalculationService/getCalculations",
-      "x-axis2-payloadTemplate": "{\"getCalculations\":[{\"arg0\":{}}]}",
+      "name":        "portfolioVariance",
+      "description": "Calculate portfolio variance using O(n^2) covariance matrix multiplication",
+      "inputSchema": {
+        "type": "object",
+        "required": ["nAssets", "weights", "covarianceMatrix"],
+        "properties": {
+          "nAssets":          {"type": "integer", "minimum": 2, "maximum": 2000},
+          "weights":          {"type": "array", "items": {"type": "number"}},
+          "covarianceMatrix": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}},
+          "normalizeWeights": {"type": "boolean", "default": false},
+          "nPeriodsPerYear":  {"type": "integer", "default": 252}
+        }
+      },
+      "endpoint":                "POST /services/FinancialBenchmarkService/portfolioVariance",
+      "x-axis2-payloadTemplate": "{\"portfolioVariance\":[{\"arg0\":{}}]}",
       "x-requiresAuth":          true,
       "annotations": {
-        "readOnlyHint":    false,
+        "readOnlyHint":    true,
         "destructiveHint": false,
-        "idempotentHint":  false,
+        "idempotentHint":  true,
         "openWorldHint":   false
       }
     }
@@ -161,7 +177,7 @@ before calling any tool:</p>
 <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
 <tr><td><code>name</code></td><td>string</td><td>Axis2 operation name (local part of QName); use as tool name in MCP</td></tr>
 <tr><td><code>description</code></td><td>string</td><td>Auto-generated "ServiceName: operationName" — not a rich natural language description</td></tr>
-<tr><td><code>inputSchema</code></td><td>object</td><td>MCP-compliant JSON Schema wrapper; <strong>properties is always empty</strong> (see Section 7)</td></tr>
+<tr><td><code>inputSchema</code></td><td>object</td><td>MCP-compliant JSON Schema; populated from <code>mcpInputSchema</code> parameter in services.xml when set, otherwise empty <code>{}</code></td></tr>
 <tr><td><code>endpoint</code></td><td>string</td><td>Full POST path for this operation</td></tr>
 <tr><td><code>x-axis2-payloadTemplate</code></td><td>string (JSON)</td><td>The exact body to send, with the operation's wrapper already filled in</td></tr>
 <tr><td><code>x-requiresAuth</code></td><td>boolean</td><td><code>false</code> only for <code>loginService</code> (case-insensitive); <code>true</code> for everything else</td></tr>
@@ -470,8 +486,8 @@ Each item notes whether the gap is architectural (won't be added to Axis2) or de
 <tr><th>Feature</th><th>Status</th><th>Notes</th></tr>
 <tr>
   <td>Rich <code>inputSchema</code> properties</td>
-  <td>Not implemented — architectural gap</td>
-  <td><code>inputSchema.properties</code> is always <code>{}</code>. Axis2 does not introspect Java parameter types into JSON Schema. MCP clients that need parameter validation must define their own schemas (e.g., via Pydantic models in a Python MCP server layer).</td>
+  <td><strong>Implemented</strong> — set <code>mcpInputSchema</code> parameter on <code>&lt;operation&gt;</code> in services.xml</td>
+  <td>When <code>mcpInputSchema</code> is set, the catalog embeds the full JSON Schema (types, constraints, required fields). Falls back to empty <code>{}</code> when not set. All financial benchmark operations have full schemas. Automatic introspection from Java types is not yet implemented — schemas are hand-authored in services.xml.</td>
 </tr>
 <tr>
   <td>Natural language tool descriptions</td>
@@ -546,7 +562,7 @@ uses determines what limitations apply:</p>
 <tr><td>Query semantics</td><td>Per-operation parameters in arg0</td><td>Uniform filter/sort/fields on every resource</td></tr>
 <tr><td>Error format</td><td>SOAP fault with correlation ID UUID</td><td>RFC 7807 Problem Details (JSON, per-field)</td></tr>
 <tr><td>Pagination</td><td>Full result sets only</td><td>Cursor-based</td></tr>
-<tr><td>inputSchema</td><td>Always empty properties</td><td>Full JSON Schema from OpenAPI annotations</td></tr>
+<tr><td>inputSchema</td><td>Full JSON Schema via <code>mcpInputSchema</code> in services.xml (hand-authored)</td><td>Full JSON Schema from OpenAPI annotations (auto-generated)</td></tr>
 </table>
 
 <p>The Axis2 MCP catalog at <code>/openapi-mcp.json</code> provides MCP-ready tool
@@ -561,7 +577,8 @@ tool discovery during the transition period.</p>
 <p>When building a Python MCP server that targets Axis2 services, keep these points in mind:</p>
 
 <ul>
-<li>The Axis2 catalog's <code>inputSchema.properties</code> is always empty — define full
+<li>When <code>mcpInputSchema</code> is set in services.xml, the catalog provides full
+    JSON Schema for each tool. For services without <code>mcpInputSchema</code>, define
     Pydantic <code>inputSchema</code> per tool in your Python MCP server layer.</li>
 <li>Use curated natural language descriptions in your MCP server rather than relying on
     the auto-generated "ServiceName: opName" default (or set <code>mcpDescription</code>
