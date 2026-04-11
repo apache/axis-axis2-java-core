@@ -76,7 +76,7 @@
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/complexdatatypebare" />
 
 		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="rpc-wsdl-codegen" />
-		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="wsdl20-codegen" />
+		<!-- WSDL 2.0 codegen removed in 2.0.1 (AXIS2-6102) -->
 	</target>
 
 	<target name="rpc-wsdl-codegen">
@@ -127,15 +127,7 @@
 					 target="jar.client"/>
 	</target>
 
-	<target name="wsdl20-codegen">
-		<echo>Running codegen for WSDL 2.0</echo>
-		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.runtime.classpath"/>
-			<arg line="-wv 2.0 -ap -o target/wsdl20-test -s -uri test-resources/wsdl20/HotelReservationService.wsdl"/>
-		</java>
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl20-test"
-									 target="jar.client"/>
-    </target>
+	<!-- wsdl20-codegen target removed in 2.0.1 (AXIS2-6102) -->
 
 	<target name="enterprise-wsdl-codegen">
 		<!-- codegen for the enterprise wsdl -->
