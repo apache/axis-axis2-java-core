@@ -44,23 +44,40 @@ deployed services, accessible at <code>/openapi-mcp.json</code>, that tells MCP 
 the exact JSON-RPC envelope format, auth requirements, and endpoint URL for every
 deployed operation — no out-of-band documentation required.</p>
 
-<p><strong>Legacy SOAP services:</strong> MCP is a JSON-RPC 2.0 protocol — it does
-not support SOAP. To expose a SOAP service to AI agents via MCP, first convert it
-to JSON-RPC by switching message receivers in <code>services.xml</code> and setting
-<code>axis2.mode=json</code> (see the
-<a href="spring-boot-starter.html#soap_vs_json">Spring Boot Starter Guide</a>).
-The service Java class does not change — only the wire format configuration.</p>
-
 <!-- ============================================================ -->
 <h2>What is MCP?</h2>
 
 <p><strong>MCP (Model Context Protocol)</strong> is an open standard published at
 <code>modelcontextprotocol.io</code> that defines how AI assistants (Claude, ChatGPT,
-Cursor, etc.) discover and call external tools. The protocol is JSON-RPC 2.0 over
-stdio or HTTP/SSE. An MCP server advertises a catalog of tools — each with a name,
-description, and JSON Schema for its parameters — and the AI assistant calls them
-by name. MCP is to AI tool use what OpenAPI is to REST API discovery: a
-machine-readable contract that eliminates guesswork.</p>
+Cursor, etc.) discover and call external tools.</p>
+
+<p><strong>The core idea:</strong> An MCP server advertises a catalog of tools — each
+with a name, a natural-language description, and a JSON Schema describing its
+parameters. An AI assistant reads this catalog, decides which tool to call based on
+the user's request, fills in the parameters as a JSON object, and sends a
+<code>tools/call</code> request. The server executes the tool and returns the result
+as JSON. The entire exchange is JSON — requests, responses, parameter schemas,
+error messages. There is no XML anywhere in the protocol.</p>
+
+<p><strong>Why MCP is JSON-only:</strong> MCP is built on
+<a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>, the same
+lightweight RPC protocol used by language servers (LSP), cryptocurrency nodes
+(Ethereum), and many other modern tools. AI assistants produce and consume JSON
+natively — their training data is overwhelmingly JSON, their function-calling APIs
+use JSON, and their tool-use formats are JSON Schema. XML/SOAP was never considered
+for MCP because the entire AI tooling ecosystem is JSON-native.</p>
+
+<p><strong>What this means for SOAP services:</strong> MCP cannot call SOAP endpoints
+directly. A SOAP service returns XML envelopes with namespaces, and MCP clients
+cannot parse them. To expose a SOAP service to AI agents, convert it to JSON-RPC
+first — this is a configuration change in <code>services.xml</code> (swap message
+receivers), not a code change. The service Java class is unchanged. See the
+<a href="spring-boot-starter.html#soap_vs_json">Spring Boot Starter Guide</a>
+for the <code>axis2.mode=json</code> setting.</p>
+
+<p>MCP is to AI tool use what OpenAPI is to REST API discovery: a machine-readable
+contract that eliminates guesswork. The protocol specification is at
+<code>modelcontextprotocol.io</code>.</p>
 
 <h2>Axis2: Three Protocols from One Service</h2>
 
