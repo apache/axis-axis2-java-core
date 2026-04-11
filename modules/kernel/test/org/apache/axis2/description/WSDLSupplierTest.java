@@ -78,25 +78,7 @@ public class WSDLSupplierTest extends TestCase {
         assertTrue(wsdl.contains("</wsdl:definitions>"));
     }
 
-    public void testWSDLSupplierWSDL20() throws Exception {
-        String value = TestWSDL20Supplier.class.getName();
-        axisService.addParameter(Constants.WSDL_20_SUPPLIER_CLASS_PARAM, value);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        axisService.printWSDL2(outputStream);
-        String wsdl = outputStream.toString();
-        assertTrue(wsdl.contains("<wsdl:description xmlns:wsdl=\"http://www.w3.org/ns/wsdl\">"));
-        assertTrue(wsdl.contains("</wsdl:description>"));
-    }
-
-    public void testWSDLSupplierWSDL2SupplierClass() throws Exception {
-        Object value = new TestWSDL20Supplier();
-        axisService.addParameter(Constants.WSDL_SUPPLIER_PARAM, value);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        axisService.printWSDL2(outputStream);
-        String wsdl = outputStream.toString();
-        assertTrue(wsdl.contains("<wsdl:description xmlns:wsdl=\"http://www.w3.org/ns/wsdl\">"));
-        assertTrue(wsdl.contains("</wsdl:description>"));
-    }
+    // testWSDLSupplierWSDL20, testWSDLSupplierWSDL2SupplierClass removed (AXIS2-6102)
 
     public void testWSDL11SupplierTemplate() throws Exception {
         WSDL11SupplierTemplate value = new TestWSDL11SupplierTemplate();
@@ -138,44 +120,5 @@ public class WSDLSupplierTest extends TestCase {
         assertFalse(wsdl.contains("<documentation/>"));
     }
 
-    public void testWSDL20SupplierTemplate() throws Exception {
-        TestWSDL20SupplierTemplate value = new TestWSDL20SupplierTemplate();
-        axisService.addParameter(Constants.WSDL_SUPPLIER_PARAM, value);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        axisService.printWSDL2(outputStream);
-        String wsdl = outputStream.toString();
-        assertTrue(wsdl.contains("<wsdl2:description"));
-        assertTrue(wsdl.contains("xmlns:wsdl2=\"http://www.w3.org/ns/wsdl\""));
-        assertTrue(wsdl.contains("xmlns:wsaw=\"http://www.w3.org/2006/05/addressing/wsd"));
-        assertTrue(wsdl.contains("xmlns:tns=\"http://ws.apache.org/axis2\""));
-        assertTrue(wsdl.contains("xmlns:wsoap=\"http://www.w3.org/ns/wsdl/soap\" "));
-        assertTrue(wsdl.contains("<wsdl2:documentation>"));
-        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
-        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
-        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
-        assertTrue(wsdl.contains(" </ap:detail>"));
-        assertTrue(wsdl.contains("</wsdl2:documentation>"));
-        assertFalse(wsdl.contains("<documentation/>"));
-    }
-
-    public void testWSDL11SupplierTemplateWSDL20SupplierClass() throws Exception {
-        String value = TestWSDL20SupplierTemplate.class.getName();
-        axisService.addParameter(Constants.WSDL_20_SUPPLIER_CLASS_PARAM, value);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        axisService.printWSDL2(outputStream);
-        String wsdl = outputStream.toString();
-        assertTrue(wsdl.contains("<wsdl2:description"));
-        assertTrue(wsdl.contains("xmlns:wsdl2=\"http://www.w3.org/ns/wsdl\""));
-        assertTrue(wsdl.contains("xmlns:wsaw=\"http://www.w3.org/2006/05/addressing/wsd"));
-        assertTrue(wsdl.contains("xmlns:tns=\"http://ws.apache.org/axis2\""));
-        assertTrue(wsdl.contains("xmlns:wsoap=\"http://www.w3.org/ns/wsdl/soap\" "));
-        assertTrue(wsdl.contains("<wsdl2:documentation>"));
-        assertTrue(wsdl.contains("<ap:detail xmlns:ap=\"http://axis.apache.org\">"));
-        assertTrue(wsdl.contains("<ap:name>Apache Axis2</ap:name>"));
-        assertTrue(wsdl.contains("<ap:email>user@axis.apache.org</ap:email>"));
-        assertTrue(wsdl.contains(" </ap:detail>"));
-        assertTrue(wsdl.contains("</wsdl2:documentation>"));
-        assertFalse(wsdl.contains("<documentation/>"));
-    }
-
+    // testWSDL20SupplierTemplate, testWSDL11SupplierTemplateWSDL20SupplierClass removed (AXIS2-6102)
 }

@@ -39,10 +39,6 @@ public class WSDLToAllServicesBuilderTest extends TestCase {
             "EchoServicePortOne",
             "EchoServicePortTwo",
             "EchoServicePortThree"};
-    private static final String[] expectedService20 = {
-            "echoService1$echoServiceSOAPBinding_http",
-            "echoService1$echoServiceEndpoint2SOAPBinding_http",
-            "echoService2$echoServiceSOAPBinding_http"};
     private ConfigurationContext configContext;
     ListenerManager lm;
 
@@ -94,26 +90,5 @@ public class WSDLToAllServicesBuilderTest extends TestCase {
         }
     }
 
-    public void testWSDL20toAllAxisServices() throws Exception {
-        File testResourceFile = new File("target/test-classes/wsdl/EchoServiceWsdl20.wsdl");
-        File outLocation = new File("target/test-resources");
-        outLocation.mkdirs();
-        if (testResourceFile.exists()) {
-            List axisServices = null;
-            try {
-                WSDL20ToAllAxisServicesBuilder builder = new WSDL20ToAllAxisServicesBuilder(
-                        new FileInputStream(testResourceFile));
-                axisServices = builder.populateAllServices();
-                System.out.println("WSDL file: " + testResourceFile.getName());
-            } catch (Exception e) {
-                System.out.println("Error in WSDL : " + testResourceFile.getName());
-                System.out.println("Exception: " + e.toString());
-                throw e;
-            }
-            checkResults(axisServices, expectedService20);
-
-        }
-    }
-
-
+    // testWSDL20toAllAxisServices removed in 2.0.1 (AXIS2-6102)
 }
