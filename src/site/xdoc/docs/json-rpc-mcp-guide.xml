@@ -44,6 +44,59 @@ deployed services, accessible at <code>/openapi-mcp.json</code>, that tells MCP 
 the exact JSON-RPC envelope format, auth requirements, and endpoint URL for every
 deployed operation — no out-of-band documentation required.</p>
 
+<!-- ============================================================ -->
+<h2>What is MCP?</h2>
+
+<p><strong>MCP (Model Context Protocol)</strong> is an open standard published at
+<code>modelcontextprotocol.io</code> that defines how AI assistants (Claude, ChatGPT,
+Cursor, etc.) discover and call external tools. The protocol is JSON-RPC 2.0 over
+stdio or HTTP/SSE. An MCP server advertises a catalog of tools — each with a name,
+description, and JSON Schema for its parameters — and the AI assistant calls them
+by name. MCP is to AI tool use what OpenAPI is to REST API discovery: a
+machine-readable contract that eliminates guesswork.</p>
+
+<h2>Axis2: Three Protocols from One Service</h2>
+
+<p>A single Axis2 service deployment simultaneously speaks three protocols from the
+same Java class, with no code duplication and no wrapper layers:</p>
+
+<table border="1">
+<tr><th>Protocol</th><th>What it serves</th><th>Who calls it</th></tr>
+<tr>
+  <td><strong>JSON-RPC</strong></td>
+  <td>Axis2's native wire format — <code>{"op":[{"arg0":{...}}]}</code> envelope over HTTP POST</td>
+  <td>Existing enterprise callers, Node.js bridges, legacy integrations</td>
+</tr>
+<tr>
+  <td><strong>REST + OpenAPI</strong></td>
+  <td>Auto-generated OpenAPI 3.0 spec at <code>/openapi.json</code>, interactive Swagger UI at <code>/swagger-ui</code></td>
+  <td>React frontends, data API consumers, API gateways, developers exploring the service</td>
+</tr>
+<tr>
+  <td><strong>MCP</strong></td>
+  <td>Auto-generated MCP tool catalog at <code>/openapi-mcp.json</code> with full <code>inputSchema</code>, auth hints, and payload templates</td>
+  <td>AI assistants (Claude Desktop, Claude API, Cursor), any MCP-compatible agent</td>
+</tr>
+</table>
+
+<p><strong>This is unique to Axis2.</strong> No other Java framework serves all three
+protocols from the same service class in the same deployment:</p>
+
+<ul>
+<li><strong>Spring Boot</strong> — excellent REST + OpenAPI via springdoc. MCP is available
+    via Spring AI, but as a separate server component with its own tool definitions — not
+    auto-generated from existing service classes. No native JSON-RPC support.</li>
+<li><strong>Apache CXF</strong> — SOAP + REST, but no JSON-RPC transport and no MCP support.</li>
+<li><strong>JAX-RS (Jersey, RESTEasy)</strong> — REST + OpenAPI only. No JSON-RPC, no MCP.</li>
+<li><strong>gRPC</strong> — its own binary protocol with REST bridging via grpc-gateway.
+    No JSON-RPC, no MCP.</li>
+</ul>
+
+<p>With Axis2, adding MCP to an existing JSON-RPC service is a configuration change in
+<code>services.xml</code> — add <code>mcpDescription</code> and <code>mcpInputSchema</code>
+parameters to each operation, and the MCP catalog appears automatically at
+<code>/openapi-mcp.json</code>. The service Java class is unchanged.</p>
+
 <ul>
 <li><a href="#mcp_catalog">1. The MCP Catalog Endpoint</a></li>
 <li><a href="#catalog_schema">2. Catalog Schema Reference</a></li>
