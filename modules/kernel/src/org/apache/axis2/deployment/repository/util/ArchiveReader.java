@@ -452,17 +452,9 @@ public class ArchiveReader implements DeploymentConstants {
                 return ((WSDL11ToAllAxisServicesBuilder)wsdlToAxisServiceBuilder).populateAllServices();
             } else if (WSDL2Constants.WSDL_NAMESPACE.
                     equals(documentElementNS.getNamespaceURI())){
-                wsdlToAxisServiceBuilder = new WSDL20ToAllAxisServicesBuilder(
-                        new ByteArrayInputStream(out.toByteArray()));
-                ((WSDL20ToAllAxisServicesBuilder)wsdlToAxisServiceBuilder).setCustomWSDLResolver(new WarBasedWSDLLocator(wsdlUrl,
-                                                                                         loader,
-                                                                                         new ByteArrayInputStream(
-                                                                                                 out.toByteArray())));
-                wsdlToAxisServiceBuilder.setCustomResolver(
-                        new WarFileBasedURIResolver(loader));
-                return ((WSDL20ToAllAxisServicesBuilder)wsdlToAxisServiceBuilder).populateAllServices();
-            }
-            else {
+                // WSDL 2.0 support removed in 2.0.1 (AXIS2-6102)
+                throw new DeploymentException("WSDL 2.0 is no longer supported. Use WSDL 1.1.");
+            } else {
                 throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
             }
         }

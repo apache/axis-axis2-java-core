@@ -680,26 +680,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
             if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                     equals(getWSDLVersion())) {
-
-                WSDL20ToAxisServiceBuilder builder;
-
-                // jibx currently does not support multiservice
-                if ((getServiceName() != null) || (getDatabindingType().equals("jibx"))) {
-                    builder = new WSDL20ToAxisServiceBuilder(
-                            wsdlUri,
-                            getServiceName(),
-                            getPortName(),
-                            isAllPorts());
-                    builder.setCodegen(true);
-                    addAxisService(builder.populateService());
-                } else {
-                    builder = new WSDL20ToAllAxisServicesBuilder(wsdlUri, getPortName());
-                    builder.setCodegen(true);
-                    builder.setAllPorts(isAllPorts());
-                    setAxisServices(
-                            ((WSDL20ToAllAxisServicesBuilder)builder).populateAllServices());
-                }
-
+                // WSDL 2.0 codegen removed in 2.0.1 (AXIS2-6102)
+                throw new CodeGenerationException(
+                        new Exception("WSDL 2.0 code generation is no longer supported. Use WSDL 1.1."));
             } else {
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);

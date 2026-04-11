@@ -68,8 +68,6 @@ import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
-import org.apache.woden.WSDLSource;
-import org.apache.woden.wsdl20.Description;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
@@ -1194,21 +1192,10 @@ public class AxisService extends AxisDescription {
     }
     
     public void printUserWSDL2(OutputStream out, String wsdlName, String ip) throws AxisFault {
-        Description description = null;
-        // first find the correct wsdl definition
-        Parameter wsdlParameter = getParameter(WSDLConstants.WSDL_20_DESCRIPTION);
-        if (wsdlParameter != null) {
-            description = (Description) wsdlParameter.getValue();
-            try {
-                org.apache.woden.WSDLFactory factory = org.apache.woden.WSDLFactory.newInstance();
-                org.apache.woden.WSDLWriter writer = factory.newWSDLWriter();
-                writer.writeWSDL(description.toElement(), out);
-            } catch (org.apache.woden.WSDLException e) {
-                throw AxisFault.makeFault(e);
-            }
-        }
-
-}
+        // WSDL 2.0 support removed in 2.0.1 (AXIS2-6102).
+        // WSDL 2.0 was never adopted by the industry; Apache Woden never reached a final release.
+        throw new AxisFault("WSDL 2.0 output is no longer supported. Use WSDL 1.1 (?wsdl).");
+    }
 
     /**
      * find the defintion object for given name
@@ -1839,20 +1826,8 @@ public class AxisService extends AxisDescription {
         }                
         if (supplier != null) {
             Object wsdlContent = supplier.getWSDL(this);
-            if( wsdlContent instanceof Description){
-                try {
-                    Description definition = (Description) wsdlContent;
-                    if (definition != null) {
-                        //TODO  -- Need to implement this method for WSDL 2.0
-                        //changeImportAndIncludeLocations(definition);
-                        printDescriptionObject(definition, out, requestIP);
-                    }
-                } catch (Exception e) {
-                    printWSDLError(out, e);
-                }
-                
-            // wsdlContent can be a OMElement           
-            } else if (wsdlContent instanceof OMElement) {
+            // WSDL 2.0 Description handling removed in 2.0.1 (AXIS2-6102)
+            if (wsdlContent instanceof OMElement) {
                 OMElement wsdlElement = (OMElement) wsdlContent;
                 QName wsdlName = wsdlElement.getQName();
                 if (wsdlName != null
@@ -2407,14 +2382,6 @@ public class AxisService extends AxisDescription {
                 }
                 return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName,
                         options);
-            } else if (Constants.NS_URI_WSDL20.equals(namespaceURI)) {
-                org.apache.woden.WSDLReader reader = org.apache.woden.WSDLFactory.newInstance()
-                        .newWSDLReader();
-                WSDLSource source = reader.createWSDLSource();
-                source.setSource(doc);
-                source.setBaseURI(wsdlURL.toURI());
-                Description description = reader.readWSDL(source);
-                return createClientSideAxisService(description, wsdlServiceName, portName, options);
             } else {
                 throw new AxisFault("No namespace found : Invalid WSDL");
             }
@@ -2429,12 +2396,6 @@ public class AxisService extends AxisDescription {
             log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         } catch (WSDLException e) {
-            log.error(e.getMessage(), e);
-            throw AxisFault.makeFault(e);
-        } catch (org.apache.woden.WSDLException e) {
-            log.error(e.getMessage(), e);
-            throw AxisFault.makeFault(e);
-        } catch (URISyntaxException e) {
             log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         }
@@ -3469,35 +3430,7 @@ public class AxisService extends AxisDescription {
      * @return
      * @throws AxisFault
      */
-    public static AxisService createClientSideAxisService(Description description,
-            QName wsdlServiceName, String endPoint, Options options) throws AxisFault {
-        WSDL20ToAxisServiceBuilder serviceBuilder = new WSDL20ToAxisServiceBuilder(description,
-                wsdlServiceName, endPoint);
-        serviceBuilder.setServerSide(false);
-        AxisService axisService = serviceBuilder.populateService();
-        AxisEndpoint axisEndpoint = (AxisEndpoint) axisService.getEndpoint(axisService
-                .getEndpointName());
-        if (axisEndpoint != null) {
-            options.setTo(new EndpointReference(axisEndpoint.getEndpointURL()));
-            options.setSoapVersionURI((String) axisEndpoint.getBinding().getProperty(
-                    WSDL2Constants.ATTR_WSOAP_VERSION));
-        }
-        return axisService;
-    }    
-    private void printDescriptionObject(Description definition,
-            OutputStream out, String requestIP) {
-        //TODO - complete this method
-        org.apache.woden.WSDLFactory fac;
-        try {
-            fac = org.apache.woden.WSDLFactory.newInstance();
-            org.apache.woden.WSDLWriter writer = fac.newWSDLWriter();
-            writer.writeWSDL(definition.toElement(), out);
-        } catch (org.apache.woden.WSDLException e) {
-            e.printStackTrace();
-        }
-        
-        
-    }
+    // WSDL 2.0 client-side service creation removed in 2.0.1 (AXIS2-6102).
     
     private WSDLSupplier getUserDefinedWSDLSupplier(String wsdlVersion){
         WSDLSupplier wsdlSupplier = null;
