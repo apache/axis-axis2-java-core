@@ -115,7 +115,8 @@ public class Axis2OpenApiAutoConfiguration {
                 }
             } catch (Exception e) {
                 log.error("OpenApiServlet error handling " + uri + ": " + e.getMessage(), e);
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Internal Server Error");
             }
         }
     }
