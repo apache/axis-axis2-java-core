@@ -29,81 +29,298 @@
 </head>
 <body lang="en-US" dir="ltr" xml:lang="en-US">
 <h1 align="center">Apache Axis2 Architecture Guide</h1>
-<p>This document gives an introduction to Axis2's modular
-architecture with explanations on every module.</p>
+
+<p>Apache Axis2 has a twenty-year proven architecture that now serves modern
+protocols. What began as a SOAP processing engine in 2004 has evolved into a
+multi-protocol service platform -- deploying JSON-RPC, REST with OpenAPI,
+Model Context Protocol (MCP), and classic SOAP services from a single
+codebase and a single handler chain. This guide explains why that matters
+and how to get involved.</p>
+
+<!-- =============================================================== -->
+<!-- MODERN OVERVIEW (2026)                                          -->
+<!-- =============================================================== -->
+
 <h2>Contents</h2>
 <ul>
-<li><a href="#bmBP">The Big Picture</a></li>
-<li>
-<p><a href="#requirements">Requirement of Axis2</a></p>
+<li><a href="#modern-overview">Axis2 in 2026: Multi-Protocol Platform</a>
+  <ul>
+  <li><a href="#handler-chain-differentiator">The Handler Chain as Architectural Differentiator</a></li>
+  <li><a href="#modern-deployment">Modern Deployment Targets</a></li>
+  <li><a href="#whats-new-2">What's New in 2.0</a></li>
+  <li><a href="#architecture-at-a-glance">Architecture at a Glance</a></li>
+  <li><a href="#contributing">Where to Contribute</a></li>
+  </ul>
 </li>
-<li><a href="#thearchi">Axis2 Architecture</a>
+<li><a href="#classic-architecture">Classic SOAP Architecture Reference</a>
+  <ul>
+  <li><a href="#bmBP">The Big Picture</a></li>
+  <li><a href="#requirements">Requirement of Axis2</a></li>
+  <li><a href="#thearchi">Axis2 Architecture</a>
+    <ul>
+    <li><a href="#bmcore">Core Modules</a></li>
+    <li><a href="#bmother">Other Modules</a></li>
+    <li><a href="#bmInfoMod">Information Model</a></li>
+    <li><a href="#bmXML">XML Processing Model</a></li>
+    <li><a href="#bmSOAPPM">SOAP Processing Model</a>
+      <ul>
+      <li><a href="#default">Axis2 Default Processing Model</a></li>
+      <li><a href="#incomingsoap">Processing an Incoming SOAP Message</a></li>
+      <li><a href="#outgoing">Processing of the Outgoing Message</a></li>
+      <li><a href="#extending">Extending the SOAP Processing Model</a>
+        <ul>
+        <li><a href="#extendingwithhandlers">Extending the SOAP Processing Model with Handlers</a></li>
+        <li><a href="#extendingwithmodules">Extending the SOAP Processing Model with Modules</a></li>
+        </ul>
+      </li>
+      </ul>
+    </li>
+    <li><a href="#bmDeployment">Deployment</a>
+      <ul>
+      <li><a href="#xmlfile">The <em>axis2.xml</em> file</a></li>
+      <li><a href="#servicearchive">Service Archive</a></li>
+      <li><a href="#modulearchive">Module Archive</a></li>
+      </ul>
+    </li>
+    <li><a href="#bmClientAPI">Client API</a>
+      <ul>
+      <li><a href="#oneway">One Way Messaging Support</a></li>
+      <li><a href="#requestresponse">Request Response Messaging Support</a></li>
+      </ul>
+    </li>
+    <li><a href="#bmTransports">Transports</a></li>
+    <li><a href="#bmWSDL">Code Generation</a></li>
+    <li><a href="#bmDB">Data Binding</a>
+      <ul>
+      <li><a href="#integration">Integration with Code Generation Engine</a></li>
+      <li><a href="#serial">Serialization and De-Serialization</a></li>
+      </ul>
+    </li>
+    </ul>
+  </li>
+  </ul>
+</li>
+</ul>
+
+<!-- =============================================================== -->
+<a name="modern-overview" id="modern-overview"></a>
+<h2>Axis2 in 2026: Multi-Protocol Platform</h2>
+
+<p>Axis2 2.0 delivers JSON-RPC, REST+OpenAPI, Model Context Protocol (MCP),
+and classic SOAP -- all from one deployment artifact, all processed by the
+same handler chain. A service written as a plain Java class can simultaneously
+accept SOAP/XML requests, JSON-RPC calls, RESTful HTTP requests with
+auto-generated OpenAPI documentation, and MCP tool invocations. No separate
+frameworks, no glue code, no protocol-specific deployment descriptors.</p>
+
+<p>This is possible because the handler-chain architecture designed in 2004
+was protocol-agnostic from the start. Messages enter a pipeline of phases
+and handlers regardless of wire format. Axis2 2.0 extends that pipeline with
+new dispatchers and message receivers that understand JSON and MCP, while
+every existing SOAP handler, module, and service continues to work
+unchanged.</p>
+
+<!-- =============================================================== -->
+<a name="handler-chain-differentiator" id="handler-chain-differentiator"></a>
+<h3>The Handler Chain as Architectural Differentiator</h3>
+
+<p>The handler chain is the single most important concept in Axis2. Every
+inbound message -- whether it carries a SOAP envelope, a JSON-RPC request, or
+an MCP tool call -- flows through the same sequence of phases:</p>
+
+<ol>
+<li><strong>Transport Phase</strong> -- transport-level processing (HTTP
+headers, TLS client certificates, HTTP/2 stream management).</li>
+<li><strong>Pre-Dispatch Phase</strong> -- populates the MessageContext with
+addressing information, content-type sniffing, and protocol detection.</li>
+<li><strong>Dispatch Phase</strong> -- dispatchers identify the target service
+and operation. The new <code>JSONBasedDefaultDispatcher</code> handles
+JSON-RPC method resolution alongside the classic URI, SOAP-action, and
+WS-Addressing dispatchers.</li>
+<li><strong>User Phases</strong> -- custom handlers for logging, security
+policy enforcement, rate limiting, or any cross-cutting concern.</li>
+<li><strong>Message Receiver</strong> -- the terminal handler that delivers
+the message to your service implementation. SOAP messages reach the classic
+<code>RawXMLINOutMessageReceiver</code>; JSON-RPC calls reach the new
+<code>JsonRpcMessageReceiver</code>; MCP invocations reach the
+<code>McpToolMessageReceiver</code>.</li>
+</ol>
+
+<p>Because security handlers, logging handlers, and WS-Addressing handlers
+sit in the chain <em>before</em> dispatch, they apply uniformly to every
+protocol. You write a handler once and it protects SOAP, JSON-RPC, REST,
+and MCP traffic alike.</p>
+
+<!-- =============================================================== -->
+<a name="modern-deployment" id="modern-deployment"></a>
+<h3>Modern Deployment Targets</h3>
+
+<p>Axis2 2.0 runs on current Java platforms and application servers:</p>
+
+<table border="1" cellpadding="4" cellspacing="0">
+<tr>
+<th>Target</th>
+<th>Details</th>
+</tr>
+<tr>
+<td><strong>Spring Boot Starter</strong></td>
+<td>Auto-configures Axis2 as an embedded servlet. Add the starter
+dependency and your services are live. See
+<a href="spring-boot-starter.html">Spring Boot Starter Guide</a>.</td>
+</tr>
+<tr>
+<td><strong>Apache Tomcat 11</strong></td>
+<td>Deploy as a standard WAR with Jakarta Servlet 6.0 support.</td>
+</tr>
+<tr>
+<td><strong>WildFly 32 / 39</strong></td>
+<td>Deploy as a WAR or EAR. Axis2 integrates with the WildFly
+class-loading and JNDI subsystems.</td>
+</tr>
+<tr>
+<td><strong>OpenJDK 21 / 25</strong></td>
+<td>Fully tested on the current LTS and latest OpenJDK releases.
+Virtual threads (Project Loom) are supported for high-concurrency
+deployments.</td>
+</tr>
+</table>
+
+<!-- =============================================================== -->
+<a name="whats-new-2" id="whats-new-2"></a>
+<h3>What's New in 2.0</h3>
+
+<p>The following features are new or substantially reworked in Axis2 2.0:</p>
+
+<dl>
+<dt><strong>JSON-RPC Message Receivers</strong></dt>
+<dd>The <code>JsonRpcMessageReceiver</code> and
+<code>JsonRpcInOnlyMessageReceiver</code> allow any Axis2 service to accept
+JSON-RPC 2.0 calls. No WSDL required -- method names map directly to
+operations. See the
+<a href="json-rpc-mcp-guide.html">JSON-RPC and MCP Guide</a>.</dd>
+
+<dt><strong>JSONBasedDefaultDispatcher</strong></dt>
+<dd>A new dispatcher that examines the JSON-RPC <code>method</code> field
+to resolve the target service and operation, complementing the existing
+URI-based, SOAP-action-based, and WS-Addressing-based dispatchers.</dd>
+
+<dt><strong>OpenAPI Auto-Generation</strong></dt>
+<dd>Axis2 can generate an OpenAPI 3.1 specification from any deployed
+service, making REST endpoints discoverable by standard tooling and API
+gateways.</dd>
+
+<dt><strong>MCP Tool Catalogs</strong></dt>
+<dd>Services can expose operations as Model Context Protocol tools,
+allowing AI agents and LLM-based systems to discover and invoke them.
+See the <a href="mcp-architecture.html">MCP Architecture Guide</a>.</dd>
+
+<dt><strong>HTTP/2 Transport</strong></dt>
+<dd>The new HTTP/2-capable transport, built on Apache HttpComponents 5,
+supports multiplexed streams, server push, and HTTPS-only deployments.</dd>
+
+<dt><strong>mTLS and X.509 Security</strong></dt>
+<dd>Mutual TLS authentication with X.509 client certificates is supported
+natively, alongside JWT bearer tokens, providing dual-auth capability on
+HTTPS endpoints.</dd>
+</dl>
+
+<!-- =============================================================== -->
+<a name="architecture-at-a-glance" id="architecture-at-a-glance"></a>
+<h3>Architecture at a Glance</h3>
+
+<p>The following text diagram shows the request flow for all protocols:</p>
+
+<pre>
+  HTTP/HTTPS Request (SOAP, JSON-RPC, REST, or MCP)
+         |
+         v
+  +------------------+
+  |   AxisServlet     |   (or Spring Boot auto-configured servlet)
+  +------------------+
+         |
+         v
+  +------------------+
+  |  Transport Phase  |   HTTP headers, TLS certs, HTTP/2 streams
+  +------------------+
+         |
+         v
+  +------------------+
+  | Pre-Dispatch      |   Content-type detection, WS-Addressing
+  +------------------+
+         |
+         v
+  +------------------+
+  | Dispatch Phase    |   URIBasedDispatcher (REST)
+  |                   |   SOAPActionBasedDispatcher (SOAP)
+  |                   |   JSONBasedDefaultDispatcher (JSON-RPC)
+  |                   |   AddressingBasedDispatcher (WS-A)
+  +------------------+
+         |
+         v
+  +------------------+
+  | User Phases       |   Security, logging, custom handlers
+  +------------------+
+         |
+         v
+  +--------------------------------------------------+
+  | Message Receiver (chosen per-operation)            |
+  |                                                    |
+  |  SOAP:      RawXMLINOutMessageReceiver             |
+  |  JSON-RPC:  JsonRpcMessageReceiver                 |
+  |  MCP:       McpToolMessageReceiver                 |
+  +--------------------------------------------------+
+         |
+         v
+  +------------------+
+  | Service Impl      |   Your plain Java class
+  +------------------+
+</pre>
+
+<p>The key insight: everything above the Message Receiver line is shared
+infrastructure. Protocol-specific behavior is isolated to the dispatcher
+(which routes) and the message receiver (which deserializes). Your service
+implementation is protocol-unaware.</p>
+
+<!-- =============================================================== -->
+<a name="contributing" id="contributing"></a>
+<h3>Where to Contribute</h3>
+
+<p>Axis2 is undergoing active modernization. The following areas need
+contributors:</p>
+
 <ul>
-<li>
-<p><a href="#bmcore">Core Modules</a></p>
-</li>
-<li><a href="#bmother">Other Modules</a></li>
-<li>
-<p><a href="#bmInfoMod">Information Model</a></p>
-</li>
-<li><a href="#bmXML">XML Processing Model</a></li>
-<li>
-<p><a href="#bmSOAPPM">SOAP Processing Model</a></p>
-<ul>
-<li><a href="#default">Axis2 Default Processing Model</a></li>
-<li>
-<p><a href="#incomingsoap">Processing an Incoming SOAP
-Message</a></p>
-</li>
-<li><a href="#outgoing">Processing of the Outgoing Message</a></li>
-<li>
-<p><a href="#extending">Extending the SOAP Processing Model</a></p>
-<ul>
-<li><a href="#extendingwithhandlers">Extending the SOAP Processing
-Model with Handlers</a></li>
-<li>
-<p><a href="#extendingwithmodules">Extending the SOAP Processing
-Model with Modules</a></p>
-</li>
+<li><strong>Embedded Tomcat support</strong> -- A lightweight embedded
+Tomcat launcher (similar to the existing <code>SimpleHTTPServer</code> but
+based on Tomcat 11) would simplify development and testing without requiring
+a full application server.</li>
+<li><strong>Native MCP transport</strong> -- The current MCP support runs
+over HTTP. A native MCP transport using stdio or SSE would allow Axis2
+services to participate directly in MCP agent ecosystems.</li>
+<li><strong>REST dispatch annotations</strong> -- JAX-RS-style annotations
+(<code>@GET</code>, <code>@Path</code>, etc.) for Axis2 services would
+reduce configuration and make REST endpoints more intuitive.</li>
+<li><strong>Test coverage</strong> -- Unit and integration tests for the
+new JSON-RPC and MCP message receivers.</li>
 </ul>
-</li>
-</ul>
-</li>
-<li><a href="#bmDeployment">Deployment</a>
-<ul>
-<li><a href="#xmlfile">The <em>axis2.xml</em> file</a></li>
-<li>
-<p><a href="#servicearchive">Service Archive</a></p>
-</li>
-<li><a href="#modulearchive">Module Archive</a></li>
-</ul>
-</li>
-<li>
-<p><a href="#bmClientAPI">Client API</a></p>
-<ul>
-<li><a href="#oneway">One Way Messaging Support</a></li>
-<li>
-<p><a href="#requestresponse">Request Response Messaging
-Support</a></p>
-</li>
-</ul>
-</li>
-<li><a href="#bmTransports">Transports</a></li>
-<li>
-<p><a href="#bmWSDL">Code Generation</a></p>
-</li>
-<li><a href="#bmDB">Data Binding</a>
-<ul>
-<li><a href="#integration">Integration with Code Generation
-Engine</a></li>
-<li>
-<p><a href="#serial">Serialization and De-Serialization</a></p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+
+<p>See the project modernization plan in the repository for the full
+roadmap. Contributions are welcome at
+<a href="https://github.com/apache/axis-axis2-java-core">github.com/apache/axis-axis2-java-core</a>.</p>
+
+<hr />
+
+<!-- =============================================================== -->
+<!-- CLASSIC SOAP ARCHITECTURE (preserved in full from original)     -->
+<!-- =============================================================== -->
+
+<a name="classic-architecture" id="classic-architecture"></a>
+<h1 align="center">Classic SOAP Architecture Reference</h1>
+
+<p><em>The following sections contain the original Axis2 architecture
+documentation written in 2004-2005. This content describes the SOAP-centric
+processing model in detail and remains accurate for SOAP deployments.
+Modern multi-protocol features are described in the sections above.</em></p>
+
 <a name="bmBP" id="bmBP"></a>
 <h2>The Big Picture</h2>
 <p>A new architecture for Axis was introduced during the August
@@ -607,7 +824,7 @@ server, and provides the following information:</p>
 <a name="servicearchive" id="servicearchive"></a>
 <h3>Service Archive</h3>
 <p>The Service archive must have a <em>META-INF/services.xml</em> file and may
-contain the dependent classes. Please see modules/kernel/resources/services.xsd in 
+contain the dependent classes. Please see modules/kernel/resources/services.xsd in
 the source distribution for the schema for services.xml. The <em>services.xml</em> file has
 the following information.</p>
 <ol>

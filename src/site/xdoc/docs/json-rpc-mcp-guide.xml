@@ -44,6 +44,13 @@ deployed services, accessible at <code>/openapi-mcp.json</code>, that tells MCP 
 the exact JSON-RPC envelope format, auth requirements, and endpoint URL for every
 deployed operation — no out-of-band documentation required.</p>
 
+<p><strong>Legacy SOAP services:</strong> MCP is a JSON-RPC 2.0 protocol — it does
+not support SOAP. To expose a SOAP service to AI agents via MCP, first convert it
+to JSON-RPC by switching message receivers in <code>services.xml</code> and setting
+<code>axis2.mode=json</code> (see the
+<a href="spring-boot-starter.html#soap_vs_json">Spring Boot Starter Guide</a>).
+The service Java class does not change — only the wire format configuration.</p>
+
 <!-- ============================================================ -->
 <h2>What is MCP?</h2>
 
