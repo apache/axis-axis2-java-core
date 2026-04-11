@@ -168,6 +168,11 @@ public class URLTemplatingUtil {
      */
     private static String applyURITemplating(MessageContext messageContext, String rawURLString,
                                              boolean detach) throws AxisFault {
+        if (messageContext == null || messageContext.getEnvelope() == null
+                || messageContext.getEnvelope().getBody() == null
+                || messageContext.getEnvelope().getBody().getFirstElement() == null) {
+            return rawURLString;
+        }
         OMElement firstElement;
         if (detach) {
             firstElement = messageContext.getEnvelope().getBody().getFirstElement();

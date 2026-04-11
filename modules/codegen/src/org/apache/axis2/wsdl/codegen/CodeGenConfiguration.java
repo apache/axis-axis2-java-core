@@ -23,8 +23,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
-import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.WSDLUtil;
@@ -682,7 +680,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
                     equals(getWSDLVersion())) {
                 // WSDL 2.0 codegen removed in 2.0.1 (AXIS2-6102)
                 throw new CodeGenerationException(
-                        new Exception("WSDL 2.0 code generation is no longer supported. Use WSDL 1.1."));
+                        "WSDL 2.0 code generation is no longer supported. Use WSDL 1.1.");
             } else {
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);

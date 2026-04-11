@@ -85,11 +85,7 @@
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.woden</groupId>
-            <artifactId>woden-core</artifactId>
-            <optional>true</optional>
-        </dependency>
+        <!-- woden-core removed in 2.0.1 (AXIS2-6102) — WSDL 2.0 no longer supported -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
