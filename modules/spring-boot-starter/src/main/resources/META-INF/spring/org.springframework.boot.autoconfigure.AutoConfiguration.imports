@@ -1,0 +1,4 @@
+org.apache.axis2.spring.boot.Axis2AutoConfiguration
+org.apache.axis2.spring.boot.Axis2RepositoryAutoConfiguration
+org.apache.axis2.spring.boot.Axis2ServletAutoConfiguration
+org.apache.axis2.spring.boot.Axis2OpenApiAutoConfiguration

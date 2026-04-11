@@ -72,6 +72,20 @@ Administrator's Guide</a></li>
 <li><a href="jaxws-guide.html">JAXWS Guide</a></li>
 <li><a href="pojoguide.html">POJO Guide</a></li>
 <li><a href="spring.html">Spring Guide</a></li>
+<li><a href="spring-boot-starter.html">Spring Boot Starter</a>
+<ul>
+<li>12a.0 <a href="spring-boot-starter.html#deployment_model">Deployment Model (WAR Only — Embedded Not Supported)</a></li>
+<li>12a.1 <a href="spring-boot-starter.html#quickstart">Quick Start (Single Dependency)</a></li>
+<li>12a.2 <a href="spring-boot-starter.html#how_axisservlet_works">How AxisServlet Works (SOAP vs JSON)</a></li>
+<li>12a.3 <a href="spring-boot-starter.html#properties">Configuration Properties</a></li>
+<li>12a.4 <a href="spring-boot-starter.html#soap_vs_json">SOAP Mode vs JSON Mode</a></li>
+<li>12a.5 <a href="spring-boot-starter.html#what_autoconfigured">What Gets Autoconfigured</a></li>
+<li>12a.6 <a href="spring-boot-starter.html#what_stays">What Stays in Your Application</a></li>
+<li>12a.7 <a href="spring-boot-starter.html#openapi_mcp">OpenAPI and MCP Support</a></li>
+<li>12a.8 <a href="spring-boot-starter.html#migration">Migration from Manual Configuration</a></li>
+<li>12a.9 <a href="spring-boot-starter.html#containers">Container Support</a></li>
+</ul>
+</li>
 <li><a href="modules.html">ModulesGuide</a></li>
 <li><a href="clustering-guide.html">Clustering Guide</a></li>
 <li>ADB Data Binding

@@ -1,0 +1,408 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content=""/>
+  <title>Apache Axis2 Spring Boot Starter</title>
+</head>
+
+<body dir="ltr" lang="en-US">
+
+<h1 align="center">Apache Axis2 Spring Boot Starter</h1>
+
+<p><strong>axis2-spring-boot-starter</strong> reduces Axis2 + Spring Boot integration
+from a multi-day configuration project to a single Maven dependency. It handles
+servlet registration, repository configuration, and OpenAPI/MCP endpoint activation
+with sensible defaults — for both SOAP and JSON-RPC services.</p>
+
+<p><strong>Important — WAR deployment only.</strong> This starter requires deployment
+as a WAR file to an external servlet container (Tomcat 11, WildFly 32/39, or similar).
+Spring Boot's embedded Tomcat mode (<code>java -jar</code>) is <strong>not
+supported</strong> in this release. See <a href="#deployment_model">Deployment Model</a>
+for details and rationale.</p>
+
+<ul>
+<li><a href="#deployment_model">0. Deployment Model (WAR Only)</a></li>
+<li><a href="#quickstart">1. Quick Start</a></li>
+<li><a href="#how_axisservlet_works">2. How AxisServlet Works (SOAP vs JSON)</a></li>
+<li><a href="#properties">3. Configuration Properties</a></li>
+<li><a href="#soap_vs_json">4. SOAP Mode vs JSON Mode</a></li>
+<li><a href="#what_autoconfigured">5. What Gets Autoconfigured</a></li>
+<li><a href="#what_stays">6. What Stays in Your Application</a></li>
+<li><a href="#openapi_mcp">7. OpenAPI and MCP Support</a></li>
+<li><a href="#migration">8. Migration from Manual Configuration</a></li>
+<li><a href="#containers">9. Container Support</a></li>
+</ul>
+
+<!-- ============================================================ -->
+<a name="deployment_model"/>
+<h2>0. Deployment Model (WAR Only)</h2>
+
+<p>This starter supports <strong>WAR deployment to an external servlet
+container</strong> — the same deployment model used by most organizations running
+Axis2 in production. Your Spring Boot application must extend
+<code>SpringBootServletInitializer</code> and be packaged as a WAR.</p>
+
+<p><strong>Spring Boot embedded Tomcat (<code>java -jar</code>) is not supported.</strong></p>
+
+<h3>Why not embedded?</h3>
+
+<p>Axis2's <code>WarBasedAxisConfigurator</code> requires a real filesystem layout:
+<code>WEB-INF/conf/axis2.xml</code>, <code>WEB-INF/services/*.aar</code>, and
+<code>WEB-INF/modules/*.mar</code>. An embedded Spring Boot application runs from
+a fat JAR with no exploded WAR directory. Supporting this would require runtime
+classpath scanning for <code>.aar</code> files, temp directory staging, and a
+new configurator implementation — work that is planned but not yet complete.</p>
+
+<p>Additionally, external containers provide operational advantages for the
+long-running, stateful service deployments typical of Axis2 workloads:</p>
+
+<ul>
+<li>Container-managed thread pools, connection pools, and JMX monitoring</li>
+<li>Hot-redeploy via exploded WAR without JVM restart</li>
+<li>Central TLS/certificate management (Tomcat's <code>server.xml</code>, WildFly's Elytron)</li>
+<li>Established operational tooling (WildFly CLI, Tomcat Manager, deployment scanners)</li>
+</ul>
+
+<h3>Which external containers?</h3>
+
+<table border="1">
+<tr><th>Container</th><th>JDK</th><th>Tested</th></tr>
+<tr><td>Apache Tomcat 11</td><td>OpenJDK 21, OpenJDK 25</td><td>Yes</td></tr>
+<tr><td>WildFly 32</td><td>OpenJDK 21</td><td>Yes</td></tr>
+<tr><td>WildFly 39</td><td>OpenJDK 25</td><td>Yes</td></tr>
+</table>
+
+<p>Other Jakarta EE 9+ containers (WebSphere Liberty, Payara) should work but
+are not tested.</p>
+
+<h3>Will embedded mode be supported in the future?</h3>
+
+<p>Embedded Tomcat support is planned for a future release. It requires a
+<code>ClasspathBasedAxisConfigurator</code> that discovers services and modules
+from the classpath rather than from <code>WEB-INF/</code>. Contributions
+are welcome — see the
+<a href="https://github.com/apache/axis-axis2-java-core/blob/master/AXIS2_MODERNIZATION_PLAN.md">Axis2 Modernization Plan</a>
+for the full roadmap.</p>
+
+<!-- ============================================================ -->
+<a name="quickstart"/>
+<h2>1. Quick Start</h2>
+
+<p>Add the starter to your <code>pom.xml</code>:</p>
+
+<pre>
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
+    &lt;artifactId&gt;axis2-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.0.1&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- Optional: OpenAPI/MCP endpoints --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
+    &lt;artifactId&gt;axis2-openapi&lt;/artifactId&gt;
+    &lt;version&gt;2.0.1&lt;/version&gt;
+&lt;/dependency&gt;
+</pre>
+
+<p>This single dependency replaces ~30 individual Axis2 dependencies
+(<code>axis2-kernel</code>, <code>axis2-transport-http</code>,
+<code>axis2-json</code>, <code>axis2-spring</code>, <code>axis2-jaxws</code>,
+etc.) and eliminates the need for a hand-coded <code>Axis2WebAppInitializer</code>
+or <code>OpenApiServlet</code> class.</p>
+
+<p>The starter auto-registers <code>AxisServlet</code> at <code>/services/*</code>
+and — when <code>axis2-openapi</code> is on the classpath — registers the OpenAPI
+servlet at <code>/openapi.json</code>, <code>/openapi.yaml</code>,
+<code>/swagger-ui</code>, and <code>/openapi-mcp.json</code>.</p>
+
+<!-- ============================================================ -->
+<a name="how_axisservlet_works"/>
+<h2>2. How AxisServlet Works (SOAP vs JSON)</h2>
+
+<p><code>org.apache.axis2.transport.http.AxisServlet</code> is the single entry
+point for <strong>all</strong> Axis2 service calls — SOAP and JSON-RPC alike.
+The servlet itself is protocol-agnostic. It does not know or care whether the
+incoming request is SOAP 1.1, SOAP 1.2, or JSON-RPC.</p>
+
+<p>The protocol handling is determined entirely by <code>axis2.xml</code>:</p>
+
+<table border="1">
+<tr><th>Component</th><th>SOAP</th><th>JSON-RPC</th></tr>
+<tr>
+  <td><strong>Message Receivers</strong><br/>Parse the incoming payload and invoke the service method</td>
+  <td><code>RawXMLINOutMessageReceiver</code><br/><code>RawXMLINOnlyMessageReceiver</code><br/>(read SOAP XML envelopes)</td>
+  <td><code>JsonRpcMessageReceiver</code><br/><code>JsonInOnlyRPCMessageReceiver</code><br/>(read JSON-RPC <code>{"op":[{"arg0":{}}]}</code> envelope)</td>
+</tr>
+<tr>
+  <td><strong>Dispatchers</strong><br/>Route the request to the correct service and operation</td>
+  <td>Multi-handler chain:<br/><code>SOAPActionBasedDispatcher</code><br/><code>RequestURIBasedDispatcher</code><br/><code>SOAPMessageBodyBasedDispatcher</code><br/><code>HTTPLocationBasedDispatcher</code><br/>(routes by SOAPAction header, WS-Addressing, message body)</td>
+  <td>Single handler:<br/><code>JSONBasedDefaultDispatcher</code><br/>(routes by URL path only)</td>
+</tr>
+<tr>
+  <td><strong><code>enableJSONOnly</code></strong></td>
+  <td><code>false</code> (the default since Axis2 1.0, 2006)</td>
+  <td><code>true</code> (skips SOAP envelope processing)</td>
+</tr>
+</table>
+
+<p><strong>SOAP and JSON cannot coexist in a single deployment.</strong>
+The message receivers and dispatchers are incompatible — a SOAP receiver cannot
+parse JSON, and the JSON dispatcher cannot route by SOAPAction. This is not a
+starter limitation; it is how Axis2's processing pipeline works.</p>
+
+<h3>AxisServlet Initialization Sequence</h3>
+
+<p>When AxisServlet starts (<code>init()</code>), it:</p>
+<ol>
+<li>Creates a <code>WarBasedAxisConfigurator</code></li>
+<li>Locates the repository (<code>WEB-INF/</code>) using, in order:
+    <ol>
+    <li><code>axis2.repository.path</code> servlet init-parameter (if set explicitly)</li>
+    <li><code>axis2.repository.url</code> servlet init-parameter (if set explicitly)</li>
+    <li><code>ServletContext.getRealPath("/WEB-INF")</code> (automatic fallback)</li>
+    </ol>
+</li>
+<li>Reads <code>WEB-INF/conf/axis2.xml</code> to configure the engine</li>
+<li>Scans <code>WEB-INF/services/*.aar</code> to deploy services</li>
+<li>Scans <code>WEB-INF/modules/*.mar</code> to load modules (e.g., OpenAPI)</li>
+<li>Stores the <code>ConfigurationContext</code> in the <code>ServletContext</code>
+    — this is how other servlets (OpenAPI, MCP) access the Axis2 engine</li>
+</ol>
+
+<p>The starter sets <code>axis2.repository.path</code> eagerly at startup as a
+workaround for WildFly VFS timing issues where <code>getRealPath()</code> can
+return <code>null</code> during lazy servlet initialization.</p>
+
+<!-- ============================================================ -->
+<a name="properties"/>
+<h2>3. Configuration Properties</h2>
+
+<table border="1">
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>axis2.enabled</code></td><td><code>true</code></td>
+    <td>Set to <code>false</code> to disable Axis2 entirely (e.g., for server roles that don't serve web services)</td></tr>
+<tr><td><code>axis2.mode</code></td><td><code>json</code></td>
+    <td><code>soap</code> or <code>json</code> — selects the built-in axis2.xml template (see Section 4)</td></tr>
+<tr><td><code>axis2.services-path</code></td><td><code>/services</code></td>
+    <td>URL path for AxisServlet. Servlet is registered at <code>{services-path}/*</code></td></tr>
+<tr><td><code>axis2.configuration-file</code></td><td><em>(empty)</em></td>
+    <td>Path to a custom axis2.xml. Overrides <code>axis2.mode</code>. Supports <code>classpath:</code> prefix</td></tr>
+<tr><td><code>axis2.openapi.enabled</code></td><td><code>true</code></td>
+    <td>Register OpenAPI/MCP servlet (requires <code>axis2-openapi</code> on classpath)</td></tr>
+<tr><td><code>axis2.openapi.paths</code></td><td><code>/openapi.json, /openapi.yaml, /swagger-ui, /openapi-mcp.json</code></td>
+    <td>URL paths for OpenAPI endpoints</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<a name="soap_vs_json"/>
+<h2>4. SOAP Mode vs JSON Mode</h2>
+
+<p>The starter ships two built-in <code>axis2.xml</code> templates, selected by
+<code>axis2.mode</code>:</p>
+
+<h3>JSON mode (<code>axis2.mode=json</code>, the default)</h3>
+<pre>
+# application.properties
+axis2.mode=json
+</pre>
+<p>Uses <code>JsonRpcMessageReceiver</code>, <code>JSONBasedDefaultDispatcher</code>,
+and <code>enableJSONOnly=true</code>. Choose this for new services, MCP/AI integration,
+and REST/OpenAPI consumers.</p>
+
+<h3>SOAP mode (<code>axis2.mode=soap</code>)</h3>
+<pre>
+# application.properties
+axis2.mode=soap
+</pre>
+<p>Uses <code>RawXMLINOutMessageReceiver</code>, the full SOAP dispatcher stack,
+and <code>enableJSONOnly=false</code>. Choose this for WSDL-first services,
+WS-Security, WS-Addressing, or interop with .NET/PHP SOAP clients. This is the
+classic Axis2 configuration that has been in use since version 1.0 (2006).</p>
+
+<h3>Custom axis2.xml</h3>
+<pre>
+# application.properties
+axis2.configuration-file=classpath:my-axis2.xml
+</pre>
+<p>Overrides both built-in templates. Use this when you need custom phases,
+modules, transport configurations, or any axis2.xml settings not covered by
+the built-in templates.</p>
+
+<p>The starter only stages axis2.xml if <code>WEB-INF/conf/axis2.xml</code>
+does not already exist. If your Maven build pre-stages it (e.g., via
+<code>maven-antrun-plugin</code>), the starter will not overwrite it.</p>
+
+<!-- ============================================================ -->
+<a name="what_autoconfigured"/>
+<h2>5. What Gets Autoconfigured</h2>
+
+<table border="1">
+<tr><th>Component</th><th>What it replaces</th><th>Condition</th></tr>
+<tr>
+  <td><code>AxisServlet</code> registration at <code>/services/*</code></td>
+  <td>Hand-coded <code>Axis2WebAppInitializer</code></td>
+  <td>Always (when <code>axis2.enabled=true</code>)</td>
+</tr>
+<tr>
+  <td><code>axis2.xml</code> staging (SOAP or JSON template)</td>
+  <td><code>axis2.xml</code> copy step in <code>maven-antrun-plugin</code></td>
+  <td>When <code>WEB-INF/conf/axis2.xml</code> does not already exist</td>
+</tr>
+<tr>
+  <td>OpenAPI/MCP servlet at <code>/openapi.json</code>, <code>/swagger-ui</code>, <code>/openapi-mcp.json</code></td>
+  <td>Hand-coded <code>OpenApiServlet</code> class</td>
+  <td>When <code>axis2-openapi</code> is on classpath and <code>axis2.openapi.enabled=true</code></td>
+</tr>
+</table>
+
+<!-- ============================================================ -->
+<a name="what_stays"/>
+<h2>6. What Stays in Your Application</h2>
+
+<p>The starter deliberately does <strong>not</strong> autoconfigure:</p>
+
+<ul>
+<li><strong>Security</strong> — JWT authentication, mTLS, SAML, CSRF guard filter
+    chains are application-specific. The starter does not provide any
+    <code>SecurityFilterChain</code> beans.</li>
+<li><strong>Service definitions</strong> — <code>services.xml</code> files inside
+    <code>.aar</code> archives define operation names, Spring bean names,
+    per-operation message receivers. These are service-specific.</li>
+<li><strong><code>.aar</code> file creation</strong> — pre-built <code>.aar</code> files
+    must be staged in <code>WEB-INF/services/</code> by the Maven build
+    (<code>maven-antrun-plugin</code> or <code>axis2-aar-maven-plugin</code>).</li>
+<li><strong><code>.mar</code> module staging</strong> — the OpenAPI module JAR must be
+    renamed to <code>.mar</code> and placed in <code>WEB-INF/modules/</code> by the
+    Maven build.</li>
+<li><strong>Container-specific descriptors</strong> — WildFly's
+    <code>jboss-deployment-structure.xml</code>, <code>jboss-web.xml</code>,
+    <code>beans.xml</code>.</li>
+<li><strong><code>@SpringBootApplication</code> class</strong> — the consuming app
+    still needs its main class extending <code>SpringBootServletInitializer</code>.</li>
+</ul>
+
+<!-- ============================================================ -->
+<a name="openapi_mcp"/>
+<h2>7. OpenAPI and MCP Support</h2>
+
+<p>When <code>axis2-openapi</code> is on the classpath, the starter automatically
+registers the OpenAPI servlet. No additional code is needed in the consuming app.</p>
+
+<p>The servlet provides:</p>
+<ul>
+<li><code>GET /openapi.json</code> — OpenAPI 3.0.1 specification</li>
+<li><code>GET /openapi.yaml</code> — same in YAML format</li>
+<li><code>GET /swagger-ui</code> — interactive Swagger UI</li>
+<li><code>GET /openapi-mcp.json</code> — MCP tool catalog for AI assistants</li>
+</ul>
+
+<p>See the <a href="json-rpc-mcp-guide.html">JSON-RPC MCP Integration Guide</a>
+for details on the MCP catalog format, the Axis2 JSON-RPC envelope, and how
+AI assistants discover and call Axis2 services.</p>
+
+<!-- ============================================================ -->
+<a name="migration"/>
+<h2>8. Migration from Manual Configuration</h2>
+
+<p>If you have an existing Axis2 + Spring Boot project with manual servlet
+registration, follow these steps:</p>
+
+<ol>
+<li><strong>Replace dependencies:</strong> Remove the ~30 individual Axis2
+    dependencies and add the single <code>axis2-spring-boot-starter</code>
+    dependency.</li>
+<li><strong>Delete <code>Axis2WebAppInitializer</code></strong> (or your
+    equivalent <code>ServletContextInitializer</code> that registers
+    <code>AxisServlet</code>). The starter handles this.</li>
+<li><strong>Delete <code>OpenApiServlet.java</code></strong> if you have one.
+    The starter provides it when <code>axis2-openapi</code> is on the classpath.</li>
+<li><strong>Set <code>axis2.mode</code></strong> in <code>application.properties</code>:
+    <code>json</code> for JSON-RPC services, <code>soap</code> for SOAP services.</li>
+<li><strong>Keep your Maven build steps</strong> that create <code>.aar</code> files
+    and copy <code>.mar</code> modules — the starter does not replace these yet.</li>
+<li><strong>Keep your security configuration</strong> — the starter does not touch
+    Spring Security.</li>
+</ol>
+
+<p>For working reference implementations, see:</p>
+<ul>
+<li><code>modules/samples/userguide/src/userguide/springbootdemo-tomcat11/README.md</code></li>
+<li><code>modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md</code></li>
+</ul>
+
+<!-- ============================================================ -->
+<a name="testing"/>
+<h2>9. Tested Configurations</h2>
+
+<h3>JSON-RPC / MCP (axis2.mode=json)</h3>
+
+<p>The starter was tested with the <code>springbootdemo-tomcat11</code> sample
+application, replacing ~30 individual Axis2 dependencies with the single
+<code>axis2-spring-boot-starter</code> dependency and removing the hand-coded
+<code>Axis2WebAppInitializer</code>. All endpoints confirmed working over
+HTTPS/HTTP2 on Tomcat 11 with OpenJDK 25:</p>
+
+<table border="1">
+<tr><th>Endpoint</th><th>Result</th></tr>
+<tr><td><code>GET /openapi.json</code></td><td>Pass — OpenAPI 3.0.1 spec returned</td></tr>
+<tr><td><code>GET /openapi.yaml</code></td><td>Pass</td></tr>
+<tr><td><code>GET /openapi-mcp.json</code></td><td>Pass — MCP tool catalog with full inputSchema</td></tr>
+<tr><td><code>GET /swagger-ui</code></td><td>Pass — HTTP 200</td></tr>
+<tr><td><code>POST loginService/doLogin</code></td><td>Pass — JWT token returned</td></tr>
+<tr><td><code>POST FinancialBenchmarkService/portfolioVariance</code></td><td>Pass — SUCCESS, variance=0.03168</td></tr>
+<tr><td><code>POST FinancialBenchmarkService/monteCarlo</code></td><td>Pass — SUCCESS, 10K simulations</td></tr>
+<tr><td><code>POST FinancialBenchmarkService/scenarioAnalysis</code></td><td>Pass — SUCCESS</td></tr>
+</table>
+
+<h3>SOAP (axis2.mode=soap)</h3>
+
+<p>The SOAP axis2.xml template was validated by unit tests confirming correct
+message receivers (<code>RawXMLINOutMessageReceiver</code>,
+<code>RawXMLINOnlyMessageReceiver</code>), the full SOAP dispatcher stack
+(<code>SOAPActionBasedDispatcher</code>, <code>RequestURIBasedDispatcher</code>,
+<code>SOAPMessageBodyBasedDispatcher</code>, <code>HTTPLocationBasedDispatcher</code>),
+and <code>enableJSONOnly=false</code>. The SOAP template is based on the
+Axis2 configuration that has been in production since version 1.0 (2006) and is
+identical in structure to the configuration used by the legacy userguide
+<code>example1</code> Echo service (<code>MyService.echo()</code> with
+<code>RawXMLINOutMessageReceiver</code>).</p>
+
+<h3>Unit test suite</h3>
+
+<p>The starter includes 9 unit tests covering:</p>
+<ul>
+<li>Both axis2.xml templates exist on the classpath</li>
+<li>JSON template correctness (enableJSONOnly=true, JSONBasedDefaultDispatcher, no SOAP receivers)</li>
+<li>SOAP template correctness (enableJSONOnly=false, RawXMLINOut receivers, full SOAP dispatcher stack, no JSON dispatcher)</li>
+<li>Default property values</li>
+<li>AutoConfiguration.imports contains all required classes</li>
+</ul>
+
+<h3>Container matrix</h3>
+
+<p>See <a href="#deployment_model">Section 0</a> for the full container
+compatibility matrix and the rationale for WAR-only deployment.</p>
+
+</body>
+</html>
