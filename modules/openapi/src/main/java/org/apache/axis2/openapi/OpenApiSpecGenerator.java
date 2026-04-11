@@ -947,7 +947,7 @@ public class OpenApiSpecGenerator {
             java.util.Map<String, AxisService> services = axisConfig.getServices();
             for (AxisService service : services.values()) {
                 String svcName = service.getName();
-                if (isSystemService(svcName)) continue;
+                if (isSystemService(service)) continue;
 
                 // URI: logical identifier for the resource in the MCP protocol.
                 // Uses the "axis2://" scheme so clients can distinguish these
@@ -999,7 +999,7 @@ public class OpenApiSpecGenerator {
                 metadata.put("requiresAuth", requiresAuth);
             }
 
-            log.debug("Generated MCP resources JSON ({} services)", resources.size());
+            log.debug("Generated MCP resources JSON (" + resources.size() + " services)");
             return jackson.writeValueAsString(root);
 
         } catch (Exception e) {
