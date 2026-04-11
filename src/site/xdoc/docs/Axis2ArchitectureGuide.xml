@@ -47,7 +47,7 @@ and how to get involved.</p>
   <ul>
   <li><a href="#handler-chain-differentiator">The Handler Chain as Architectural Differentiator</a></li>
   <li><a href="#modern-deployment">Modern Deployment Targets</a></li>
-  <li><a href="#whats-new-2">What's New in 2.0</a></li>
+  <li><a href="#whats-new-2">What's New in 2.0.1</a></li>
   <li><a href="#architecture-at-a-glance">Architecture at a Glance</a></li>
   <li><a href="#contributing">Where to Contribute</a></li>
   </ul>
@@ -106,7 +106,7 @@ and how to get involved.</p>
 <a name="modern-overview" id="modern-overview"></a>
 <h2>Axis2 in 2026: Multi-Protocol Platform</h2>
 
-<p>Axis2 2.0 delivers JSON-RPC, REST+OpenAPI, Model Context Protocol (MCP),
+<p>Axis2 2.0.1 delivers JSON-RPC, REST+OpenAPI, Model Context Protocol (MCP),
 and classic SOAP -- all from one deployment artifact, all processed by the
 same handler chain. A service written as a plain Java class can simultaneously
 accept SOAP/XML requests, JSON-RPC calls, RESTful HTTP requests with
@@ -115,7 +115,7 @@ frameworks, no glue code, no protocol-specific deployment descriptors.</p>
 
 <p>This is possible because the handler-chain architecture designed in 2004
 was protocol-agnostic from the start. Messages enter a pipeline of phases
-and handlers regardless of wire format. Axis2 2.0 extends that pipeline with
+and handlers regardless of wire format. Axis2 2.0.1 extends that pipeline with
 new dispatchers and message receivers that understand JSON and MCP, while
 every existing SOAP handler, module, and service continues to work
 unchanged.</p>
@@ -155,7 +155,7 @@ and MCP traffic alike.</p>
 <a name="modern-deployment" id="modern-deployment"></a>
 <h3>Modern Deployment Targets</h3>
 
-<p>Axis2 2.0 runs on current Java platforms and application servers:</p>
+<p>Axis2 2.0.1 runs on current Java platforms and application servers:</p>
 
 <table border="1" cellpadding="4" cellspacing="0">
 <tr>
@@ -187,9 +187,9 @@ Tested on 17, 21, and 25. The CI builds with
 
 <!-- =============================================================== -->
 <a name="whats-new-2" id="whats-new-2"></a>
-<h3>What's New in 2.0</h3>
+<h3>What's New in 2.0.1</h3>
 
-<p>The following features are new or substantially reworked in Axis2 2.0:</p>
+<p>The following features are new or substantially reworked in Axis2 2.0.1:</p>
 
 <dl>
 <dt><strong>JSON-RPC Message Receivers</strong></dt>

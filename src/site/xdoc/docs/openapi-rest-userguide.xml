@@ -83,7 +83,7 @@ prefix the subject of the mail with [Axis2].</p>
 
 <h2>OpenAPI Integration Features</h2>
 
-<p>Axis2 2.0 provides comprehensive OpenAPI 3.0.1 integration designed for enterprise
+<p>Axis2 2.0.1 provides comprehensive OpenAPI 3.0.1 integration designed for enterprise
 REST services and drop-in backend replacement scenarios. The OpenAPI module offers
 flexible generation modes to balance automatic documentation with real-world usage patterns.</p>
 

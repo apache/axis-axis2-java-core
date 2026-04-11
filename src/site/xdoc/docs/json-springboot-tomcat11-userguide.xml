@@ -39,7 +39,7 @@ enterprise big data processing, including large payload handling (50MB+), connec
 streaming optimization, and memory-efficient processing within 2GB heap constraints.
 </p>
 
-<p><strong>New in Axis2 2.0:</strong> Complete HTTP/2 transport implementation with enterprise
+<p><strong>New in Axis2 2.0.1:</strong> Complete HTTP/2 transport implementation with enterprise
 big data processing capabilities, streaming optimization for large JSON payloads, and
 production-ready performance enhancements.</p>
 <p>More docs concerning Axis2 and JSON can be found in the <a href="
@@ -133,7 +133,7 @@ This is a notable milestone: the previous Axis2/C release was 1.6 in 2009.
 
 <h2>HTTP/2 Transport Features</h2>
 
-<p>Axis2 2.0 introduces a complete HTTP/2 transport implementation designed for enterprise
+<p>Axis2 2.0.1 introduces a complete HTTP/2 transport implementation designed for enterprise
 big data processing requirements. The HTTP/2 transport provides significant performance
 improvements over HTTP/1.1, especially for large JSON payloads and concurrent requests.
 For comprehensive HTTP/2 configuration details and advanced features, see the
