@@ -588,6 +588,117 @@ public class OpenApiSpecGenerator {
     }
 
     /**
+     * Auto-generate a JSON Schema from the Java service method's parameter type.
+     *
+     * <p>Looks up the service class, finds the method matching the operation name,
+     * and introspects the parameter POJO's fields to produce a schema. This is the
+     * "Option 2" fallback when no explicit {@code mcpInputSchema} is set in
+     * services.xml.
+     *
+     * <p>Supports: primitives (int/long/double/boolean/String), arrays, and
+     * nested POJOs (one level). Returns null if introspection fails for any reason.
+     *
+     * @param service the Axis2 service descriptor
+     * @param operationName the operation (method) name
+     * @return an ObjectNode containing the JSON Schema, or null
+     */
+    private com.fasterxml.jackson.databind.node.ObjectNode generateSchemaFromServiceClass(
+            AxisService service, String operationName) {
+        try {
+            String className = getServiceClassName(service);
+            if (className == null) return null;
+
+            Class<?> serviceClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+            java.lang.reflect.Method targetMethod = null;
+            for (java.lang.reflect.Method m : serviceClass.getMethods()) {
+                if (m.getName().equals(operationName) && m.getParameterCount() == 1) {
+                    targetMethod = m;
+                    break;
+                }
+            }
+            if (targetMethod == null) return null;
+
+            Class<?> paramType = targetMethod.getParameterTypes()[0];
+            // Skip primitives and common JDK types — only introspect POJOs
+            if (paramType.isPrimitive() || paramType == String.class
+                    || paramType.getName().startsWith("java.")) {
+                return null;
+            }
+
+            com.fasterxml.jackson.databind.ObjectMapper mapper = io.swagger.v3.core.util.Json.mapper();
+            com.fasterxml.jackson.databind.node.ObjectNode schema = mapper.createObjectNode();
+            schema.put("type", "object");
+            com.fasterxml.jackson.databind.node.ObjectNode properties = schema.putObject("properties");
+            com.fasterxml.jackson.databind.node.ArrayNode required = schema.putArray("required");
+
+            for (java.lang.reflect.Method getter : paramType.getMethods()) {
+                String name = getter.getName();
+                if (!name.startsWith("get") || name.equals("getClass") || getter.getParameterCount() != 0) {
+                    if (name.startsWith("is") && getter.getParameterCount() == 0
+                            && (getter.getReturnType() == boolean.class || getter.getReturnType() == Boolean.class)) {
+                        // boolean getter: isNormalizeWeights -> normalizeWeights
+                        String fieldName = Character.toLowerCase(name.charAt(2)) + name.substring(3);
+                        com.fasterxml.jackson.databind.node.ObjectNode prop = properties.putObject(fieldName);
+                        prop.put("type", "boolean");
+                    }
+                    continue;
+                }
+                // getWeights -> weights
+                String fieldName = Character.toLowerCase(name.charAt(3)) + name.substring(4);
+                Class<?> returnType = getter.getReturnType();
+
+                com.fasterxml.jackson.databind.node.ObjectNode prop = properties.putObject(fieldName);
+                mapJavaTypeToJsonSchema(returnType, getter.getGenericReturnType(), prop);
+            }
+
+            return schema;
+        } catch (Exception e) {
+            log.debug("[MCP] Could not auto-generate schema for " + service.getName()
+                    + "/" + operationName + ": " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Maps a Java type to a JSON Schema type/format in the given ObjectNode.
+     */
+    private void mapJavaTypeToJsonSchema(Class<?> type, java.lang.reflect.Type genericType,
+            com.fasterxml.jackson.databind.node.ObjectNode prop) {
+        if (type == int.class || type == Integer.class) {
+            prop.put("type", "integer");
+        } else if (type == long.class || type == Long.class) {
+            prop.put("type", "integer");
+        } else if (type == double.class || type == Double.class || type == float.class || type == Float.class) {
+            prop.put("type", "number");
+        } else if (type == boolean.class || type == Boolean.class) {
+            prop.put("type", "boolean");
+        } else if (type == String.class) {
+            prop.put("type", "string");
+        } else if (type.isArray()) {
+            prop.put("type", "array");
+            com.fasterxml.jackson.databind.node.ObjectNode items = prop.putObject("items");
+            Class<?> componentType = type.getComponentType();
+            if (componentType.isArray()) {
+                // double[][] -> array of arrays of numbers
+                items.put("type", "array");
+                com.fasterxml.jackson.databind.node.ObjectNode innerItems = items.putObject("items");
+                mapJavaTypeToJsonSchema(componentType.getComponentType(), null, innerItems);
+            } else {
+                mapJavaTypeToJsonSchema(componentType, null, items);
+            }
+        } else if (java.util.List.class.isAssignableFrom(type) && genericType instanceof java.lang.reflect.ParameterizedType) {
+            prop.put("type", "array");
+            java.lang.reflect.Type[] typeArgs = ((java.lang.reflect.ParameterizedType) genericType).getActualTypeArguments();
+            if (typeArgs.length > 0 && typeArgs[0] instanceof Class) {
+                com.fasterxml.jackson.databind.node.ObjectNode items = prop.putObject("items");
+                mapJavaTypeToJsonSchema((Class<?>) typeArgs[0], null, items);
+            }
+        } else {
+            prop.put("type", "object");
+        }
+    }
+
+    /**
      * Check if a package is included in the configured resource packages.
      */
     private boolean isPackageIncluded(String packageName) {
@@ -820,11 +931,25 @@ public class OpenApiSpecGenerator {
                             schema.putArray("required");
                         }
                     } else {
+                        // Option 2: auto-generate schema from Java method parameter type.
+                        // Introspects the service class to find the method matching
+                        // this operation name, then reflects on the request POJO's
+                        // fields to build a JSON Schema. Falls back to empty schema
+                        // if introspection fails (e.g., no ServiceClass parameter,
+                        // method not found, or primitive parameters).
                         com.fasterxml.jackson.databind.node.ObjectNode schema =
-                                toolNode.putObject("inputSchema");
-                        schema.put("type", "object");
-                        schema.putObject("properties");
-                        schema.putArray("required");
+                                generateSchemaFromServiceClass(service, opName);
+                        if (schema != null) {
+                            toolNode.set("inputSchema", schema);
+                            log.debug("[MCP] Auto-generated inputSchema for "
+                                    + service.getName() + "/" + opName
+                                    + " from Java type introspection");
+                        } else {
+                            schema = toolNode.putObject("inputSchema");
+                            schema.put("type", "object");
+                            schema.putObject("properties");
+                            schema.putArray("required");
+                        }
                     }
 
                     toolNode.put("endpoint", "POST " + path);
