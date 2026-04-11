@@ -604,11 +604,57 @@ public class OpenApiSpecGenerator {
      */
     private com.fasterxml.jackson.databind.node.ObjectNode generateSchemaFromServiceClass(
             AxisService service, String operationName) {
-        try {
-            String className = getServiceClassName(service);
-            if (className == null) return null;
+        return generateSchemaFromServiceClass(service, operationName, null);
+    }
 
-            Class<?> serviceClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+    private com.fasterxml.jackson.databind.node.ObjectNode generateSchemaFromServiceClass(
+            AxisService service, String operationName, HttpServletRequest request) {
+        try {
+            Class<?> serviceClass = null;
+
+            // Try 1: explicit ServiceClass parameter
+            String className = getServiceClassName(service);
+            if (className != null) {
+                serviceClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+            }
+
+            // Try 2: resolve Spring bean class from SpringBeanName via WebApplicationContext.
+            // Uses reflection to avoid a compile-time dependency on Spring Framework —
+            // the openapi module must work without Spring on the classpath.
+            // Mirrors the lookup in SpringServletContextObjectSupplier which uses
+            // WebApplicationContextUtils.getWebApplicationContext(servletContext).
+            if (serviceClass == null && request != null) {
+                try {
+                    String beanName = null;
+                    if (service.getParameter("SpringBeanName") != null) {
+                        beanName = (String) service.getParameter("SpringBeanName").getValue();
+                    }
+                    if (beanName != null) {
+                        jakarta.servlet.ServletContext sc = request.getServletContext();
+                        // Call WebApplicationContextUtils.getWebApplicationContext(sc) via reflection
+                        Class<?> wacUtils = Class.forName(
+                                "org.springframework.web.context.support.WebApplicationContextUtils");
+                        java.lang.reflect.Method getWac = wacUtils.getMethod(
+                                "getWebApplicationContext", jakarta.servlet.ServletContext.class);
+                        Object ctx = getWac.invoke(null, sc);
+                        if (ctx != null) {
+                            java.lang.reflect.Method getBean = ctx.getClass().getMethod(
+                                    "getBean", String.class);
+                            Object bean = getBean.invoke(ctx, beanName);
+                            if (bean != null) {
+                                serviceClass = bean.getClass();
+                                log.debug("[MCP] Resolved Spring bean '" + beanName
+                                        + "' -> " + serviceClass.getName());
+                            }
+                        }
+                    }
+                } catch (Exception springEx) {
+                    log.debug("[MCP] Could not resolve Spring bean for "
+                            + service.getName() + ": " + springEx.getMessage());
+                }
+            }
+
+            if (serviceClass == null) return null;
             java.lang.reflect.Method targetMethod = null;
             for (java.lang.reflect.Method m : serviceClass.getMethods()) {
                 if (m.getName().equals(operationName) && m.getParameterCount() == 1) {
@@ -938,7 +984,7 @@ public class OpenApiSpecGenerator {
                         // if introspection fails (e.g., no ServiceClass parameter,
                         // method not found, or primitive parameters).
                         com.fasterxml.jackson.databind.node.ObjectNode schema =
-                                generateSchemaFromServiceClass(service, opName);
+                                generateSchemaFromServiceClass(service, opName, request);
                         if (schema != null) {
                             toolNode.set("inputSchema", schema);
                             log.debug("[MCP] Auto-generated inputSchema for "

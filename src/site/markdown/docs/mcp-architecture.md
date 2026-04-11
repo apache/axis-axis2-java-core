@@ -360,6 +360,73 @@ MCP and OpenAPI support needs validation across the full container/JDK matrix:
 
 ---
 
+## Known Limitations
+
+### No progress notifications during long-running operations
+
+The MCP spec supports progress notifications — JSON-RPC messages sent from the
+server to the client while a tool call is executing. This is useful for
+operations like Monte Carlo simulations (100K+ paths can take 1-14 seconds)
+where the AI assistant could display incremental status.
+
+**The limitation is architectural, not transport-related.** The MCP stdio
+transport supports progress notifications natively (they are regular JSON-RPC
+notifications on stdout). The constraint is the bridge's HTTP proxy pattern:
+
+```
+Claude Desktop ←stdio→ axis2-mcp-bridge ←blocking HTTP POST→ Axis2 service
+```
+
+The bridge sends one HTTP POST to Axis2 and blocks until the full response
+arrives. During a long computation, the bridge has no way to obtain intermediate
+status from the service. Adding progress support would require one of:
+
+- A polling side-channel (bridge polls a status endpoint while the main call runs)
+- HTTP chunked/streaming responses from Axis2
+- A callback mechanism from the service to the bridge
+
+These are non-trivial changes to the Axis2 response pipeline and the bridge
+architecture.
+
+**Practical impact:** The financial benchmark services complete well within
+interactive time budgets — portfolio variance in under 1 ms, Monte Carlo
+100K paths in ~1.4 seconds on Java. For workloads where even this latency
+is a concern, the same financial benchmark operations are available on
+[Axis2/C](http://axis.apache.org/axis2/c/), which runs 2-3x faster:
+Monte Carlo 100K paths in ~0.7 seconds, 500-asset portfolio variance in
+232 μs vs Java's 660 μs (see [performance comparison](mcp-examples.md#full-performance-summary)).
+Both implementations expose identical MCP tool schemas — an AI assistant
+configured with either backend gets the same financial capabilities.
+
+### Stdio transport only (HTTP/SSE deferred)
+
+The MCP bridge currently supports stdio transport only (Claude Desktop
+subprocess model). HTTP/SSE transport (A4) — which would enable Claude
+API tool use, multi-user bridge sharing, and remote MCP clients — is
+deferred. Contributions welcome.
+
+### Auto-generated inputSchema from Java types
+
+When `mcpInputSchema` is not set in `services.xml`, the MCP catalog
+generator auto-generates a JSON Schema by introspecting the Java service
+method's parameter type. Two resolution strategies are used:
+
+1. **`ServiceClass` parameter** — the class is loaded directly from the
+   classpath. Works immediately on the first catalog request.
+2. **`SpringBeanName` parameter** — the bean is resolved from the Spring
+   `WebApplicationContext` via reflection (no compile-time Spring dependency
+   in the OpenAPI module). Works after Spring initialization is complete.
+
+Supported types: `int`/`long` → `integer`, `double`/`float` → `number`,
+`boolean` → `boolean`, `String` → `string`, arrays (including nested
+`double[][]`), `List<T>`, and POJOs → `object`.
+
+Explicit `mcpInputSchema` in `services.xml` always takes precedence —
+use it when you need `required` fields, `minimum`/`maximum` constraints,
+`default` values, or `description` text that reflection cannot provide.
+
+---
+
 ## Dependencies and Build
 
 Track A (`axis2-mcp-bridge`) requires:
