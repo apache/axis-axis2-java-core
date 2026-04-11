@@ -48,47 +48,31 @@ where a JVM cannot run. The same MCP client connects to both Axis2/Java
 results. See the
 <a href="http://axis.apache.org/axis2/c/">Axis2/C site</a> for details.</p>
 <p>Apache Axis2, Axis2, Apache, the Apache feather logo, and the Apache Axis2 project logo are trademarks of The Apache Software Foundation.</p>
-<h3><em>Why Apache Axis2:</em></h3>
-<p>A new architecture for Axis2 was introduced during the August
-2004 Summit in Colombo, Sri Lanka. The new architecture on which
-Axis2 is based on is more flexible, efficient and configurable in
-comparison to <a href=
-"http://ws.apache.org/axis/java/architecture-guide.html">Axis1.x
-architecture</a>. Some well established concepts from Axis 1.x,
-like handlers etc., have been preserved in the new
-architecture.</p>
-<p>Apache Axis2 not only supports SOAP 1.1 and SOAP 1.2, but it
-also has integrated support for the widely popular <a href=
-"http://www.xfront.com/REST-Web-Services.html">REST style of Web
-services</a>. The same business logic implementation can offer both
-a WS-* style interface as well as a REST/POX style interface
-simultaneously.</p>
-<p>Apache Axis2 over time has expanded to contemporary JSON 
-(JavaScript Object Notation) web services, and that area
-is where new development is occuring. In addition to GSON
-for the Java serialization/deserialization of JSON, Moshi
-is now supported since GSON development has largely ceased.</p>
-<p>Apache Axis2 is more efficient, more modular and more
-XML-oriented / JSON-orientated than the older version. It is 
-carefully designed to support the easy addition of plug-in "modules" 
-that extend their functionality for features such as security and 
-reliability. The <a href="modules/index.html">Modules</a>
-currently available or under development include:</p>
-<ul>
-<li><a href=
-"http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss"
->WS-Security</a> - Supported by <a href=
-"http://axis.apache.org/axis2/java/rampart/">
-Apache Rampart</a></li>
-<li><a href="http://www.w3.org/Submission/ws-addressing/"
->WS-Addressing</a> -Module included as part of Axis2
-core</li>
-</ul>
-<p>Apache Axis2 is built on <a href=
-"http://ws.apache.org/axiom/">Apache AXIOM</a>, a
-new high performant, pull-based XML object model - however for JSON
-based web services, Moshi (or GSON) takes its place and largely follows 
-the same pull-based concepts.</p>
+<h3><em>Why Apache Axis2 in 2026:</em></h3>
+
+<p><strong>One service, three protocols.</strong> Axis2 is the only Java framework
+that serves JSON-RPC, REST+OpenAPI, and
+<a href="docs/mcp-architecture.html">MCP</a> from a single service class &#x2014;
+no code duplication, no wrapper layers. Add the
+<a href="docs/spring-boot-starter.html">Spring Boot Starter</a> dependency and
+your services are live on Tomcat 11 or WildFly 32/39 with OpenJDK 21 or 25.</p>
+
+<p>The architecture that made this possible was designed at the August 2004 Summit
+in Colombo, Sri Lanka. Its handler chain &#x2014; a pipeline of phases that
+processes every message regardless of wire format &#x2014; turned out to be the
+ideal foundation for multi-protocol support twenty years later. Security handlers,
+logging handlers, and custom interceptors written for SOAP apply unchanged to
+JSON-RPC, REST, and MCP traffic. See the
+<a href="docs/Axis2ArchitectureGuide.html">Architecture Guide</a> for details.</p>
+
+<p>Axis2 supports SOAP 1.1/1.2, REST,
+<a href="docs/json_support_gson.html">JSON-RPC</a> (via Moshi or GSON),
+<a href="docs/openapi-rest-userguide.html">OpenAPI 3.0 auto-generation</a>
+with Swagger UI, and
+<a href="docs/json-rpc-mcp-guide.html">MCP tool catalogs</a> for AI agents.
+Legacy SOAP services continue to work unchanged &#x2014; the SOAP handler chain,
+WS-Security (<a href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>),
+and WS-Addressing are fully supported.</p>
 <p>Axis2 comes with many new features, enhancements and industry
 specification implementations. The key features offered are as
 follows:</p>
