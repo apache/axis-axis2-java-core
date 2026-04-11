@@ -158,8 +158,79 @@
             <artifactId>commons-validator</artifactId>
             <version>1.10.1</version>
         </dependency>
-        <!-- axis2 -->
-	<dependency>
+        <!-- Axis2 core (JSON-RPC/MCP only — SOAP deps excluded) -->
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+            <exclusions>
+                <!-- SOAP/WS-* deps not needed for JSON-RPC/MCP -->
+                <exclusion><groupId>org.apache.axis2</groupId><artifactId>axis2-saaj</artifactId></exclusion>
+                <!-- Codegen/WSDL tools not needed at runtime -->
+                <exclusion><groupId>org.apache.axis2</groupId><artifactId>axis2-codegen</artifactId></exclusion>
+                <exclusion><groupId>org.apache.axis2</groupId><artifactId>axis2-adb-codegen</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-json</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-spring</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-openapi</artifactId>
+            <version>${axis2.version}</version>
+        </dependency>
+        <!-- HTTP/2 Transport -->
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-h2</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-h2</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <!-- Axiom (XML object model — still needed by kernel internals) -->
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-impl</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-jakarta-activation</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <!-- Deps still needed at runtime (transitive from kernel) -->
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+        <!-- commons-fileupload -->
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-fileupload2-core</artifactId>
             <version>2.0.0-M5</version>
@@ -168,128 +239,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
             <version>2.0.0-M5</version>
-        </dependency>
-	<dependency>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-kernel</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-transport-http</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
-	</dependency>
-	<!-- HTTP/2 Transport for Enterprise Big Data Processing -->
-	<dependency>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-transport-h2</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
-	</dependency>
-	<!-- HTTP/2 Dependencies -->
-	<dependency>
-		<groupId>org.apache.httpcomponents.core5</groupId>
-		<artifactId>httpcore5-h2</artifactId>
-		<version>5.4.1</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-transport-local</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-json</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
-	</dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-ant-plugin</artifactId>
-	    <version>2.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-adb</artifactId>
-	    <version>2.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-java2wsdl</artifactId>
-	    <version>2.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-metadata</artifactId>
-	    <version>2.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-spring</artifactId>
-	    <version>2.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jaxws</artifactId>
-	    <version>2.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-openapi</artifactId>
-	    <version>${axis2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.neethi</groupId>
-            <artifactId>neethi</artifactId>
-	    <version>3.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-	    <version>1.6.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.xmlschema</groupId>
-            <artifactId>xmlschema-core</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>stax2-api</artifactId>
-            <version>4.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.woden</groupId>
-            <artifactId>woden-core</artifactId>
-            <version>1.0M10</version>
-        </dependency>
-	<dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-impl</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-dom</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-jakarta-activation</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-legacy-attachments</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-jakarta-jaxb</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.owasp.esapi</groupId>
