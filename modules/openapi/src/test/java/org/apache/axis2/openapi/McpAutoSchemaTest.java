@@ -55,6 +55,7 @@ public class McpAutoSchemaTest {
         private double[] values;
         private double[][] matrix;
         private String requestId;
+        private java.util.List<String> tags;
 
         public int getCount() { return count; }
         public void setCount(int count) { this.count = count; }
@@ -72,6 +73,8 @@ public class McpAutoSchemaTest {
         public void setMatrix(double[][] matrix) { this.matrix = matrix; }
         public String getRequestId() { return requestId; }
         public void setRequestId(String requestId) { this.requestId = requestId; }
+        public java.util.List<String> getTags() { return tags; }
+        public void setTags(java.util.List<String> tags) { this.tags = tags; }
     }
 
     public static class SampleResponse {
@@ -274,5 +277,28 @@ public class McpAutoSchemaTest {
         JsonNode props = calcTool.get("inputSchema").get("properties");
         assertTrue("isActive() should produce active property", props.has("active"));
         assertEquals("boolean", props.get("active").get("type").asText());
+    }
+
+    @Test
+    public void testAutoSchemaGenericListType() throws Exception {
+        AxisService service = createServiceWithClass("SampleService",
+                McpAutoSchemaTest.SampleService.class.getName());
+        addOperation(service, "calculate");
+
+        String catalog = generator.generateMcpCatalogJson(null);
+        JsonNode root = jackson.readTree(catalog);
+        JsonNode calcTool = null;
+        for (JsonNode tool : root.get("tools")) {
+            if ("calculate".equals(tool.get("name").asText())) {
+                calcTool = tool;
+                break;
+            }
+        }
+        JsonNode props = calcTool.get("inputSchema").get("properties");
+
+        // List<String> -> array of strings
+        assertTrue("should have tags property", props.has("tags"));
+        assertEquals("array", props.get("tags").get("type").asText());
+        assertEquals("string", props.get("tags").get("items").get("type").asText());
     }
 }

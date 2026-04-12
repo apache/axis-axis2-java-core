@@ -626,8 +626,10 @@ public class OpenApiSpecGenerator {
             if (serviceClass == null && request != null) {
                 try {
                     String beanName = null;
-                    if (service.getParameter("SpringBeanName") != null) {
-                        beanName = (String) service.getParameter("SpringBeanName").getValue();
+                    org.apache.axis2.description.Parameter springBeanParam =
+                            service.getParameter("SpringBeanName");
+                    if (springBeanParam != null && springBeanParam.getValue() != null) {
+                        beanName = (String) springBeanParam.getValue();
                     }
                     if (beanName != null) {
                         jakarta.servlet.ServletContext sc = request.getServletContext();
@@ -658,8 +660,14 @@ public class OpenApiSpecGenerator {
             java.lang.reflect.Method targetMethod = null;
             for (java.lang.reflect.Method m : serviceClass.getMethods()) {
                 if (m.getName().equals(operationName) && m.getParameterCount() == 1) {
-                    targetMethod = m;
-                    break;
+                    if (targetMethod != null) {
+                        log.warn("[MCP] Ambiguous method '" + operationName
+                                + "' in " + serviceClass.getName()
+                                + " — multiple one-arg overloads, using first match");
+                    }
+                    if (targetMethod == null) {
+                        targetMethod = m;
+                    }
                 }
             }
             if (targetMethod == null) return null;
@@ -698,9 +706,14 @@ public class OpenApiSpecGenerator {
             }
 
             return schema;
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SecurityException e) {
             log.debug("[MCP] Could not auto-generate schema for " + service.getName()
-                    + "/" + operationName + ": " + e.getMessage());
+                    + "/" + operationName + ": " + e.getClass().getSimpleName()
+                    + " - " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.warn("[MCP] Unexpected error during auto-schema generation for "
+                    + service.getName() + "/" + operationName, e);
             return null;
         }
     }
