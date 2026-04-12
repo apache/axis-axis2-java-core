@@ -32,7 +32,7 @@
           "type": "object",
           "required": ["nAssets", "weights", "covarianceMatrix"],
           "properties": {
-            "nAssets":            {"type": "integer", "minimum": 2, "maximum": 2000, "description": "Number of assets in the portfolio"},
+            "nAssets":            {"type": "integer", "minimum": 2, "maximum": 3000, "description": "Number of assets in the portfolio"},
             "weights":            {"type": "array", "items": {"type": "number"}, "description": "Portfolio weights. Must sum to 1.0 unless normalizeWeights=true"},
             "covarianceMatrix":   {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "n×n covariance matrix (2D array)"},
             "covarianceMatrixFlat": {"type": "array", "items": {"type": "number"}, "description": "Alternative: flattened n×n covariance matrix (row-major, length = nAssets²)"},
