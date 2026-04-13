@@ -405,13 +405,6 @@ side skeleton.</td>
 the command line tool.</td>
 </tr>
 <tr>
-<td>wsdlVersion</td>
-<td>Sets the version of the wsdl that is being used during
-codegeneration. This deafults to 1.1 and one can set this to 2,
-when trying to work with a WSDL 2.0 document. Maps to the -wv
-option of the command line tool.</td>
-</tr>
-<tr>
 <td>externalMapping</td>
 <td>Location of the external mapping file to be used. Maps to the
 -em option of the command line tool.</td>

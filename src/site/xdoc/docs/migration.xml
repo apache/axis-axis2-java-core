@@ -60,9 +60,9 @@ and listeners for SOAP over various protocols such as HTTP, SMTP,
 etc.), have been abstracted away from the Axis2 engine. Having a
 transport-independent Axis engine allows far more flexibility in
 transport options.</p>
-<p><strong>WSDL 2.0 support</strong> - Axis2 supports both WSDL
-versions 1.1 and 2.0, which are used by Axis2's code generation
-tools to create web service skeletons and client stubs.</p>
+<p><strong>WSDL support</strong> - Axis2 supports WSDL 1.1, which is
+used by Axis2's code generation tools to create web service
+skeletons and client stubs.</p>
 <p><strong>Component-oriented architecture</strong> - Axis2
 components consist of handlers and modules in .mar and .aar
 archives. These easily reusable components allow extended

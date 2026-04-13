@@ -194,18 +194,6 @@ generated code with Castor.</p>
 outputs the Apache Axis2 version.</p>
 <p><strong>yahoorestearch</strong>: A complete example of the use
 of a REST service rather than a SOAP service.</p>
-<h3>External:</h3>
-<p><strong>FlickrClient</strong> : Demonstrates code generation
-capabilities for WSDL 2.0. The FlickrService.wsdl describes
-services offered by flickr in terms of WSDL 2.0. It also
-demonstrates how a restful service can be described using the
-HTTPBinding of wsdl 2.0.</p>
-<p>Extract the <a href=
-"http://dist.wso2.org/products/wsas/java/nightly-build/">WSO2 WSAS
-for Java nightly build distribution</a> and you will find the
-sample at WSAS_HOME/samples/FlickrClient or checkout sample from
-SVN:
-http://wso2.org/repos/wso2/trunk/wsas/java/modules/samples/FlickrClient</p>
 <p><strong>See Next Section</strong> - <a href=
 "userguide-forfurtherstudy.html">For Further Study</a></p>
 </body>

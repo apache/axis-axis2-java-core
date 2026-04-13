@@ -43,10 +43,9 @@ GET.</p>
 
 <h2>Introduction</h2>
 
-<p>WSDL 2.0 HTTP Binding defines a way to implement REST (Representational
-State Transfer) with Web services. Axis2 implements the most defined HTTP
-binding specification. REST Web services are a reduced subset of the usual
-Web service stack.</p>
+<p>REST (Representational State Transfer) Web services are a reduced
+subset of the usual Web service stack. Axis2 supports exposing services
+over HTTP GET and POST without requiring a SOAP envelope.</p>
 
 <p>The Axis2 REST implementation assumes the following properties:</p>
 <ol>
@@ -54,10 +53,7 @@ Web service stack.</p>
   <li>When REST Web services are accessed via GET, the service and the
     operations are identified based on the URL. The parameters are assumed as
     parameters of the Web service. In this case, the GET based REST Web
-    services support only simple types as arguments and it should adhere to
-    the <a
-    href="http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#_operation_iri_style">IRI
-    style</a>.</li>
+    services support only simple types as arguments.</li>
   <li>POST based Web services do not need a SOAP Envelope or a SOAP Body.
     REST Web Services do not have Headers and the payload is sent
   directly.</li>

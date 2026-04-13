@@ -15,4 +15,3 @@ Running the Clients
 * Run each clients using a IDE or use following Maven commands. 
 
 mvn exec:java -Dexec.mainClass="org.apache.axis2.examples.client.WSDL11DynamicClient"  -Dexec.classpathScope=compile
-mvn exec:java -Dexec.mainClass="org.apache.axis2.examples.client.WSDL20DynamicClient"  -Dexec.classpathScope=compile

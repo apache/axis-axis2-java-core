@@ -111,12 +111,6 @@ and asynchronous Web services invocation using non-blocking clients
 and transports.</p>
 </li>
 <li>
-<p style="margin-bottom: 0in"><strong>MEP Support</strong> - Axis2
-now comes handy with the flexibility to support Message Exchange
-Patterns (MEPs) with in-built support for basic MEPs defined in
-WSDL 2.0.</p>
-</li>
-<li>
 <p style="margin-bottom: 0in"><strong>Flexibility</strong> - The
 Axis2 architecture gives the developer complete freedom to insert
 extensions into the engine for custom header processing, system
@@ -143,8 +137,7 @@ the core of the engine is completely transport-independent.</p>
 <li>
 <p style="margin-bottom: 0in"><strong>WSDL support</strong> - Axis2
 supports the Web Service Description Language, version <a href=
-"http://www.w3.org/TR/wsdl">1.1</a> and <a href=
-"http://www.w3.org/TR/wsdl20/">2.0</a>, which allows you to easily
+"http://www.w3.org/TR/wsdl">1.1</a>, which allows you to easily
 build stubs to access remote services, and also to automatically
 export machine-readable descriptions of your deployed services from
 Axis2.</p>
