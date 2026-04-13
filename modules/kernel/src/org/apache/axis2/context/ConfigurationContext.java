@@ -500,12 +500,36 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Returns a ServiceGroupContext object associated with the specified ID from the internal
-     * table.
+     * table. The returned context's {@code lastTouchedTime} is updated as a side effect of the
+     * lookup; use {@link #getServiceGroupContext(String, boolean)} with {@code touch=false}
+     * if the caller needs to inspect the context (for example to evaluate staleness against
+     * {@code lastTouchedTime}) without mutating it. See AXIS2-5788.
      *
      * @param serviceGroupCtxId The ID string associated with the ServiceGroupContext object
      * @return The ServiceGroupContext object, or null if not found
      */
     public ServiceGroupContext getServiceGroupContext(String serviceGroupCtxId) {
+        return getServiceGroupContext(serviceGroupCtxId, true);
+    }
+
+    /**
+     * Returns a ServiceGroupContext object associated with the specified ID from the internal
+     * table, optionally updating its {@code lastTouchedTime}.
+     * <p>
+     * Passing {@code touchServiceGroupContext=false} lets external code read the context
+     * without the "observer effect" described in
+     * <a href="https://issues.apache.org/jira/browse/AXIS2-5788">AXIS2-5788</a>:
+     * for example, session-cleanup code that wants to evaluate staleness against
+     * {@code lastTouchedTime} would otherwise reset the clock by the very act of looking.
+     *
+     * @param serviceGroupCtxId         The ID string associated with the ServiceGroupContext object.
+     * @param touchServiceGroupContext  {@code true} to update {@code lastTouchedTime} on a hit
+     *                                  (legacy behaviour preserved for back-compat), {@code false}
+     *                                  to leave it unchanged.
+     * @return The ServiceGroupContext object, or null if not found.
+     */
+    public ServiceGroupContext getServiceGroupContext(String serviceGroupCtxId,
+                                                      boolean touchServiceGroupContext) {
 
         if (serviceGroupCtxId == null) {
             // Hashtables require non-null key-value pairs
@@ -515,15 +539,13 @@ public class ConfigurationContext extends AbstractContext {
         ServiceGroupContext serviceGroupContext = null;
 
         if (serviceGroupContextMap != null) {
-            serviceGroupContext =serviceGroupContextMap.get(serviceGroupCtxId);
-            if (serviceGroupContext != null) {
-                serviceGroupContext.touch();
-            } else {
-                serviceGroupContext =applicationSessionServiceGroupContexts
+            serviceGroupContext = serviceGroupContextMap.get(serviceGroupCtxId);
+            if (serviceGroupContext == null) {
+                serviceGroupContext = applicationSessionServiceGroupContexts
                                 .get(serviceGroupCtxId);
-                if (serviceGroupContext != null) {
-                    serviceGroupContext.touch();
-                }
+            }
+            if (serviceGroupContext != null && touchServiceGroupContext) {
+                serviceGroupContext.touch();
             }
         }
 
@@ -532,9 +554,14 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * Gets all service groups in the system.
+     * Returns the IDs of all service groups currently held by this
+     * {@code ConfigurationContext} (both SOAP-session and application-session scoped).
+     * <p>
+     * Fixes the stale Javadoc noted in
+     * <a href="https://issues.apache.org/jira/browse/AXIS2-5788">AXIS2-5788</a>: the return
+     * type is a {@code String[]}, not a hashmap of {@code ServiceGroupContext} instances.
      *
-     * @return Returns hashmap of ServiceGroupContexts.
+     * @return an array of service group context IDs; never {@code null}, but may be empty.
      */
     public String[] getServiceGroupContextIDs() {
         String[] ids = new String[serviceGroupContextMap.size() +
