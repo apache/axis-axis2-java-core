@@ -47,6 +47,16 @@ where a JVM cannot run. The same MCP client connects to both Axis2/Java
 (enterprise) and Axis2/C (embedded) with identical protocol and identical
 results. See the
 <a href="http://axis.apache.org/axis2/c/">Axis2/C site</a> for details.</p>
+<p><strong>Apache Rampart 2.0.0 is ready for release</strong> and will ship
+immediately after Axis2/Java 2.0.1, on which it depends. Rampart 2.0.0
+brings WS-Security up to date with the Jakarta EE 9+ / Axis2 2.0.x line
+(<code>jakarta.*</code> namespaces, modern WSS4J, current OpenJDK support)
+so legacy SOAP services with WS-Security policies can run unchanged on
+the same Tomcat 11 / WildFly 32 / WildFly 39 stack as the rest of
+Axis2/Java. Minimum OpenJDK version is 17; tested with the same
+server/JDK combinations listed below. See the
+<a href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart
+site</a> for details.</p>
 <p>Apache Axis2, Axis2, Apache, the Apache feather logo, and the Apache Axis2 project logo are trademarks of The Apache Software Foundation.</p>
 <h3><em>Why Apache Axis2 in 2026:</em></h3>
 
@@ -55,7 +65,10 @@ that serves JSON-RPC, REST+OpenAPI, and
 <a href="docs/mcp-architecture.html">MCP</a> from a single service class &#x2014;
 no code duplication, no wrapper layers. Add the
 <a href="docs/spring-boot-starter.html">Spring Boot Starter</a> dependency and
-your services are live on Tomcat 11 or WildFly 32/39 with OpenJDK 17, 21, or 25.</p>
+your services are live on a modern application server. <strong>Minimum
+OpenJDK version is 17.</strong> Tested configurations: Tomcat 11 with
+OpenJDK 21 and OpenJDK 25, WildFly 32 with OpenJDK 21, and WildFly 39
+with OpenJDK 25.</p>
 
 <p>The architecture that made this possible was designed at the August 2004 Summit
 in Colombo, Sri Lanka. Its handler chain &#x2014; a pipeline of phases that
