@@ -279,6 +279,14 @@ public class H2StreamingRequestImpl implements Request {
     }
 
     @Override
+    public String getResponseContentEncoding() {
+        // HTTP/2 streaming responses use SimpleHttpResponse which does not
+        // expose entity content encoding separately. Return null since
+        // HC5's async pipeline handles decompression before we see the body.
+        return null;
+    }
+
+    @Override
     public void releaseConnection() {
         log.trace("Releasing HTTP/2 streaming connection resources");
         // HTTP/2 connections are managed by the connection pool

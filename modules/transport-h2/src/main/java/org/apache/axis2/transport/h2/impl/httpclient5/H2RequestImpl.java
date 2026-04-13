@@ -225,6 +225,14 @@ public class H2RequestImpl implements Request {
     }
 
     @Override
+    public String getResponseContentEncoding() {
+        // HTTP/2 async responses use SimpleHttpResponse which does not expose
+        // entity content encoding separately. Return null (no encoding) since
+        // HC5's async pipeline handles decompression before we see the body.
+        return null;
+    }
+
+    @Override
     public int getStatusCode() {
         return response != null ? response.getCode() : -1;
     }
