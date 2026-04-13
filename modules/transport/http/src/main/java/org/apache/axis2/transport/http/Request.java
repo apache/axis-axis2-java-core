@@ -42,5 +42,17 @@ public interface Request {
     Header[] getResponseHeaders();
     Map<String,String> getCookies();
     InputStream getResponseContent() throws IOException;
+    /**
+     * Returns the content encoding of the response entity, or null if
+     * the content is not encoded (or has already been decoded by the
+     * HTTP client library).
+     *
+     * <p>Starting with HttpClient 5.6, ContentCompressionExec decompresses
+     * gzip/deflate responses but no longer removes the Content-Encoding
+     * response header. Callers should use this method instead of
+     * {@code getResponseHeader("Content-Encoding")} to avoid double
+     * decompression. See AXIS2-6101.
+     */
+    String getResponseContentEncoding();
     void releaseConnection();
 }

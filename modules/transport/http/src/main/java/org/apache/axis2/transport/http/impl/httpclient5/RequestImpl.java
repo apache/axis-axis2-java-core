@@ -216,6 +216,12 @@ final class RequestImpl implements Request {
     }
 
     @Override
+    public String getResponseContentEncoding() {
+        HttpEntity entity = response.getEntity();
+        return entity == null ? null : entity.getContentEncoding();
+    }
+
+    @Override
     public void execute() throws IOException {
         populateHostConfiguration();
 

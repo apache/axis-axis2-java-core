@@ -253,12 +253,15 @@ public abstract class HTTPSender {
                     if (opContext != null) {
                         InputStream in = request.getResponseContent();
                         if (in != null) {
-                            String contentEncoding = request.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
+                            // AXIS2-6101: Check the entity's content encoding, not the
+                            // response header. Starting with HttpClient 5.6,
+                            // ContentCompressionExec decompresses gzip responses but
+                            // no longer removes the Content-Encoding header. Checking
+                            // the header would cause double decompression.
+                            String contentEncoding = request.getResponseContentEncoding();
                             if (contentEncoding != null) {
                                 if (contentEncoding.equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
                                     in = new GZIPInputStream(in);
-                                    // If the content-encoding is identity we can basically ignore
-                                    // it.
                                 } else if (!"identity".equalsIgnoreCase(contentEncoding)) {
                                     throw new AxisFault("HTTP :" + "unsupported content-encoding of '"
                                                         + contentEncoding + "' found");
