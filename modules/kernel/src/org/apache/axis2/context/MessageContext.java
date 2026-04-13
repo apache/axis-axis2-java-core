@@ -346,12 +346,29 @@ public class MessageContext extends AbstractContext
     private transient ConfigurationContext configurationContext;
 
     /**
-     * @serial Index into the executuion chain of the currently executing handler
+     * @serial Index into the execution chain of the currently executing handler.
+     * <p>
+     * NOTE on naming (see AXIS2-5862 for history): the execution chain stored
+     * on this MessageContext is a {@code List<Handler>} whose elements are
+     * actually {@link org.apache.axis2.engine.Phase} objects (Phase implements
+     * Handler). So despite the field name, {@code currentHandlerIndex} is
+     * effectively "index of the current Phase within the execution chain."
+     * {@link org.apache.axis2.engine.AxisEngine#invoke} walks the chain using
+     * this field and {@link #setCurrentHandlerIndex(int)}.
      */
     private int currentHandlerIndex;
 
     /**
-     * @serial Index into the current Phase of the currently executing handler (if any)
+     * @serial Index into the current Phase of the currently executing handler (if any).
+     * <p>
+     * NOTE on naming (see AXIS2-5862 for history): despite the field name,
+     * {@code currentPhaseIndex} does NOT index the chain of phases --
+     * {@link #currentHandlerIndex} does that. This field indexes the
+     * {@code handlers} list INSIDE the Phase that is currently executing,
+     * so it is effectively "index of the current Handler within the current
+     * Phase." {@link org.apache.axis2.engine.Phase#invoke} and
+     * {@link org.apache.axis2.engine.Phase#flowComplete} use this field
+     * via {@link #getCurrentPhaseIndex()} / {@link #setCurrentPhaseIndex(int)}.
      */
     private int currentPhaseIndex;
 
@@ -625,10 +642,21 @@ public class MessageContext extends AbstractContext
         return configurationContext;
     }
 
+    /**
+     * @return The index of the current Phase within the execution chain.
+     *         See the note on {@link #currentHandlerIndex} for why the
+     *         field is named the way it is.
+     */
     public int getCurrentHandlerIndex() {
         return currentHandlerIndex;
     }
 
+    /**
+     * @return The index of the currently executing Handler within the
+     *         current Phase's handlers list. See the note on
+     *         {@link #currentPhaseIndex} for why the field is named the
+     *         way it is.
+     */
     public int getCurrentPhaseIndex() {
         return currentPhaseIndex;
     }
@@ -1272,10 +1300,21 @@ public class MessageContext extends AbstractContext
         configurationContext = context;
     }
 
+    /**
+     * Sets the index of the current Phase within the execution chain.
+     * See the note on {@link #currentHandlerIndex} for why the field
+     * is named the way it is.
+     */
     public void setCurrentHandlerIndex(int currentHandlerIndex) {
         this.currentHandlerIndex = currentHandlerIndex;
     }
 
+    /**
+     * Sets the index of the currently executing Handler within the
+     * current Phase's handlers list. See the note on
+     * {@link #currentPhaseIndex} for why the field is named the way
+     * it is.
+     */
     public void setCurrentPhaseIndex(int currentPhaseIndex) {
         this.currentPhaseIndex = currentPhaseIndex;
     }

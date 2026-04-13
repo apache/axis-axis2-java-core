@@ -342,7 +342,15 @@ public class Phase implements Handler {
         }
 
         // This will be non-zero if we failed during execution of one of the
-        // handlers in this phase
+        // handlers in this phase.
+        //
+        // Naming note: the local is called "currentHandlerIndex" because that
+        // is what the value *semantically* is -- the index of the handler
+        // within this Phase at which the fault was raised. The getter is
+        // called getCurrentPhaseIndex() because that is the MessageContext
+        // field name, but despite the name the field holds a handler-within-
+        // phase index, not a phase-within-chain index. See the Javadoc on
+        // MessageContext.currentPhaseIndex and AXIS2-5862.
         int currentHandlerIndex = msgContext.getCurrentPhaseIndex();
         if (currentHandlerIndex == 0) {
             currentHandlerIndex = handlers.size();
