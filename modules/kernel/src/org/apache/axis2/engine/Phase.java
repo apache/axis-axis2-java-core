@@ -352,6 +352,17 @@ public class Phase implements Handler {
             msgContext.setCurrentPhaseIndex(0);
         }
 
+        // AXIS2-5862: guard against a stale currentPhaseIndex that exceeds this
+        // phase's handler count. The documented symptom is an empty phase being
+        // reached via flowComplete() with a non-zero inbound index, which makes
+        // handlers.get(currentHandlerIndex - 1) throw ArrayIndexOutOfBoundsException
+        // and silently abort flowComplete() for every earlier phase. Capping at
+        // handlers.size() turns that crash into a safe no-op / truncated unwind,
+        // and has no effect on the normal path where the index is already valid.
+        if (currentHandlerIndex > handlers.size()) {
+            currentHandlerIndex = handlers.size();
+        }
+
         for (; currentHandlerIndex > 0; currentHandlerIndex--) {
             Handler handler = (Handler) handlers.get(currentHandlerIndex - 1);
 
