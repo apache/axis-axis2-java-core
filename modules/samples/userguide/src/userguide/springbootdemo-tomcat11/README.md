@@ -163,6 +163,48 @@ $CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/FinancialBench
 
 ---
 
+## Streaming JSON message formatter
+
+Axis2 2.0.1 includes streaming message formatters that prevent reverse proxy
+body-size rejections on large HTTP responses. Drop-in replacement — no service
+code changes required.
+
+**Problem solved (response-side):** The default formatter buffers the entire
+JSON response before writing to the wire. A reverse proxy may return 502 Bad
+Gateway on large responses. The streaming formatter flushes every 64 KB
+(configurable), so the proxy sees a stream of chunks, never the full body.
+
+**Not solved (request-side):** Large HTTP request bodies (client → server)
+are a client-side problem. If a client sends a 620 MB POST and the proxy
+rejects it, the fix is client-side: break the request into smaller payloads
+or add a pre-send size guard.
+
+| Variant | Class |
+|---------|-------|
+| GSON | `org.apache.axis2.json.streaming.JSONStreamingMessageFormatter` |
+| Moshi | `org.apache.axis2.json.streaming.MoshiStreamingMessageFormatter` |
+
+Enable globally in `axis2.xml`:
+
+```xml
+<messageFormatter contentType="application/json"
+    class="org.apache.axis2.json.streaming.MoshiStreamingMessageFormatter"/>
+```
+
+Optional flush interval tuning per-service in `services.xml`:
+
+```xml
+<parameter name="streamingFlushIntervalBytes">131072</parameter>
+```
+
+Applies to all services (BigDataH2Service, FinancialBenchmarkService, any
+custom service). Tested on WildFly 32 locally and behind a real reverse proxy
+(stg-rapi02, HTTP/2 ALPN). Bit-identical results to the non-streaming formatter.
+
+See the [Streaming JSON Message Formatter guide](../../../../../../src/site/xdoc/docs/json-streaming-formatter.xml) for full documentation.
+
+---
+
 ## Axis2 JSON-RPC request format
 
 The top-level key is the **operation name**, and the value is an array containing one object

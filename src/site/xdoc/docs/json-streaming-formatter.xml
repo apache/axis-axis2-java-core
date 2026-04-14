@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+    <properties>
+        <title>Streaming JSON Message Formatter</title>
+    </properties>
+
+    <body>
+        <h1>Streaming JSON Message Formatter</h1>
+
+        <section name="Overview">
+        <p>Axis2 2.0.1 includes streaming message formatters for JSON responses.
+        These formatters wrap the transport OutputStream with a FlushingOutputStream
+        that pushes data to the HTTP layer every 64 KB (configurable), converting
+        a single buffered response into a stream of HTTP/2 DATA frames or HTTP/1.1
+        chunked transfer encoding segments.</p>
+
+        <p>Both GSON and Moshi variants are provided as drop-in replacements for
+        their respective base formatters. No service code changes are required.</p>
+        </section>
+
+        <section name="Problem: Large HTTP Responses and Reverse Proxies">
+        <p>When an Axis2 service returns a large JSON response (hundreds of MB),
+        the default formatter serializes the entire response into memory before
+        writing it to the wire. A reverse proxy (nginx, AWS ALB, or similar) may
+        reject the response due to body-size limits or buffering timeouts,
+        returning <code>502 Bad Gateway</code> to the client even though the
+        Axis2 service completed successfully.</p>
+
+        <p>The streaming formatter eliminates this by flushing incrementally
+        during GSON/Moshi serialization. The proxy never sees the full response
+        body as a single buffer; it forwards chunks as they arrive.</p>
+
+        <p><strong>What this does NOT solve:</strong> Large HTTP <em>request</em>
+        bodies (client to server). If a client sends a very large POST body and
+        the proxy rejects it, the fix is client-side: break the request into
+        smaller payloads (for example, date-range chunking) or add a pre-send
+        size guard. The streaming formatter operates on the response path only.</p>
+        </section>
+
+        <section name="Available Variants">
+        <table>
+            <tr><th>JSON Library</th><th>Formatter Class</th><th>Replaces</th></tr>
+            <tr>
+                <td>GSON</td>
+                <td><code>org.apache.axis2.json.streaming.JSONStreamingMessageFormatter</code></td>
+                <td><code>org.apache.axis2.json.gson.JsonFormatter</code></td>
+            </tr>
+            <tr>
+                <td>Moshi</td>
+                <td><code>org.apache.axis2.json.streaming.MoshiStreamingMessageFormatter</code></td>
+                <td><code>org.apache.axis2.json.moshi.JsonFormatter</code></td>
+            </tr>
+        </table>
+
+        <p>Both variants share the same <code>FlushingOutputStream</code>
+        implementation in the <code>org.apache.axis2.json.streaming</code>
+        package.</p>
+        </section>
+
+        <section name="Configuration">
+
+        <subsection name="Global (axis2.xml)">
+        <p>Replace the default JSON message formatter with the streaming variant:</p>
+<source><![CDATA[<!-- Moshi streaming variant -->
+<messageFormatter contentType="application/json"
+    class="org.apache.axis2.json.streaming.MoshiStreamingMessageFormatter"/>
+
+<!-- OR: GSON streaming variant -->
+<messageFormatter contentType="application/json"
+    class="org.apache.axis2.json.streaming.JSONStreamingMessageFormatter"/>]]></source>
+        <p>All JSON-RPC services in the deployment will use the streaming
+        formatter. Existing services require no code changes.</p>
+        </subsection>
+
+        <subsection name="Flush Interval Tuning (services.xml)">
+        <p>The default flush interval is 64 KB. Override per-service:</p>
+<source><![CDATA[<parameter name="streamingFlushIntervalBytes">131072</parameter>]]></source>
+        <p>Smaller values increase flush frequency (lower latency to first
+        byte, more HTTP frames). Larger values reduce flush overhead at the
+        cost of larger transport buffers before each flush.</p>
+        </subsection>
+
+        </section>
+
+        <section name="How It Works">
+        <p>The streaming formatter is structurally identical to the standard
+        GSON/Moshi formatter with one difference: before creating the
+        <code>JsonWriter</code>, it wraps the transport <code>OutputStream</code>
+        with a <code>FlushingOutputStream</code>:</p>
+
+<source><![CDATA[// Inside writeTo():
+OutputStream flushingStream = new FlushingOutputStream(outputStream, flushInterval);
+// ... GSON/Moshi serialization proceeds normally against the flushing stream]]></source>
+
+        <p>During serialization, every time the accumulated bytes exceed the
+        flush interval, the <code>FlushingOutputStream</code> calls
+        <code>flush()</code> on the underlying transport stream. This triggers
+        the servlet container (Tomcat, WildFly/Undertow) to send the buffered
+        bytes as an HTTP/2 DATA frame or HTTP/1.1 chunk. The reverse proxy
+        receives and forwards each chunk independently.</p>
+
+        <p>The three serialization paths (fault response, element response,
+        and object response) all benefit from flushing without any path-specific
+        changes.</p>
+        </section>
+
+        <section name="Services That Benefit">
+        <p>The streaming formatter applies to <strong>all</strong> Axis2
+        JSON-RPC services in the deployment. Any service that returns a
+        large JSON response benefits transparently:</p>
+
+        <ul>
+            <li><strong>BigDataH2Service</strong> — enterprise big data
+            processing with large record sets. The streaming formatter
+            prevents proxy rejections as response sizes grow into the
+            hundreds of MB range.</li>
+            <li><strong>FinancialBenchmarkService</strong> — portfolio
+            variance, Monte Carlo VaR, and scenario analysis. Responses
+            are typically small (1-10 KB) but the formatter operates
+            transparently with no overhead on small payloads.</li>
+            <li><strong>Any custom service</strong> — services deployed
+            as <code>.aar</code> archives benefit without code changes
+            once the formatter is configured in <code>axis2.xml</code>.</li>
+        </ul>
+        </section>
+
+        <section name="Testing">
+        <p>The streaming formatter has been tested on:</p>
+        <ul>
+            <li>WildFly 32 (local) — all services produce valid JSON</li>
+            <li>WildFly 32 behind a reverse proxy (staging infrastructure
+            with HTTP/2 ALPN on port 8443) — all services produce
+            bit-identical results compared to the non-streaming formatter</li>
+        </ul>
+        <p>To verify the formatter is active, enable DEBUG logging for
+        <code>org.apache.axis2.json.streaming</code> and look for:</p>
+<source>MoshiStreamingMessageFormatter: using FlushingOutputStream with 65536 byte flush interval</source>
+        </section>
+
+        <section name="Axis2/C Equivalent">
+        <p>The same pattern applies to Axis2/C services using Apache httpd
+        with mod_axis2. During JSON response generation, call
+        <code>ap_rflush(r)</code> periodically to flush the response
+        bucket brigade. This causes mod_h2 to emit HTTP/2 DATA frames
+        incrementally, achieving the same proxy-friendly streaming behavior
+        as the Java formatter.</p>
+        </section>
+
+    </body>
+</document>

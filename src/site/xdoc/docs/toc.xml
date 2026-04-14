@@ -125,14 +125,15 @@ Transport</a></li>
 Integration Guide</a></li>
 <li>18.5 <a href="wildfly-http2-integration-guide.html">WildFly HTTP/2
 Integration Guide</a></li>
-<li>18.6 <a href="servlet-transport.html">HTTP
+<li>18.6 <a href="json-streaming-formatter.html">Streaming JSON Formatter for Large HTTP/2 Responses</a></li>
+<li>18.7 <a href="servlet-transport.html">HTTP
 servlet transport</a></li>
-<li>18.7 <a href="jms-transport.html">JMS Transport</a></li>
-<li>18.8 <a href="tcp-transport.html">TCP Transport</a></li>
-<li>18.9 <a href="mail-transport.html">Mail Transport</a></li>
-<li>18.10 <a href="udp-transport.html">UDP Transport</a></li>
-<li>18.11 <a href="xmpp-transport.html">XMPP Transport</a></li>
-<li>18.12 <a href="transport_howto.html">Custom
+<li>18.8 <a href="jms-transport.html">JMS Transport</a></li>
+<li>18.9 <a href="tcp-transport.html">TCP Transport</a></li>
+<li>18.10 <a href="mail-transport.html">Mail Transport</a></li>
+<li>18.11 <a href="udp-transport.html">UDP Transport</a></li>
+<li>18.12 <a href="xmpp-transport.html">XMPP Transport</a></li>
+<li>18.13 <a href="transport_howto.html">Custom
 Transport</a></li>
 </ul>
 </li>
@@ -168,6 +169,7 @@ Support</a></li>
         <li><a href="json-rpc-mcp-guide.html#error_handling">Error Handling: Correlation ID Pattern</a></li>
         <li><a href="json-rpc-mcp-guide.html#tested_features">Unit Test Feature Coverage</a></li>
         <li><a href="json-rpc-mcp-guide.html#not_implemented">Not Implemented / Limitations</a></li>
+        <li><a href="json-streaming-formatter.html">Streaming Formatter for Large MCP Tool Responses</a></li>
         <li><a href="json-rpc-mcp-guide.html#data_api_relationship">Relationship to Data API Vision</a></li>
         <li><a href="json-rpc-mcp-guide.html#python_compat">Python MCP Compatibility Notes</a></li>
     </ul>
@@ -181,7 +183,16 @@ Support</a></li>
         <li><a href="mcp-architecture.html#key-design-decisions">Key Design Decisions</a></li>
     </ul>
     </li>
-    <li><strong>23.6 <a href="mcp-examples.html">MCP Examples — Financial Services Benchmarks</a></strong>
+    <li><strong>23.6 <a href="json-streaming-formatter.html">Streaming JSON Message Formatter</a></strong>
+    <ul>
+        <li><a href="json-streaming-formatter.html#Overview">Overview</a></li>
+        <li><a href="json-streaming-formatter.html#Problem_Large_HTTP_Responses_and_Reverse_Proxies">Problem: Large Responses and Reverse Proxies</a></li>
+        <li><a href="json-streaming-formatter.html#Configuration">Configuration (axis2.xml / services.xml)</a></li>
+        <li><a href="json-streaming-formatter.html#Services_That_Benefit">Services That Benefit (BigDataH2Service, FinancialBenchmarkService)</a></li>
+        <li><a href="json-streaming-formatter.html#Axis2_C_Equivalent">Axis2/C Equivalent (ap_rflush)</a></li>
+    </ul>
+    </li>
+    <li><strong>23.7 <a href="mcp-examples.html">MCP Examples — Financial Services Benchmarks</a></strong>
     <ul>
         <li><a href="mcp-examples.html#live-examples-tested-on-wildfly-32-0-1-final-2026-04-08">Live Examples (WildFly 32)</a></li>
         <li><a href="mcp-examples.html#demo-1-stress-test--what-if-correlations-spike">Demo 1: Stress Test</a></li>
