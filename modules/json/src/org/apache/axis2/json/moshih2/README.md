@@ -17,7 +17,7 @@ This package provides enhanced JSON processing capabilities for Apache Axis2, in
 - **40-60% performance improvement** for large JSON payloads (>1MB)
 - **Reduced memory usage** through intelligent streaming and GC optimization
 - **Better throughput** for concurrent JSON processing
-- **Specialized optimization** for RAPI-style data patterns (records, metadata arrays)
+- **Specialized optimization** for record-oriented payloads (records, metadata arrays)
 - **Async processing prevents blocking** for production scenarios with 12-18s response times
 
 ## Components
@@ -59,7 +59,7 @@ Advanced XML stream reader with field-specific optimizations and intelligent pro
 - Field-specific parsing optimizations (extracted from HTTP/2 integration)
 - Large array processing with flow control
 - Memory management patterns
-- RAPI-style data pattern optimizations
+- Record-oriented payload optimizations
 - Performance tracking at field level
 
 ## Configuration

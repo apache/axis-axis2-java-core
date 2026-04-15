@@ -559,8 +559,8 @@ understand the multi-protocol positioning, and have concrete migration guides.
 1. **Apache blog post: "Axis2 as a Multi-Protocol Service Platform"**
    - Covers: dual-protocol JSON-RPC + REST from one service, OpenAPI generation,
      MCP transport, Spring Boot starter
-   - Uses the calculation orchestration deployment (anonymized DPTv2) as the case study:
-     sub-200ms portfolio calculations, CDC cache, Node.js bridge
+   - Uses a calculation-orchestration deployment as the case study:
+     sub-200ms portfolio calculations, change-data-capture cache, Node.js bridge
    - Positions Axis2's handler chain as the differentiator for production orchestration
      workloads
 

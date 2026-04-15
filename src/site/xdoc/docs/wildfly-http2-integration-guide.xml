@@ -121,7 +121,7 @@
 
     &lt;!-- HTTP/2 Optimization Filters --&gt;
     &lt;filters&gt;
-        &lt;!-- JSON Compression for RAPI Operations (30-50% reduction) --&gt;
+        &lt;!-- JSON compression for JSON-RPC / REST operations (30-50% reduction) --&gt;
         &lt;gzip name="gzip-compression"/&gt;
 
         &lt;!-- Cache Control Headers for Static Resources --&gt;

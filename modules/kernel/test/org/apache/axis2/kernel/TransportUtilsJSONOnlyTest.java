@@ -68,7 +68,8 @@ public class TransportUtilsJSONOnlyTest extends TestCase {
 
     /**
      * Test that TransportUtils.deleteAttachments() is skipped when enableJSONOnly=true.
-     * This is the key test that would have caught the JAX-WS issue in dptv2.
+     * Regression guard for the JAX-WS JSON-only attachment handling path that
+     * previously triggered a NoClassDefFoundError in JSON-only deployments.
      */
     public void testDeleteAttachmentsSkippedWhenEnableJSONOnlyTrue() throws Exception {
         // Set enableJSONOnly=true on the service
@@ -150,10 +151,10 @@ public class TransportUtilsJSONOnlyTest extends TestCase {
 
     /**
      * Test the specific JAX-WS scenario: MessageContext with AxisService but no attachments.
-     * This simulates the dptv2 JSON service request scenario.
+     * This simulates a JSON-only JAX-WS service request scenario.
      */
     public void testJAXWSJSONServiceScenario() throws Exception {
-        // Set enableJSONOnly=true (typical for JSON-only services like dptv2)
+        // Set enableJSONOnly=true (typical for JSON-only JAX-WS services)
         axisService.addParameter(new Parameter("enableJSONOnly", "true"));
 
         // Simulate JAX-WS service invocation scenario
