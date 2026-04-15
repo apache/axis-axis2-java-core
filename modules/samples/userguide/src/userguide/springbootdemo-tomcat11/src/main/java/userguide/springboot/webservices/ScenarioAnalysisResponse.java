@@ -54,8 +54,19 @@ public class ScenarioAnalysisResponse {
     private double downsideRisk;
 
     /**
-     * Upside/downside ratio. 0 when downsideRisk == 0 (no loss scenarios).
-     * > 1 means more expected upside than downside.
+     * Upside/downside ratio.
+     * <ul>
+     *   <li>Finite positive value — the common case; &gt; 1 means more
+     *       expected upside than downside.</li>
+     *   <li>{@link Double#POSITIVE_INFINITY} — all-upside portfolio
+     *       (downside is effectively zero, upside is positive).</li>
+     *   <li>{@link Double#NaN} — both sides effectively zero (ratio
+     *       genuinely undefined).</li>
+     * </ul>
+     * Note: Jackson serializes these as {@code "Infinity"} / {@code "NaN"}
+     * string tokens, which are valid JavaScript Number literals but NOT
+     * strict JSON per RFC 8259. Clients using strict JSON parsers should
+     * configure their parser or map these to null before parsing.
      */
     private double upsideDownsideRatio;
 

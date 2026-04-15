@@ -22,7 +22,8 @@ package userguide.springboot.webservices;
  * Request for portfolio variance calculation.
  *
  * <p>Computes σ²_p = Σ_i Σ_j w_i · w_j · σ_ij — an O(n²) operation
- * that mirrors correlation/risk calculations in DPT v2 and similar systems.
+ * that mirrors correlation/risk calculations in typical portfolio risk
+ * platforms.
  *
  * <h3>Covariance matrix formats</h3>
  * <ul>
@@ -49,6 +50,17 @@ public class PortfolioVarianceRequest {
     /**
      * Covariance matrix in 2D format: {@code covarianceMatrix[i][j]}.
      * Takes precedence over {@code covarianceMatrixFlat} if both are provided.
+     *
+     * <p>Time basis (important): the matrix MUST be on the same frequency
+     * basis as {@code nPeriodsPerYear}.  The service's
+     * {@code annualizedVolatility} output is computed as
+     * {@code sqrt(w'Σw) · sqrt(nPeriodsPerYear)}, which is only correct
+     * when Σ is <em>per-period</em> covariance (daily Σ with
+     * nPeriodsPerYear=252, weekly with 52, monthly with 12).  Passing an
+     * already-annualized Σ while leaving nPeriodsPerYear=252 inflates the
+     * reported annualized vol by √252 ≈ 15.9×.  If your matrix is already
+     * annualized, set {@code nPeriodsPerYear=1} and read
+     * {@code portfolioVolatility} instead.
      */
     private double[][] covarianceMatrix;
 
@@ -56,6 +68,7 @@ public class PortfolioVarianceRequest {
      * Covariance matrix in flat row-major format: element (i,j) is at index
      * {@code i * nAssets + j}. Length must be nAssets². Used when the caller
      * cannot produce a nested JSON array (e.g., numpy {@code .flatten()}).
+     * Same time-basis convention as {@link #covarianceMatrix} applies.
      */
     private double[] covarianceMatrixFlat;
 
@@ -73,6 +86,13 @@ public class PortfolioVarianceRequest {
      * {@code annualizedVolatility = portfolioVolatility × sqrt(nPeriodsPerYear)}.
      * Common values: 252 (equity, default), 260 (some fixed-income conventions),
      * 365 (crypto), 12 (monthly factor models).
+     *
+     * <p>MUST match the frequency basis of the supplied covariance matrix
+     * (see {@link #covarianceMatrix}).  Mismatches silently inflate or
+     * deflate {@code annualizedVolatility} by {@code sqrt(nPeriodsPerYear)};
+     * the service cannot detect this because both per-period and annualized
+     * matrices are valid PSD covariance matrices.  If your covariance is
+     * already annualized, pass {@code 1} here.
      */
     private int nPeriodsPerYear = 252;
 

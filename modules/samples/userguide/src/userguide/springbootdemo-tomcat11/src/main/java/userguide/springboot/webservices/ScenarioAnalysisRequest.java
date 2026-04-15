@@ -26,7 +26,8 @@ import java.util.List;
  * <p>Computes probability-weighted expected return, upside, and downside
  * for a portfolio under multiple price scenarios. Also benchmarks
  * {@code HashMap} O(1) lookup against {@code ArrayList} O(n) scan,
- * mirroring the Array→Map optimization used in DPT v2 for 500+ asset portfolios.
+ * a common optimization pattern in portfolio analysis systems that
+ * handle 500+ assets.
  *
  * <h3>Example</h3>
  * <pre>{@code
@@ -61,7 +62,9 @@ public class ScenarioAnalysisRequest {
     /**
      * Tolerance for probability sum validation per asset.
      * Each asset's scenario probabilities must sum to 1.0 within this tolerance.
-     * Default: 1e-4 (0.01%). Pass 0.0 to keep the default. Clamped to [1e-10, 0.1].
+     * Default: 1e-4 (0.01%). Passing 0.0 or any negative value falls back to
+     * this default. Positive values are capped at 0.1 (10%) to prevent a
+     * too-loose tolerance from hiding real probability-sum bugs.
      * Loosen (e.g., 0.001) when aggregating externally-sourced probabilities
      * that carry rounding error; keep tight to catch genuinely miscounted scenarios.
      */

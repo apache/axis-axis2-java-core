@@ -44,6 +44,18 @@ import java.util.UUID;
  *   <tr><td>scenarioAnalysis (1000 assets)</td><td>O(n) linear / O(1) hash</td><td>&lt;5 ms</td><td>requires 16–32 GB JVM</td></tr>
  * </table>
  *
+ * <p><i>Note on the memory delta:</i> the C column reflects raw working-set
+ * size on an embedded Linux target.  The Java column reflects a typical
+ * production JVM baseline (Tomcat/WildFly + Spring Boot + Axis2 Databinding
+ * (ADB) + JIT code cache + GC headroom + Axiom/Axis2 libraries) before the
+ * service does any
+ * allocation of its own.  Both implementations perform the same financial
+ * math on similar primitive arrays; the difference is almost entirely
+ * fixed JVM/container overhead that a tuned server could reduce with
+ * {@code -XX:MinRAMPercentage}, alternative GCs (ZGC, Shenandoah), or
+ * native-image builds.  The numbers above are for baseline-configured
+ * deployments, not a tuned ceiling.
+ *
  * <h3>Operations</h3>
  * <ul>
  *   <li>{@link #portfolioVariance} — O(n²) covariance matrix: σ²_p = Σ_i Σ_j w_i·w_j·σ_ij</li>
@@ -82,6 +94,41 @@ public class FinancialBenchmarkService {
      * <p>Input validation mirrors the C implementation: weight count must match
      * n_assets, covariance matrix must be n×n, weights must sum to 1.0 (unless
      * {@code normalizeWeights=true}).
+     *
+     * <p>Intuition for readers new to portfolio math:
+     *   A portfolio of N assets has N individual volatilities (how much each
+     *   asset moves) AND N×N pairwise correlations (how they move together).
+     *   The covariance matrix packages both: cov[i][j] = vol_i · vol_j · corr_ij.
+     *   Portfolio variance is not just the weighted average of individual
+     *   variances — correlation effects dominate.  Negative correlations
+     *   reduce portfolio risk (diversification benefit); correlations that
+     *   converge to 1.0 during crises make "diversified" portfolios behave
+     *   like a single asset.
+     *
+     * <p>Numerical notes preserved in this implementation:
+     *   - Variance can become slightly negative from floating-point
+     *     cancellation in the O(n²) accumulator; clamp to zero before sqrt
+     *     (see {@link #portfolioVariance} body).
+     *   - Non-positive-semi-definite covariance matrices silently yield
+     *     {@code portfolioVariance ≈ 0} after clamping.  Callers SHOULD
+     *     validate PSD upstream (e.g., check that the smallest eigenvalue
+     *     is >= -tolerance) rather than trusting a zero result.
+     *
+     * <p>Time basis (IMPORTANT — frequency consistency):
+     *   The covariance matrix MUST be expressed on the same time basis as
+     *   the period implied by {@code nPeriodsPerYear}.  The output field
+     *   {@code annualizedVolatility = sqrt(w'Σw) · sqrt(nPeriodsPerYear)}
+     *   assumes the input Σ is <em>per-period</em> covariance (e.g., daily
+     *   covariance with nPeriodsPerYear=252, weekly with 52, monthly with
+     *   12).  If a caller submits an <em>already-annualized</em> matrix
+     *   while leaving nPeriodsPerYear=252 at its default, the reported
+     *   annualized vol is inflated by √252 ≈ 15.9× and is meaningless.
+     *   There is no way for the service to detect this — annualized and
+     *   per-period matrices are both valid PSD covariance matrices — so
+     *   callers must self-enforce the convention.  If your covariance is
+     *   already annualized, pass {@code nPeriodsPerYear=1} and read
+     *   {@code portfolioVolatility} (which equals the annualized vol in
+     *   that case) instead of {@code annualizedVolatility}.
      */
     public PortfolioVarianceResponse portfolioVariance(PortfolioVarianceRequest request) {
         String uuid = UUID.randomUUID().toString();
@@ -126,6 +173,25 @@ public class FinancialBenchmarkService {
         double weightSum = 0.0;
         for (double w : weights) weightSum += w;
 
+        // Weights are fractions of portfolio value per asset (e.g.,
+        //   [0.25, 0.25, 0.20, 0.15, 0.15] for a 5-asset equal-weight-ish
+        //   portfolio).  They MUST sum to 1.0 for the math to represent a
+        //   real portfolio.
+        //
+        // Edge cases documented for callers:
+        //   - Zero-sum weights (e.g., [0.5, 0.5, -0.5, -0.5], a long-short
+        //     portfolio with zero net exposure) CANNOT use normalizeWeights=true.
+        //     The service rejects this because dividing by sum=0 is undefined.
+        //     Callers with zero-sum portfolios should compute normalized
+        //     weights client-side and pass normalizeWeights=false.  The
+        //     portfolio variance formula w'Σw is still well-defined for
+        //     zero-sum weights; only the normalization step is ill-defined.
+        //   - Gross exposure is lost under normalization: submitting
+        //     [1.3, 0.3] (sum 1.6, 160% gross leverage) becomes
+        //     [0.8125, 0.1875] after normalization (100% gross).  A caller
+        //     expecting to measure leveraged risk will instead measure
+        //     un-leveraged risk.  This is inherent to normalization, not a
+        //     service bug, but callers should be aware.
         boolean weightsNormalized = false;
         if (request.isNormalizeWeights()) {
             if (weightSum <= 0.0) {
@@ -164,7 +230,25 @@ public class FinancialBenchmarkService {
 
         long elapsedUs = (System.nanoTime() - startNs) / 1_000;
 
-        // Clamp negative variance from floating-point cancellation before sqrt
+        // Clamp negative variance from floating-point cancellation before sqrt.
+        //
+        // Two independent causes can produce variance < 0 here:
+        //   1. Rounding error in the O(n²) accumulator when correlations are
+        //      strongly negative and weights are large.  Common, harmless,
+        //      magnitude typically 1e-16 to 1e-12.
+        //   2. A non-positive-semi-definite input covariance matrix.  This is
+        //      a math error — a real covariance matrix is PSD by construction.
+        //      Non-PSD inputs can arise from mixed-frequency estimation,
+        //      shrinkage that went too far, or copy-paste errors in client
+        //      code.  The magnitude can be arbitrarily large (e.g., -0.02).
+        //
+        // Clamping treats both cases identically: report vol = 0 rather than
+        // NaN from sqrt(negative).  This is safe for case 1 but silently
+        // masks case 2.  The service documentation advises callers to
+        // validate PSD upstream.  Alternative: replace the clamp with an
+        // explicit error when |variance| > tolerance and variance < 0,
+        // which would force callers to fix upstream data errors.  Kept as
+        // a clamp here to match the C reference implementation.
         if (variance < 0.0) variance = 0.0;
         double volatility = Math.sqrt(variance);
         int npy = request.getNPeriodsPerYear();
@@ -195,9 +279,46 @@ public class FinancialBenchmarkService {
      *
      * <p>S(t+dt) = S(t) × exp((μ − σ²/2)·dt + σ·√dt·Z), Z ~ N(0,1)
      *
-     * <p>Uses {@link Random#nextGaussian()} (polar method) for normal variates.
-     * When {@code randomSeed != 0}, a seeded {@link Random} is used for reproducibility.
-     * When {@code randomSeed == 0}, a fresh unseeded instance gives non-deterministic results.
+     * <p>Intuition for readers new to GBM:
+     *   GBM is the standard "a stock moves continuously in log-returns
+     *   with constant drift μ and constant volatility σ" assumption.
+     *   Each time step adds a normally-distributed shock scaled by
+     *   σ·√dt plus a deterministic drift.  The {@code −σ²/2} correction
+     *   (Itô's lemma) ensures that E[S(T)] = S(0)·exp(μ·T); without it,
+     *   the expected value drifts upward with higher volatility.  This
+     *   correction is the single most common bug in home-grown GBM code
+     *   and should be preserved verbatim in any re-implementation.
+     *
+     * <p>Sampling behavior:
+     *   Uses {@link Random#nextGaussian()} (polar method) for normal variates.
+     *   When {@code randomSeed != 0}, a seeded {@link Random} is used for
+     *   reproducibility (same seed → bit-identical output).  When
+     *   {@code randomSeed == 0}, a fresh unseeded instance gives
+     *   non-deterministic results.
+     *
+     *   Warning for cross-implementation reproducibility: {@code java.util.Random}
+     *   uses a linear congruential generator (LCG).  An implementation in a
+     *   different language or using a different PRNG (e.g., xorshift128+,
+     *   PCG64, NumPy's default) will produce DIFFERENT numbers for the
+     *   SAME seed.  Reproducibility is per-PRNG, not cross-PRNG.
+     *
+     * <p>Numerical edge cases:
+     *   - <b>Guarded in the body below:</b> the variance accumulator
+     *     {@code (sumSqFinal/nSims - mean²)} can go slightly negative from
+     *     floating-point cancellation; it is clamped to 0.0 before the final
+     *     sqrt so the reported stdDev is never NaN.
+     *   - <b>NOT guarded (caller responsibility):</b> {@code Math.exp()} can
+     *     overflow to {@code +Infinity} when the exponent exceeds ~709 (the
+     *     natural log of {@code Double.MAX_VALUE}).  For typical equity
+     *     parameters (σ ≤ 40%, horizons ≤ 1 year) this is unreachable, but
+     *     extreme stress scenarios (pandemic-era σ ≈ 90%, multi-year
+     *     horizons) can approach it.  If an Infinity appears in
+     *     {@code finalValues[]}, the downstream sum/sort becomes NaN and the
+     *     entire result is corrupted.  This service deliberately does NOT
+     *     clamp the exponent — silently capping would mask an unrealistic
+     *     input and produce a confidently wrong VaR.  Callers running
+     *     extreme scenarios must validate inputs upstream (e.g., reject
+     *     {@code σ·√T > ~20}).
      */
     public MonteCarloResponse monteCarlo(MonteCarloRequest request) {
         String uuid = UUID.randomUUID().toString();
@@ -214,11 +335,27 @@ public class FinancialBenchmarkService {
         double sigma = request.getVolatility();
         int npy = request.getNPeriodsPerYear();
 
+        // GBM is defined only for strictly positive price paths: the process
+        // evolves multiplicatively via exp(...), so S(0) must be > 0 or every
+        // S(t) collapses to 0 and all VaR / CVaR statistics are degenerate.
+        // The request POJO applies a default when missing, but an explicit
+        // zero or negative value reaches here via direct field access paths
+        // and must be rejected at the service boundary.
+        if (initialValue <= 0.0) {
+            return MonteCarloResponse.failed(
+                "initialValue must be > 0 (GBM is undefined for non-positive starting values).");
+        }
         if (sigma < 0.0) {
             return MonteCarloResponse.failed("volatility must be >= 0.");
         }
 
         // ── Pre-computed GBM constants ────────────────────────────────────────
+        // dt         — length of one time step in years (e.g., 1/252 for one
+        //              trading day when nPeriodsPerYear = 252)
+        // drift      — (μ − σ²/2)·dt.  The (−σ²/2) term is the Itô correction
+        //              that keeps E[S(T)] = S(0)·exp(μ·T).  Do not drop it.
+        // volSqrtDt  — σ·√dt.  Scales each standard-normal shock by the
+        //              one-step standard deviation.
         double dt = 1.0 / npy;
         double drift = (mu - 0.5 * sigma * sigma) * dt;
         double volSqrtDt = sigma * Math.sqrt(dt);
@@ -270,13 +407,39 @@ public class FinancialBenchmarkService {
         double variance = (sumSqFinal / nSims) - (mean * mean);
         if (variance < 0.0) variance = 0.0;
 
+        // Sort ascending so finalValues[0] is the worst outcome and
+        // finalValues[nSims-1] is the best.  VaR and CVaR then become
+        // simple index lookups: the p-th percentile loss corresponds to
+        // finalValues[floor(p * nSims)].
         Arrays.sort(finalValues);
 
         int idx5  = (int)(0.05 * nSims);
         int idx1  = (int)(0.01 * nSims);
-        int idx50 = nSims / 2;
 
-        // CVaR: mean of worst 5%
+        // Sample median of a sorted array: for odd N take the middle element,
+        // for even N average the two central elements.  Using a single index
+        // (e.g., nSims/2) is only an approximation for even N and can produce
+        // small reconciliation differences against NumPy/R, which both
+        // implement the average-of-two rule.
+        double median = (nSims % 2 == 0)
+            ? (finalValues[nSims / 2 - 1] + finalValues[nSims / 2]) / 2.0
+            : finalValues[nSims / 2];
+
+        // CVaR95 (a.k.a. Expected Shortfall at 95%): the arithmetic mean of
+        // the {@code idx5} worst final values after ascending sort.  In
+        // This is a common discrete-sample estimator for Expected Shortfall
+        // E[L | L ≥ VaR₉₅] — representing the average loss in the worst 5%
+        // of simulated outcomes.  For a continuous distribution the two are
+        // identical; on a finite sample they can differ slightly depending
+        // on how many observations fall exactly at the VaR threshold.
+        //
+        // Estimator detail: this averages the floor(0.05 · nSims) WORST
+        // observations, i.e., positions 0 through idx5-1 (inclusive).  For
+        // a large nSims this matches the textbook definition to within one
+        // observation.  Callers reconciling against another risk system
+        // should be aware that different estimators (e.g., one that
+        // averages L values that strictly exceed VaR rather than the
+        // bottom k outcomes) can give minutely different numbers.
         double cvarSum = 0.0;
         for (int i = 0; i < idx5; i++) cvarSum += finalValues[i];
         double cvar95 = (idx5 > 0) ? (cvarSum / idx5) : finalValues[0];
@@ -298,8 +461,13 @@ public class FinancialBenchmarkService {
         MonteCarloResponse response = new MonteCarloResponse();
         response.setStatus("SUCCESS");
         response.setMeanFinalValue(mean);
-        response.setMedianFinalValue(finalValues[idx50]);
+        response.setMedianFinalValue(median);
         response.setStdDevFinalValue(Math.sqrt(variance));
+        // Sign convention: VaR and CVaR are returned as POSITIVE LOSS
+        // MAGNITUDES in base-currency units.  So {@code var95 = $252,000}
+        // means "worst-5% outcome is a $252,000 loss from initialValue",
+        // not "portfolio value of $252,000" and not "-$252,000".
+        // Convention mirrors the Basel / regulatory reporting standard.
         response.setVar95(initialValue - finalValues[idx5]);
         response.setVar99(initialValue - finalValues[idx1]);
         response.setCvar95(initialValue - cvar95);
@@ -330,6 +498,25 @@ public class FinancialBenchmarkService {
      *   <li>Downside_i = Σ_j p_j × max(0, currentPrice − price_j) × positionSize</li>
      * </ul>
      * Portfolio E[r] = Σ_i (E[r_i] × positionValue_i) / Σ_i positionValue_i
+     *
+     * <p>Intuition for readers new to scenario analysis:
+     *   Scenario analysis is a "what if" tool, not a statistical forecast.
+     *   Given a small, discrete set of future price outcomes for each asset
+     *   (typically 3-5: base / bull / bear / crash / etc.) each with an
+     *   assigned probability, we compute the probability-weighted average
+     *   return.  This is distinct from Monte Carlo, which samples from a
+     *   continuous distribution rather than a fixed scenario set.
+     *
+     *   Upside and downside are separated so the caller can see the
+     *   asymmetry of the distribution independently — a symmetric scenario
+     *   set around the current price yields equal upside and downside,
+     *   while a long-tailed distribution (common in tech stocks) shows
+     *   larger upside than downside at the same probability weight.
+     *
+     * <p>The HashMap-vs-linear-scan benchmark is an implementation timing
+     * study (O(1) vs O(n) lookup cost) and is independent of the financial
+     * math.  It exists to give callers real numbers for the data-structure
+     * choice when building their own scenario analysis pipelines.
      */
     public ScenarioAnalysisResponse scenarioAnalysis(ScenarioAnalysisRequest request) {
         String uuid = UUID.randomUUID().toString();
@@ -352,10 +539,57 @@ public class FinancialBenchmarkService {
 
         double probTolerance = request.getProbTolerance();
 
-        // ── Step 1: Probability validation ────────────────────────────────────
+        // ── Step 1: Input validation (fail fast on bad assets) ────────────────
+        // Validates every asset up-front and fails with a specific error
+        // rather than silently skipping assets during the financial
+        // calculation.  Silent skipping would produce a portfolio
+        // aggregate that omits the invalid asset without any indication
+        // to the caller — a dangerous default for a risk system.
+        //
+        // Per-asset requirements:
+        //   - currentPrice > 0    — the return formula (price_j / currentPrice
+        //                           − 1) is undefined for non-positive
+        //                           currentPrice; skipping would corrupt
+        //                           portfolio-level aggregates.
+        //   - at least one scenario — required to compute a probability-
+        //                             weighted expectation; an empty
+        //                             scenario list is never a valid model.
+        //   - probabilities sum to 1.0 within {@code probTolerance} — a
+        //     non-unit sum is usually a data entry error (e.g., three
+        //     scenarios at 0.3 each summing to 0.9).  The default
+        //     tolerance of 1e-4 accommodates JSON round-trip precision
+        //     loss but rejects genuine mistakes.
         for (int i = 0; i < nAssets; i++) {
             ScenarioAnalysisRequest.AssetScenario asset = assets.get(i);
-            if (asset.getScenarios() == null || asset.getScenarios().isEmpty()) continue;
+
+            if (asset.getCurrentPrice() <= 0.0) {
+                String err = String.format(
+                    "Asset index %d (id=%d): currentPrice=%.8f is not positive. " +
+                    "Scenario analysis computes return as (price / currentPrice − 1), " +
+                    "which is undefined for non-positive currentPrice.",
+                    i, asset.getAssetId(), asset.getCurrentPrice());
+                logger.warn("{} validation failed: {}", logPrefix, err);
+                return ScenarioAnalysisResponse.failed(err);
+            }
+
+            if (asset.getScenarios() == null || asset.getScenarios().isEmpty()) {
+                String err = String.format(
+                    "Asset index %d (id=%d): scenarios array is missing or empty. " +
+                    "At least one scenario {price, probability} is required.",
+                    i, asset.getAssetId());
+                logger.warn("{} validation failed: {}", logPrefix, err);
+                return ScenarioAnalysisResponse.failed(err);
+            }
+
+            if (asset.getScenarios().size() > MAX_SCENARIOS) {
+                String err = String.format(
+                    "Asset index %d (id=%d): scenarios count %d exceeds maximum %d. " +
+                    "Coalesce low-probability outcomes to stay within the cap.",
+                    i, asset.getAssetId(),
+                    asset.getScenarios().size(), MAX_SCENARIOS);
+                logger.warn("{} validation failed: {}", logPrefix, err);
+                return ScenarioAnalysisResponse.failed(err);
+            }
 
             double probSum = 0.0;
             for (ScenarioAnalysisRequest.Scenario s : asset.getScenarios()) {
@@ -383,10 +617,9 @@ public class FinancialBenchmarkService {
         double totalUpside = 0.0;
         double totalDownside = 0.0;
 
+        // Step 1 above guarantees all assets have currentPrice > 0 and a
+        // non-empty scenarios list, so no per-asset skip is needed here.
         for (ScenarioAnalysisRequest.AssetScenario asset : assets) {
-            if (asset.getCurrentPrice() <= 0.0 ||
-                    asset.getScenarios() == null || asset.getScenarios().isEmpty()) continue;
-
             double assetExpectedReturn = 0.0;
             double assetWeightedValue = 0.0;
             double assetUpside = 0.0;
@@ -466,8 +699,28 @@ public class FinancialBenchmarkService {
         response.setWeightedValue(portfolioWeightedValue);
         response.setUpsidePotential(totalUpside);
         response.setDownsideRisk(totalDownside);
-        response.setUpsideDownsideRatio(
-            totalDownside > 0.0 ? totalUpside / totalDownside : 0.0);
+        // Upside/downside ratio edge cases:
+        //   downside > 0              → finite positive ratio (the common path)
+        //   downside ≈ 0, upside > 0  → Double.POSITIVE_INFINITY (all-upside
+        //                               portfolio; returning 0.0 here would
+        //                               falsely imply "no upside")
+        //   downside ≈ 0, upside ≈ 0  → Double.NaN (no variance either way;
+        //                               the ratio is genuinely undefined)
+        // The 1e-9 threshold avoids treating floating-point residue from the
+        // probability-weighted sums as a real non-zero downside.
+        // Note on JSON: Jackson serializes these as "Infinity" / "NaN" which
+        // are valid JavaScript Number literals but NOT strict JSON per RFC
+        // 8259. Clients that parse with strict libraries should configure
+        // their parser or map these to nulls.
+        double udRatio;
+        if (totalDownside > 1e-9) {
+            udRatio = totalUpside / totalDownside;
+        } else if (totalUpside > 1e-9) {
+            udRatio = Double.POSITIVE_INFINITY;
+        } else {
+            udRatio = Double.NaN;
+        }
+        response.setUpsideDownsideRatio(udRatio);
         response.setCalcTimeUs(calcElapsedUs);
         response.setLinearLookupUs(linearUs);
         response.setHashLookupUs(hashLookupUs);
