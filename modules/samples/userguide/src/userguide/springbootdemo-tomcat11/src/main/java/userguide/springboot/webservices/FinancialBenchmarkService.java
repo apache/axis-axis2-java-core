@@ -66,6 +66,9 @@ import java.util.UUID;
  * <h3>API parity with C implementation</h3>
  * All request/response fields match the C structs in {@code financial_benchmark_service.h}:
  * normalizeWeights, nPeriodsPerYear, percentiles, probTolerance.
+ *
+ * @see <a href="https://github.com/apache/axis-axis2-c-core/blob/master/samples/user_guide/financial-benchmark-service/src/financial_benchmark_service.h">Axis2/C equivalent — financial_benchmark_service.h</a>
+ * @see <a href="https://github.com/apache/axis-axis2-c-core/blob/master/samples/user_guide/financial-benchmark-service/src/financial_benchmark_service.c">Axis2/C implementation — financial_benchmark_service.c</a>
  */
 @Component
 public class FinancialBenchmarkService {
