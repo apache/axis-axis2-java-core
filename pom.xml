@@ -484,7 +484,7 @@
         <jetty.version>12.1.8</jetty.version>
         <jibx.version>1.4.5</jibx.version>
         <maven.archiver.version>3.6.6</maven.archiver.version>
-        <maven.version>3.9.14</maven.version>
+        <maven.version>3.9.15</maven.version>
         <rhino.version>1.9.1</rhino.version>
         <slf4j.version>2.0.17</slf4j.version>
         <spring.version>7.0.6</spring.version>
