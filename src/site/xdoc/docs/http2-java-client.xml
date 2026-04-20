@@ -47,6 +47,38 @@
 
         </section>
 
+        <section name="Why Not SimpleHttpRequest / SimpleHttpResponse">
+
+        <p>Apache HttpClient 5 provides <code>SimpleHttpRequest</code> and
+        <code>SimpleHttpResponse</code> as convenience classes for async
+        requests. <strong>Do not use them for HTTP/2 workloads.</strong></p>
+
+        <p><code>SimpleHttpResponse</code> is a buffering response object —
+        it accumulates the entire response body in memory before returning
+        it to the caller. This completely defeats the core benefit of HTTP/2
+        streaming. For a 100MB response:</p>
+
+        <ul>
+            <li><code>SimpleHttpResponse</code>: allocates 100MB+ of heap
+                (internal byte arrays, header maps, content type parsing)
+                before your code sees a single byte</li>
+            <li><code>AbstractBinResponseConsumer</code>: your
+                <code>data(ByteBuffer)</code> callback fires for each 64KB
+                HTTP/2 DATA frame — memory stays flat at ~64KB working
+                set</li>
+        </ul>
+
+        <p>The <code>Http2JsonClient</code> uses
+        <code>AbstractBinResponseConsumer</code> for all requests.  Even the
+        buffered <code>execute()</code> method delegates to
+        <code>executeStreaming()</code> with a
+        <code>ByteArrayOutputStream</code> — same final heap usage as
+        <code>SimpleHttpResponse</code>, but without the internal overhead
+        and with proper HTTP/2 flow control backpressure via
+        <code>capacityIncrement()</code>.</p>
+
+        </section>
+
         <section name="Dependencies">
 
         <p>Requires Java 11+ and Apache HttpClient 5.4+:</p>
