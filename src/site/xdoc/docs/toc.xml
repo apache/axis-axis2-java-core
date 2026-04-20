@@ -116,16 +116,17 @@ Guide</a></li>
 <li>Transports
 <ul>
 <li>18.1 <a href="http-transport.html">HTTP
-Transport sender</a></li>
-<li>18.2 <a href="axis2-http2-simplified-example.html">HTTP/2
-Simplified Configuration</a></li>
-<li>18.3 <a href="http2-transport-additions.html">HTTP/2
-Transport</a></li>
-<li>18.4 <a href="http2-integration-guide.html">HTTP/2
-Integration Guide</a></li>
-<li>18.5 <a href="wildfly-http2-integration-guide.html">WildFly HTTP/2
-Integration Guide</a></li>
-<li>18.6 <a href="json-streaming-formatter.html">Streaming JSON Formatter for Large HTTP/2 Responses</a></li>
+Transport sender</a> (HTTP/1.1)</li>
+<li>18.2 <a href="http2-integration-guide.html"><strong>HTTP/2
+Overview — start here</strong></a> (architecture, framework comparison, why Axis2 is different)</li>
+<li>18.3 <a href="axis2-http2-simplified-example.html">HTTP/2
+Simplified Configuration</a> (minimal axis2.xml — 2 parameters)</li>
+<li>18.4 <a href="json-streaming-formatter.html">Streaming JSON Formatter + Field Selection</a> (64 KB flush, <code>?fields=</code>)</li>
+<li>18.4a <a href="http2-java-client.html">HTTP/2 Java Client</a> (standalone HttpClient 5, buffered + streaming)</li>
+<li>18.5 <a href="wildfly-http2-integration-guide.html">WildFly HTTP/2</a> |
+<a href="tomcat-http2-integration-guide.html">Tomcat HTTP/2</a> (container-specific)</li>
+<li>18.6 <a href="http2-transport-additions.html">HTTP/2
+Transport Module Reference</a> (transport-h2 internals)</li>
 <li>18.7 <a href="servlet-transport.html">HTTP
 servlet transport</a></li>
 <li>18.8 <a href="jms-transport.html">JMS Transport</a></li>

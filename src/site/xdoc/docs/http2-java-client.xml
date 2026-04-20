@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+    <properties>
+        <title>HTTP/2 Java Client for Axis2 JSON-RPC Services</title>
+    </properties>
+
+    <body>
+        <section name="HTTP/2 Java Client">
+
+        <p>A standalone Java client for calling Axis2 JSON-RPC services over
+        HTTP/2. Uses Apache HttpClient 5 async with ALPN negotiation over TLS.</p>
+
+        <p>Two execution modes:</p>
+        <ul>
+            <li><strong>Buffered</strong> — returns the full response as a
+                <code>String</code>. Simple, suitable for responses that fit
+                in memory.</li>
+            <li><strong>Streaming</strong> — writes response bytes to an
+                <code>OutputStream</code> in 64KB chunks as HTTP/2 DATA
+                frames arrive. Memory stays flat regardless of response size.
+                When paired with the
+                <a href="json-streaming-formatter.html">Streaming JSON
+                Formatter</a> (AXIS2-6103), data flows end-to-end in 64KB
+                chunks.</li>
+        </ul>
+
+        </section>
+
+        <section name="Dependencies">
+
+        <p>Requires Java 11+ and Apache HttpClient 5.4+:</p>
+
+<source>
+&lt;!-- Maven --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.httpcomponents.client5&lt;/groupId&gt;
+    &lt;artifactId&gt;httpclient5&lt;/artifactId&gt;
+    &lt;version&gt;5.4.3&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.httpcomponents.core5&lt;/groupId&gt;
+    &lt;artifactId&gt;httpcore5-h2&lt;/artifactId&gt;
+    &lt;version&gt;5.4.1&lt;/version&gt;
+&lt;/dependency&gt;
+</source>
+
+        </section>
+
+        <section name="Buffered Execution">
+
+        <p>POST JSON-RPC to any Axis2 service, get the response as a String:</p>
+
+<source>
+String url = "https://localhost:8443/axis2-json-api/services/FinancialBenchmarkService";
+String json = "{\"monteCarlo\":[{\"arg0\":{\"nSimulations\":100000,\"nPeriods\":252,"
+    + "\"initialValue\":1000000,\"expectedReturn\":0.10,\"volatility\":0.223,"
+    + "\"nPeriodsPerYear\":252,\"randomSeed\":42}}]}";
+
+String response = Http2JsonClient.execute(url, json, 300);
+System.out.println(response);
+
+Http2JsonClient.shutdown();
+</source>
+
+        <p>The client negotiates HTTP/2 via ALPN on the TLS handshake.
+        Connections are pooled and multiplexed — multiple concurrent requests
+        share a single TCP connection.</p>
+
+        </section>
+
+        <section name="Streaming Execution">
+
+        <p>For large responses (10MB+), stream to a file or parser instead
+        of buffering in heap:</p>
+
+<source>
+String url = "https://localhost:8443/axis2-json-api/services/BigDataH2Service";
+String json = "{\"generate\":[{\"arg0\":{\"datasetSize\":52428800}}]}";
+
+try (FileOutputStream fos = new FileOutputStream("/tmp/result.json")) {
+    int status = Http2JsonClient.executeStreaming(url, json, 300, fos);
+    System.out.println("HTTP " + status);
+}
+
+Http2JsonClient.shutdown();
+</source>
+
+        <p>Each HTTP/2 DATA frame triggers a callback that writes directly
+        to your <code>OutputStream</code>. The <code>capacityIncrement()</code>
+        returns 64KB, creating natural HTTP/2 flow control backpressure —
+        the client tells the server "I can accept 64KB more" after each
+        chunk.</p>
+
+        <p>When the server uses the
+        <a href="json-streaming-formatter.html">Streaming JSON Formatter</a>,
+        data flows end-to-end without full-body buffering on either side:</p>
+
+<source>
+Server (MoshiStreamingMessageFormatter)
+  → FlushingOutputStream flushes every 64KB
+  → HTTP/2 DATA frames
+  → Http2JsonClient.data() callback
+  → your OutputStream
+</source>
+
+        </section>
+
+        <section name="Timeout and Cancellation">
+
+        <p>Both methods accept a <code>timeoutSeconds</code> parameter for
+        <code>Future.get()</code>. If the timeout expires or the thread is
+        interrupted, the underlying HTTP request is cancelled to prevent
+        zombie requests that would continue consuming resources:</p>
+
+<source>
+try {
+    response = future.get(timeoutSeconds, TimeUnit.SECONDS);
+} catch (Exception e) {
+    requestFuture.cancel(true);  // Cancel the HTTP request
+    if (e instanceof InterruptedException) {
+        Thread.currentThread().interrupt();  // Restore interrupt flag
+    }
+    throw e;
+}
+</source>
+
+        </section>
+
+        <section name="Source Code">
+
+        <p>The complete client is available in the userguide samples:</p>
+
+        <p><code>modules/samples/userguide/src/userguide/springbootdemo-tomcat11/src/main/java/userguide/springboot/client/Http2JsonClient.java</code></p>
+
+        </section>
+
+    </body>
+</document>
