@@ -188,6 +188,10 @@ public class Http2JsonClient {
                                      org.apache.hc.core5.http.ContentType contentType)
                         throws org.apache.hc.core5.http.HttpException, java.io.IOException {
                     statusCode[0] = response.getCode();
+                    // Fail fast on non-2xx — abort before writing error body to the OutputStream
+                    if (statusCode[0] < 200 || statusCode[0] >= 300) {
+                        throw new java.io.IOException("HTTP " + statusCode[0] + " from streaming request");
+                    }
                 }
 
                 @Override
@@ -242,22 +246,20 @@ public class Http2JsonClient {
             throw e;
         }
 
-        if (result < 200 || result >= 300) {
-            throw new java.io.IOException("HTTP " + result + " from streaming request");
-        }
-
         return result;
     }
 
     /**
      * Shut down the shared HTTP/2 client. Call once at application exit.
      */
-    public static void shutdown() {
+    public static synchronized void shutdown() {
         if (sharedClient != null) {
             try {
                 sharedClient.close();
             } catch (Exception e) {
-                // ignore
+                System.err.println("Error shutting down HTTP/2 client: " + e.getMessage());
+            } finally {
+                sharedClient = null;
             }
         }
     }
