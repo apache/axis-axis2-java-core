@@ -422,11 +422,7 @@
         <module>modules/jaxws-mar</module>
         <module>modules/jaxws-integration</module>
         <module>modules/corba</module>
-        <module>modules/osgi</module>
-	<!-- FIXME AXIS2-6076, need to figure out OSGI
-	     in the transition to jakarta
-        <module>modules/osgi-tests</module>
-	-->
+        <!-- OSGi modules removed: AXIS2-6105 -->
         <module>modules/transport/local</module>
         <module>modules/transport/http</module>
         <module>modules/transport-h2</module>
@@ -764,18 +760,7 @@
                 <artifactId>httpclient5</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
-	    <!--
-            <dependency>
-                <groupId>org.apache.httpcomponents.client5</groupId>
-                <artifactId>httpclient5-osgi</artifactId>
-                <version>5.0-beta2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents.core5</groupId>
-                <artifactId>httpcore5-osgi</artifactId>
-                <version>5.0-beta5</version>
-            </dependency>
-	    -->
+            <!-- httpclient5-osgi / httpcore5-osgi removed: AXIS2-6105 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-core</artifactId>

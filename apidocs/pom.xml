@@ -128,11 +128,7 @@
             <version>${project.version}</version>
             <classifier>sources</classifier>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>org.apache.axis2.osgi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- OSGi dep removed: AXIS2-6105 -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ping</artifactId>
