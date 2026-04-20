@@ -43,7 +43,6 @@ Axis2.</p>
 <td>Bundled with the <a href="../download.html">Standard Binary Distribution</a>.</td>
 </tr>
 <!-- SOAPMonitor removed: AXIS2-6105 -->
-</tr>
 <tr>
 <td><a href="http://ws.apache.org/rampart/">Rampart</a></td>
 <td>The WS-Security and WS-SecureConversation implementation for
