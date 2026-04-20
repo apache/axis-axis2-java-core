@@ -809,6 +809,9 @@ public class AxisServlet extends HttpServlet {
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setFrom(new EndpointReference(request.getRemoteAddr()));
         msgContext.setProperty(MessageContext.REMOTE_ADDR, request.getRemoteAddr());
+        // AXIS2-5762: Expose transport ports on the MessageContext
+        msgContext.setProperty(MessageContext.TRANSPORT_LOCAL_PORT, request.getLocalPort());
+        msgContext.setProperty(MessageContext.TRANSPORT_REMOTE_PORT, request.getRemotePort());
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(response));
         // set the transport Headers

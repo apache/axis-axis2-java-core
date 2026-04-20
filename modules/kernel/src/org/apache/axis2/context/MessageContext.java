@@ -236,6 +236,20 @@ public class MessageContext extends AbstractContext
     public static final String TRANSPORT_SUCCEED = "TRANSPORT_SUCCEED";
 
     /**
+     * AXIS2-5762: Local port on which the request was received.
+     * Set by the transport listener (e.g., AxisServlet) at request ingress.
+     * Value type: {@code Integer}.
+     */
+    public static final String TRANSPORT_LOCAL_PORT = "TRANSPORT_LOCAL_PORT";
+
+    /**
+     * AXIS2-5762: Remote port of the client that sent the request.
+     * Set by the transport listener (e.g., AxisServlet) at request ingress.
+     * Value type: {@code Integer}.
+     */
+    public static final String TRANSPORT_REMOTE_PORT = "TRANSPORT_REMOTE_PORT";
+
+    /**
      * Field DEFAULT_CHAR_SET_ENCODING. This is the default value for
      * CHARACTER_SET_ENCODING property.
      */
