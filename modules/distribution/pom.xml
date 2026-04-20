@@ -95,11 +95,7 @@
             <version>${project.version}</version>
         </dependency>
         <!-- removed: AXIS2-6105 -->
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-fastinfoset</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- axis2-fastinfoset removed: AXIS2-6105 -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxbri-codegen</artifactId>

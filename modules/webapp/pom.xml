@@ -56,11 +56,7 @@
             <artifactId>axis2-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-fastinfoset</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- axis2-fastinfoset removed: AXIS2-6105 -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
@@ -351,8 +347,6 @@
                         WEB-INF/lib/spring-core-*.jar,
                         WEB-INF/lib/spring-web-*.jar,
                         WEB-INF/lib/aopalliance-*.jar,
-                        WEB-INF/lib/bsf-*.jar,
-                        WEB-INF/lib/FastInfoset-*.jar,
                         WEB-INF/lib/js-*.jar
                     </packagingExcludes>
                     <webResources>

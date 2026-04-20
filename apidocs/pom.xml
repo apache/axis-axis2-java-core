@@ -65,11 +65,7 @@
             <artifactId>axis2-corba</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-fastinfoset</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- axis2-fastinfoset removed: AXIS2-6105 -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-java2wsdl</artifactId>

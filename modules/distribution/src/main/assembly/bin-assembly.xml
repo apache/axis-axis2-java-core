@@ -188,9 +188,7 @@
                  <exclude>org.apache.ant:ant:jar</exclude>
                  <exclude>org.apache.ant:ant-launcher:jar</exclude>
                  <exclude>aopalliance:aopalliance:jar</exclude>
-                 <exclude>bsf:bsf:jar</exclude>
-                 <exclude>com.sun.xml.fastinfoset:FastInfoset:jar</exclude>
-                 <exclude>rhino:js:jar</exclude>
+                 <!-- bsf, FastInfoset, rhino removed: AXIS2-6105 -->
                  <exclude>javax.servlet:servlet-api</exclude>
 		 <!-- AXIS2-6051, why was this excluded
 		      and why is it needed now?
