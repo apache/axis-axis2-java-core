@@ -24,7 +24,6 @@ import org.apache.axis2.maven.shared.NamespaceMappingUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.codegen.extension.JiBXExtension;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -68,11 +67,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
     @Parameter(property = "axis2.wsdl2code.databindingName", defaultValue = "adb")
     private String databindingName;
 
-    /**
-     * The binding file for JiBX databinding.
-     */
-    @Parameter(property = "axis2.wsdl2code.jibxBindingFile")
-    private String jibxBindingFile;
+    // JiBX binding file parameter removed: AXIS2-6105
 
     /**
      * Port name, for which to generate sources. By default, sources will be generated for a
@@ -277,9 +272,7 @@ public abstract class AbstractWSDL2CodeMojo extends AbstractMojo {
         config.setOutputLocation(getOutputDirectory());
         config.setDatabindingType(databindingName);
 
-        if ("jibx".equals(databindingName)) {
-            config.getProperties().put(JiBXExtension.BINDING_PATH_OPTION, jibxBindingFile);
-        }
+        // JiBX databinding support removed: AXIS2-6105
 
         if ("async".equals(syncMode)) {
             config.setSyncOn(false);
