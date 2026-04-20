@@ -336,6 +336,15 @@ final class RequestImpl implements Request {
             }
         }
         
+        // AXIS2-6055: Preemptive authentication — send credentials on the first
+        // request without waiting for a 401 challenge. This was supported in
+        // Axis2 1.7 (HC 4) but the TODO was never implemented for HC 5.
+        if (authenticator.getPreemptiveAuthentication() && username != null && password != null) {
+            String credentials = username + ":" + password;
+            String encoded = java.util.Base64.getEncoder().encodeToString(credentials.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            httpRequestMethod.setHeader("Authorization", "Basic " + encoded);
+        }
+
         /* Customizing the priority Order */
         List schemes = authenticator.getAuthSchemes();
         if (schemes != null && schemes.size() > 0) {
