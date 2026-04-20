@@ -199,7 +199,7 @@ Optional flush interval tuning per-service in `services.xml`:
 
 Applies to all services (BigDataH2Service, FinancialBenchmarkService, any
 custom service). Tested on WildFly 32 locally and behind a real reverse proxy
-(stg-rapi02, HTTP/2 ALPN). Bit-identical results to the non-streaming formatter.
+(with HTTP/2 ALPN). Bit-identical results to the non-streaming formatter.
 
 See the [Streaming JSON Message Formatter guide](../../../../../../src/site/xdoc/docs/json-streaming-formatter.xml) for full documentation.
 

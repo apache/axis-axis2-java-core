@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Created-By: Maven WAR Plugin 3.5.1
+Java-Version: 21
+Build-Jdk-Spec: 25
+Implementation-Title: axis2-json-api
+Implementation-Version: 0.0.1-SNAPSHOT
+

@@ -1,0 +1,10 @@
+<jboss-deployment-structure>
+   <deployment>
+        <exclusions><module name="org.apache.logging.log4j.api" /></exclusions>
+        <dependencies>
+            <system export="true"><paths><path name="org/w3c/dom/css"/></paths></system>
+            <module name="org.bouncycastle" slot="main" export="true" />
+            <module name="jdk.unsupported" /><module name="jdk.net" />
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

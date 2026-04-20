@@ -80,16 +80,43 @@
         <section name="Configuration">
 
         <subsection name="Global (axis2.xml)">
-        <p>Replace the default JSON message formatter with the streaming variant:</p>
-<source><![CDATA[<!-- Moshi streaming variant -->
+        <p>Replace the default JSON message formatter with the streaming variant.
+        The recommended configuration uses <code>FieldFilteringMessageFormatter</code>,
+        which wraps the Moshi streaming formatter and adds support for response
+        field selection via a <code>?fields=</code> query parameter:</p>
+<source><![CDATA[<!-- Recommended: streaming + field filtering (wraps MoshiStreamingMessageFormatter) -->
+<messageFormatter contentType="application/json"
+    class="org.apache.axis2.json.streaming.FieldFilteringMessageFormatter"/>
+
+<!-- OR: streaming only (Moshi, no field filtering) -->
 <messageFormatter contentType="application/json"
     class="org.apache.axis2.json.streaming.MoshiStreamingMessageFormatter"/>
 
-<!-- OR: GSON streaming variant -->
+<!-- OR: streaming only (GSON variant) -->
 <messageFormatter contentType="application/json"
     class="org.apache.axis2.json.streaming.JSONStreamingMessageFormatter"/>]]></source>
         <p>All JSON-RPC services in the deployment will use the streaming
         formatter. Existing services require no code changes.</p>
+        </subsection>
+
+        <subsection name="Field Selection (?fields=)">
+        <p>When using <code>FieldFilteringMessageFormatter</code>, callers can
+        reduce response payload size by specifying which top-level fields to
+        include. This is useful for AI agents (MCP tools) and API consumers
+        that need only a subset of the response fields.</p>
+<source><![CDATA[# Only return status and portfolioVariance fields
+curl -sk --http2 \
+  "https://host/services/FinancialBenchmarkService?fields=status,portfolioVariance" \
+  -H "Content-Type: application/json" \
+  -d '{"portfolioVariance":[{"arg0":{...}}]}'
+
+# Response: {"response":{"status":"SUCCESS","portfolioVariance":0.0245}}
+# (other fields like calcTimeUs, annualizedVolatility, etc. are omitted)]]></source>
+        <p>Field filtering happens during serialization — non-selected fields
+        are never serialized, never buffered, and never written to the wire.
+        The streaming pipeline (Moshi → Okio → FlushingOutputStream → HTTP/2
+        DATA frames) is preserved. When no <code>fields</code> parameter is
+        present, the formatter delegates directly with zero overhead.</p>
         </subsection>
 
         <subsection name="Flush Interval Tuning (services.xml)">
@@ -148,9 +175,9 @@ OutputStream flushingStream = new FlushingOutputStream(outputStream, flushInterv
         <p>The streaming formatter has been tested on:</p>
         <ul>
             <li>WildFly 32 (local) — all services produce valid JSON</li>
-            <li>WildFly 32 behind a reverse proxy (staging infrastructure
-            with HTTP/2 ALPN on port 8443) — all services produce
-            bit-identical results compared to the non-streaming formatter</li>
+            <li>WildFly 32 behind a reverse proxy (HTTP/2 ALPN on port 8443)
+            — all services produce bit-identical results compared to the
+            non-streaming formatter</li>
         </ul>
         <p>To verify the formatter is active, enable DEBUG logging for
         <code>org.apache.axis2.json.streaming</code> and look for:</p>
