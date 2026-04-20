@@ -99,7 +99,7 @@
 
             <target name="jar.xbeans">
                 <!-- jar the  XMLbeans stuff to the lib folder-->
-                <jar>
+                <jar duplicate="preserve">
                     <xsl:attribute name="basedir">${resources}</xsl:attribute>
                     <xsl:attribute name="destfile">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
                     <xsl:attribute name="excludes">**/services.xml, **/*.xsd</xsl:attribute>
@@ -192,7 +192,7 @@
                     <xsl:attribute name="file">${lib}/${xbeans.packaged.jar.name}</xsl:attribute>
                     <xsl:attribute name="toDir">${classes}/lib</xsl:attribute>
                 </copy>
-                <jar>
+                <jar duplicate="preserve">
                     <xsl:attribute name="destfile">${lib}/${name}.aar</xsl:attribute>
                     <fileset>
                         <xsl:attribute name="excludes">**/Test.class</xsl:attribute>
@@ -201,7 +201,7 @@
                 </jar>
             </target>
             <target name="jar.client" depends="compile.test" if="jars.ok">
-                <jar>
+                <jar duplicate="preserve">
                     <xsl:attribute name="destfile">${lib}/${name}-test-client.jar</xsl:attribute>
                     <fileset>
                         <xsl:attribute name="dir">${classes}</xsl:attribute>

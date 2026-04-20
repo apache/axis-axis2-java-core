@@ -182,7 +182,7 @@
                         <exclude><xsl:attribute name="name">**/schemaorg_apache_xmlbean/**</xsl:attribute></exclude>
                     </fileset>
                 </copy>
-                <jar>
+                <jar duplicate="preserve">
                     <xsl:attribute name="destfile">${lib}/${name}.aar</xsl:attribute>
                     <fileset>
                         <xsl:attribute name="excludes">**/Test.class</xsl:attribute>
@@ -202,7 +202,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
 
-                <jar>
+                <jar duplicate="preserve">
                     <xsl:attribute name="destfile">${lib}/${name}-test-client.jar</xsl:attribute>
                     <fileset>
                         <xsl:attribute name="dir">${classes}</xsl:attribute>
