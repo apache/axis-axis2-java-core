@@ -187,21 +187,7 @@ Transport protocol</li>
 Generator Tool Guide for Command Line and Ant Tasks</a> - Lists
 command line and Ant task references. How to build a file using
 custom Ant tasks and how to invoke a Code Generator from Ant</li>
-<li><a href=
-"../tools/eclipse/wsdl2java-plugin.html">Code
-Generator Wizard Guide for Eclipse Plug-in</a> - Explains the usage
-of the code generator Eclipse plug-in for WSDL2Java and/or
-Java2WSDL operations</li>
-<li><a href=
-"../tools/eclipse/servicearchiver-plugin.html">Service
-Archive Generator Wizard Guide for Eclipse Plug-in</a> - Describes
-the functionality of the Eclipse plugin service archive generator
-tool</li>
-<li><a href=
-"../tools/idea/Idea_plug-in_userguide.html">Code
-Generator Wizard Guide for IntelliJ IDEA Plug-in</a> - A guide on
-the usage of the IDEA code generation plug-in to create service
-archives and generate Java class files from WSDL files</li>
+<!-- Eclipse and IDEA plugin entries removed: AXIS2-6105 -->
 <li><a href=
 "../tools/maven-plugins/maven-aar-plugin.html">Maven2
 AAR Plug-in Guide</a> - A guide to generate an Axis 2 service file

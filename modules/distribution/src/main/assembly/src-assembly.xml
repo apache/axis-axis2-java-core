@@ -42,13 +42,7 @@
             <outputDirectory></outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <excludes>
-                <!-- For PDE support, we need to generate some files outside of the
-                     target directory. They are removed during the clean phase, but
-                     we also need to exclude them here. -->
-                <exclude>modules/tool/axis2-eclipse-service-plugin/META-INF/**</exclude>
-                <exclude>modules/tool/axis2-eclipse-service-plugin/lib/**</exclude>
-                <exclude>modules/tool/axis2-eclipse-codegen-plugin/META-INF/**</exclude>
-                <exclude>modules/tool/axis2-eclipse-codegen-plugin/lib/**</exclude>
+                <!-- Eclipse plugin exclusions removed: AXIS2-6105 -->
                 
                 <!-- These directories are not excluded by the rules below because of the
                      "src" component in the path. We need to exclude them explicitly. -->
@@ -77,7 +71,7 @@
 
         </fileSet>
 
-        <!-- copying tools section of xdocs. This is needed by eclipse plugins -->
+        <!-- copying tools section of xdocs -->
         <fileSet>
             <directory>../../xdocs</directory>
             <outputDirectory>xdocs</outputDirectory>

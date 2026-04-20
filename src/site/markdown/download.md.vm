@@ -30,9 +30,6 @@ The following distributions are available for download:
 Binary distribution                | [axis2-${release_version}-bin.zip][1]                     | [SHA512][3] [PGP][4]
 Source distribution                | [axis2-${release_version}-src.zip][5]                     | [SHA512][7] [PGP][8]
 WAR distribution                   | [axis2-${release_version}-war.zip][9]                     | [SHA512][11] [PGP][12]
-## Service Archive plugin for Eclipse | [axis2-eclipse-service-plugin-${release_version}.zip][13] | [SHA512][15] [PGP][16]
-## Code Generator plugin for Eclipse  | [axis2-eclipse-codegen-plugin-${release_version}.zip][17] | [SHA512][19] [PGP][20]
-Axis2 plugin for IntelliJ IDEA     | [axis2-idea-plugin-${release_version}.zip][21]            | [SHA512][23] [PGP][24]
 
 The binary distribution contains all the Axis2 libraries and modules, except for [Apache Rampart](../rampart/)
 (WS-Security implementation) which must be downloaded separately. It also contains command line tools,
@@ -56,15 +53,6 @@ All releases are also available as Maven artifacts in the [central repository][2
 [9]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip
 [11]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip.sha512
 [12]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-${release_version}-war.zip.asc
-[13]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip
-[15]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip.sha512
-[16]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-eclipse-service-plugin-${release_version}.zip.asc
-[17]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip
-[19]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip.sha512
-[20]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-eclipse-codegen-plugin-${release_version}.zip.asc
-[21]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip
-[23]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip.sha512
-[24]: https://downloads.apache.org/axis/axis2/java/core/${release_version}/axis2-idea-plugin-${release_version}.zip.asc
 [25]: http://www.apache.org/dev/release-signing#verifying-signature
 [26]: https://downloads.apache.org/axis/axis2/java/core/KEYS
 [27]: http://www.apache.org/dyn/closer.lua/axis/axis2/java/core/

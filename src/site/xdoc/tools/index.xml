@@ -44,34 +44,7 @@ implemented by the WSDL2Code class and WSDL2Java class. One can
 choose to run the main classes directly or use one of the scripts
 to run the WSDL2Code and WSDL2Java appropriately.</td>
 				</tr>
-				<tr>
-					<td>
-						<a href="eclipse/servicearchiver-plugin.html">Service Archive
-Wizard - Eclipse Plug-in</a>
-					</td>
-					<td>As part of the Axis2 tool set, the service archive generator is
-an important tool that allows the generation of service archives
-("aar" file or a "jar" files) that can be deployed as a Web
-services to the Axis2.</td>
-				</tr>
-				<tr>
-					<td>
-						<a href="eclipse/wsdl2java-plugin.html">Code
-Generator Wizard - Eclipse Plug-in</a>
-					</td>
-					<td>Axis2 code generator comes built-in with an <a href="http://www.eclipse.org/">eclipse</a> plug-in. This can be used to
-generate a WSDL file from a java class (Java2WSDL) and/or a java
-class file from a WSDL (WSDL2Java)</td>
-				</tr>
-				<tr>
-					<td>
-						<a href="idea/Idea_plug-in_userguide.html">Code
-Generator Wizard - IntelliJ IDEA Plug-in</a>
-					</td>
-					<td>Using this tool one can create service archives that can be
-deployed as a Web services to the Axis2, and also generate a java
-class file from a WSDL file (WSDL2Java).</td>
-				</tr>
+				<!-- Eclipse and IDEA plugin entries removed: AXIS2-6105 -->
 				<tr>
 					<td>
 						<a href="maven-plugins/maven-aar-plugin.html">axis2-aar-maven-plugin</a>
@@ -120,8 +93,6 @@ WSDL.</p>
 			</tbody>
 		</table>
 		<p>The command line tools and Ant tasks are bundled with the Axis2 binary distribution.
-		The Eclipse and IntelliJ IDEA plugins are shipped as separate archives. These files can
-		be downloaded <a href="../download.html">here</a>.
 		All Maven plugins are available from the Maven central repository and need not be downloaded separately.</p>
 	</body>
 </document>

@@ -403,9 +403,6 @@
         <module>modules/tool/maven-shared</module>
         <module>modules/tool/axis2-aar-maven-plugin</module>
         <module>modules/tool/axis2-ant-plugin</module>
-        <module>modules/tool/axis2-eclipse-codegen-plugin</module>
-        <module>modules/tool/axis2-eclipse-service-plugin</module>
-        <module>modules/tool/axis2-idea-plugin</module>
         <module>modules/tool/axis2-java2wsdl-maven-plugin</module>
         <module>modules/tool/axis2-mar-maven-plugin</module>
         <module>modules/tool/axis2-repo-maven-plugin</module>
@@ -479,7 +476,6 @@
         <groovy.version>5.0.5</groovy.version>
         <httpcore.version>5.4.2</httpcore.version>
         <httpclient.version>5.6</httpclient.version>
-        <intellij.version>5.0</intellij.version>
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>12.1.8</jetty.version>
         <jibx.version>1.4.5</jibx.version>
@@ -878,73 +874,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.jobs</artifactId>
-                <version>3.15.700</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.resources</artifactId>
-                <version>3.23.100</version>
-            </dependency>
-	    <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.runtime</artifactId>
-                <version>3.34.200</version>
-            </dependency>
-	    <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.common</artifactId>
-                <version>3.20.300</version>
-            </dependency>
-	    <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.jface</artifactId>
-                <version>3.38.100</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.osgi</artifactId>
-                <version>3.24.100</version>
-            </dependency>
-	    <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.swt</artifactId>
-                <version>3.132.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-                <version>3.133.0</version>
-            </dependency>
-	    <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.ui.ide</artifactId>
-                <version>3.22.800</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.ui.workbench</artifactId>
-                <version>3.137.0</version>
-                <exclusions>
-		    <!-- FIXME -->	
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis-ext</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.intellij</groupId>
-                <artifactId>openapi</artifactId>
-                <version>${intellij.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.intellij</groupId>
-                <artifactId>extensions</artifactId>
-                <version>${intellij.version}</version>
-            </dependency>
+            <!-- Eclipse platform and IntelliJ deps removed: AXIS2-6105 -->
             <dependency>
                 <groupId>org.mozilla</groupId>
                 <artifactId>rhino</artifactId>
