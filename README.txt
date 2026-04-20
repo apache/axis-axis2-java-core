@@ -8,6 +8,12 @@ ___________________
 Building 
 ===================
 
+Prerequisites:
+  - JDK 17 or later
+  - Maven 3.9+ (http://maven.apache.org)
+  - Bash shell (required by some Maven plugins and integration tests;
+    available by default on Linux/macOS, use Git Bash or WSL on Windows)
+
 We use Maven 3 (http://maven.apache.org) to build, and you'll find a
 pom.xml in each module, as well as at the top level.  Use "mvn install"
 (or "mvn clean install" to clean up first) to build.
