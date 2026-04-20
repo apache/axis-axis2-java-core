@@ -1046,6 +1046,16 @@
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.5.0</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <!-- AXIS2-6040: Stable module name for Java 9+ module system.
+                                     Without this, the module name is derived from the JAR filename
+                                     and changes with version numbers, producing IDE warnings. -->
+                                <Automatic-Module-Name>${project.groupId}.${project.artifactId}</Automatic-Module-Name>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-plugin-plugin</artifactId>
