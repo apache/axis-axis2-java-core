@@ -393,7 +393,9 @@ public class ConfigPropertyFileLoader {
      * @return names
      */
     public static List getUnwrapDirectFrameworkNames() {
-        return Arrays.asList(unwrapDirectdatabindingFrameworkNames);
+        return unwrapDirectdatabindingFrameworkNames != null
+                ? Arrays.asList(unwrapDirectdatabindingFrameworkNames)
+                : java.util.Collections.emptyList();
     }
 
     /**
