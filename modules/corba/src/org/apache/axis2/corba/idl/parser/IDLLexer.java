@@ -829,61 +829,35 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
+	// AXIS2-6095: Fixed to handle comments ending with **/ (double asterisk).
+	// The original grammar's ('*')+ alternative failed on **/ because after
+	// consuming both asterisks, the next char '/' didn't match any inner
+	// alternative. The fix uses a semantic predicate: consume '*' only when
+	// the next char is not '/', so '*/' always terminates the comment.
 	public final void mML_COMMENT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = ML_COMMENT;
 		int _saveIndex;
-		
+
 		_saveIndex=text.length();
 		match("/*");
 		text.setLength(_saveIndex);
 		{
 		_loop333:
 		do {
-			if ((LA(1)=='*') && (_tokenSet_2.member(LA(2)))) {
-				{
-				int _cnt329=0;
-				_loop329:
-				do {
-					if ((LA(1)=='*')) {
-						match('*');
-					}
-					else {
-						if ( _cnt329>=1 ) { break _loop329; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
-					}
-					
-					_cnt329++;
-				} while (true);
-				}
-				{
-				if ((LA(1)=='\n')) {
-					match('\n');
-					newline();
-				}
-				else if ((_tokenSet_3.member(LA(1)))) {
-					{
-					match(_tokenSet_3);
-					}
-				}
-				else {
-					throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
-				}
-				
-				}
+			if ((LA(1)=='*') && (LA(2) != '/')) {
+				match('*');
 			}
 			else if ((LA(1)=='\n')) {
 				match('\n');
 				newline();
 			}
-			else if ((_tokenSet_4.member(LA(1)))) {
-				{
-				match(_tokenSet_4);
-				}
+			else if (LA(1) != '*' && LA(1) != '\n' && LA(1) != EOF_CHAR) {
+				matchNot(EOF_CHAR);
 			}
 			else {
 				break _loop333;
 			}
-			
 		} while (true);
 		}
 		_saveIndex=text.length();
