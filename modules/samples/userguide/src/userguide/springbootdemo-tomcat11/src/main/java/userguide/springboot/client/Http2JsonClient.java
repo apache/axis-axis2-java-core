@@ -25,9 +25,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
-import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.async.methods.SimpleRequestBuilder;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
@@ -131,6 +128,11 @@ public class Http2JsonClient {
     /**
      * POST JSON to an Axis2 service and return the response as a String.
      *
+     * <p>Uses the same streaming transport as {@link #executeStreaming},
+     * writing to a {@code ByteArrayOutputStream} and converting to String.
+     * This avoids {@code SimpleHttpResponse}'s internal buffering overhead
+     * while maintaining a simple String return type.</p>
+     *
      * @param url            HTTPS endpoint (e.g., {@code https://host:8443/axis2-json-api/services/MyService})
      * @param json           JSON-RPC request body
      * @param timeoutSeconds maximum wait time for the response
@@ -138,39 +140,9 @@ public class Http2JsonClient {
      * @throws Exception on HTTP error or timeout
      */
     public static String execute(String url, String json, int timeoutSeconds) throws Exception {
-        CloseableHttpAsyncClient client = getClient();
-
-        SimpleHttpRequest request = SimpleRequestBuilder.post(url)
-            .setBody(json, ContentType.APPLICATION_JSON)
-            .setHeader("Accept", "application/json")
-            .build();
-
-        CompletableFuture<SimpleHttpResponse> future = new CompletableFuture<>();
-        Future<SimpleHttpResponse> requestFuture = client.execute(request,
-            new FutureCallback<SimpleHttpResponse>() {
-                @Override public void completed(SimpleHttpResponse r) { future.complete(r); }
-                @Override public void failed(Exception ex) { future.completeExceptionally(ex); }
-                @Override public void cancelled() { future.cancel(true); }
-            });
-
-        SimpleHttpResponse response;
-        try {
-            response = future.get(timeoutSeconds, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            requestFuture.cancel(true);
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            throw e;
-        }
-
-        int status = response.getCode();
-        if (status < 200 || status >= 300) {
-            throw new java.io.IOException("HTTP " + status + ": "
-                + response.getBodyText().substring(0, Math.min(500,
-                    response.getBodyText() != null ? response.getBodyText().length() : 0)));
-        }
-        return response.getBodyText();
+        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+        executeStreaming(url, json, timeoutSeconds, baos);
+        return baos.toString(StandardCharsets.UTF_8.name());
     }
 
     /**
@@ -268,6 +240,10 @@ public class Http2JsonClient {
                 Thread.currentThread().interrupt();
             }
             throw e;
+        }
+
+        if (result < 200 || result >= 300) {
+            throw new java.io.IOException("HTTP " + result + " from streaming request");
         }
 
         return result;
