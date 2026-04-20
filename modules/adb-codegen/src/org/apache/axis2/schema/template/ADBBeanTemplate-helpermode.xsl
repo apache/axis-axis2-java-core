@@ -253,7 +253,8 @@
                                        </xsl:otherwise>
                                    </xsl:choose>
 
-                                if (enumeration==null) throw new java.lang.IllegalArgumentException();
+                                // AXIS2-6074: return null for empty/null values instead of throwing
+                                if (enumeration==null &amp;&amp; value != null &amp;&amp; !value.toString().trim().isEmpty()) throw new java.lang.IllegalArgumentException();
                                 return enumeration;
                             }
                             public static <xsl:value-of select="$name"/> fromString(java.lang.String value)

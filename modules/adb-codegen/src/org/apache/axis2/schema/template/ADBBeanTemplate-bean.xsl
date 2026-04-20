@@ -1811,7 +1811,8 @@
                        </xsl:choose>
 
                     // handle unexpected enumeration values properly
-                    if (enumeration == null  <xsl:if test="$propertyType='string'">&amp;&amp; !((value == null) || (value.equals("")))</xsl:if>) {
+                    // AXIS2-6074: allow null/empty values for all types, not just string
+                    if (enumeration == null &amp;&amp; value != null &amp;&amp; !value.toString().trim().isEmpty()) {
                         <xsl:choose>
                             <xsl:when test="$ignoreunexpected">
                                 log.warn("Unexpected value " + value + " for enumeration <xsl:value-of select="$name"/>");
