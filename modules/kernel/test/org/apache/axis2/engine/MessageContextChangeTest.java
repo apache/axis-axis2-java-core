@@ -53,6 +53,8 @@ public class MessageContextChangeTest extends TestCase {
             new FieldDescription("java.lang.String", "UTF_8"),
             new FieldDescription("java.lang.String", "UTF_16"),
             new FieldDescription("java.lang.String", "TRANSPORT_SUCCEED"),
+            new FieldDescription("java.lang.String", "TRANSPORT_LOCAL_PORT"),
+            new FieldDescription("java.lang.String", "TRANSPORT_REMOTE_PORT"),
             new FieldDescription("java.lang.String", "DEFAULT_CHAR_SET_ENCODING"),
             new FieldDescription("int", "FLOW"),
             new FieldDescription("java.lang.String", "CLIENT_API_NON_BLOCKING"),
