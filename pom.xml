@@ -1046,16 +1046,10 @@
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.5.0</version>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <!-- AXIS2-6040: Stable module name for Java 9+ module system.
-                                     Without this, the module name is derived from the JAR filename
-                                     and changes with version numbers, producing IDE warnings. -->
-                                <Automatic-Module-Name>${project.groupId}.${project.artifactId}</Automatic-Module-Name>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
+                    <!-- AXIS2-6040: Automatic-Module-Name removed from global config.
+                         Hyphens in artifactIds (e.g., axis2-resource-bundle) produce
+                         invalid Java module names. Modules that need stable JPMS names
+                         should define Automatic-Module-Name in their own pom.xml. -->
                 </plugin>
                 <plugin>
                     <artifactId>maven-plugin-plugin</artifactId>
