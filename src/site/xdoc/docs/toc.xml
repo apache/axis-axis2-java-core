@@ -96,13 +96,7 @@ Administrator's Guide</a></li>
 <li>14.4 <a href="adb/adb-tweaking.html">Tweaking</a></li>
 </ul>
 </li>
-<li>JiBX Data Binding
-<ul>
-<li>15.1 <a href="jibx/jibx-codegen-integration.html">Code Generation Integration</a></li>
-<li>15.2 <a href="jibx/jibx-doclit-example.html">doc/lit Example</a></li>
-<li>15.3 <a href="jibx/jibx-unwrapped-example.html">unwrapped Example</a></li>
-</ul>
-</li>
+<!-- JiBX Data Binding removed: AXIS2-6105 -->
 <li>Advanced
 <ul>
 <li>16.1 <a href="xmlbased-server.html">AXIOM
@@ -207,8 +201,7 @@ Support</a></li>
 <li><a href="corba-deployer.html">Exposing CORBA Services as Web Services</a></li>
 <li><a href="ejb-provider.html">Guide to using
 EJB Provider in Axis2</a></li>
-<li><a href="soapmonitor-module.html">SOAP
-Monitor</a></li>
+<!-- SOAPMonitor removed: AXIS2-6105 -->
 <li><a href="reference.html">Command Line
 Tools</a></li>
 <li><a href="../tools/index.html">Tools/Plug-ins</a>

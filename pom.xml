@@ -384,8 +384,7 @@
         <module>modules/fastinfoset</module>
         <module>modules/integration</module>
         <module>modules/java2wsdl</module>
-        <module>modules/jibx</module>
-        <module>modules/jibx-codegen</module>
+        <!-- JiBX modules removed: AXIS2-6105 (dead project, last release 2016) -->
         <module>modules/json</module>
         <module>modules/kernel</module>
         <module>modules/openapi</module>
@@ -394,8 +393,7 @@
         <module>modules/mtompolicy-mar</module>
         <module>modules/ping</module>
         <module>modules/samples/version</module>
-        <module>modules/soapmonitor/servlet</module>
-        <module>modules/soapmonitor/module</module>
+        <!-- SOAPMonitor removed: AXIS2-6105 (Java Applets removed from JDK in Java 11) -->
         <module>modules/schema-validation</module>
         <module>modules/spring</module>
         <module>modules/spring-boot-starter</module>
@@ -414,7 +412,7 @@
         <module>modules/webapp</module>
         <module>modules/xmlbeans</module>
         <module>modules/xmlbeans-codegen</module>
-        <module>modules/scripting</module>
+        <!-- Scripting module removed: AXIS2-6105 (Nashorn removed from JDK in Java 15) -->
         <module>modules/jaxbri-codegen</module>
         <module>modules/metadata</module>
         <module>modules/saaj</module>
@@ -474,7 +472,7 @@
         <httpclient.version>5.6</httpclient.version>
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>12.1.8</jetty.version>
-        <jibx.version>1.4.5</jibx.version>
+        <!-- jibx.version removed: AXIS2-6105 -->
         <maven.archiver.version>3.6.6</maven.archiver.version>
         <maven.version>3.9.14</maven.version>
         <rhino.version>1.9.1</rhino.version>
@@ -598,22 +596,7 @@
                 <artifactId>gson</artifactId>
                 <version>${google.gson.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.jibx</groupId>
-                <artifactId>jibx-bind</artifactId>
-                <version>${jibx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jibx</groupId>
-                <artifactId>jibx-run</artifactId>
-                <version>${jibx.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+            <!-- JiBX deps removed: AXIS2-6105 -->
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant-launcher</artifactId>

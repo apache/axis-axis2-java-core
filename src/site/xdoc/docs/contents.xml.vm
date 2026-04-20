@@ -132,9 +132,7 @@ Transmission Optimization Mechanism</li>
 <li><a href="axis2config.html">Axis2 Configuration Guide</a> -
 Explains the three configurations in Axis2: global, service, and
 module</li>
-<li><a href="soapmonitor-module.html">SOAP Monitor How-to</a> - A
-guide on the utilities used to monitor the SOAP messages that
-invoke Web services, along with the results of those messages</li>
+<!-- SOAPMonitor removed: AXIS2-6105 -->
 <li><a href="WS_policy.html">Web Services Policy Support In
 Axis2</a> - Introduction to the role of Web services policy in
 Axis2</li>
@@ -167,10 +165,7 @@ ADB</li>
 <li><a href="adb/adb-codegen-integration.html">ADB Integration with
 Axis2</a> - A guide to writing an extension using the integrator in
 order to integrate ADB with Axis2</li>
-<li><a href="jibx/jibx-codegen-integration.html">JiBX Integration
-With Axis2</a> - A guide to using JiBX with Axis2 in order to
-expose existing Java code as a Web service and to implement a
-client for an existing Web service</li>
+<!-- JiBX removed: AXIS2-6105 -->
 </ul>
 <p><strong>Transports:</strong></p>
 <ul>

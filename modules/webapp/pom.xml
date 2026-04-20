@@ -42,11 +42,7 @@
     </scm>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jibx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- removed: AXIS2-6105 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -80,12 +76,7 @@
             <artifactId>axis2-json</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>soapmonitor</artifactId>
-            <version>${project.version}</version>
-            <type>mar</type>
-        </dependency>
+        <!-- removed: AXIS2-6105 -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>addressing</artifactId>
@@ -105,12 +96,7 @@
             <type>jar</type>
             <classifier>impl</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>scripting</artifactId>
-            <version>${project.version}</version>
-            <type>mar</type>
-        </dependency>
+        <!-- removed: AXIS2-6105 -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-corba</artifactId>
@@ -349,22 +335,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/webResources</outputDirectory>
-                            <includeArtifactIds>axis2-soapmonitor-servlet</includeArtifactIds>
-                            <includes>org/apache/axis2/soapmonitor/applet/**/*.class</includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- removed: AXIS2-6105 (soapmonitor applet copy) -->
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>

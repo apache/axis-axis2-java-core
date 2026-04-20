@@ -247,12 +247,7 @@
                                         <include>**/*.xsl</include>
                                     </includes>
                                 </resource>
-                                <resource>
-                                    <directory>../jibx-codegen/src</directory>
-                                    <includes>
-                                        <include>**/*.xsl</include>
-                                    </includes>
-                                </resource>
+                                <!-- removed: AXIS2-6105 -->
                             </resources>
                         </configuration>
                     </execution>

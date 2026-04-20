@@ -91,11 +91,7 @@
             <version>${project.version}</version>
             <classifier>sources</classifier>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-jibx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- removed: AXIS2-6105 -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-json</artifactId>
@@ -140,23 +136,7 @@
             <artifactId>axis2-saaj</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>scripting</artifactId>
-            <version>${project.version}</version>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>soapmonitor</artifactId>
-            <version>${project.version}</version>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-soapmonitor-servlet</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- removed: AXIS2-6105 -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-spring</artifactId>
