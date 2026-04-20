@@ -28,6 +28,14 @@ public class JsonConstant {
     public static final String RETURN_OBJECT = "returnObject";
     public static final String RETURN_TYPE = "returnType";
 
+    /**
+     * Property name for field-level filtering. When set on the
+     * MessageContext (or OperationContext), the value is a
+     * {@code Set<String>} of field names to include in the response.
+     * Fields not in the set are omitted during serialization.
+     */
+    public static final String FIELD_FILTER = "jsonFieldFilter";
+
     public static final String IS_JSON_STREAM = "isJsonStream";
 
     public static final String GSON_XML_STREAM_READER = "GsonXMLStreamReader";

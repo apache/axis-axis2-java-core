@@ -46,11 +46,15 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Streaming Moshi JSON message formatter for Axis2.
@@ -182,13 +186,29 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * The JsonWriter is backed by an Okio sink wrapping a
      * {@link FlushingOutputStream}, so the HTTP transport receives chunks
      * as serialization progresses.</p>
+     *
+     * <p>When {@link JsonConstant#FIELD_FILTER} is set on the MessageContext,
+     * only the requested top-level fields of the return object are serialized.
+     * This is done via reflection-based selective serialization — each field
+     * is checked against the filter set before being written to the JsonWriter.
+     * The streaming pipeline is never broken: non-selected fields are simply
+     * never written, so no capture buffer is needed.</p>
      */
+    @SuppressWarnings("unchecked")
     private void writeObjectResponse(JsonWriter jsonWriter, JsonAdapter<Object> adapter,
                                      Object retObj, MessageContext outMsgCtxt) throws AxisFault {
         try {
             jsonWriter.beginObject();
             jsonWriter.name(JsonConstant.RESPONSE);
-            adapter.toJson(jsonWriter, retObj);
+
+            Object filterProp = outMsgCtxt.getProperty(JsonConstant.FIELD_FILTER);
+            if (filterProp instanceof Set && !((Set<?>) filterProp).isEmpty()) {
+                writeFilteredObject(jsonWriter, retObj, (Set<String>) filterProp,
+                    adapter);
+            } else {
+                adapter.toJson(jsonWriter, retObj);
+            }
+
             jsonWriter.endObject();
 
         } catch (IOException e) {
@@ -196,6 +216,105 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
             log.error(msg, e);
             throw AxisFault.makeFault(e);
         }
+    }
+
+    /**
+     * Serialize only the fields in {@code allowedFields} from the return
+     * object, directly to the JsonWriter. No intermediate buffer.
+     *
+     * <p>Uses Java reflection to iterate over the object's declared fields.
+     * For each field whose name is in the allowed set, the field value is
+     * serialized via the Moshi adapter for that field's type. Fields not in
+     * the set are silently skipped — they are never serialized, never
+     * buffered, never written to the wire.</p>
+     *
+     * <p>This keeps the streaming pipeline intact: JsonWriter → Okio sink →
+     * FlushingOutputStream → transport. Each allowed field's value flows
+     * through to the client as soon as serialization produces enough bytes
+     * to trigger a flush.</p>
+     */
+    /** Shared Moshi instance for field-level serialization (thread-safe, reusable). */
+    private static final Moshi FIELD_FILTER_MOSHI = new Moshi.Builder()
+        .add(String.class, new JsonHtmlEncoder())
+        .add(Date.class, new Rfc3339DateJsonAdapter())
+        .build();
+
+    private void writeFilteredObject(JsonWriter jsonWriter, Object retObj,
+                                     Set<String> allowedFields,
+                                     JsonAdapter<Object> fallbackAdapter)
+            throws IOException {
+
+        if (retObj == null) {
+            jsonWriter.nullValue();
+            return;
+        }
+
+        List<Field> allFields = getAllFields(retObj.getClass());
+        boolean prevSerializeNulls = jsonWriter.getSerializeNulls();
+        jsonWriter.setSerializeNulls(true);
+        try {
+            jsonWriter.beginObject();
+
+            for (Field field : allFields) {
+                if (!allowedFields.contains(field.getName())) {
+                    continue;
+                }
+
+                field.setAccessible(true);
+                Object value;
+                try {
+                    value = field.get(retObj);
+                } catch (IllegalAccessException e) {
+                    log.warn("Cannot access field " + field.getName()
+                        + " for field filtering; skipping", e);
+                    continue;
+                }
+
+                jsonWriter.name(field.getName());
+                if (value == null) {
+                    jsonWriter.nullValue();
+                } else {
+                    @SuppressWarnings("unchecked")
+                    JsonAdapter<Object> fieldAdapter =
+                        (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(
+                            field.getGenericType());
+                    fieldAdapter.toJson(jsonWriter, value);
+                }
+            }
+
+            jsonWriter.endObject();
+        } finally {
+            jsonWriter.setSerializeNulls(prevSerializeNulls);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("writeFilteredObject: serialized fields from "
+                + allowedFields + " (streaming, no buffer)");
+        }
+    }
+
+    /**
+     * Collect all non-static, non-transient fields from the class hierarchy.
+     * Walks from the concrete class up through all superclasses to (but not
+     * including) Object. This ensures inherited fields are included when
+     * a response object extends a base class.
+     *
+     * <p>Note: this method reflects over the class on each call. For extreme
+     * performance needs, the result could be cached in a
+     * {@code ConcurrentHashMap<Class<?>, List<Field>>}. The current approach
+     * avoids cache-related complexity with dynamic classloaders.</p>
+     */
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> result = new ArrayList<>();
+        for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                int mods = field.getModifiers();
+                if (!Modifier.isStatic(mods) && !Modifier.isTransient(mods)) {
+                    result.add(field);
+                }
+            }
+        }
+        return result;
     }
 
     /**
