@@ -59,8 +59,8 @@ springbootdemo-wildfly base URL: https://localhost:8443/axis2-json-api
 
 ### PKI (IoT CA Pattern)
 
-Certificates live in `/home/robert/repos/axis-axis2-java-core/certs/`. The CA follows
-the same pattern as the Kanaha camera project — RSA 4096 CA with RSA 2048 leaf certs,
+Certificates live in `${project.basedir}/certs/`. The CA follows
+a standard IoT CA pattern — RSA 4096 CA with RSA 2048 leaf certs,
 appropriate for IoT/embedded where certificate management is manual.
 
 | File | Contents | Validity |
@@ -72,13 +72,13 @@ appropriate for IoT/embedded where certificate management is manual.
 | `client.key` / `client.crt` | Client cert, `CN=axis2-mcp-bridge`, `extendedKeyUsage=clientAuth` | 2 years |
 | `client-keystore.p12` | Bridge client keystore (client cert + key + CA chain) | — |
 
-Keystores are also copied to `/home/robert/apache-tomcat-11.0.20/conf/`.
+Keystores are also copied to `${CATALINA_HOME}/conf/`.
 
 Password for all PKCS12 files: `changeit`
 
 ### Tomcat mTLS Connector (port 8443)
 
-`server.xml` connector in `/home/robert/apache-tomcat-11.0.20/conf/server.xml`:
+`server.xml` connector in `${CATALINA_HOME}/conf/server.xml`:
 
 ```xml
 <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
@@ -205,8 +205,8 @@ with no response, as required by JSON-RPC 2.0.
       "command": "java",
       "args": ["-jar", "/path/to/axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar",
                "--base-url",    "https://localhost:8443/axis2-json-api",
-               "--keystore",    "/home/robert/repos/axis-axis2-java-core/certs/client-keystore.p12",
-               "--truststore",  "/home/robert/repos/axis-axis2-java-core/certs/ca-truststore.p12"]
+               "--keystore",    "${project.basedir}/certs/client-keystore.p12",
+               "--truststore",  "${project.basedir}/certs/ca-truststore.p12"]
     }
   }
 }
@@ -316,7 +316,7 @@ dependencies whose license compatibility is uncertain. The protocol is well-spec
 enough to hand-roll correctly.
 
 **Why IoT CA pattern**: RSA 4096 CA (10 years) + RSA 2048 leaf certs (2 years) matches
-the Kanaha camera project pattern. Appropriate for environments where certificate
+a standard IoT CA pattern. Appropriate for environments where certificate
 management is manual and infrequent. The CA is only on one machine — this is a
 development/demo CA, not a production CA.
 
