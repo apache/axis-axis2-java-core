@@ -51,6 +51,7 @@ for details and rationale.</p>
 <li><a href="#openapi_mcp">7. OpenAPI and MCP Support</a></li>
 <li><a href="#migration">8. Migration from Manual Configuration</a></li>
 <li><a href="#containers">9. Container Support</a></li>
+<li><a href="#http2">10. HTTP/2 and Streaming</a></li>
 </ul>
 
 <!-- ============================================================ -->
@@ -409,6 +410,44 @@ identical in structure to the configuration used by the legacy userguide
 
 <p>See <a href="#deployment_model">Section 0</a> for the full container
 compatibility matrix and the rationale for WAR-only deployment.</p>
+
+<!-- ============================================================ -->
+<a name="http2"/>
+<h2>10. HTTP/2 and Streaming</h2>
+
+<p>Axis2/Java has <strong>built-in HTTP/2 support at the serialization
+layer</strong>, not just the transport layer. Unlike most frameworks where
+the servlet container handles HTTP/2 transparently and the serialization
+is unaware of the protocol, Axis2 integrates HTTP/2 awareness into the
+JSON message formatter pipeline:</p>
+
+<ul>
+  <li><strong>Dedicated HTTP/2 transport module</strong>
+      (<code>modules/transport-h2</code>) — ALPN negotiation, per-stream
+      flow control, adaptive buffering, compression optimization, and
+      HTTP/1.1 fallback. See
+      <a href="http2-integration-guide.html">HTTP/2 Integration Guide</a>.</li>
+  <li><strong>Streaming JSON formatters</strong> — flush every 64 KB
+      during serialization, converting a single buffered response into a
+      stream of HTTP/2 DATA frames. A 50MB response arrives at the client
+      as ~780 incremental frames, with the first frame arriving within
+      milliseconds. See
+      <a href="json-streaming-formatter.html">Streaming JSON Formatter</a>.</li>
+  <li><strong>Field selection</strong> — callers add
+      <code>?fields=status,result</code> to any service URL and the
+      response includes only those fields, filtered during serialization
+      with zero overhead when not used. See
+      <a href="json-streaming-formatter.html#Field_Selection">Field Selection</a>.</li>
+  <li><strong>C parity</strong> — the same streaming architecture exists
+      in Axis2/C via Apache httpd <code>mod_h2</code>. Both
+      implementations use the same 64 KB flush interval, producing
+      identical HTTP/2 DATA frame patterns.</li>
+</ul>
+
+<p>For a detailed comparison of Axis2's HTTP/2 architecture with
+Spring MVC, JAX-RS, gRPC, and other frameworks, see the
+<a href="http2-integration-guide.html#How_Axis2_HTTP2_Differs_From_Other_Frameworks">framework comparison</a>
+in the HTTP/2 Integration Guide.</p>
 
 </body>
 </html>

@@ -35,12 +35,134 @@
 configuration that provides enhanced performance through cooperative integration with Undertow.
 </div>
 
+<div style="background-color: #f0f8ff; border: 1px solid #0066cc; padding: 15px; margin: 15px 0;">
+<h3>Quick start — pick your path</h3>
+<ul>
+  <li><strong>Just want the config?</strong> →
+      <a href="axis2-http2-simplified-example.html">2 parameters in axis2.xml</a></li>
+  <li><strong>Streaming large responses?</strong> →
+      <a href="json-streaming-formatter.html">Streaming JSON Formatter</a>
+      (64 KB flush + <code>?fields=</code> field selection)</li>
+  <li><strong>WildFly?</strong> →
+      <a href="wildfly-http2-integration-guide.html">WildFly HTTP/2 guide</a>
+      &nbsp;|&nbsp; <strong>Tomcat?</strong> →
+      <a href="tomcat-http2-integration-guide.html">Tomcat HTTP/2 guide</a></li>
+  <li><strong>Why is Axis2 different?</strong> →
+      <a href="#How_Axis2_HTTP2_Differs_From_Other_Frameworks">framework comparison</a> (below)</li>
+</ul>
+</div>
+
 <h2>Overview</h2>
 
-<p>This document provides a comprehensive staged migration plan for implementing <strong>dual-protocol HTTP/2 support</strong>
-in Apache Axis2/Java using Apache HttpComponents 5.x. The architecture supports <strong>both HTTP/1.1 and HTTP/2 independently</strong>,
-allowing selection of either protocol but not both simultaneously. This approach is specifically designed for enterprise
-applications that process large JSON payloads (50MB+) within memory-constrained environments (2GB heap).</p>
+<p>Apache Axis2/Java has <strong>native HTTP/2 support</strong> via a dedicated
+transport module (<code>modules/transport-h2</code>) built on Apache
+HttpComponents 5.x. The architecture supports <strong>both HTTP/1.1 and
+HTTP/2 as independent transport implementations</strong>, with runtime
+protocol selection and automatic fallback. HTTP/2 awareness extends
+into the JSON serialization pipeline — streaming formatters flush
+every 64 KB, converting buffered responses into HTTP/2 DATA frames
+during serialization rather than after. This is designed for
+enterprise applications that process large JSON payloads (50MB+).</p>
+
+<p><em>Note: sections below titled "Phase" or "Proposed" reflect the
+original design process and are retained for architectural context.
+The implementation is complete — see
+<code>modules/transport-h2</code> and
+<code>org.apache.axis2.json.streaming</code>.</em></p>
+
+<h2>How Axis2 HTTP/2 Differs From Other Frameworks</h2>
+
+<p>Most web service frameworks treat HTTP/2 as a transparent transport
+upgrade — the servlet container (Tomcat, Undertow, Netty) negotiates
+HTTP/2 via ALPN, and the framework's serialization layer is unaware of
+the underlying protocol. The response is fully buffered in memory before
+being handed to the container, which then splits it into HTTP/2 DATA
+frames. This means a 50MB JSON response is buffered as a single 50MB
+byte array regardless of whether the wire protocol is HTTP/1.1 or
+HTTP/2.</p>
+
+<p>Axis2/Java takes a fundamentally different approach:
+<strong>HTTP/2 awareness is built into the serialization pipeline
+itself</strong>, not just the transport layer.</p>
+
+<ul>
+  <li><strong>Dedicated HTTP/2 transport module</strong>
+      (<code>modules/transport-h2</code>) — a standalone module with
+      ALPN protocol negotiation
+      (<code>ALPNProtocolSelector</code>), per-stream flow control
+      (<code>H2FlowControlManager</code>,
+      <code>ProgressiveFlowControl</code>), adaptive buffering
+      (<code>AdaptiveBufferManager</code>), compression optimization
+      (<code>CompressionOptimizer</code>), and HTTP/1.1 fallback
+      (<code>H2FallbackManager</code>). This is not a wrapper around
+      the servlet container's HTTP/2 — it is an independent
+      implementation using Apache HttpComponents 5.x.</li>
+  <li><strong>Streaming JSON formatters</strong>
+      (<code>MoshiStreamingMessageFormatter</code>,
+      <code>JSONStreamingMessageFormatter</code>) — flush every 64 KB
+      via <code>FlushingOutputStream</code>, converting a single
+      buffered response into a stream of HTTP/2 DATA frames during
+      serialization. Non-selected fields are never serialized when
+      field filtering is active
+      (<code>FieldFilteringMessageFormatter</code>). See
+      <a href="json-streaming-formatter.html">Streaming JSON Formatter</a>.</li>
+  <li><strong>C parity</strong> — the same architecture exists in
+      Axis2/C via Apache httpd <code>mod_h2</code> with
+      <code>ap_rflush()</code> in the message formatter. Both
+      implementations use the same 64 KB flush interval, producing
+      identical HTTP/2 DATA frame patterns from both C and Java
+      endpoints.</li>
+</ul>
+
+<p>For comparison with other frameworks:</p>
+
+<table border="1">
+  <tr>
+    <th>Framework</th>
+    <th>HTTP/2 approach</th>
+    <th>Serialization-layer awareness</th>
+    <th>Streaming during serialization</th>
+  </tr>
+  <tr>
+    <td>Spring MVC / Spring WebFlux</td>
+    <td>Servlet container handles HTTP/2 transparently</td>
+    <td>No — ResponseEntity buffers in full</td>
+    <td>WebFlux reactive streams possible, but not integrated into message formatters</td>
+  </tr>
+  <tr>
+    <td>JAX-RS (Jersey, RESTEasy)</td>
+    <td>Servlet container handles HTTP/2 transparently</td>
+    <td>No — MessageBodyWriter buffers in full by default</td>
+    <td>StreamingOutput possible but manual</td>
+  </tr>
+  <tr>
+    <td>gRPC</td>
+    <td>Mandatory HTTP/2 (the protocol is built on it)</td>
+    <td>Yes — protobuf serialization is streaming-native</td>
+    <td>Yes — but gRPC is a protocol, not an add-on</td>
+  </tr>
+  <tr>
+    <td>Django REST Framework</td>
+    <td>ASGI server handles HTTP/2; framework is oblivious</td>
+    <td>No</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td><strong>Apache Axis2/Java</strong></td>
+    <td><strong>Dedicated transport-h2 module + ALPN negotiation + flow control</strong></td>
+    <td><strong>Yes — FlushingOutputStream in the JSON formatter pipeline</strong></td>
+    <td><strong>Yes — 64 KB incremental flush, field filtering during serialization, C/Java parity</strong></td>
+  </tr>
+</table>
+
+<p>The practical impact: a 50MB Axis2 JSON response flows to the client
+in ~780 HTTP/2 DATA frames as serialization progresses, with the first
+frame arriving within milliseconds of the first serialized field. A
+50MB Spring MVC response arrives as a single burst after the entire
+object graph is serialized. For large payloads behind reverse proxies
+(nginx, AWS ALB/NLB), the Axis2 approach prevents 502 Bad Gateway
+timeouts because the proxy sees continuous data flow rather than a long
+silence followed by a large write.</p>
 
 <h2>Architecture Strategy: Dual-Protocol Design</h2>
 
@@ -54,7 +176,7 @@ applications that process large JSON payloads (50MB+) within memory-constrained 
   <li><strong>Future Maintenance</strong>: Each protocol can evolve independently</li>
 </ul>
 
-<h3>Proposed Module Structure</h3>
+<h3>Module Structure</h3>
 
 <pre>
 modules/
@@ -292,27 +414,22 @@ moshiMemoryOptimizationThreshold = 52428800 (50MB memory optimization)
   </li>
 </ol>
 
-<h2>Migration Strategy</h2>
+<h2>Recommended Adoption Path</h2>
 
-<h3>Phase 1: Parallel Deployment</h3>
+<p>HTTP/2 and HTTP/1.1 coexist as independent transport implementations.
+A typical rollout:</p>
 <ol>
-  <li>Deploy both HTTP/1.1 and HTTP/2 transports</li>
-  <li>Test HTTP/2 with non-critical services first</li>
-  <li>Monitor performance and memory usage</li>
-</ol>
-
-<h3>Phase 2: Gradual Migration</h3>
-<ol>
-  <li>Migrate high-volume services to HTTP/2</li>
-  <li>Focus on services with large JSON payloads (10MB+)</li>
-  <li>Measure performance improvements</li>
-</ol>
-
-<h3>Phase 3: Full Migration</h3>
-<ol>
-  <li>Migrate remaining services to HTTP/2</li>
-  <li>Consider deprecating HTTP/1.1 transport</li>
-  <li>Optimize HTTP/2 configuration based on usage patterns</li>
+  <li><strong>Start with high-payload services</strong> — services returning
+      10MB+ JSON responses benefit most from streaming (FlushingOutputStream
+      prevents reverse proxy timeouts).</li>
+  <li><strong>Enable globally</strong> — once validated, switch the
+      <code>axis2.xml</code> formatter to
+      <code>FieldFilteringMessageFormatter</code> (wraps the streaming
+      Moshi formatter). All services benefit; small responses have zero
+      overhead.</li>
+  <li><strong>HTTP/1.1 fallback remains available</strong> — the original
+      transport is unchanged and can be restored by reverting the
+      <code>axis2.xml</code> formatter class.</li>
 </ol>
 
 <h2>Security Considerations</h2>

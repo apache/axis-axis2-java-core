@@ -83,6 +83,13 @@ JSON-RPC, REST, and MCP traffic. See the
 <a href="docs/openapi-rest-userguide.html">OpenAPI 3.0 auto-generation</a>
 with Swagger UI, and
 <a href="docs/json-rpc-mcp-guide.html">MCP tool catalogs</a> for AI agents.
+<a href="docs/http2-integration-guide.html">HTTP/2 support</a> is built into
+the serialization pipeline &#x2014; streaming JSON formatters flush every 64 KB,
+converting buffered responses into HTTP/2 DATA frames during serialization,
+not after. Response field selection (<code>?fields=</code>) filters at the
+serialization layer with zero overhead when unused. Most frameworks treat
+HTTP/2 as a transparent container feature; Axis2 integrates it into the
+message formatter.
 Legacy SOAP services continue to work unchanged &#x2014; the SOAP handler chain,
 WS-Security (<a href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>),
 and WS-Addressing are fully supported.</p>

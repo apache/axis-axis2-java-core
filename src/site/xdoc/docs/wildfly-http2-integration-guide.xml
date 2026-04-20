@@ -21,12 +21,16 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
    <properties>
-       <title>WildFly + Axis2 HTTP/2 Integration - what works, what didn't, and lessons learned</title>
+       <title>WildFly + Axis2 HTTP/2 Integration Guide</title>
    </properties>
 
     <body>
 
-<h1>WildFly + Axis2 HTTP/2 Integration - Failed Attempts and Lessons Learned</h1>
+<h1>WildFly + Axis2 HTTP/2 Integration Guide</h1>
+
+<p><strong>Tested on:</strong> WildFly 32 (OpenJDK 17, 21) and WildFly 39
+(OpenJDK 21, 25). Configuration examples below use WildFly 32 syntax;
+WildFly 39 is compatible with the same configuration.</p>
 
 <div style="background-color: #ffe8e8; border: 1px solid #ff4444; padding: 10px; margin: 10px 0;">
 
@@ -490,523 +494,42 @@ curl -k --http2 --location 'https://localhost:8443/services/YourService' \
 # - No class loader conflicts
 </pre>
 
-<h2>Buffer Size Configuration Analysis &amp; Potential Clashes</h2>
+<h2>Troubleshooting</h2>
 
-<p><strong>⚠️ CRITICAL ANALYSIS</strong>: While the configurations are coordinated, there are potential efficiency issues and clashes that need attention:</p>
-
-<h3>1. Buffer Size Alignment Analysis (WildFly 32)</h3>
+<p>Common issues and resolution:</p>
 
 <table border="1">
-<tr><th>Layer</th><th>Current Configuration</th><th>Recommended Configuration</th><th>Impact</th></tr>
+<tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
 <tr>
-    <td><strong>WildFly 32 Buffers</strong></td>
-    <td><code>buffer-size="2048"</code> (2KB)</td>
-    <td><code>buffer-size="32768"</code> (32KB)</td>
-    <td rowspan="4">✅ <strong>ALIGNED</strong>: All layers using 32KB for optimal performance</td>
+    <td>HTTP/1.1 used despite <code>enable-http2="true"</code></td>
+    <td>Missing ALPN or TLS &lt; 1.2</td>
+    <td>Ensure OpenJDK 11+ and <code>ssl-context</code> configured with TLS 1.2+</td>
 </tr>
 <tr>
-    <td><strong>WildFly HTTP/2 Frames</strong></td>
-    <td>Missing <code>http2-max-frame-size</code></td>
-    <td><code>http2-max-frame-size="32768"</code></td>
+    <td>502 Bad Gateway on large responses</td>
+    <td>Reverse proxy timeout before data flows</td>
+    <td>Use streaming JSON formatter (<code>FlushingOutputStream</code>) — flushes every 64 KB</td>
 </tr>
 <tr>
-    <td><strong>transport-h2</strong></td>
-    <td>Default (~8KB)</td>
-    <td><code>streamingBufferSize="32768"</code></td>
+    <td>ClassLoader conflicts with log4j</td>
+    <td>WildFly's jboss-logmanager conflicts with WAR's log4j-core</td>
+    <td>Add <code>jboss-deployment-structure.xml</code> excluding <code>org.apache.logging.log4j.api</code></td>
 </tr>
 <tr>
-    <td><strong>Enhanced Moshi H2</strong></td>
-    <td>Default processing</td>
-    <td><code>moshiStreamingBufferSize="32768"</code></td>
+    <td>Buffer alignment warnings</td>
+    <td>WildFly buffer size (2KB default) mismatched with Axis2 flush interval (64KB)</td>
+    <td>Set <code>buffer-size="32768"</code> in WildFly's Undertow config to align with Axis2</td>
 </tr>
 </table>
 
-<p><strong>❌ CRITICAL ISSUE</strong>: Your current 2KB buffer configuration severely limits performance for large JSON payloads. The recommended 32KB alignment provides optimal performance while conserving memory.</p>
-
-<h3>2. Memory Amplification Risk</h3>
-
-<pre>
-Memory Usage Analysis (Per Large Request):
-┌─────────────────────────────────────────────────────────────┐
-│ WildFly Layer: 100 streams × 64KB window = 6.4MB           │
-│ transport-h2: 50 connections × 10 routes = 500 streams     │
-│ Enhanced Moshi: Async processing + field optimization      │
-│                                                             │
-│ 🚨 POTENTIAL TOTAL: 100 streams × 64KB × 3 layers = 19MB   │
-│    For 50 connections: 19MB × 50 = 950MB just for buffers  │
-└─────────────────────────────────────────────────────────────┘
-</pre>
-
-<p><strong>Risk</strong>: Memory amplification across layers can consume significant heap space, especially with large payloads and high concurrency.</p>
-
-<h3>3. Flow Control Interference</h3>
+<h3>Deployment sizing</h3>
 
 <table border="1">
-<tr><th>Flow Control Layer</th><th>Managed By</th><th>Scope</th><th>Potential Conflict</th></tr>
-<tr>
-    <td><strong>HTTP/2 Protocol Level</strong></td>
-    <td>WildFly</td>
-    <td>Inbound requests</td>
-    <td rowspan="3">⚠️ Multiple layers managing flow control independently can cause backpressure conflicts</td>
-</tr>
-<tr>
-    <td><strong>HTTP/2 Client Level</strong></td>
-    <td>transport-h2</td>
-    <td>Outbound requests</td>
-</tr>
-<tr>
-    <td><strong>Application Level</strong></td>
-    <td>Enhanced Moshi H2</td>
-    <td>JSON processing</td>
-</tr>
+<tr><th>Environment</th><th>Memory</th><th>Configuration</th></tr>
+<tr><td>Memory-constrained</td><td>≤ 2GB</td><td>32KB buffers, 50 streams</td></tr>
+<tr><td>Balanced production</td><td>2-4GB</td><td>64KB buffers, 100 streams</td></tr>
+<tr><td>High-performance</td><td>4GB+</td><td>64KB+ buffers, 200+ streams</td></tr>
 </table>
-
-<h3>4. Timeout Coordination Issues</h3>
-
-<table border="1">
-<tr><th>Layer</th><th>Connection Timeout</th><th>Processing Timeout</th><th>Clash Risk</th></tr>
-<tr>
-    <td><strong>WildFly</strong></td>
-    <td>N/A (server)</td>
-    <td>300s (5 min)</td>
-    <td>✅ Good for large payloads</td>
-</tr>
-<tr>
-    <td><strong>transport-h2</strong></td>
-    <td>30s</td>
-    <td>300s (5 min)</td>
-    <td>⚠️ <strong>30s connection timeout too short for large payload processing</strong></td>
-</tr>
-<tr>
-    <td><strong>Enhanced Moshi H2</strong></td>
-    <td>N/A</td>
-    <td>CompletableFuture timeout</td>
-    <td>⚠️ No explicit timeout coordination</td>
-</tr>
-</table>
-
-<h3>5. Optimal Configuration Recommendations</h3>
-
-<h4>Fix Buffer Size Alignment</h4>
-<pre>
-&lt;!-- WildFly: Increase frame size to match buffers --&gt;
-&lt;https-listener name="https" socket-binding="https"
-                enable-http2="true"
-                http2-max-frame-size="65536"             &lt;!-- Increase to 64KB --&gt;
-                http2-initial-window-size="65536"        &lt;!-- Keep 64KB --&gt;
-                http2-max-concurrent-streams="100"/&gt;
-
-&lt;!-- OR transport-h2: Reduce buffer size to match WildFly --&gt;
-&lt;parameter name="streamingBufferSize"&gt;32768&lt;/parameter&gt;      &lt;!-- Reduce to 32KB --&gt;
-&lt;parameter name="moshiStreamingBufferSize"&gt;32768&lt;/parameter&gt; &lt;!-- Reduce to 32KB --&gt;
-</pre>
-
-<h4>Memory-Optimized Configuration</h4>
-<pre>
-&lt;!-- Conservative memory settings for 2GB heap --&gt;
-&lt;https-listener name="https" socket-binding="https"
-                enable-http2="true"
-                http2-max-frame-size="32768"             &lt;!-- 32KB frames --&gt;
-                http2-initial-window-size="32768"        &lt;!-- 32KB window --&gt;
-                http2-max-concurrent-streams="50"        &lt;!-- Reduce streams --&gt;
-                max-post-size="52428800"/&gt;               &lt;!-- 50MB max --&gt;
-
-&lt;!-- Coordinated transport-h2 settings --&gt;
-&lt;parameter name="maxConcurrentStreams"&gt;50&lt;/parameter&gt;         &lt;!-- Match WildFly --&gt;
-&lt;parameter name="initialWindowSize"&gt;32768&lt;/parameter&gt;          &lt;!-- Match WildFly --&gt;
-&lt;parameter name="connectionTimeout"&gt;60000&lt;/parameter&gt;         &lt;!-- Increase to 60s --&gt;
-&lt;parameter name="streamingBufferSize"&gt;32768&lt;/parameter&gt;       &lt;!-- Match frame size --&gt;
-
-&lt;!-- Coordinated Moshi settings --&gt;
-&lt;parameter name="moshiStreamingBufferSize"&gt;32768&lt;/parameter&gt;   &lt;!-- Match frame size --&gt;
-&lt;parameter name="AsyncProcessingThreshold"&gt;2097152&lt;/parameter&gt; &lt;!-- Increase to 2MB --&gt;
-</pre>
-
-<h4>Performance-Optimized Configuration</h4>
-<pre>
-&lt;!-- High-performance settings for larger heaps (4GB+) --&gt;
-&lt;https-listener name="https" socket-binding="https"
-                enable-http2="true"
-                http2-max-frame-size="65536"             &lt;!-- 64KB frames --&gt;
-                http2-initial-window-size="131072"       &lt;!-- 128KB window --&gt;
-                http2-max-concurrent-streams="200"       &lt;!-- More streams --&gt;
-                max-post-size="104857600"/&gt;              &lt;!-- 100MB max --&gt;
-
-&lt;!-- High-performance transport-h2 --&gt;
-&lt;parameter name="maxConcurrentStreams"&gt;200&lt;/parameter&gt;        &lt;!-- Match WildFly --&gt;
-&lt;parameter name="initialWindowSize"&gt;131072&lt;/parameter&gt;         &lt;!-- 128KB window --&gt;
-&lt;parameter name="streamingBufferSize"&gt;65536&lt;/parameter&gt;        &lt;!-- 64KB buffers --&gt;
-
-&lt;!-- High-performance Moshi --&gt;
-&lt;parameter name="moshiStreamingBufferSize"&gt;65536&lt;/parameter&gt;    &lt;!-- 64KB buffers --&gt;
-&lt;parameter name="AsyncProcessingThreshold"&gt;524288&lt;/parameter&gt;   &lt;!-- Lower to 512KB --&gt;
-</pre>
-
-<h3>6. Deployment Recommendations</h3>
-
-<table border="1">
-<tr><th>Environment</th><th>Memory</th><th>Configuration</th><th>Expected Performance</th></tr>
-<tr>
-    <td><strong>Memory-Constrained</strong></td>
-    <td>≤ 2GB</td>
-    <td>32KB buffers, 50 streams</td>
-    <td>Stable, +30% improvement</td>
-</tr>
-<tr>
-    <td><strong>Balanced Production</strong></td>
-    <td>2-4GB</td>
-    <td>64KB buffers, 100 streams</td>
-    <td>Good performance, +45% improvement</td>
-</tr>
-<tr>
-    <td><strong>High-Performance</strong></td>
-    <td>4GB+</td>
-    <td>64KB+ buffers, 200+ streams</td>
-    <td>Maximum throughput, +60% improvement</td>
-</tr>
-</table>
-
-<h2>Failed Integration Attempts and Root Cause Analysis</h2>
-
-<h3>1. The Fundamental Problem: Axis2 Axiom Integration Requirements</h3>
-
-<p><strong>Core Issue</strong>: Apache Axis2 requires all incoming JSON data to be converted to **OMElement** objects (Apache Axiom's XML Object Model) for processing by web services. This conversion must happen <strong>within Axis2's processing pipeline</strong>, not at the WildFly container level.</p>
-
-<pre>
-Key Axis2 Processing Requirements:
-┌─────────────────────────────────────────────────────────┐
-│ 1. JSON Input → Axiom OMElement Objects                │
-│ 2. OMElement → SOAP Processing → Web Service Methods   │
-│ 3. Response Objects → OMElement → JSON Output          │
-└─────────────────────────────────────────────────────────┘
-
-WildFly HTTP/2 Integration Challenge:
-┌─────────────────────────────────────────────────────────┐
-│ WildFly Layer: HTTP/2 → Raw JSON Bytes                 │
-│ ❌ DISCONNECT: No direct path to Axis2 OMElement       │
-│ Axis2 Layer:   JSON Bytes → OMElement Conversion       │
-└─────────────────────────────────────────────────────────┘
-</pre>
-
-<p><strong>Why WildFly Integration Failed</strong>: WildFly's HTTP/2 processing operates at the container level with <code>HttpServerExchange</code> and raw byte streams, while Axis2 requires specialized JSON-to-OMElement conversion within its own <code>MessageBuilder</code> architecture. The two systems operate at different abstraction levels with incompatible processing models.</p>
-
-<h3>2. Axis2 JSON Processing Architecture Conflicts</h3>
-
-<p><strong>The Deeper Problem</strong>: Axis2's JSON processing requires custom <code>MessageBuilder</code> and <code>MessageFormatter</code> implementations that convert between JSON and Axiom OMElement objects:</p>
-
-<pre>
-Axis2 JSON Processing Pipeline:
-InputStream → JsonReader → XMLStreamReader → OMElement → Web Service
-
-Required Integration Points:
-- JsonBuilder.processDocument() → OMElement
-- JsonFormatter.writeTo() → OMElement → JSON
-- Deep integration with SOAPFactory, OMAbstractFactory
-- Custom XMLStreamReader implementation for JSON conversion
-</pre>
-
-<p><strong>WildFly Integration Impossibility</strong>: WildFly HTTP/2 integration would require:</p>
-<ul>
-  <li><strong>Bypassing Axis2's MessageBuilder architecture</strong> - Breaking core JSON processing</li>
-  <li><strong>Custom OMElement creation at container level</strong> - Violating separation of concerns</li>
-  <li><strong>Deep coupling between WildFly and Axis2 internals</strong> - Architectural violation</li>
-  <li><strong>Duplicating JSON-to-XML conversion logic</strong> - Maintenance nightmare</li>
-</ul>
-
-<h3>3. The Subsequent org.xnio.XnioWorker LinkageError</h3>
-
-<p><strong>Secondary Issue</strong>: After discovering the Axiom integration challenges, attempts to create hybrid integration classes led to class loader conflicts:</p>
-
-<pre>
-java.lang.LinkageError: loader constraint violation: when resolving method
-'org.xnio.XnioWorker io.undertow.server.ServerConnection.getWorker()'
-
-Class loader conflict:
-- 'deployment.staging.war' @321cfd96 (WAR deployment)
-- 'io.undertow.core@2.3.13.Final' @6aa6b375 (WildFly module)
-- Different Class objects for org/xnio/XnioWorker
-</pre>
-
-<p><strong>What Went Wrong</strong>: The integration classes tried to bridge WAR-deployed Axis2 code with WildFly's modular classloader system, but this was a symptom of the deeper architectural mismatch, not the root cause.</p>
-
-<h3>2. Axis2ServletExtension Integration Failure</h3>
-
-<p><strong>Problem</strong>: Created `org.apache.axis2.transport.h2.integration.Axis2ServletExtension$DeferredAxis2Handler` to integrate with WildFly's servlet extension mechanism:</p>
-
-<pre>
-public class Axis2ServletExtension implements ServletExtension {
-    @Override
-    public void handleDeployment(DeploymentInfo deploymentInfo, ServletContext servletContext) {
-        // Attempt to register custom handler that bridges Axis2 and Undertow
-        deploymentInfo.addInitialHandlerChainWrapper(new DeferredAxis2HandlerWrapper());
-    }
-
-    private class DeferredAxis2Handler implements HttpHandler {
-        @Override
-        public void handleRequest(HttpServerExchange exchange) throws Exception {
-            // FAILURE POINT: Cannot access Undertow classes from WAR classloader
-            XnioWorker worker = exchange.getConnection().getWorker(); // LinkageError here!
-        }
-    }
-}
-</pre>
-
-<p><strong>Fundamental Issue</strong>: WAR-deployed code cannot safely access WildFly module classes due to classloader isolation. The servlet extension approach requires deep integration that breaks module boundaries.</p>
-
-<h3>3. org.xnio Dependency Problems</h3>
-
-<p><strong>Dependencies That Failed</strong>:</p>
-<ul>
-  <li><strong>org.xnio.XnioWorker</strong> - Core XNIO worker threads</li>
-  <li><strong>org.xnio.channels.StreamSinkChannel</strong> - Async I/O channels</li>
-  <li><strong>org.xnio.conduits.Conduit</strong> - Low-level I/O conduits</li>
-  <li><strong>io.undertow.server.HttpServerExchange</strong> - Request/response exchange objects</li>
-  <li><strong>io.undertow.server.ServerConnection</strong> - Connection management</li>
-</ul>
-
-<p><strong>Module Isolation Problem</strong>: These classes are in WildFly's private module system and cannot be safely accessed from user deployments:</p>
-
-<pre>
-WildFly Module System:
-┌─────────────────────────────────────────────────────────┐
-│ WildFly Core Modules (private)                          │
-│ ├── org.xnio                                            │
-│ ├── io.undertow.core                                    │
-│ └── org.jboss.as.*                                      │
-├─────────────────────────────────────────────────────────┤
-│ User Deployment (WAR)                                   │
-│ ├── deployment.staging.war                              │
-│ └── Cannot access private modules safely                │
-└─────────────────────────────────────────────────────────┘
-</pre>
-
-<h3>4. Configuration-Driven Integration Failures</h3>
-
-<p><strong>Attempted Configuration</strong>: Complex axis2.xml configuration that tried to bridge the two systems:</p>
-
-<pre>
-&lt;!-- FAILED: This caused LinkageError --&gt;
-&lt;transportReceiver name="https"
-                   class="org.apache.axis2.transport.h2.integration.UndertowAxis2TransportReceiver"&gt;
-    &lt;parameter name="enableHTTP2"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="undertowIntegration"&gt;true&lt;/parameter&gt;  &lt;!-- BROKEN --&gt;
-    &lt;parameter name="xnioWorkerThreads"&gt;10&lt;/parameter&gt;    &lt;!-- BROKEN --&gt;
-&lt;/transportReceiver&gt;
-
-&lt;!-- FAILED: Non-existent classes referenced --&gt;
-&lt;messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
-                 class="org.apache.axis2.json.moshih2.rpc.HTTP2StreamingJsonRpcMessageReceiver"/&gt;
-&lt;messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
-                 class="org.apache.axis2.json.moshih2.rpc.HTTP2StreamingJsonInOnlyRPCMessageReceiver"/&gt;
-</pre>
-
-<p><strong>Result</strong>: ClassNotFoundException and LinkageError exceptions prevented system startup.</p>
-
-<h3>5. HTTP/2 Stream Management Conflicts</h3>
-
-<p><strong>Attempted Solution</strong>: Create shared HTTP/2 stream management between Axis2 and WildFly:</p>
-
-<pre>
-public class HTTP2StreamCoordinator {
-    private XnioWorker undertowWorker;  // FAILURE: Cannot access from WAR
-    private Http2Channel sharedChannel; // FAILURE: Not accessible
-
-    public void coordinateStreams(MessageContext msgCtx) throws AxisFault {
-        try {
-            // Attempt to share Undertow's HTTP/2 streams with Axis2
-            Http2StreamSourceChannel sourceChannel =
-                (Http2StreamSourceChannel) msgCtx.getProperty("HTTP_CHANNEL"); // NULL
-
-            // Try to get Undertow worker from current exchange
-            HttpServerExchange exchange = getCurrentExchange(); // LinkageError!
-            this.undertowWorker = exchange.getConnection().getWorker();
-        } catch (Exception e) {
-            // Integration impossible due to classloader isolation
-            throw new AxisFault("Cannot coordinate HTTP/2 streams", e);
-        }
-    }
-}
-</pre>
-
-<p><strong>Why It Failed</strong>: No safe way to share HTTP/2 stream objects between WildFly's module system and WAR-deployed Axis2 code.</p>
-
-<h2>Lessons Learned and Strategic Pivot</h2>
-
-<h3>1. Architectural Mismatch: Container vs Application Layer Processing</h3>
-
-<p><strong>Critical Lesson</strong>: **Axis2's Axiom OMElement conversion must happen within the application layer**, not at the container level. WildFly HTTP/2 integration operates at the wrong abstraction level for Axis2's JSON processing requirements.</p>
-
-<p><strong>Decision</strong>: Abandoned container-level integration in favor of **application-layer optimization within Axis2's existing MessageBuilder/MessageFormatter architecture**.</p>
-
-<h3>2. JSON-to-OMElement Conversion is the Core Challenge</h3>
-
-<p><strong>Deep Insight</strong>: The real performance bottleneck was **JSON parsing and OMElement creation**, not HTTP/2 transport. Optimizing the JSON → XMLStreamReader → OMElement pipeline delivers greater benefits than transport-layer integration.</p>
-
-<p><strong>Strategic Shift</strong>: Focus optimization efforts on **Enhanced Moshi JSON processing with field-specific optimizations** rather than WildFly integration complexity.</p>
-
-<h3>3. Axis2 Architecture Requires Internal Optimization</h3>
-
-<p><strong>Key Realization</strong>: Axis2's performance improvements must work **within its existing processing pipeline**:</p>
-<ul>
-  <li><strong>InputStream → JsonReader → XMLStreamReader → OMElement</strong></li>
-  <li><strong>Custom MessageBuilder implementations with async processing</strong></li>
-  <li><strong>Field-specific parsing optimizations within XMLStreamReader</strong></li>
-  <li><strong>Memory management at OMElement creation level</strong></li>
-</ul>
-
-<p><strong>Solution Path</strong>: Create enhanced JSON processing components that **optimize within Axis2's architecture** rather than bypassing it.</p>
-
-<h3>4. Focus Shift to Enhanced Moshi H2 Development</h3>
-
-<p><strong>Key Insight</strong>: The performance research identified that <strong>JSON processing and OMElement conversion</strong> was the actual bottleneck, not HTTP/2 transport layer integration.</p>
-
-<p><strong>Strategic Pivot</strong>: Instead of fighting WildFly integration complexity, focus optimization efforts on <strong>JSON parsing and generation</strong> where Axis2 has full control.</p>
-
-<h2>Positive Outcome: Enhanced Moshi H2 Development</h2>
-
-<h3>Salvaged Concepts and Ideas</h3>
-
-<p><strong>What We Learned from the Failed Integration</strong>:</p>
-
-<ol>
-  <li><strong>Async Processing Patterns</strong>: HTTP/2 integration research revealed async processing benefits that were applied to JSON processing</li>
-  <li><strong>Buffer Management Techniques</strong>: WildFly buffer optimization concepts were adapted for JSON streaming</li>
-  <li><strong>Performance Monitoring Approaches</strong>: Integration monitoring concepts became JSON processing metrics</li>
-  <li><strong>Configuration-Based Activation</strong>: Runtime detection patterns became JSON optimization activation logic</li>
-  <li><strong>Memory Pressure Management</strong>: WildFly memory management concepts applied to large JSON payload handling</li>
-</ol>
-
-<h3>Enhanced Moshi H2 as the Solution</h3>
-
-<p><strong>Enhanced Moshi H2 solved the core Axiom integration problem by optimizing JSON-to-OMElement conversion within Axis2's architecture</strong>:</p>
-
-<p><strong>How it Solves the Fundamental Issue</strong>:</p>
-<ul>
-  <li><strong>Works within MessageBuilder architecture</strong> - No bypassing of Axis2's processing pipeline</li>
-  <li><strong>Direct JSON → OMElement optimization</strong> - Targets the actual performance bottleneck</li>
-  <li><strong>Enhanced XMLStreamReader with field-specific parsing</strong> - IDs, amounts, dates, arrays</li>
-  <li><strong>Async processing within OMElement creation</strong> - Prevents 12-18s blocking behavior</li>
-  <li><strong>Portable solution</strong> - No WildFly dependencies, works in any servlet container</li>
-</ul>
-
-<pre>
-// Concepts salvaged from WildFly integration research:
-public class EnhancedMoshiJsonBuilder {
-    // Async processing patterns from HTTP/2 integration attempts
-    private CompletableFuture&lt;OMElement&gt; processLargePayloadAsync(InputStream inputStream) {
-        return CompletableFuture.supplyAsync(() -&gt; {
-            // Apply buffer management lessons from WildFly integration
-            return processWithEnhancedMoshi(inputStream, messageContext, strategy, requestId);
-        }, asyncExecutor);
-    }
-
-    // Memory management from WildFly buffer optimization research
-    private void optimizeMemoryUsage(long payloadSize) {
-        if (payloadSize &gt; memoryOptimizationThreshold) {
-            // Apply GC hints learned from WildFly integration
-            System.gc(); // Strategic GC suggestion
-        }
-    }
-}
-</pre>
-
-<h3>Performance Benefits Achieved</h3>
-
-<p><strong>Enhanced Moshi H2 delivers the performance improvements originally sought from WildFly integration</strong>:</p>
-
-<ul>
-  <li><strong>40-60% JSON processing improvement</strong> for large payloads (&gt;1MB)</li>
-  <li><strong>Async processing prevents blocking</strong> (eliminates 12-18s stalls)</li>
-  <li><strong>Field-specific optimizations</strong> for IDs, amounts, dates, arrays</li>
-  <li><strong>Memory management with GC optimization</strong></li>
-  <li><strong>Performance metrics and monitoring</strong></li>
-  <li><strong>Intelligent payload analysis</strong> and processing strategy selection</li>
-</ul>
-
-<h3>Superior Approach</h3>
-
-<p><strong>Enhanced Moshi H2 is actually better than WildFly integration would have been</strong>:</p>
-
-<table border="1">
-<tr><th>Aspect</th><th>Failed WildFly Integration</th><th>Enhanced Moshi H2</th></tr>
-<tr><td><strong>Compatibility</strong></td><td>❌ WildFly-only</td><td>✅ Universal (Tomcat, Jetty, standalone)</td></tr>
-<tr><td><strong>Deployment</strong></td><td>❌ Complex configuration</td><td>✅ Simple axis2.xml changes</td></tr>
-<tr><td><strong>Maintenance</strong></td><td>❌ WildFly version coupling</td><td>✅ Independent of app server</td></tr>
-<tr><td><strong>Performance</strong></td><td>⚠️ 15-25% improvement</td><td>✅ 40-60% improvement</td></tr>
-<tr><td><strong>Risk</strong></td><td>❌ ClassLoader conflicts</td><td>✅ Zero breaking changes</td></tr>
-</table>
-
-<h2>Conclusion: Architectural Understanding Led to Superior Solution</h2>
-
-<p><strong>The WildFly integration failure revealed fundamental architectural insights</strong> that led to a better solution:</p>
-
-<ol>
-  <li><strong>Identified the real bottleneck</strong>: mandatory <a href="json_support_gson.xml">dummy SOAP envelope</a> within Axis2, not HTTP/2 transport layer</li>
-  <li><strong>Recognized architectural mismatch</strong>: Container-level integration vs application-layer optimization requirements</li>
-  <li><strong>Understood Axiom integration needs</strong>: Performance improvements must work within MessageBuilder/MessageFormatter architecture</li>
-  <li><strong>Discovered portable optimization opportunities</strong>: Field-specific parsing, async processing, memory management within OMElement creation</li>
-  <li><strong>Achieved superior performance</strong>: 40-60% improvement by targeting the actual bottleneck</li>
-</ol>
-
-<p><strong>Critical Architectural Insight</strong>: **Axis2's JSON processing bottleneck is in the InputStream → JsonReader → XMLStreamReader → OMElement pipeline**, not in the HTTP transport layer. Optimizing at the correct architectural layer (MessageBuilder/MessageFormatter) delivers far greater benefits than container-level integration attempts.</p>
-
-<p><strong>Key Learning</strong>: The "elegant" container integration was architecturally wrong. **Understanding where performance optimization should occur in the software stack** is more valuable than sophisticated container integration. Enhanced Moshi H2's success proves that **working within existing architecture** often outperforms **bypassing architecture**.</p>
-
-<p><strong>For the Axis2 Community</strong>: This demonstrates how architectural analysis of failed integration attempts can reveal the correct optimization approach. The WildFly integration research identified the real architectural mismatch (mandatory <a href="json_support_gson.xml">dummy SOAP envelope</a>) and provided the async processing patterns that made Enhanced Moshi H2 possible, delivering superior JSON performance improvements through architectural alignment rather than integration complexity.</p>
-
-<h2>WildFly 32 Configuration Corrections Summary</h2>
-
-<p><strong>🔧 KEY CORRECTIONS MADE</strong> - The guide has been updated to accurately reflect WildFly 32 requirements:</p>
-
-<h3>1. Critical Issues Fixed</h3>
-<table border="1">
-<tr><th>Issue</th><th>Previous (Incorrect)</th><th>Corrected for WildFly 32</th><th>Impact</th></tr>
-<tr>
-    <td><strong>Buffer Sizes</strong></td>
-    <td>Misaligned buffer sizes (2KB vs 64KB)</td>
-    <td>Aligned at 32KB across all layers</td>
-    <td>✅ Eliminates memory fragmentation</td>
-</tr>
-<tr>
-    <td><strong>SSL Context Name</strong></td>
-    <td><code>ssl-context="applicationSSL"</code></td>
-    <td><code>ssl-context="applicationSSC"</code></td>
-    <td>✅ Matches your existing WildFly config</td>
-</tr>
-<tr>
-    <td><strong>Missing HTTP/2 Parameters</strong></td>
-    <td>Only <code>enable-http2="true"</code></td>
-    <td>Full HTTP/2 tuning parameters added</td>
-    <td>✅ Enables proper HTTP/2 optimization</td>
-</tr>
-<tr>
-    <td><strong>Namespace Version</strong></td>
-    <td>Generic examples</td>
-    <td>WildFly 32 specific namespace and attributes</td>
-    <td>✅ Configuration compatibility</td>
-</tr>
-</table>
-
-<h3>2. Performance Optimizations Added</h3>
-<ul>
-  <li><strong>Buffer Pool Alignment</strong>: <code>byte-buffer-pool buffer-size="32768"</code> matches <code>http2-max-frame-size="32768"</code></li>
-  <li><strong>Connection Limits</strong>: <code>max-connections="200"</code> matches your existing setup</li>
-  <li><strong>Timeout Coordination</strong>: <code>no-request-timeout="300000"</code> aligned across layers</li>
-  <li><strong>HTTP/2 Frame Optimization</strong>: Proper frame sizes for large JSON payloads</li>
-</ul>
-
-<h3>3. Next Steps for Your Environment</h3>
-<p><strong>To apply these optimizations to your WildFly 32 configuration</strong>:</p>
-
-<ol>
-  <li><strong>Update Buffer Sizes</strong>: Change <code>buffer-size="2048"</code> to <code>buffer-size="32768"</code> in your standalone.xml</li>
-  <li><strong>Add HTTP/2 Parameters</strong>: Add the missing <code>http2-*</code> parameters to your listeners</li>
-  <li><strong>Verify SSL Context</strong>: Ensure <code>ssl-context="applicationSSC"</code> matches your configuration</li>
-  <li><strong>Deploy Enhanced Moshi H2</strong>: Use the corrected buffer alignment in axis2.xml</li>
-  <li><strong>Monitor Performance</strong>: Enable HTTP/2 access logging to verify protocol negotiation</li>
-</ol>
-
-<p><strong>Expected Results</strong>: With these corrections, you should see 40-60% improvement in JSON processing performance for large payloads while maintaining memory efficiency in your 2GB heap environment.</p>
 
 
     </body>

@@ -175,8 +175,13 @@
                           class="org.apache.axis2.kernel.http.SOAPMessageFormatter"/>
         <messageFormatter contentType="application/soap+xml"
                           class="org.apache.axis2.kernel.http.SOAPMessageFormatter"/>
+        <!-- FieldFilteringMessageFormatter wraps MoshiStreamingMessageFormatter:
+             - Streams response in 64KB chunks (FlushingOutputStream) for HTTP/2
+             - Supports ?fields=a,b,c query parameter for response field selection
+             - Zero overhead when no fields parameter is present
+             See: json-streaming-formatter.html -->
         <messageFormatter contentType="application/json"
-                          class="org.apache.axis2.json.moshi.JsonFormatter"/>
+                          class="org.apache.axis2.json.streaming.FieldFilteringMessageFormatter"/>
     </messageFormatters>
 
     <!-- ================================================= -->

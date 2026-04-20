@@ -268,42 +268,14 @@ progressive flow control that adapts to network conditions:</p>
 &lt;parameter name="protocolNegotiationTimeout"&gt;5000&lt;/parameter&gt;
 </pre>
 
-<h3>Server Push Capabilities</h3>
+<h3>Server Push</h3>
 
-<p>HTTP/2 server push allows servers to proactively send resources to clients before they are requested.
-However, for web service APIs and JSON REST endpoints, server push is typically disabled as it provides
-limited benefits and can increase complexity.</p>
-
-<p><strong>When Server Push is Useful:</strong></p>
-<ul>
-  <li>Web applications serving HTML with predictable resource dependencies (CSS, JS, images)</li>
-  <li>Content delivery networks (CDNs) pushing static assets</li>
-  <li>Applications where the server can predict client resource needs</li>
-</ul>
-
-<p><strong>Why Server Push is Disabled for Web Services:</strong></p>
-<ul>
-  <li><strong>API Pattern Mismatch:</strong> REST APIs typically follow request-response patterns</li>
-  <li><strong>Unpredictable Payloads:</strong> Server cannot predict what additional resources a JSON client will need</li>
-  <li><strong>Client Diversity:</strong> API clients (mobile apps, services, curl) don't benefit from pushed resources</li>
-  <li><strong>Cache Complexity:</strong> Pushed resources can interfere with client-side caching strategies</li>
-  <li><strong>Bandwidth Waste:</strong> Pushing unwanted resources wastes bandwidth, especially for large JSON payloads</li>
-</ul>
-
-<p><strong>Configuration:</strong></p>
+<p>Server push is <strong>disabled by default</strong> — REST/JSON APIs follow
+request-response patterns where push provides no benefit. Enable only
+for web-app use cases with predictable resource dependencies:</p>
 <pre>
-&lt;!-- Server push disabled by default (recommended for web services) --&gt;
-&lt;parameter name="serverPushEnabled"&gt;false&lt;/parameter&gt;
-
-&lt;!-- If enabled for special use cases --&gt;
-&lt;parameter name="serverPushEnabled"&gt;true&lt;/parameter&gt;
-&lt;parameter name="pushPromiseTimeout"&gt;5000&lt;/parameter&gt;
-&lt;parameter name="maxPushedStreams"&gt;10&lt;/parameter&gt;
+&lt;parameter name="serverPushEnabled"&gt;false&lt;/parameter&gt; &lt;!-- default --&gt;
 </pre>
-
-<p><strong>Implementation Note:</strong> The Axis2 HTTP/2 transport disables server push by default in all
-configuration profiles (standard, multiplexing, streaming) as it's optimized for JSON API and web service
-usage patterns rather than web application resource delivery.</p>
 
 <h3>Service-Level HTTP/2 Configuration</h3>
 
@@ -569,171 +541,11 @@ set the cached HTTP/2 client using the CACHED_HTTP2_ASYNC_CLIENT property before
   <li><strong>Fallback Handling</strong>: Automatic fallback to HTTP/1.1 if HTTP/2 negotiation fails</li>
 </ul>
 
-<h3>SSL Troubleshooting for HTTP/2</h3>
+<h3>SSL Notes</h3>
 
-<p>Common SSL configuration issues with HTTP/2:</p>
-
-<h4>ALPN Not Supported</h4>
-<pre>
-Error: ALPN not supported in current environment
-Solution: Ensure Java 8u251+ or Java 11+ with ALPN support
-</pre>
-
-<h4>TLS Version Mismatch</h4>
-<pre>
-Error: HTTP/2 requires TLS 1.2+
-Solution: Configure SSL context with TLS 1.2 or 1.3:
-SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
-</pre>
-
-<h4>Certificate Validation Failures</h4>
-<pre>
-Error: Certificate path validation failed
-Solution: Add certificates to trust store or configure custom trust manager
-</pre>
-
-<h4>Connection Manager Not Started</h4>
-<pre>
-Error: IllegalStateException - Request cannot be executed
-Solution: Always start the async client:
-httpAsyncClient.start();
-</pre>
-
-<h3>SOAP Support and Performance Expectations</h3>
-
-<p><strong>Current Status:</strong> HTTP/2 transport provides <strong>basic SOAP compatibility</strong> with limited performance benefits.</p>
-
-<h4>SOAP Over HTTP/2 Limitations</h4>
-
-<p>SOAP services can use HTTP/2 transport, but benefits are significantly limited compared to JSON APIs:</p>
-
-<table border="1">
-<tr><th>Aspect</th><th>JSON APIs</th><th>SOAP Services</th><th>HTTP/2 Benefit</th></tr>
-<tr><td><strong>Protocol Efficiency</strong></td><td>Binary JSON + HPACK</td><td>Verbose XML + HPACK</td><td>High vs Minimal</td></tr>
-<tr><td><strong>Payload Compression</strong></td><td>50-70% improvement</td><td>10-20% improvement</td><td>Limited by XML verbosity</td></tr>
-<tr><td><strong>Multiplexing Benefit</strong></td><td>Significant for concurrent calls</td><td>Moderate for RPC-style calls</td><td>Some improvement</td></tr>
-<tr><td><strong>Large Payload Streaming</strong></td><td>40-70% faster</td><td>5-15% faster</td><td>Minimal due to XML overhead</td></tr>
-<tr><td><strong>Memory Efficiency</strong></td><td>20-30% reduction</td><td>5-10% reduction</td><td>Limited by XML processing</td></tr>
-</table>
-
-<h4>Realistic SOAP Performance Expectations</h4>
-
-<p>For SOAP services using HTTP/2 transport:</p>
-
-<ul>
-  <li><strong>Small SOAP Messages (0MB-1MB):</strong> 5-15% latency improvement due to connection multiplexing</li>
-  <li><strong>Medium SOAP Messages (1-10MB):</strong> 10-20% improvement from header compression</li>
-  <li><strong>Large SOAP Messages (10MB+):</strong> 15-25% improvement from streaming, but still much slower than equivalent JSON</li>
-  <li><strong>Concurrent SOAP Calls:</strong> 20-40% improvement from stream multiplexing</li>
-  <li><strong>MTOM Attachments:</strong> Minimal improvement due to base64 encoding overhead</li>
-</ul>
-
-<h4>SOAP Configuration Recommendations</h4>
-
-<p>For SOAP services that must use HTTP/2, optimize for the limited benefits:</p>
-
-<pre>
-&lt;transportSender name="h2" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender"&gt;
-   &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
-
-   &lt;!-- SOAP-Optimized Settings --&gt;
-   &lt;parameter name="maxConcurrentStreams"&gt;50&lt;/parameter&gt; &lt;!-- Higher for concurrent RPC --&gt;
-   &lt;parameter name="initialWindowSize"&gt;131072&lt;/parameter&gt; &lt;!-- 128KB for typical SOAP --&gt;
-
-   &lt;!-- Standard timeouts for SOAP processing --&gt;
-   &lt;parameter name="responseTimeout"&gt;120000&lt;/parameter&gt; &lt;!-- 2 minutes --&gt;
-
-   &lt;!-- Enable fallback for SOAP clients that may not support HTTP/2 --&gt;
-   &lt;parameter name="http2FallbackEnabled"&gt;true&lt;/parameter&gt;
-&lt;/transportSender&gt;
-</pre>
-
-<h4>Why SOAP Benefits are Limited</h4>
-
-<ol>
-  <li><strong>XML Verbosity:</strong> SOAP's verbose XML structure reduces HTTP/2's binary efficiency gains</li>
-  <li><strong>Processing Overhead:</strong> XML parsing/serialization dominates performance, not transport</li>
-  <li><strong>Legacy Architecture:</strong> Most SOAP services designed for HTTP/1.1 request-response patterns</li>
-  <li><strong>Attachment Handling:</strong> MTOM base64 encoding negates HTTP/2 binary advantages</li>
-  <li><strong>Client Support:</strong> Many SOAP clients don't support HTTP/2 protocol negotiation</li>
-</ol>
-
-<h4>Minimal SOAP Testing Status</h4>
-
-<p>The HTTP/2 transport includes basic SOAP compatibility testing via <code>H2SOAPCompatibilityTest.java</code>:</p>
-
-<ul>
-  <li>✅ <strong>SOAP 1.1 Messages:</strong> Basic envelope creation and processing tested</li>
-  <li>✅ <strong>SOAP 1.2 Messages:</strong> Basic envelope creation and processing tested</li>
-  <li>✅ <strong>Complex SOAP Structures:</strong> Multi-element message handling verified</li>
-  <li>✅ <strong>HTTP/2 Transport Integration:</strong> H2TransportSender initialization and configuration tested</li>
-  <li>⚠️ <strong>MTOM Attachments:</strong> Functional but limited performance benefit (not specifically tested)</li>
-  <li>⚠️ <strong>WS-Security:</strong> Compatible but not optimized for HTTP/2 (not specifically tested)</li>
-  <li>❌ <strong>Advanced SOAP Features:</strong> WS-ReliableMessaging, WS-AtomicTransaction not tested</li>
-</ul>
-
-<p><strong>Test Coverage:</strong> The test suite focuses on basic compatibility rather than performance,
-confirming that SOAP messages can be created, processed, and transported over HTTP/2 without errors.
-This aligns with the 10% effort allocation for SOAP testing as documented in the migration plan.</p>
-
-<h4>Authentication Patterns: JSON vs SOAP Focus</h4>
-
-<p><strong>Important:</strong> The HTTP/2 transport has unimplemented authentication features that are
-<strong>SOAP-focused rather than JSON-focused</strong>. This design decision reflects modern API patterns.</p>
-
-<table border="1">
-<tr><th>Authentication Type</th><th>JSON APIs</th><th>SOAP Services</th><th>HTTP/2 Status</th></tr>
-<tr><td><strong>Bearer Token (JWT/OAuth 2.0)</strong></td><td>✅ Primary Method</td><td>❌ Rarely Used</td><td>✅ <strong>Supported</strong> (via headers)</td></tr>
-<tr><td><strong>API Key Authentication</strong></td><td>✅ Very Common</td><td>❌ Rarely Used</td><td>✅ <strong>Supported</strong> (via headers)</td></tr>
-<tr><td><strong>Custom Header Auth</strong></td><td>✅ Common</td><td>❌ Rarely Used</td><td>✅ <strong>Supported</strong> (via headers)</td></tr>
-<tr><td><strong>HTTP Basic Authentication</strong></td><td>❌ Discouraged</td><td>✅ Very Common</td><td>❌ <strong>Not Implemented</strong></td></tr>
-<tr><td><strong>HTTP Digest Authentication</strong></td><td>❌ Never Used</td><td>✅ Common</td><td>❌ <strong>Not Implemented</strong></td></tr>
-<tr><td><strong>NTLM Authentication</strong></td><td>❌ Never Used</td><td>✅ Enterprise Use</td><td>❌ <strong>Not Implemented</strong></td></tr>
-</table>
-
-<p><strong>JSON API Authentication Reality:</strong></p>
-<pre>
-# Modern JSON API patterns (fully supported by HTTP/2)
-curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." https://api.example.com/data
-curl -H "X-API-Key: abc123def456" https://api.example.com/data
-curl -H "X-Auth-Token: custom-token-value" https://api.example.com/data
-</pre>
-
-<p><strong>SOAP Service Authentication Reality:</strong></p>
-<pre>
-# Legacy SOAP patterns (not implemented in HTTP/2 transport)
-# Basic Authentication: username:password encoded in Authorization header
-# Digest Authentication: challenge-response authentication
-# NTLM Authentication: Windows domain-integrated authentication
-</pre>
-
-<p><strong>Design Rationale:</strong> The HTTP/2 transport prioritizes modern JSON API authentication patterns
-over legacy SOAP authentication schemes. This reflects the reality that:</p>
-
-<ul>
-  <li><strong>JSON APIs (90% of HTTP/2 usage)</strong> use token-based authentication via standard HTTP headers</li>
-  <li><strong>SOAP Services (10% of HTTP/2 usage)</strong> typically remain on HTTP/1.1 with legacy authentication</li>
-  <li><strong>Enterprise SOAP migrations</strong> usually modernize authentication alongside protocol upgrades</li>
-</ul>
-
-<p><strong>Missing Authentication Impact:</strong> The unimplemented HTTPAuthenticator schemes affect primarily
-legacy SOAP services, not modern JSON APIs. For JSON applications, authentication works seamlessly through
-standard HTTP headers without requiring HTTP/2 transport-specific authentication implementations.</p>
-
-<h4>Migration Recommendation</h4>
-
-<p><strong>For New Projects:</strong> Use JSON APIs over HTTP/2 for optimal performance</p>
-
-<p><strong>For Existing SOAP Services:</strong></p>
-<ol>
-  <li><strong>Stay with HTTP/1.1</strong> unless you need specific HTTP/2 features</li>
-  <li><strong>Focus on XML optimization</strong> (compression, efficient serialization) rather than protocol changes</li>
-  <li><strong>Consider REST/JSON modernization</strong> for better HTTP/2 benefits</li>
-  <li><strong>Use HTTP/2 only for concurrent SOAP calls</strong> where multiplexing provides clear benefit</li>
-</ol>
-
-<p><strong>Bottom Line:</strong> HTTP/2 transport works with SOAP but provides minimal benefits.
-The 90% performance gains are reserved for JSON APIs, while SOAP sees only 5-25% improvements.</p>
+<p>HTTP/2 requires TLS 1.2+ with ALPN. Use OpenJDK 11+ (ALPN built in).
+If ALPN negotiation fails, the transport falls back to HTTP/1.1
+automatically when <code>http2FallbackEnabled=true</code>.</p>
 
 </body>
 </html>
