@@ -574,9 +574,13 @@ public class AxisServlet extends HttpServlet {
         httpsListener = getAxisServletListener(Constants.TRANSPORT_HTTPS);
 
         if (httpListener == null && httpsListener == null) {
-            log.warn("No transportReceiver for " + AxisServletListener.class.getName() +
-                     " found. An instance for HTTP will be configured automatically. " +
-                     "Please update your axis2.xml file!");
+            // This is the normal path for most servlet deployments. The default
+            // axis2.xml ships a <transportReceiver name="http"> without
+            // class="...AxisServletListener", so getAxisServletListener() returns
+            // null. Auto-configuring an AxisServletListener here is expected and
+            // correct — no user action required.
+            log.trace("Auto-configuring HTTP AxisServletListener (axis2.xml does not " +
+                     "declare one explicitly — this is normal for servlet deployments)");
             httpListener = new AxisServletListener();
             TransportInDescription transportInDescription = new TransportInDescription(
                     Constants.TRANSPORT_HTTP);
