@@ -47,11 +47,16 @@
     Hashtable errornessservice = (Hashtable) request.getAttribute(Constants.ERROR_SERVICE_MAP);
     boolean status = false;
 %>
-<c:forEach var="service" items="${requestScope.configContext.axisConfiguration.services.values()}">
+<c:forEach var="service" items="${requestScope.sortedServices.values()}">
 <%
             AxisService axisService = (AxisService) pageContext.getAttribute("service");
             if (!Utils.isHiddenService(axisService)) {
+            // AXIS2-5881: Sort operations alphabetically
+            java.util.List<AxisOperation> sortedOps = new java.util.ArrayList<>();
             Iterator opItr = axisService.getOperations();
+            while (opItr.hasNext()) { sortedOps.add((AxisOperation) opItr.next()); }
+            sortedOps.sort(java.util.Comparator.comparing(o -> o.getName().getLocalPart()));
+            opItr = sortedOps.iterator();
             String serviceName = axisService.getName();
 %><h2><a style="color:blue" href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></h2>
 <%
@@ -69,7 +74,7 @@
 } else {
 %><i> There are no Operations specified</i><%
     }
-    opItr = axisService.getOperations();
+    opItr = sortedOps.iterator();
 %><ul><%
     while (opItr.hasNext()) {
         AxisOperation axisOperation = (AxisOperation) opItr.next();

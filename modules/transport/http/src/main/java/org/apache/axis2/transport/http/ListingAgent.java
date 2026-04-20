@@ -356,6 +356,20 @@ public class ListingAgent extends AbstractAgent {
            return;
         }
         populateRequestAttributes(req);
+        // AXIS2-5881: Sort services alphabetically by name for the listing page.
+        // Take a snapshot via putAll to avoid ConcurrentModificationException
+        // if services are deployed/undeployed during iteration (hot deployment).
+        java.util.TreeMap<String, AxisService> sortedServices = new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        try {
+            java.util.Map<String, AxisService> services = configContext.getAxisConfiguration().getServices();
+            if (services != null) {
+                sortedServices.putAll(services);
+            }
+        } catch (java.util.ConcurrentModificationException e) {
+            // Hot deployment race — use whatever we captured so far
+            log.debug("ConcurrentModificationException while listing services, displaying partial list", e);
+        }
+        req.setAttribute("sortedServices", sortedServices);
         req.setAttribute(Constants.ERROR_SERVICE_MAP,
                 configContext.getAxisConfiguration().getFaultyServices());
         renderView(LIST_MULTIPLE_SERVICE_JSP_NAME, req, res);
