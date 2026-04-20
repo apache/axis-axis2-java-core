@@ -427,7 +427,14 @@ public class HTTPTransportUtils {
                 String scheme = trpInDesc.getName();
                 epr.append(scheme);
                 epr.append("://");
-                epr.append(ip);
+                // AXIS2-5858: IPv6 addresses must be enclosed in brackets in URLs (RFC 2732)
+                if (ip != null && ip.contains(":")) {
+                    epr.append('[');
+                    epr.append(ip);
+                    epr.append(']');
+                } else {
+                    epr.append(ip);
+                }
                 if (!(scheme.equals("http") && port == 80
                         || scheme.equals("https") && port == 443)) {
                     epr.append(':');
