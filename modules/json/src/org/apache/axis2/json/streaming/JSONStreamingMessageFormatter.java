@@ -44,10 +44,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Streaming JSON message formatter for Axis2.
@@ -210,7 +215,13 @@ public class JSONStreamingMessageFormatter implements MessageFormatter {
      * Because the JsonWriter is backed by a {@link FlushingOutputStream},
      * the HTTP transport receives chunks as serialization progresses —
      * the full response is never buffered in a single String or byte[].</p>
+     *
+     * <p>When {@link JsonConstant#FIELD_FILTER} is set on the MessageContext,
+     * only the requested fields are serialized via reflection. Supports
+     * dot-notation for one level of nesting ({@code container.field}).
+     * This matches the Moshi formatter's filtering behavior.</p>
      */
+    @SuppressWarnings("unchecked")
     private void writeObjectResponse(MessageContext outMsgCtxt, JsonWriter jsonWriter,
                                      Object retObj) throws AxisFault {
         try {
@@ -220,8 +231,15 @@ public class JSONStreamingMessageFormatter implements MessageFormatter {
 
             jsonWriter.beginObject();
             jsonWriter.name(JsonConstant.RESPONSE);
-            Type returnType = (Type) outMsgCtxt.getProperty(JsonConstant.RETURN_TYPE);
-            gson.toJson(retObj, returnType, jsonWriter);
+
+            Object filterProp = outMsgCtxt.getProperty(JsonConstant.FIELD_FILTER);
+            if (filterProp instanceof Set && !((Set<?>) filterProp).isEmpty()) {
+                writeFilteredObjectGson(jsonWriter, retObj, (Set<String>) filterProp, gson);
+            } else {
+                Type returnType = (Type) outMsgCtxt.getProperty(JsonConstant.RETURN_TYPE);
+                gson.toJson(retObj, returnType, jsonWriter);
+            }
+
             jsonWriter.endObject();
 
         } catch (IOException e) {
@@ -229,6 +247,176 @@ public class JSONStreamingMessageFormatter implements MessageFormatter {
             log.error(msg, e);
             throw AxisFault.makeFault(e);
         }
+    }
+
+    /**
+     * Serialize only the requested fields from the return object using GSON.
+     * Supports dot-notation for one level of nesting ({@code container.field}).
+     *
+     * <p>Behavioral parity with
+     * {@link MoshiStreamingMessageFormatter#writeFilteredObject} — same
+     * two-phase approach (top-level prune, then nested prune), same
+     * request-scoped field cache, same edge case handling.</p>
+     */
+    private void writeFilteredObjectGson(JsonWriter jsonWriter, Object retObj,
+                                         Set<String> allowedFields, Gson gson)
+            throws IOException {
+
+        if (retObj == null) {
+            jsonWriter.nullValue();
+            return;
+        }
+
+        // Parse dot-notation into top-level keeps + nested specs
+        Set<String> topLevel = new LinkedHashSet<>();
+        java.util.Map<String, Set<String>> nestedSpecs = new java.util.LinkedHashMap<>();
+
+        for (String fieldSpec : allowedFields) {
+            int dot = fieldSpec.indexOf('.');
+            if (dot > 0 && dot < fieldSpec.length() - 1) {
+                String container = fieldSpec.substring(0, dot);
+                String subField = fieldSpec.substring(dot + 1);
+                topLevel.add(container);
+                nestedSpecs.computeIfAbsent(container, k -> new LinkedHashSet<>())
+                    .add(subField);
+            } else {
+                topLevel.add(fieldSpec);
+            }
+        }
+
+        // Request-scoped cache for reflected field lists
+        java.util.Map<Class<?>, List<Field>> fieldCache = new java.util.HashMap<>();
+
+        List<Field> allFields = fieldCache.computeIfAbsent(
+            retObj.getClass(), JSONStreamingMessageFormatter::getAllFields);
+        boolean prevSerializeNulls = jsonWriter.getSerializeNulls();
+        jsonWriter.setSerializeNulls(true);
+        try {
+            jsonWriter.beginObject();
+
+            for (Field field : allFields) {
+                if (!topLevel.contains(field.getName())) {
+                    continue;
+                }
+
+                Object value;
+                try {
+                    field.setAccessible(true);
+                    value = field.get(retObj);
+                } catch (IllegalAccessException | SecurityException e) {
+                    log.warn("Cannot access field "
+                        + field.getName().replaceAll("[\r\n]", "_")
+                        + " for field filtering; skipping", e);
+                    continue;
+                }
+
+                jsonWriter.name(field.getName());
+
+                Set<String> subFields = nestedSpecs.get(field.getName());
+                if (subFields != null && value != null) {
+                    writeFilteredNestedGson(jsonWriter, value, subFields, gson, fieldCache);
+                } else if (value == null) {
+                    jsonWriter.nullValue();
+                } else {
+                    gson.toJson(value, field.getGenericType(), jsonWriter);
+                }
+            }
+
+            jsonWriter.endObject();
+        } finally {
+            jsonWriter.setSerializeNulls(prevSerializeNulls);
+        }
+    }
+
+    /**
+     * Serialize a nested field (Collection, Map, or single POJO) with only
+     * the specified sub-fields. GSON equivalent of the Moshi
+     * {@code writeFilteredNested} method.
+     */
+    private void writeFilteredNestedGson(JsonWriter jsonWriter, Object value,
+                                         Set<String> subFields, Gson gson,
+                                         java.util.Map<Class<?>, List<Field>> fieldCache)
+            throws IOException {
+
+        if (value instanceof java.util.Collection) {
+            jsonWriter.beginArray();
+            for (Object element : (java.util.Collection<?>) value) {
+                if (element == null) {
+                    jsonWriter.nullValue();
+                } else {
+                    writeFilteredSingleObjectGson(jsonWriter, element, subFields,
+                        gson, fieldCache);
+                }
+            }
+            jsonWriter.endArray();
+        } else if (value instanceof java.util.Map) {
+            jsonWriter.beginObject();
+            for (java.util.Map.Entry<?, ?> entry : ((java.util.Map<?, ?>) value).entrySet()) {
+                String key = String.valueOf(entry.getKey());
+                if (subFields.contains(key)) {
+                    jsonWriter.name(key);
+                    gson.toJson(entry.getValue(), Object.class, jsonWriter);
+                }
+            }
+            jsonWriter.endObject();
+        } else if (value.getClass().getName().startsWith("java.lang.")) {
+            gson.toJson(value, value.getClass(), jsonWriter);
+        } else {
+            writeFilteredSingleObjectGson(jsonWriter, value, subFields, gson, fieldCache);
+        }
+    }
+
+    /**
+     * Serialize a single object with only the specified fields using GSON.
+     * Inner loop of nested filtering — called once per collection element.
+     */
+    private void writeFilteredSingleObjectGson(JsonWriter jsonWriter, Object obj,
+                                               Set<String> allowedFields, Gson gson,
+                                               java.util.Map<Class<?>, List<Field>> fieldCache)
+            throws IOException {
+
+        List<Field> fields = fieldCache.computeIfAbsent(
+            obj.getClass(), JSONStreamingMessageFormatter::getAllFields);
+        jsonWriter.beginObject();
+        for (Field field : fields) {
+            if (!allowedFields.contains(field.getName())) {
+                continue;
+            }
+            Object value;
+            try {
+                field.setAccessible(true);
+                value = field.get(obj);
+            } catch (IllegalAccessException | SecurityException e) {
+                log.warn("Cannot access field "
+                    + field.getDeclaringClass().getName().replaceAll("[\r\n]", "_")
+                    + "." + field.getName().replaceAll("[\r\n]", "_")
+                    + " for nested field filtering; skipping", e);
+                continue;
+            }
+            jsonWriter.name(field.getName());
+            if (value == null) {
+                jsonWriter.nullValue();
+            } else {
+                gson.toJson(value, field.getGenericType(), jsonWriter);
+            }
+        }
+        jsonWriter.endObject();
+    }
+
+    /**
+     * Collect all non-static, non-transient fields from the class hierarchy.
+     */
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> result = new ArrayList<>();
+        for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                int mods = field.getModifiers();
+                if (!Modifier.isStatic(mods) && !Modifier.isTransient(mods)) {
+                    result.add(field);
+                }
+            }
+        }
+        return result;
     }
 
     /**

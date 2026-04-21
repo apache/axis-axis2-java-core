@@ -53,6 +53,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -203,8 +204,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
 
             Object filterProp = outMsgCtxt.getProperty(JsonConstant.FIELD_FILTER);
             if (filterProp instanceof Set && !((Set<?>) filterProp).isEmpty()) {
-                writeFilteredObject(jsonWriter, retObj, (Set<String>) filterProp,
-                    adapter);
+                writeFilteredObject(jsonWriter, retObj, (Set<String>) filterProp);
             } else {
                 adapter.toJson(jsonWriter, retObj);
             }
@@ -239,9 +239,52 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
         .add(Date.class, new Rfc3339DateJsonAdapter())
         .build();
 
+    /**
+     * Serialize only the requested fields from the return object.
+     *
+     * <p>Supports two field specification formats:</p>
+     * <ul>
+     *   <li><b>Flat:</b> {@code "status"} — include this top-level field as-is</li>
+     *   <li><b>Dot-notation:</b> {@code "items.id"} — include the "items"
+     *       container but filter its contents to only "id"</li>
+     * </ul>
+     *
+     * <p>The dot-notation form is essential for services that return large
+     * nested data structures, such as a list of wide objects:</p>
+     * <pre>{@code
+     * {"response": {
+     *     "status": "SUCCESS",
+     *     "items": [
+     *       {"id":"item-1", "name":"Widget A", ... 125 more fields ...},
+     *       {"id":"item-2", "name":"Widget B", ... 125 more fields ...}
+     *     ]
+     * }}
+     * }</pre>
+     *
+     * <p>With {@code ?fields=status,items.id}, the response becomes:</p>
+     * <pre>{@code
+     * {"response": {
+     *     "status": "SUCCESS",
+     *     "items": [
+     *       {"id":"item-1"},
+     *       {"id":"item-2"}
+     *     ]
+     * }}
+     * }</pre>
+     *
+     * <p>Compatible with nested field filtering logic in other Axis2 language
+     * bindings. The streaming pipeline (Moshi → Okio → FlushingOutputStream)
+     * is preserved — no capture buffer is used.</p>
+     *
+     * <p><b>Nesting depth:</b> One level of dot-notation is supported
+     * ({@code container.field}). Multi-level paths like {@code a.b.c} are
+     * not supported — the sub-field {@code "b.c"} is treated as a literal
+     * field name, not a nested path. This matches the Axis2/C implementation
+     * and covers the primary use case of filtering wide objects inside a
+     * top-level collection.</p>
+     */
     private void writeFilteredObject(JsonWriter jsonWriter, Object retObj,
-                                     Set<String> allowedFields,
-                                     JsonAdapter<Object> fallbackAdapter)
+                                     Set<String> allowedFields)
             throws IOException {
 
         if (retObj == null) {
@@ -249,31 +292,91 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
             return;
         }
 
-        List<Field> allFields = getAllFields(retObj.getClass());
+        /*
+         * Step 1: Parse the allowedFields set into two structures.
+         *
+         * Input: {"status", "items.id", "items.name"}
+         *
+         * Output:
+         *   topLevel    = {"status", "items"}     — fields to keep at top level
+         *   nestedSpecs = {"items" -> {"id", "name"}}  — sub-fields per container
+         *
+         * "items" appears in BOTH topLevel (so it survives the top-level pass)
+         * AND nestedSpecs (so its contents get filtered in the nested pass).
+         * This mirrors the two-phase approach in the Axis2/C implementation.
+         */
+        Set<String> topLevel = new LinkedHashSet<>();
+        java.util.Map<String, Set<String>> nestedSpecs = new java.util.LinkedHashMap<>();
+
+        for (String fieldSpec : allowedFields) {
+            int dot = fieldSpec.indexOf('.');
+            if (dot > 0 && dot < fieldSpec.length() - 1) {
+                // Dot-notation: "container.subField"
+                String container = fieldSpec.substring(0, dot);
+                String subField = fieldSpec.substring(dot + 1);
+                topLevel.add(container);
+                nestedSpecs.computeIfAbsent(container, k -> new LinkedHashSet<>())
+                    .add(subField);
+            } else {
+                // Simple top-level field: "status", "calcTimeUs"
+                topLevel.add(fieldSpec);
+            }
+        }
+
+        /*
+         * Step 2: Iterate the POJO's fields via reflection.
+         *
+         * For each field:
+         *   - Skip if not in topLevel set
+         *   - If it has nestedSpecs, serialize with inner filtering
+         *   - Otherwise serialize the whole value (flat field or
+         *     container with no dot-notation sub-fields)
+         */
+        /*
+         * Request-scoped cache for reflected field lists. Avoids calling
+         * getAllFields() repeatedly on the same class when filtering a
+         * collection of same-typed objects (e.g., 500 elements of the
+         * same Record class). Not static — scoped to this single request
+         * to avoid classloader complexity.
+         */
+        java.util.Map<Class<?>, List<Field>> fieldCache = new java.util.HashMap<>();
+
+        List<Field> allFields = fieldCache.computeIfAbsent(
+            retObj.getClass(), MoshiStreamingMessageFormatter::getAllFields);
         boolean prevSerializeNulls = jsonWriter.getSerializeNulls();
         jsonWriter.setSerializeNulls(true);
         try {
             jsonWriter.beginObject();
 
             for (Field field : allFields) {
-                if (!allowedFields.contains(field.getName())) {
+                // Top-level prune: skip fields not in the keep set
+                if (!topLevel.contains(field.getName())) {
                     continue;
                 }
 
-                field.setAccessible(true);
                 Object value;
                 try {
+                    field.setAccessible(true);
                     value = field.get(retObj);
-                } catch (IllegalAccessException e) {
-                    log.warn("Cannot access field " + field.getName()
+                } catch (IllegalAccessException | SecurityException e) {
+                    log.warn("Cannot access field "
+                        + field.getName().replaceAll("[\r\n]", "_")
                         + " for field filtering; skipping", e);
                     continue;
                 }
 
                 jsonWriter.name(field.getName());
-                if (value == null) {
+
+                // Check if this field has nested sub-field specs
+                Set<String> subFields = nestedSpecs.get(field.getName());
+                if (subFields != null && value != null) {
+                    // Nested filtering: serialize container but prune its contents
+                    writeFilteredNested(jsonWriter, value, subFields,
+                        field.getGenericType(), fieldCache);
+                } else if (value == null) {
                     jsonWriter.nullValue();
                 } else {
+                    // No nested specs: serialize the entire field value as-is
                     @SuppressWarnings("unchecked")
                     JsonAdapter<Object> fieldAdapter =
                         (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(
@@ -291,6 +394,147 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
             log.debug("writeFilteredObject: serialized fields from "
                 + allowedFields + " (streaming, no buffer)");
         }
+    }
+
+    /**
+     * Serialize a nested field (object or collection) with only the
+     * specified sub-fields included.
+     *
+     * <p>Handles three cases:</p>
+     * <ol>
+     *   <li><b>Collection (List, Set):</b> The key use case for services returning
+     *       arrays of wide objects. A {@code List<Record>} where each record has
+     *       100+ fields — filter each element independently, keeping only the
+     *       requested sub-fields.
+     *       Output: {@code [{"id":"item-1"},{"id":"item-2"}]}</li>
+     *   <li><b>Map:</b> Filter by key name. Keeps only entries whose key matches
+     *       one of the sub-fields.</li>
+     *   <li><b>Single POJO:</b> Filter its declared fields, same as a single
+     *       array element.</li>
+     * </ol>
+     *
+     * <p>If the value is a scalar (String, Number, etc.), it is serialized as-is
+     * since there are no sub-fields to filter inside a primitive.</p>
+     *
+     * <p>Designed to handle both object and array containers, compatible
+     * with nested field filtering logic in other Axis2 language bindings.</p>
+     */
+    @SuppressWarnings("unchecked")
+    private void writeFilteredNested(JsonWriter jsonWriter, Object value,
+                                     Set<String> subFields, Type declaredType,
+                                     java.util.Map<Class<?>, List<Field>> fieldCache)
+            throws IOException {
+
+        if (value instanceof java.util.Collection) {
+            /*
+             * Array of objects — the primary use case.
+             *
+             * Example: List<Record> with 127 fields per element.
+             * With subFields = {"id", "name"}, each element is filtered
+             * from 127 fields down to 2. The array structure is preserved.
+             */
+            jsonWriter.beginArray();
+            for (Object element : (java.util.Collection<?>) value) {
+                if (element == null) {
+                    jsonWriter.nullValue();
+                } else {
+                    writeFilteredSingleObject(jsonWriter, element, subFields, fieldCache);
+                }
+            }
+            jsonWriter.endArray();
+
+        } else if (value instanceof java.util.Map) {
+            /*
+             * Map — filter by key name.
+             *
+             * Example: Map<String, Object> with keys "id", "name", "category", ...
+             * With subFields = {"id"}, only the "id" entry is written.
+             */
+            jsonWriter.beginObject();
+            for (java.util.Map.Entry<?, ?> entry : ((java.util.Map<?, ?>) value).entrySet()) {
+                String key = String.valueOf(entry.getKey());
+                if (subFields.contains(key)) {
+                    jsonWriter.name(key);
+                    JsonAdapter<Object> valAdapter =
+                        (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(Object.class);
+                    valAdapter.toJson(jsonWriter, entry.getValue());
+                }
+            }
+            jsonWriter.endObject();
+
+        } else if (value.getClass().getName().startsWith("java.lang.")) {
+            /*
+             * Scalar (String, Integer, Double, etc.) — nothing to filter
+             * inside a primitive value. Serialize as-is.
+             *
+             * This handles the edge case of ?fields=status.foo where "status"
+             * is a String, not an object with sub-fields.
+             */
+            JsonAdapter<Object> adapter =
+                (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(declaredType);
+            adapter.toJson(jsonWriter, value);
+
+        } else {
+            /*
+             * Single POJO — filter its declared fields.
+             *
+             * Example: a response with a single nested object (not an array):
+             * {"results": {"id":"item-1", "name":"Widget A", ...}}
+             * With subFields = {"id"}, outputs {"id":"item-1"}.
+             */
+            writeFilteredSingleObject(jsonWriter, value, subFields, fieldCache);
+        }
+    }
+
+    /**
+     * Serialize a single object with only the specified fields included.
+     *
+     * <p>Used for both standalone nested objects and individual elements
+     * within a filtered collection. Uses the request-scoped field cache
+     * to avoid repeated reflection on the same class — critical when
+     * filtering a 500-element collection where every element is the
+     * same type.</p>
+     *
+     * <p>This is the inner loop of nested filtering — called once per
+     * array element. For a 500-element collection with 127 fields each,
+     * this method is called 500 times, each time skipping ~125 fields
+     * and serializing ~2.</p>
+     */
+    @SuppressWarnings("unchecked")
+    private void writeFilteredSingleObject(JsonWriter jsonWriter, Object obj,
+                                           Set<String> allowedFields,
+                                           java.util.Map<Class<?>, List<Field>> fieldCache)
+            throws IOException {
+
+        List<Field> fields = fieldCache.computeIfAbsent(
+            obj.getClass(), MoshiStreamingMessageFormatter::getAllFields);
+        jsonWriter.beginObject();
+        for (Field field : fields) {
+            if (!allowedFields.contains(field.getName())) {
+                continue;  // Skip — this field was not requested
+            }
+            Object value;
+            try {
+                field.setAccessible(true);
+                value = field.get(obj);
+            } catch (IllegalAccessException | SecurityException e) {
+                log.warn("Cannot access field "
+                    + field.getDeclaringClass().getName().replaceAll("[\r\n]", "_")
+                    + "." + field.getName().replaceAll("[\r\n]", "_")
+                    + " for nested field filtering; skipping", e);
+                continue;
+            }
+            jsonWriter.name(field.getName());
+            if (value == null) {
+                jsonWriter.nullValue();
+            } else {
+                JsonAdapter<Object> adapter =
+                    (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(
+                        field.getGenericType());
+                adapter.toJson(jsonWriter, value);
+            }
+        }
+        jsonWriter.endObject();
     }
 
     /**

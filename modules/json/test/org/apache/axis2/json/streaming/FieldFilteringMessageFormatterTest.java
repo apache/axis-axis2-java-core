@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -579,6 +580,165 @@ public class FieldFilteringMessageFormatterTest {
             "Payload reduction (" + String.format("%.0f", reductionPct)
                 + "%) should exceed 90%",
             reductionPct > 90.0);
+    }
+
+    // ── Nested dot-notation field filtering ─────────────────────────────
+    //
+    // Models a service returning a top-level response with a nested array
+    // of wide objects (127 fields each). Proves that dot-notation like
+    // ?fields=status,records.s0 can filter inside each array element,
+    // removing 126 of 127 fields per element without breaking the
+    // streaming pipeline.
+
+    /** Response wrapper: status + a list of WideRecord elements. */
+    public static class ServiceResponse {
+        public String status;
+        public long calcTimeUs;
+        public List<WideRecord> records;
+
+        public ServiceResponse() {}
+        public ServiceResponse(String status, long calcTimeUs, List<WideRecord> records) {
+            this.status = status;
+            this.calcTimeUs = calcTimeUs;
+            this.records = records;
+        }
+    }
+
+    /** Build a ServiceResponse with N records, each having 127 fields. */
+    private static ServiceResponse buildNestedResponse(int nRecords) {
+        List<WideRecord> records = new ArrayList<>();
+        for (int i = 0; i < nRecords; i++) {
+            WideRecord r = WideRecord.createTestRecord();
+            // Give each record a unique s0 so we can verify identity
+            try {
+                r.getClass().getField("s0").set(r, "record_" + i);
+            } catch (ReflectiveOperationException e) {
+                throw new AssertionError("Failed to set s0", e);
+            }
+            records.add(r);
+        }
+        return new ServiceResponse("SUCCESS", 42, records);
+    }
+
+    @Test
+    public void testNestedDotNotationKeepsOneFieldPerElement() throws Exception {
+        // 3 records x 127 fields each. Filter to status + records.s0 only.
+        // Each array element should have exactly 1 field (s0).
+        setReturnObject(buildNestedResponse(3));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "records.s0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        // Top level: status + records (calcTimeUs filtered out)
+        Assert.assertEquals("SUCCESS",
+            response.getAsJsonObject().get("status").getAsString());
+        Assert.assertFalse("calcTimeUs should be filtered",
+            response.getAsJsonObject().has("calcTimeUs"));
+
+        // Each array element: only s0 remains
+        var records = response.getAsJsonObject().getAsJsonArray("records");
+        Assert.assertEquals(3, records.size());
+        for (int i = 0; i < 3; i++) {
+            var record = records.get(i).getAsJsonObject();
+            Assert.assertEquals("record_" + i,
+                record.get("s0").getAsString());
+            Assert.assertEquals(
+                "Element " + i + " should have exactly 1 field", 1,
+                record.size());
+        }
+    }
+
+    @Test
+    public void testNestedDotNotationKeepsFiveFieldsPerElement() throws Exception {
+        // Filter to 5 fields per element across different types
+        setReturnObject(buildNestedResponse(2));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "records.s0", "records.d5",
+                  "records.i10", "records.l15", "records.b0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        var records = response.getAsJsonObject().getAsJsonArray("records");
+        Assert.assertEquals(2, records.size());
+
+        var first = records.get(0).getAsJsonObject();
+        Assert.assertEquals("Should have exactly 5 fields per element", 5,
+            first.size());
+        Assert.assertEquals("record_0", first.get("s0").getAsString());
+        Assert.assertEquals(5.5, first.get("d5").getAsDouble(), 0.0001);
+        Assert.assertEquals(1000, first.get("i10").getAsInt());
+        Assert.assertEquals(15000000L, first.get("l15").getAsLong());
+        Assert.assertTrue(first.get("b0").getAsBoolean());
+    }
+
+    @Test
+    public void testNestedDotNotation126of127FieldsRemoved() throws Exception {
+        // The headline test: 127 fields per element, keep 1, verify massive
+        // payload reduction. This is the portfolio use case.
+        ServiceResponse full = buildNestedResponse(10);
+
+        // Full response (all fields)
+        setReturnObject(full);
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        int fullSize = outputStream.size();
+
+        // Filtered response: keep only records.s0 (1 of 127 per element)
+        outputStream.reset();
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "records.s0"));
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        int filteredSize = outputStream.size();
+
+        double reductionPct = (1.0 - (double) filteredSize / fullSize) * 100;
+
+        Assert.assertTrue(
+            "Full response (" + fullSize + " bytes) should be > 10KB for 10 records",
+            fullSize > 10000);
+        Assert.assertTrue(
+            "Filtered response (" + filteredSize + " bytes) should be < 500 bytes",
+            filteredSize < 500);
+        Assert.assertTrue(
+            "Payload reduction (" + String.format("%.0f", reductionPct)
+                + "%) should exceed 95%",
+            reductionPct > 95.0);
+    }
+
+    @Test
+    public void testNestedDotNotationNonexistentSubField() throws Exception {
+        // Sub-field doesn't exist — array elements should be empty objects
+        setReturnObject(buildNestedResponse(2));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "records.nonexistent"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        var records = response.getAsJsonObject().getAsJsonArray("records");
+        Assert.assertEquals(2, records.size());
+        Assert.assertEquals("Empty object when sub-field doesn't exist", 0,
+            records.get(0).getAsJsonObject().size());
+    }
+
+    @Test
+    public void testNoDotsPassesThrough() throws Exception {
+        // Without dot-notation, the existing flat filtering behavior is unchanged.
+        // "records" without dots keeps the entire array unfiltered.
+        setReturnObject(buildNestedResponse(1));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "records"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        Assert.assertTrue(response.getAsJsonObject().has("records"));
+        var first = response.getAsJsonObject().getAsJsonArray("records")
+            .get(0).getAsJsonObject();
+        // All 127 fields should be present (no nested filtering)
+        Assert.assertTrue("All fields should be present without dot-notation",
+            first.size() > 100);
     }
 
     static class TestHelper {
