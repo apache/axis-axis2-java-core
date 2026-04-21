@@ -50,10 +50,10 @@ import java.util.Set;
  */
 public class FieldFilteringMessageFormatterTest {
 
-    private MessageContext outMsgContext;
-    private OMOutputFormat outputFormat;
-    private ByteArrayOutputStream outputStream;
-    private FieldFilteringMessageFormatter formatter;
+    protected MessageContext outMsgContext;
+    protected OMOutputFormat outputFormat;
+    protected ByteArrayOutputStream outputStream;
+    protected FieldFilteringMessageFormatter formatter;
 
     @Before
     public void setUp() {
