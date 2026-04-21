@@ -481,27 +481,27 @@ public class FieldFilteringMessageFormatterTest {
             for (int n = 0; n < 30; n++) {
                 try {
                     r.getClass().getField("s" + n).set(r, "val_" + n);
-                } catch (Exception e) { throw new RuntimeException(e); }
+                } catch (ReflectiveOperationException e) { throw new AssertionError("Field setup failed", e); }
             }
             for (int n = 0; n < 40; n++) {
                 try {
                     r.getClass().getField("d" + n).setDouble(r, n * 1.1);
-                } catch (Exception e) { throw new RuntimeException(e); }
+                } catch (ReflectiveOperationException e) { throw new AssertionError("Field setup failed", e); }
             }
             for (int n = 0; n < 25; n++) {
                 try {
                     r.getClass().getField("i" + n).setInt(r, n * 100);
-                } catch (Exception e) { throw new RuntimeException(e); }
+                } catch (ReflectiveOperationException e) { throw new AssertionError("Field setup failed", e); }
             }
             for (int n = 0; n < 20; n++) {
                 try {
                     r.getClass().getField("l" + n).setLong(r, n * 1000000L);
-                } catch (Exception e) { throw new RuntimeException(e); }
+                } catch (ReflectiveOperationException e) { throw new AssertionError("Field setup failed", e); }
             }
             for (int n = 0; n < 12; n++) {
                 try {
                     r.getClass().getField("b" + n).setBoolean(r, n % 2 == 0);
-                } catch (Exception e) { throw new RuntimeException(e); }
+                } catch (ReflectiveOperationException e) { throw new AssertionError("Field setup failed", e); }
             }
             return r;
         }
