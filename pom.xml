@@ -1046,10 +1046,11 @@
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.5.0</version>
-                    <!-- AXIS2-6040: Automatic-Module-Name removed from global config.
-                         Hyphens in artifactIds (e.g., axis2-resource-bundle) produce
-                         invalid Java module names. Modules that need stable JPMS names
-                         should define Automatic-Module-Name in their own pom.xml. -->
+                    <!-- AXIS2-6040: Automatic-Module-Name defined per-module (not global).
+                         A global ${project.artifactId} approach fails because hyphens in
+                         artifactIds (e.g., axis2-resource-bundle) are invalid in Java
+                         module names. Each module defines its own name with hyphens
+                         replaced by dots (e.g., org.apache.axis2.resource.bundle). -->
                 </plugin>
                 <plugin>
                     <artifactId>maven-plugin-plugin</artifactId>

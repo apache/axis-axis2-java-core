@@ -111,6 +111,17 @@
                     <includeDependencies>false</includeDependencies>
                 </configuration>
             </plugin>
+                    <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <!-- AXIS2-6040: Stable module name for Java 9+ JPMS -->
+                            <Automatic-Module-Name>org.apache.axis2.jaxws.mar</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
