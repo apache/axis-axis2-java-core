@@ -440,6 +440,142 @@ public class FieldFilteringMessageFormatterTest {
         public StaticTransientData(String s, int v) { status = s; value = v; }
     }
 
+    // ── Large-payload field filtering (127-field POJO) ─────────────────
+    //
+    // Tests prove that ?fields= can select a small subset from a wide
+    // response object (127 fields) without breaking serialization or
+    // losing data. Uses programmatically generated generic field names.
+
+    /**
+     * POJO with 127 fields to exercise field filtering at scale.
+     * Uses mixed types (String, double, int, long, boolean) across
+     * all 127 fields to verify that filtering handles every
+     * primitive and object type correctly.
+     */
+    public static class WideRecord {
+        // 30 String fields
+        public String s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
+        public String s10, s11, s12, s13, s14, s15, s16, s17, s18, s19;
+        public String s20, s21, s22, s23, s24, s25, s26, s27, s28, s29;
+        // 40 double fields
+        public double d0, d1, d2, d3, d4, d5, d6, d7, d8, d9;
+        public double d10, d11, d12, d13, d14, d15, d16, d17, d18, d19;
+        public double d20, d21, d22, d23, d24, d25, d26, d27, d28, d29;
+        public double d30, d31, d32, d33, d34, d35, d36, d37, d38, d39;
+        // 25 int fields
+        public int i0, i1, i2, i3, i4, i5, i6, i7, i8, i9;
+        public int i10, i11, i12, i13, i14, i15, i16, i17, i18, i19;
+        public int i20, i21, i22, i23, i24;
+        // 20 long fields
+        public long l0, l1, l2, l3, l4, l5, l6, l7, l8, l9;
+        public long l10, l11, l12, l13, l14, l15, l16, l17, l18, l19;
+        // 12 boolean fields — total: 30+40+25+20+12 = 127
+        public boolean b0, b1, b2, b3, b4, b5, b6, b7, b8, b9;
+        public boolean b10, b11;
+
+        public WideRecord() {}
+
+        /** Populate all 127 fields with non-default values. */
+        public static WideRecord createTestRecord() {
+            WideRecord r = new WideRecord();
+            for (int n = 0; n < 30; n++) {
+                try {
+                    r.getClass().getField("s" + n).set(r, "val_" + n);
+                } catch (Exception e) { throw new RuntimeException(e); }
+            }
+            for (int n = 0; n < 40; n++) {
+                try {
+                    r.getClass().getField("d" + n).setDouble(r, n * 1.1);
+                } catch (Exception e) { throw new RuntimeException(e); }
+            }
+            for (int n = 0; n < 25; n++) {
+                try {
+                    r.getClass().getField("i" + n).setInt(r, n * 100);
+                } catch (Exception e) { throw new RuntimeException(e); }
+            }
+            for (int n = 0; n < 20; n++) {
+                try {
+                    r.getClass().getField("l" + n).setLong(r, n * 1000000L);
+                } catch (Exception e) { throw new RuntimeException(e); }
+            }
+            for (int n = 0; n < 12; n++) {
+                try {
+                    r.getClass().getField("b" + n).setBoolean(r, n % 2 == 0);
+                } catch (Exception e) { throw new RuntimeException(e); }
+            }
+            return r;
+        }
+    }
+
+    @Test
+    public void testFilter127FieldsKeepOne() throws Exception {
+        setReturnObject(WideRecord.createTestRecord());
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("s0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        Assert.assertEquals("Should have exactly 1 field", 1,
+            response.getAsJsonObject().size());
+        Assert.assertEquals("val_0",
+            response.getAsJsonObject().get("s0").getAsString());
+    }
+
+    @Test
+    public void testFilter127FieldsKeepFive() throws Exception {
+        setReturnObject(WideRecord.createTestRecord());
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("s0", "d5", "i10", "l15", "b0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        Assert.assertEquals("Should have exactly 5 fields", 5,
+            response.getAsJsonObject().size());
+        Assert.assertEquals("val_0",
+            response.getAsJsonObject().get("s0").getAsString());
+        Assert.assertEquals(5.5,
+            response.getAsJsonObject().get("d5").getAsDouble(), 0.0001);
+        Assert.assertEquals(1000,
+            response.getAsJsonObject().get("i10").getAsInt());
+        Assert.assertEquals(15000000L,
+            response.getAsJsonObject().get("l15").getAsLong());
+        Assert.assertTrue(
+            response.getAsJsonObject().get("b0").getAsBoolean());
+    }
+
+    @Test
+    public void testFilter127FieldsPayloadSizeReduction() throws Exception {
+        WideRecord record = WideRecord.createTestRecord();
+
+        // Full response (all 127 fields)
+        setReturnObject(record);
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        int fullSize = outputStream.size();
+
+        // Filtered response (1 field out of 127)
+        outputStream.reset();
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("s0"));
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        int filteredSize = outputStream.size();
+
+        // The filtered response should be dramatically smaller
+        double reductionPct = (1.0 - (double) filteredSize / fullSize) * 100;
+
+        Assert.assertTrue(
+            "Full response (" + fullSize + " bytes) should be > 1KB",
+            fullSize > 1000);
+        Assert.assertTrue(
+            "Filtered response (" + filteredSize + " bytes) should be < 200 bytes",
+            filteredSize < 200);
+        Assert.assertTrue(
+            "Payload reduction (" + String.format("%.0f", reductionPct)
+                + "%) should exceed 90%",
+            reductionPct > 90.0);
+    }
+
     static class TestHelper {
         static org.apache.axiom.om.OMElement createFaultElement() {
             var factory = OMAbstractFactory.getOMFactory();
