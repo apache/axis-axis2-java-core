@@ -149,47 +149,11 @@
             <artifactId>axis2-xmlbeans</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-aar-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-ant-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!-- Eclipse/IDEA plugin deps removed: AXIS2-6105 -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-mar-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-repo-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-xsd2java-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>simple-server-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- Maven plugin modules excluded from aggregated Javadoc:
+             Their Mojo source imports Maven API classes (org.apache.maven.project,
+             org.apache.maven.execution, etc.) that are not on the Javadoc classpath,
+             causing unresolvable symbol errors. These are developer tools, not
+             user-facing API — their Javadoc belongs in each plugin's own site. -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-base</artifactId>
@@ -290,7 +254,7 @@
                     <additionalJOption>-J-Xmx256m</additionalJOption>
                     <detectJavaApiLink>false</detectJavaApiLink>
                     <links>
-                        <link>https://docs.oracle.com/javase/7/docs/api/</link>
+                        <link>https://docs.oracle.com/en/java/javase/17/docs/api/</link>
                         <link>http://ws.apache.org/axiom/apidocs/</link>
                     </links>
                     <includeDependencySources>true</includeDependencySources>
