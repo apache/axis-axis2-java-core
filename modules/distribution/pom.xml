@@ -214,25 +214,7 @@
             <artifactId>axis2-transport-udp</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-transport-xmpp</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>jivesoftware</groupId>
-                    <artifactId>smack</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>jivesoftware</groupId>
-                    <artifactId>smackx</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!-- AXIS2-6106: axis2-transport-xmpp removed -->
         
         <!-- None of the Axis2 artifacts should have a dependency on log4j
              because we don't want to impose a particular logging implementation

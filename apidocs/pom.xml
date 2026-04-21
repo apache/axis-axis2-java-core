@@ -194,11 +194,7 @@
             <artifactId>axis2-transport-udp</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-transport-xmpp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- AXIS2-6106: axis2-transport-xmpp removed -->
         <!-- Artifacts that are needed to generate the Javadoc but that are not transitive dependencies
              because they are in scope "provided". -->
         <dependency>

@@ -127,7 +127,7 @@ servlet transport</a></li>
 <li>18.9 <a href="tcp-transport.html">TCP Transport</a></li>
 <li>18.10 <a href="mail-transport.html">Mail Transport</a></li>
 <li>18.11 <a href="udp-transport.html">UDP Transport</a></li>
-<li>18.12 <a href="xmpp-transport.html">XMPP Transport</a></li>
+<!-- AXIS2-6106: XMPP transport removed -->
 <li>18.13 <a href="transport_howto.html">Custom
 Transport</a></li>
 </ul>

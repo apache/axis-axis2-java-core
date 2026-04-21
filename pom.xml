@@ -429,7 +429,8 @@
         <module>modules/transport/tcp</module>
         <module>modules/transport/testkit</module>
         <module>modules/transport/udp</module>
-        <module>modules/transport/xmpp</module>
+        <!-- AXIS2-6106: XMPP transport removed — depends on unmaintained
+             jivesoftware:smack (circa 2008), no known users -->
         <module>modules/distribution</module>
         <module>modules/samples</module>
         <module>databinding-tests</module>
