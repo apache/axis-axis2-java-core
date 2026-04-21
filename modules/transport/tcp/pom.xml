@@ -30,7 +30,7 @@
     </parent>
 
     <artifactId>axis2-transport-tcp</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <name>Apache Axis2 - Transport - TCP</name>
     <description>This inclues all the available transports in Axis2</description>
@@ -116,21 +116,15 @@
                     <configurationDirectory>conf</configurationDirectory>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
+                    <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Bundle-Vendor>Apache Software Foundation</Bundle-Vendor>
-                        <Bundle-Description>${project.description}</Bundle-Description>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>
-                            org.apache.axis2.transport.tcp.*;-split-package:=merge-last,
-                        </Export-Package>
-                    </instructions>
+                    <archive>
+                        <manifestEntries>
+                            <!-- AXIS2-6040: Stable module name for Java 9+ JPMS -->
+                            <Automatic-Module-Name>org.apache.axis2.transport.tcp</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>

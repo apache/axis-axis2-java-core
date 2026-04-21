@@ -30,7 +30,7 @@
 
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2-transport-base</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <name>Apache Axis2 - Transport - Base</name>
     <description>Apache Axis2 - Base Transport</description>
@@ -71,29 +71,18 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
+            
+                    <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Bundle-Vendor>Apache Software Foundation</Bundle-Vendor>
-                        <Bundle-Description>${project.description}</Bundle-Description>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>
-                            org.apache.axis2.transport.base.*;-split-package:=merge-last,
-                            org.apache.axis2.format.*;-split-package:=merge-last,
-                        </Export-Package>
-                        <Import-Package>
-                            !javax.xml.namespace,
-                            javax.xml.namespace; version=0.0.0,
-                            *;resolution:=optional,
-                        </Import-Package>
-                    </instructions>
+                    <archive>
+                        <manifestEntries>
+                            <!-- AXIS2-6040: Stable module name for Java 9+ JPMS -->
+                            <Automatic-Module-Name>org.apache.axis2.transport.base</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
-            
         </plugins>
     </build>
 </project>
