@@ -346,7 +346,12 @@ public class FieldFilteringMessageFormatterTest {
     }
 
     private JsonElement parseResponse() {
-        String json = outputStream.toString();
+        String json;
+        try {
+            json = outputStream.toString("UTF-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 encoding not supported", e);
+        }
         JsonElement root = JsonParser.parseString(json);
         return root.getAsJsonObject().get("response");
     }
