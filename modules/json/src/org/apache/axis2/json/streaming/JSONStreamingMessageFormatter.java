@@ -329,63 +329,110 @@ public class JSONStreamingMessageFormatter implements MessageFormatter {
     }
 
     /**
-     * Serialize a nested field (Collection, Map, or single POJO) with only
-     * the specified sub-fields. GSON equivalent of the Moshi
-     * {@code writeFilteredNested} method.
+     * Serialize a nested field with recursive dot-notation support (GSON).
+     * Mirrors the Moshi {@code writeFilteredNested} — parses sub-fields
+     * for dots at each level and recurses into Maps, Collections, and POJOs.
      */
     private void writeFilteredNestedGson(JsonWriter jsonWriter, Object value,
                                          Set<String> subFields, Gson gson,
                                          java.util.Map<Class<?>, List<Field>> fieldCache)
             throws IOException {
 
+        // Parse sub-fields into immediate keeps and deeper specs
+        Set<String> immediateKeep = new LinkedHashSet<>();
+        java.util.Map<String, Set<String>> deeperSpecs = new java.util.LinkedHashMap<>();
+        for (String spec : subFields) {
+            int dot = spec.indexOf('.');
+            if (dot > 0 && dot < spec.length() - 1) {
+                String container = spec.substring(0, dot);
+                String remainder = spec.substring(dot + 1);
+                immediateKeep.add(container);
+                deeperSpecs.computeIfAbsent(container, k -> new LinkedHashSet<>())
+                    .add(remainder);
+            } else {
+                immediateKeep.add(spec);
+            }
+        }
+
         if (value instanceof java.util.Collection) {
             jsonWriter.beginArray();
             for (Object element : (java.util.Collection<?>) value) {
                 if (element == null) {
                     jsonWriter.nullValue();
-                } else {
-                    writeFilteredSingleObjectGson(jsonWriter, element, subFields,
+                } else if (element instanceof java.util.Map) {
+                    writeFilteredMapGson(jsonWriter, (java.util.Map<?, ?>) element,
+                        immediateKeep, deeperSpecs, gson, fieldCache);
+                } else if (element instanceof java.util.Collection) {
+                    writeFilteredNestedGson(jsonWriter, element, subFields,
                         gson, fieldCache);
+                } else {
+                    writeFilteredPojoGson(jsonWriter, element,
+                        immediateKeep, deeperSpecs, gson, fieldCache);
                 }
             }
             jsonWriter.endArray();
         } else if (value instanceof java.util.Map) {
-            jsonWriter.beginObject();
-            for (java.util.Map.Entry<?, ?> entry : ((java.util.Map<?, ?>) value).entrySet()) {
-                String key = String.valueOf(entry.getKey());
-                if (subFields.contains(key)) {
-                    jsonWriter.name(key);
-                    gson.toJson(entry.getValue(), Object.class, jsonWriter);
-                }
-            }
-            jsonWriter.endObject();
+            writeFilteredMapGson(jsonWriter, (java.util.Map<?, ?>) value,
+                immediateKeep, deeperSpecs, gson, fieldCache);
         } else if (value.getClass().getName().startsWith("java.lang.")) {
             gson.toJson(value, value.getClass(), jsonWriter);
         } else {
-            writeFilteredSingleObjectGson(jsonWriter, value, subFields, gson, fieldCache);
+            writeFilteredPojoGson(jsonWriter, value,
+                immediateKeep, deeperSpecs, gson, fieldCache);
         }
     }
 
     /**
-     * Serialize a single object with only the specified fields using GSON.
-     * Inner loop of nested filtering — called once per collection element.
+     * Serialize a Map with recursive field filtering (GSON).
+     * Mirrors the Moshi {@code writeFilteredMap}.
      */
-    private void writeFilteredSingleObjectGson(JsonWriter jsonWriter, Object obj,
-                                               Set<String> allowedFields, Gson gson,
-                                               java.util.Map<Class<?>, List<Field>> fieldCache)
+    private void writeFilteredMapGson(JsonWriter jsonWriter, java.util.Map<?, ?> map,
+                                      Set<String> immediateKeep,
+                                      java.util.Map<String, Set<String>> deeperSpecs,
+                                      Gson gson,
+                                      java.util.Map<Class<?>, List<Field>> fieldCache)
+            throws IOException {
+
+        jsonWriter.beginObject();
+        for (java.util.Map.Entry<?, ?> entry : map.entrySet()) {
+            String key = String.valueOf(entry.getKey());
+            if (!immediateKeep.contains(key)) continue;
+
+            jsonWriter.name(key);
+            Object entryValue = entry.getValue();
+            Set<String> deeper = deeperSpecs.get(key);
+            if (deeper != null && entryValue != null) {
+                writeFilteredNestedGson(jsonWriter, entryValue, deeper, gson, fieldCache);
+            } else if (entryValue == null) {
+                jsonWriter.nullValue();
+            } else {
+                gson.toJson(entryValue, Object.class, jsonWriter);
+            }
+        }
+        jsonWriter.endObject();
+    }
+
+    /**
+     * Serialize a POJO with recursive field filtering (GSON).
+     * Mirrors the Moshi {@code writeFilteredPojo}.
+     */
+    private void writeFilteredPojoGson(JsonWriter jsonWriter, Object pojo,
+                                       Set<String> immediateKeep,
+                                       java.util.Map<String, Set<String>> deeperSpecs,
+                                       Gson gson,
+                                       java.util.Map<Class<?>, List<Field>> fieldCache)
             throws IOException {
 
         List<Field> fields = fieldCache.computeIfAbsent(
-            obj.getClass(), JSONStreamingMessageFormatter::getAllFields);
+            pojo.getClass(), JSONStreamingMessageFormatter::getAllFields);
         jsonWriter.beginObject();
         for (Field field : fields) {
-            if (!allowedFields.contains(field.getName())) {
-                continue;
-            }
+            if (!immediateKeep.contains(field.getName())) continue;
+
             Object value;
             try {
                 field.setAccessible(true);
-                value = field.get(obj);
+                value = field.get(pojo);
             } catch (IllegalAccessException | SecurityException e) {
                 log.warn("Cannot access field "
                     + field.getDeclaringClass().getName().replaceAll("[\r\n]", "_")
@@ -394,7 +441,10 @@ public class JSONStreamingMessageFormatter implements MessageFormatter {
                 continue;
             }
             jsonWriter.name(field.getName());
-            if (value == null) {
+            Set<String> deeper = deeperSpecs != null ? deeperSpecs.get(field.getName()) : null;
+            if (deeper != null && value != null) {
+                writeFilteredNestedGson(jsonWriter, value, deeper, gson, fieldCache);
+            } else if (value == null) {
                 jsonWriter.nullValue();
             } else {
                 gson.toJson(value, field.getGenericType(), jsonWriter);

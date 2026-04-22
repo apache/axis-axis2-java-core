@@ -77,7 +77,7 @@ public class FieldFilteringMessageFormatterTest {
 
     @Test
     public void testFilterKeepsSelectedFields() throws Exception {
-        setReturnObject(new PortfolioData("SUCCESS", 0.025, 0.157, 1));
+        setReturnObject(new SampleData("SUCCESS", 0.025, 0.157, 1));
         outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
             setOf("status", "variance"));
 
@@ -94,7 +94,7 @@ public class FieldFilteringMessageFormatterTest {
 
     @Test
     public void testFilterWithAllFieldsMatchesUnfiltered() throws Exception {
-        PortfolioData data = new PortfolioData("SUCCESS", 0.025, 0.157, 1);
+        SampleData data = new SampleData("SUCCESS", 0.025, 0.157, 1);
         setReturnObject(data);
 
         // Unfiltered baseline
@@ -115,7 +115,7 @@ public class FieldFilteringMessageFormatterTest {
 
     @Test
     public void testFilterWithNoMatchingFieldsProducesEmptyResponse() throws Exception {
-        setReturnObject(new PortfolioData("SUCCESS", 0.025, 0.157, 1));
+        setReturnObject(new SampleData("SUCCESS", 0.025, 0.157, 1));
         outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
             setOf("nonexistent"));
 
@@ -185,7 +185,7 @@ public class FieldFilteringMessageFormatterTest {
 
     @Test
     public void testNoFilterDelegatesDirectly() throws Exception {
-        setReturnObject(new PortfolioData("SUCCESS", 0.025, 0.157, 1));
+        setReturnObject(new SampleData("SUCCESS", 0.025, 0.157, 1));
         // No FIELD_FILTER set
 
         formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
@@ -363,13 +363,13 @@ public class FieldFilteringMessageFormatterTest {
 
     // ── Test POJOs ────────────────────────────────────────────────────────
 
-    public static class PortfolioData {
+    public static class SampleData {
         public String status;
         public double variance;
         public double volatility;
         public long calcTimeUs;
-        public PortfolioData() {}
-        public PortfolioData(String s, double v, double vol, long t) {
+        public SampleData() {}
+        public SampleData(String s, double v, double vol, long t) {
             status = s; variance = v; volatility = vol; calcTimeUs = t;
         }
     }
@@ -677,7 +677,7 @@ public class FieldFilteringMessageFormatterTest {
     @Test
     public void testNestedDotNotation126of127FieldsRemoved() throws Exception {
         // The headline test: 127 fields per element, keep 1, verify massive
-        // payload reduction. This is the portfolio use case.
+        // payload reduction on wide nested data structures.
         ServiceResponse full = buildNestedResponse(10);
 
         // Full response (all fields)
@@ -739,6 +739,146 @@ public class FieldFilteringMessageFormatterTest {
         // All 127 fields should be present (no nested filtering)
         Assert.assertTrue("All fields should be present without dot-notation",
             first.size() > 100);
+    }
+
+    // ── Multi-level dot-notation (Map-of-List-of-Map pattern) ──────────
+    //
+    // Models the real-world pattern where a service returns a response POJO
+    // with a Map<String, Object> field ("data") that contains a
+    // List<Map<String, Object>> ("records") where each map has 127 keys.
+    // Two-level dot-notation: ?fields=status,data.records.s0
+
+    /** Response with a Map<String, Object> field — the Map-based pattern. */
+    public static class MapResponse {
+        public String status;
+        public long calcTimeMs;
+        public java.util.Map<String, Object> data;
+
+        public MapResponse() {}
+        public MapResponse(String status, long calcTimeMs,
+                           java.util.Map<String, Object> data) {
+            this.status = status;
+            this.calcTimeMs = calcTimeMs;
+            this.data = data;
+        }
+    }
+
+    /** Build a MapResponse with N calculation records (127 keys each)
+     *  inside data.records, plus metadata keys in data. */
+    private static MapResponse buildMapResponse(int nRecords) {
+        java.util.Map<String, Object> data = new java.util.LinkedHashMap<>();
+
+        // Records: list of maps, each with 127 keys
+        List<java.util.Map<String, Object>> records = new ArrayList<>();
+        for (int i = 0; i < nRecords; i++) {
+            java.util.Map<String, Object> record = new java.util.LinkedHashMap<>();
+            // 30 string fields
+            for (int n = 0; n < 30; n++) record.put("s" + n, "val_" + i + "_" + n);
+            // 40 double fields
+            for (int n = 0; n < 40; n++) record.put("d" + n, n * 1.1 + i);
+            // 25 int fields
+            for (int n = 0; n < 25; n++) record.put("i" + n, n * 100 + i);
+            // 20 long fields
+            for (int n = 0; n < 20; n++) record.put("l" + n, (long)(n * 1000000 + i));
+            // 12 boolean fields  — total: 30+40+25+20+12 = 127
+            for (int n = 0; n < 12; n++) record.put("b" + n, n % 2 == 0);
+            records.add(record);
+        }
+        data.put("records", records);
+
+        // Metadata keys (would be filtered out in a real query)
+        data.put("notes", Arrays.asList("note1", "note2"));
+        data.put("diagnostics", java.util.Map.of("cacheHit", true, "queryTimeMs", 42));
+        data.put("viewState", "some-large-view-state-blob");
+
+        return new MapResponse("SUCCESS", 42, data);
+    }
+
+    @Test
+    public void testTwoLevelDotNotationFiltersMapsRecursively() throws Exception {
+        // Two-level: data.records.s0 — keep only s0 in each calculation
+        setReturnObject(buildMapResponse(3));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "data.records.s0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        // Top level: status + data (calcTimeMs filtered)
+        Assert.assertTrue(response.getAsJsonObject().has("status"));
+        Assert.assertTrue(response.getAsJsonObject().has("data"));
+        Assert.assertFalse("calcTimeMs should be filtered",
+            response.getAsJsonObject().has("calcTimeMs"));
+
+        // data: only "records" key (notes, diagnostics, viewState filtered)
+        var data = response.getAsJsonObject().getAsJsonObject("data");
+        Assert.assertEquals("data should have exactly 1 key", 1, data.size());
+        Assert.assertTrue(data.has("records"));
+
+        // Each calculation element: only s0 (126 of 127 keys filtered)
+        var calcs = data.getAsJsonArray("records");
+        Assert.assertEquals(3, calcs.size());
+        for (int i = 0; i < 3; i++) {
+            var calc = calcs.get(i).getAsJsonObject();
+            Assert.assertEquals("Element " + i + " should have exactly 1 key",
+                1, calc.size());
+            Assert.assertEquals("val_" + i + "_0",
+                calc.get("s0").getAsString());
+        }
+    }
+
+    @Test
+    public void testTwoLevelDotNotationMultipleSubFields() throws Exception {
+        // Keep 5 fields from each of 127 in the records
+        setReturnObject(buildMapResponse(2));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "data.records.s0", "data.records.d5",
+                  "data.records.i10", "data.records.l15",
+                  "data.records.b0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        JsonElement response = parseResponse();
+
+        var calcs = response.getAsJsonObject().getAsJsonObject("data")
+            .getAsJsonArray("records");
+        var first = calcs.get(0).getAsJsonObject();
+        Assert.assertEquals("Should have 5 keys per element", 5, first.size());
+        Assert.assertTrue(first.has("s0"));
+        Assert.assertTrue(first.has("d5"));
+        Assert.assertTrue(first.has("i10"));
+        Assert.assertTrue(first.has("l15"));
+        Assert.assertTrue(first.has("b0"));
+    }
+
+    @Test
+    public void testTwoLevelDotNotation97PercentReduction() throws Exception {
+        // The dramatic test: 10 records x 127 fields, filter to 1
+        MapResponse fullResp = buildMapResponse(10);
+
+        // Full response
+        setReturnObject(fullResp);
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        int fullSize = outputStream.size();
+
+        // Filtered: keep only data.records.s0
+        outputStream.reset();
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "data.records.s0"));
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        int filteredSize = outputStream.size();
+
+        double reductionPct = (1.0 - (double) filteredSize / fullSize) * 100;
+
+        Assert.assertTrue(
+            "Full response (" + fullSize + " bytes) should be > 10KB",
+            fullSize > 10000);
+        Assert.assertTrue(
+            "Filtered response (" + filteredSize + " bytes) should be < 500 bytes",
+            filteredSize < 500);
+        Assert.assertTrue(
+            "Payload reduction (" + String.format("%.0f", reductionPct)
+                + "%) should exceed 95%",
+            reductionPct > 95.0);
     }
 
     static class TestHelper {
