@@ -101,22 +101,96 @@
 
         <subsection name="Field Selection (?fields=)">
         <p>When using <code>FieldFilteringMessageFormatter</code>, callers can
-        reduce response payload size by specifying which top-level fields to
-        include. This is useful for AI agents (MCP tools) and API consumers
-        that need only a subset of the response fields.</p>
-<source><![CDATA[# Only return status and portfolioVariance fields
-curl -sk --http2 \
-  "https://host/services/FinancialBenchmarkService?fields=status,portfolioVariance" \
-  -H "Content-Type: application/json" \
-  -d '{"portfolioVariance":[{"arg0":{...}}]}'
+        reduce response payload size by specifying which fields to include.
+        This is useful for AI agents (MCP tools), mobile clients, and API
+        consumers that need only a subset of the response.</p>
 
-# Response: {"response":{"status":"SUCCESS","portfolioVariance":0.0245}}
-# (other fields like calcTimeUs, annualizedVolatility, etc. are omitted)]]></source>
-        <p>Field filtering happens during serialization — non-selected fields
-        are never serialized, never buffered, and never written to the wire.
-        The streaming pipeline (Moshi → Okio → FlushingOutputStream → HTTP/2
-        DATA frames) is preserved. When no <code>fields</code> parameter is
-        present, the formatter delegates directly with zero overhead.</p>
+        <p><b>Flat filtering</b> — select top-level response fields:</p>
+<source><![CDATA[GET /services/MyService?fields=status,result
+# Response: {"response":{"status":"SUCCESS","result":0.0245}}
+# (other top-level fields omitted)]]></source>
+
+        <p><b>Multi-level dot-notation</b> — filter inside nested objects and
+        collections. This is the key feature for services that return large
+        nested data structures.</p>
+
+        <p>Consider a service that returns a response POJO where the heavy
+        data lives inside a <code>Map&lt;String, Object&gt;</code> — common
+        when the service parses JSON from a backend into Java Collections
+        rather than typed POJOs:</p>
+
+<source><![CDATA[// The response POJO — what the Axis2 service method returns
+public class ServiceResponse {
+    private String status;
+    private long responseTimeMs;
+    private Map<String, Object> data;   // parsed from backend JSON
+}
+
+// At runtime, "data" contains:
+//   "records" -> List<Map<String, Object>>   (100+ fields per element)
+//   "metadata" -> Map<String, Object>
+//   "diagnostics" -> Map<String, Object>]]></source>
+
+        <p>The Java path from the response root to a record field maps
+        directly to the <code>?fields=</code> syntax:</p>
+
+<source><![CDATA[response.getData()                 // Map<String, Object>  = "data"
+    .get("records")                // List<Map>            = "data.records"
+    .get(0).get("id")              // Object               = "data.records.id"
+
+?fields=status,data.records.id,data.records.name
+   |       |         |          |
+   |       |         |          +-- 3rd level: key inside each List element
+   |       |         +------------- 2nd level: key inside the data Map
+   |       +----------------------- 1st level: field on the response POJO
+   +------------------------------- top-level POJO field (no dots)]]></source>
+
+        <p><b>Before</b> (5MB, 127 fields per record):</p>
+<source><![CDATA[{"response": {
+    "status": "SUCCESS",
+    "data": {
+        "records": [
+            {"id":"item-1", "name":"Widget A", ... 125 more fields ...},
+            {"id":"item-2", "name":"Widget B", ... 125 more fields ...}
+        ],
+        "metadata": {...},
+        "diagnostics": {...}
+    }
+}}]]></source>
+
+        <p><b>After</b> <code>?fields=status,data.records.id</code> (~150KB, 97% reduction):</p>
+<source><![CDATA[{"response": {
+    "status": "SUCCESS",
+    "data": {
+        "records": [
+            {"id":"item-1"},
+            {"id":"item-2"}
+        ]
+    }
+}}]]></source>
+
+        <p>Filtering happens during serialization — excluded fields are never
+        serialized, never buffered, never written to the wire. The streaming
+        pipeline is preserved end-to-end. When no <code>fields</code> parameter
+        is present, the formatter delegates directly with zero overhead.</p>
+
+        <p>Multi-level dot-notation works on POJOs, Maps, and Collections —
+        including <code>Map&lt;String, Object&gt;</code> containing
+        <code>List&lt;Map&lt;String, Object&gt;&gt;</code>. Both Moshi and GSON
+        formatters support the same filtering behavior.</p>
+
+        <p><b>Competitive context:</b> No other Java or Python JSON web services
+        framework ships recursive multi-level field filtering that operates on
+        runtime Maps and Collections from a query parameter. The closest
+        comparable is gRPC FieldMask (Protobuf only) and GraphQL (requires a
+        different API architecture). Spring + Jackson, Django REST, and FastAPI
+        all require custom serializer code for nested field selection.
+        Axis2/Java achieves this with zero service-side code changes.</p>
+
+        <p><b>Limitation:</b> Field names containing a literal dot character
+        cannot be selected, as the dot is always interpreted as a nesting
+        delimiter. The Axis2/C implementation supports single-level
+        dot-notation only; multi-level is an Axis2/Java extension.</p>
         </subsection>
 
         <subsection name="Flush Interval Tuning (services.xml)">
