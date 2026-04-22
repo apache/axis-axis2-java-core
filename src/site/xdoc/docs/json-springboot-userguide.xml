@@ -508,5 +508,170 @@ curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" \
 <li><strong>Record Count:</strong> Number of data records processed</li>
 <li><strong>Optimization Summary:</strong> Human-readable summary of optimizations applied</li>
 </ul>
+
+<h2>Response Field Filtering</h2>
+
+<p>Axis2/Java supports <code>?fields=</code> query parameter filtering that
+reduces response payload size by serializing only the requested fields.
+Filtering happens during streaming serialization — excluded fields are
+never buffered, never written to the wire. No service-side code changes
+are required.</p>
+
+<h3>Configuration</h3>
+
+<p>In <code>axis2.xml</code>, wrap the streaming formatter with
+<code>FieldFilteringMessageFormatter</code>:</p>
+
+<pre>
+&lt;messageFormatter contentType="application/json"
+    class="org.apache.axis2.json.streaming.FieldFilteringMessageFormatter"&gt;
+    &lt;parameter name="delegateFormatter"&gt;org.apache.axis2.json.streaming.MoshiStreamingMessageFormatter&lt;/parameter&gt;
+&lt;/messageFormatter&gt;
+</pre>
+
+<p>Without <code>?fields=</code> in the request, the formatter is a zero-overhead
+pass-through to the delegate.</p>
+
+<h3>Usage</h3>
+
+<p><strong>Flat filtering</strong> — select top-level fields:</p>
+<pre>
+GET /services/MyService?fields=status,result
+</pre>
+
+<p><strong>Dot-notation</strong> — filter inside nested objects and collections:</p>
+<pre>
+GET /services/MyService?fields=status,data.records.id,data.records.name
+</pre>
+
+<p>This walks three levels: keep <code>data</code> at top level, keep
+<code>records</code> inside it, keep only <code>id</code> and <code>name</code>
+inside each element of the <code>records</code> array. Multi-level dot-notation
+works on POJOs, Maps, and Collections — including
+<code>Map&lt;String, Object&gt;</code> containing
+<code>List&lt;Map&lt;String, Object&gt;&gt;</code>, which is the structure
+produced by JSON-RPC services that parse JSON into Java Collections.</p>
+
+<h3>Why Multi-Level Dots: A Java Collections Example</h3>
+
+<p>Consider a service that returns a response POJO where the heavy data
+is inside a <code>Map&lt;String, Object&gt;</code>. This is common when the
+service parses JSON from a backend (e.g., a calculation engine) into
+Java Collections rather than typed POJOs:</p>
+
+<pre>
+// The response POJO — what the Axis2 service method returns
+public class ServiceResponse {
+    private String status;
+    private long responseTimeMs;
+    private Map&lt;String, Object&gt; data;   // parsed from backend JSON
+    // getters, setters
+}
+</pre>
+
+<p>The <code>data</code> map contains multiple keys. One of them holds a
+list of records — each record is itself a map with 100+ fields:</p>
+
+<pre>
+// What "data" looks like at runtime (after JSON parsing):
+//
+// data = {
+//   "records" -> List&lt;Map&lt;String, Object&gt;&gt;   &lt;-- 100+ fields each
+//   "metadata" -> Map&lt;String, Object&gt;
+//   "diagnostics" -> Map&lt;String, Object&gt;
+// }
+//
+// Each record in the list:
+// { "id": "item-1", "name": "Widget A", "price": 19.99,
+//   "category": "HARDWARE", ... 96 more fields ... }
+</pre>
+
+<p>The Java path from the response root to a record field is three levels deep:</p>
+
+<pre>
+response.getData()                    // Map&lt;String, Object&gt;  = "data"
+    .get("records")                   // List&lt;Map&gt;            = "data.records"
+    .get(0).get("id")                 // Object               = "data.records.id"
+</pre>
+
+<p>That maps directly to the <code>?fields=</code> syntax:</p>
+
+<pre>
+?fields=status,data.records.id,data.records.name
+   |       |         |          |
+   |       |         |          +-- 3rd dot level: key inside each List element
+   |       |         +------------- 2nd dot level: key inside the data Map
+   |       +----------------------- 1st dot level: field on the response POJO
+   +------------------------------- top-level POJO field (no dots)
+</pre>
+
+<h3>Example: Before and After</h3>
+
+<p>A service returns a 5MB response with 127 fields per record:</p>
+<pre>
+{"response": {
+    "status": "SUCCESS",
+    "data": {
+        "records": [
+            {"id": "item-1", "name": "Widget A", ... 125 more fields ...},
+            {"id": "item-2", "name": "Widget B", ... 125 more fields ...}
+        ],
+        "metadata": {...},
+        "diagnostics": {...}
+    }
+}}
+</pre>
+
+<p>With <code>?fields=status,data.records.id</code>:</p>
+<pre>
+{"response": {
+    "status": "SUCCESS",
+    "data": {
+        "records": [
+            {"id": "item-1"},
+            {"id": "item-2"}
+        ]
+    }
+}}
+</pre>
+
+<p>The metadata, diagnostics, and 126 unused fields per record are never
+serialized. A 5MB response becomes ~150KB — a 97% reduction.</p>
+
+<h3>Competitive Context</h3>
+
+<p>No other Java or Python JSON web services framework ships recursive
+multi-level field filtering that operates on runtime Maps and Collections
+from a query parameter:</p>
+
+<table>
+<tr><th>Framework</th><th>Flat fields</th><th>Multi-level dots</th><th>Works on Map/List</th><th>No code changes</th></tr>
+<tr><td><strong>Axis2/Java</strong></td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td><strong>Yes</strong></td></tr>
+<tr><td>Spring + Jackson</td><td>Manual</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>GraphQL</td><td colspan="4">Full field selection, but requires a different API architecture</td></tr>
+<tr><td>gRPC FieldMask</td><td>Yes</td><td>Yes</td><td>No (Protobuf only)</td><td>Yes</td></tr>
+<tr><td>Django REST + flex-fields</td><td>Yes</td><td>Partial (1 level)</td><td>No</td><td>No</td></tr>
+<tr><td>FastAPI / Pydantic</td><td>Manual</td><td>No</td><td>No</td><td>No</td></tr>
+</table>
+
+<p>The closest competitor is gRPC's FieldMask, which supports dot-notation
+paths but requires Protocol Buffers — it cannot help existing JSON-RPC
+services. GraphQL provides full field selection but requires a completely
+different API contract. Spring and Django require custom serializer code
+for any field filtering beyond flat, annotated POJOs.</p>
+
+<p>Axis2/Java achieves this without annotations, schema changes, or new
+dependencies. The service returns whatever POJO or Map it already returns.
+The formatter intercepts at the serialization layer, filters during
+streaming, and the client receives only the fields it asked for.</p>
+
+<h3>Parity with Axis2/C</h3>
+
+<p>The Axis2/C implementation supports single-level dot-notation
+(<code>?fields=status,results.id</code>). Multi-level dot-notation is
+an Axis2/Java extension. Axis2/C uses json-c parse-and-delete;
+Axis2/Java uses reflection-based selective serialization. Both
+approaches produce identical filtered output for single-level queries.</p>
+
 </body>
 </html>
