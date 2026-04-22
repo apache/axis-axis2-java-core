@@ -43,10 +43,7 @@
         <tag>HEAD</tag>
     </scm>
 
-    <properties>
-        <castor.version>1.4.1</castor.version>
-    </properties>
-
+    <!-- Castor removed: obsolete XML binding library, unmaintained since 2016 -->
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -460,44 +457,8 @@
                  ant scripts, but this may cause issues with HTTP proxies and has the disadvantage
                  that the JARs are downloaded every time instead of being copied from the local
                  Maven repository. -->
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>test-dependencies</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.codehaus.castor</groupId>
-                                    <artifactId>castor-core</artifactId>
-                                    <version>${castor.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.codehaus.castor</groupId>
-                                    <artifactId>castor-codegen</artifactId>
-                                    <version>${castor.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.codehaus.castor</groupId>
-                                    <artifactId>castor-xml</artifactId>
-                                    <version>${castor.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.codehaus.castor</groupId>
-                                    <artifactId>castor-xml-schema</artifactId>
-                                    <version>${castor.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.directory}/axis2-${project.version}/modules/samples/databinding/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Castor dependency-copy removed: Castor is obsolete and the
+                 databinding sample using it no longer compiles on modern JDKs -->
             <!-- Now unpack the distribution and run some automated tests on the samples -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -511,12 +472,9 @@
                         <configuration>
                             <target>
                                 <unzip src="${project.build.directory}/axis2-${project.version}-bin.zip" dest="${project.build.directory}" />
-                                
+
                                 <!-- Build the web app -->
                                 <ant dir="${project.build.directory}/axis2-${project.version}/webapp" useNativeBasedir="true" />
-                                
-                                <!-- Test of the databinding sample -->
-                                <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/databinding" />
 
                                 <!-- Test of the mtom sample -->
                                 <ant dir="${project.build.directory}/axis2-${project.version}/modules/samples/mtom" target="generate.service" />

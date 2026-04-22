@@ -188,8 +188,7 @@ is to show where and how to use the service life cycle interface
 and session related methods.</p>
 <!--<p><strong>sgccalculator</strong>: A simple calculator that demonstrates the
 use of Service Groups.</p>-->
-<p><strong>databinding</strong>: Demonstrates how to use WSDL2Java
-generated code with Castor.</p>
+<!-- databinding sample removed: depended on Castor (obsolete, unmaintained since 2016) -->
 <p><strong>version</strong>: A very simple service that simply
 outputs the Apache Axis2 version.</p>
 <p><strong>yahoorestearch</strong>: A complete example of the use
