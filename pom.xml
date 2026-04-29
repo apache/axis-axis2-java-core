@@ -500,7 +500,7 @@
         <maven.compiler.release>17</maven.compiler.release>
         <jacoco.version>0.8.14</jacoco.version>
         <asm.version>9.9.1</asm.version>
-        <swagger.version>2.2.48</swagger.version>
+        <swagger.version>2.2.49</swagger.version>
     </properties>
 
     <dependencyManagement>
