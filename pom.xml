@@ -455,7 +455,7 @@
     </distributionManagement>
 
     <properties>
-        <neethi.version>3.2.1</neethi.version>
+        <neethi.version>3.2.2</neethi.version>
         <woden.version>1.0M10</woden.version>
         <axiom.version>2.0.0</axiom.version>
         <xmlschema.version>2.3.2</xmlschema.version>
