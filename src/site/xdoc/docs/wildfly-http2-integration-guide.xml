@@ -97,7 +97,7 @@ large-payload workloads. See
                        enable-http2="true"
                        http2-enable-push="false"
                        http2-header-table-size="8192"
-                       http2-initial-window-size="131072"
+                       http2-initial-window-size="2097152"
                        http2-max-concurrent-streams="75"
                        http2-max-frame-size="65536"
                        http2-max-header-list-size="32768"
@@ -116,7 +116,7 @@ large-payload workloads. See
                         enable-http2="true"
                         http2-enable-push="false"
                         http2-header-table-size="8192"
-                        http2-initial-window-size="131072"
+                        http2-initial-window-size="2097152"
                         http2-max-concurrent-streams="75"
                         http2-max-frame-size="65536"
                         http2-max-header-list-size="32768"
@@ -180,7 +180,7 @@ large-payload workloads. See
 <table border="1">
 <tr><th>Parameter</th><th>Production Value</th><th>Optimization Purpose</th></tr>
 <tr><td>buffer-size</td><td>65536 (64KB)</td><td>Aligned with Enhanced Moshi H2 processing</td></tr>
-<tr><td>http2-initial-window-size</td><td>131072 (128KB)</td><td>Optimized for 50MB+ JSON payloads</td></tr>
+<tr><td>http2-initial-window-size</td><td>2097152 (2MB)</td><td>Avoids flow-control round trips on large responses</td></tr>
 <tr><td>http2-max-frame-size</td><td>65536 (64KB)</td><td>Consistent buffer alignment across layers</td></tr>
 <tr><td>http2-max-concurrent-streams</td><td>75</td><td>Memory-constrained optimization</td></tr>
 <tr><td>receive-buffer</td><td>4194304 (4MB)</td><td>Large payload handling</td></tr>

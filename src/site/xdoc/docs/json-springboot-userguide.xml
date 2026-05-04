@@ -355,7 +355,7 @@ curl -v -H "Content-Type: application/json" -X POST --data @login.dat http://loc
 Where the contents of login.dat are:
 </p>
 <pre>
-{"doLogin":[{"arg0":{"email":java-dev@axis.apache.org,"credentials":userguide}}]}
+{"doLogin":[{"arg0":{"email":"user@example.org","credentials":"userguide"}}]}
 </pre>
 <p>
 Response: 

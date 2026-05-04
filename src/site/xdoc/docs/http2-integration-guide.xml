@@ -226,7 +226,7 @@ modules/
 &lt;transportSender name="h2" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender"&gt;
     &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
     &lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;
-    &lt;parameter name="initialWindowSize"&gt;32768&lt;/parameter&gt;
+    &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt;
 &lt;/transportSender&gt;
 </pre>
 
