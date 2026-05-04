@@ -124,8 +124,8 @@
 maxConcurrentStreams = 100        # Memory-constrained optimization
 maxConnectionsTotal = 50          # Enterprise connection management
 maxConnectionsPerRoute = 10       # Route-specific optimization
-initialWindowSize = 65536         # 64KB large payload optimization
-streamingBufferSize = 65536       # Aligned buffer processing
+initialWindowSize = 2097152       # 2MB flow-control window (not related to 64KB flush interval)
+streamingBufferSize = 65536       # Server-side flush interval (64KB is correct here)
 connectionKeepAliveTime = 300000  # 5-minute balanced timeout
 connectionTimeout = 30000         # 30-second connection establishment
 responseTimeout = 300000          # 5-minute large payload tolerance

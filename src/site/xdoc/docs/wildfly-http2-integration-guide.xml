@@ -48,13 +48,27 @@ WildFly 39 is compatible with the same configuration.</p>
 <h2>WildFly Server-Level HTTP/2 Configuration (RECOMMENDED)</h2>
 
 <div style="background-color: #e8f5e8; border: 1px solid #4CAF50; padding: 10px; margin: 10px 0;">
-<strong>🎯 Key Optimizations:</strong>
+<strong>Key Optimizations:</strong>
 <ul>
-  <li><strong>64KB Buffer Alignment</strong> - Consistent across all layers (WildFly + Enhanced Moshi/GSON H2)</li>
-  <li><strong>128KB HTTP/2 Windows</strong> - Optimized for 50MB+ JSON payload processing</li>
+  <li><strong>64KB Buffer/Flush Alignment</strong> - WildFly byte-buffer-pool and FlushingOutputStream flush interval are aligned at 64KB. This is a server-side serialization setting and is correct.</li>
+  <li><strong>HTTP/2 Flow-Control Windows</strong> - Sized for payload, not aligned to flush interval. See
+      <a href="http2-transport-additions.html#H2TransportSender">HTTP/2 Transport configuration</a>
+      for guidance on <code>initialWindowSize</code> tuning.</li>
   <li><strong>Minimal Protocol Overhead</strong> - Single-layer HTTP/2 processing architecture</li>
   <li><strong>Enhanced Monitoring</strong> - Built-in performance tracking and access logging</li>
 </ul>
+</div>
+
+<div style="background-color: #fff8e1; border: 1px solid #f9a825; padding: 10px; margin: 10px 0;">
+<strong>Important:</strong> The Axis2 transport's
+<code>initialWindowSize</code> should <strong>not</strong> be set to
+64KB to match the WildFly buffer pool or FlushingOutputStream flush
+interval. The flow-control window and the server-side flush interval are
+independent — a 64KB window forces ~156 WINDOW_UPDATE round-trips for a
+10MB response. Use at least 2MB for general traffic or 8MB for
+large-payload workloads. See
+<a href="http2-transport-additions.html#H2TransportSender">HTTP/2 Transport
+— Tuning for Different Workloads</a>.
 </div>
 
 <pre>

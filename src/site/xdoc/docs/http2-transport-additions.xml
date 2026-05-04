@@ -110,34 +110,109 @@ within enterprise memory constraints (2GB heap).</p>
 &lt;transportSender name="h2" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender"&gt;
    &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
    &lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;
-   &lt;parameter name="initialWindowSize"&gt;65536&lt;/parameter&gt;
+   &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt; &lt;!-- 2MB -- see note below --&gt;
    &lt;parameter name="serverPushEnabled"&gt;false&lt;/parameter&gt;
    &lt;parameter name="memoryOptimized"&gt;true&lt;/parameter&gt;
 &lt;/transportSender&gt;
 </pre>
 
+<div style="background-color: #fff8e1; border: 1px solid #f9a825; padding: 15px; margin: 15px 0;">
+<h4>Flow-control window vs. streaming flush interval</h4>
+<p><code>initialWindowSize</code> and the <code>FlushingOutputStream</code>
+64 KB flush interval are <strong>independent settings that should not be
+"aligned"</strong> to the same value.</p>
+<ul>
+  <li><strong>FlushingOutputStream flush (server-side, 64 KB)</strong> —
+      controls when serialized bytes are pushed into the HTTP/2 framing
+      layer. 64 KB is a good cadence: it gives early time-to-first-byte
+      and prevents reverse proxy timeouts on long-running serializations.
+      This value is correct and should not change.</li>
+  <li><strong>initialWindowSize (client-side, per-stream)</strong> —
+      controls how much data a stream may have in-flight before the
+      sender pauses for a WINDOW_UPDATE acknowledgement from the
+      receiver. A 10 MB response with a 64 KB window requires ~156
+      WINDOW_UPDATE round-trips; with a 2 MB window it requires ~5.
+      Under concurrent load, these round-trips serialize on each TCP
+      connection, adding significant latency.</li>
+</ul>
+<p>A server flushing at 64 KB works well with a client whose
+window is 2 MB — the server sends 64 KB, the framing layer
+accumulates up to 2 MB of in-flight data, and the client
+acknowledges in bulk. Setting both to 64 KB forces the client to
+acknowledge every single flush, converting each 64 KB chunk into a
+synchronous round-trip.</p>
+</div>
+
 <h3>HTTP/2 Configuration Parameters</h3>
 
 <table border="1">
 <tr><th>Parameter</th><th>Description</th><th>Default</th><th>Range</th></tr>
-<tr><td>maxConcurrentStreams</td><td>Maximum concurrent streams per connection</td><td>100</td><td>1-1000</td></tr>
-<tr><td>initialWindowSize</td><td>Initial flow control window size (bytes)</td><td>65536</td><td>32KB-16MB</td></tr>
+<tr><td>maxConcurrentStreams</td><td>Maximum concurrent streams per connection. Lower values (4-8) force the connection pool to spread streams across multiple TCP connections — better for workloads with few concurrent large payloads. Higher values (50-100) maximize multiplexing efficiency for many small concurrent requests.</td><td>100</td><td>1-1000</td></tr>
+<tr><td>initialWindowSize</td><td>HTTP/2 per-stream flow-control window (bytes). Determines how much data can be in-flight per stream before the sender waits for a WINDOW_UPDATE. For payloads above 1 MB, use at least 1-2 MB to avoid excessive round-trips. Not related to the server-side FlushingOutputStream 64 KB flush interval.</td><td>2097152</td><td>64KB-16MB</td></tr>
 <tr><td>serverPushEnabled</td><td>Enable HTTP/2 server push</td><td>false</td><td>true/false</td></tr>
 <tr><td>memoryOptimized</td><td>Enable adaptive memory management</td><td>true</td><td>true/false</td></tr>
 <tr><td>largePayloadThreshold</td><td>Threshold for large payload optimization</td><td>52428800</td><td>10MB-500MB</td></tr>
 <tr><td>compressionEnabled</td><td>Enable intelligent compression</td><td>true</td><td>true/false</td></tr>
 </table>
 
+<h3>Tuning for Different Workloads</h3>
+
+<p>The optimal <code>maxConcurrentStreams</code> and
+<code>initialWindowSize</code> depend on your traffic pattern. With
+Apache HttpComponents 5.x, the <code>PoolingAsyncClientConnectionManager</code>
+only opens a new TCP connection when all existing connections have reached
+their <code>maxConcurrentStreams</code> limit. If this value is higher
+than your typical concurrency, the pool will multiplex all streams onto a
+single connection — which is efficient for many small requests but creates
+flow-control contention for concurrent large payloads.</p>
+
+<table border="1">
+<tr><th>Workload</th><th>Example</th><th>maxConcurrentStreams</th><th>initialWindowSize</th><th>maxConnPerRoute</th></tr>
+<tr><td>Many small concurrent requests</td><td>Microservice mesh, API gateway</td><td>50-100</td><td>2 MB</td><td>10</td></tr>
+<tr><td>Few large concurrent payloads</td><td>Batch processing, ETL, report generation</td><td>4-8</td><td>8 MB</td><td>16-32</td></tr>
+<tr><td>Mixed traffic</td><td>General-purpose service client</td><td>8-16</td><td>2 MB</td><td>16</td></tr>
+</table>
+
+<h4>Client-side vs. server-side window: where tuning matters</h4>
+
+<p>HTTP/2 flow control is bidirectional — both client and server
+advertise an <code>initialWindowSize</code>. For typical Axis2
+deployments where the server produces large JSON responses and the
+client sends smaller requests (query parameters, filter criteria),
+the <strong>client-side window is the critical tuning point</strong>.
+It governs how much response data the server can push before pausing
+for a WINDOW_UPDATE from the client. A 64 KB client window on a
+10 MB response means ~156 pause-and-acknowledge cycles.</p>
+
+<p>The server's inbound window (configured in the application server —
+e.g., WildFly's <code>http2-initial-window-size</code>, Tomcat's
+<code>http2InitialWindowSize</code>) controls how much
+<em>request</em> data the server allows in-flight. Since requests
+are typically small relative to responses, the server-side default
+(64 KB per the HTTP/2 spec) is usually adequate. Focus tuning effort
+on the <code>H2TransportSender</code> client-side
+<code>initialWindowSize</code> shown above.</p>
+
+<p>If a single client consumes both small and large payload endpoints on
+different hosts, consider configuring separate
+<code>CloseableHttpAsyncClient</code> instances with per-workload tuning.
+The connection pool's <code>maxConnPerRoute</code> already isolates
+traffic by host, but <code>maxConcurrentStreams</code> and
+<code>initialWindowSize</code> apply to the entire client.</p>
+
 <h3>Enterprise Big Data Configuration</h3>
 
-<p>For enterprise applications processing large JSON datasets (50MB+), use the following optimized configuration:</p>
+<p>For enterprise applications processing large JSON datasets (50MB+), use the following optimized configuration.
+Note the lower <code>maxConcurrentStreams</code> (forces the pool to open multiple TCP connections under concurrent
+load) and larger <code>initialWindowSize</code> (eliminates per-stream flow-control round-trips):</p>
 <pre>
 &lt;transportSender name="h2" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender"&gt;
    &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
 
-   &lt;!-- Stream Management --&gt;
-   &lt;parameter name="maxConcurrentStreams"&gt;50&lt;/parameter&gt;
-   &lt;parameter name="initialWindowSize"&gt;131072&lt;/parameter&gt;
+   &lt;!-- Stream Management: low stream count forces connection pooling
+        instead of multiplexing all large payloads onto one TCP connection --&gt;
+   &lt;parameter name="maxConcurrentStreams"&gt;4&lt;/parameter&gt;
+   &lt;parameter name="initialWindowSize"&gt;8388608&lt;/parameter&gt; &lt;!-- 8MB -- a 50MB payload completes in ~6 window updates --&gt;
    &lt;parameter name="maxFrameSize"&gt;32768&lt;/parameter&gt;
 
    &lt;!-- Large Payload Optimization --&gt;
@@ -150,9 +225,9 @@ within enterprise memory constraints (2GB heap).</p>
    &lt;parameter name="adaptiveFlowControl"&gt;true&lt;/parameter&gt;
    &lt;parameter name="bufferPooling"&gt;true&lt;/parameter&gt;
 
-   &lt;!-- Connection Management --&gt;
-   &lt;parameter name="maxConnTotal"&gt;50&lt;/parameter&gt;
-   &lt;parameter name="maxConnPerRoute"&gt;10&lt;/parameter&gt;
+   &lt;!-- Connection Management: sized for concurrent large-payload fan-out --&gt;
+   &lt;parameter name="maxConnTotal"&gt;64&lt;/parameter&gt;
+   &lt;parameter name="maxConnPerRoute"&gt;32&lt;/parameter&gt;
 
    &lt;!-- Timeouts for Large Payloads --&gt;
    &lt;parameter name="connectionTimeout"&gt;30000&lt;/parameter&gt;
