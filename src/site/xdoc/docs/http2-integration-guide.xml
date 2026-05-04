@@ -314,7 +314,7 @@ production-ready intelligent defaults. <strong>Minimal configuration required!</
     &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
     &lt;!-- Optional: Override intelligent defaults if required --&gt;
     &lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;        &lt;!-- Default: 100 --&gt;
-    &lt;parameter name="initialWindowSize"&gt;65536&lt;/parameter&gt;         &lt;!-- Default: 65536 (64KB) --&gt;
+    &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt;       &lt;!-- Default: 2097152 (2MB: avoids flow-control round trips) --&gt;
     &lt;parameter name="maxConnectionsTotal"&gt;50&lt;/parameter&gt;          &lt;!-- Default: 50 --&gt;
     &lt;parameter name="connectionTimeout"&gt;30000&lt;/parameter&gt;        &lt;!-- Default: 30000 (30s) --&gt;
     &lt;parameter name="responseTimeout"&gt;300000&lt;/parameter&gt;         &lt;!-- Default: 300000 (5m) --&gt;
@@ -355,7 +355,7 @@ msgContext.setProperty("FLOW_CONTROL_WINDOW_SIZE", 2097152); // 2MB
 maxConcurrentStreams = 100        (Memory-constrained: vs library default 1000)
 maxConnectionsTotal = 50          (Memory-constrained: vs library default 100)
 maxConnectionsPerRoute = 10       (Route-specific limit: vs library default 20)
-initialWindowSize = 65536         (64KB optimized for large JSON payloads)
+initialWindowSize = 2097152       (2MB: avoids flow-control round trips)
 streamingBufferSize = 65536       (64KB chunks for 50MB+ processing)
 connectionKeepAliveTime = 300000  (5 minutes balanced timeout)
 responseTimeout = 300000          (5 minutes for large payload processing)

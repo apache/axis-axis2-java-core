@@ -92,7 +92,7 @@
                &lt;!-- ALIGNED: Buffer sizes match Enhanced Moshi H2 --&gt;
                upgradeAsyncTimeout="300000"      &lt;!-- HTTP/2 upgrade timeout --&gt;
                http2MaxConcurrentStreams="200"   &lt;!-- High concurrency --&gt;
-               http2InitialWindowSize="65536"    &lt;!-- 64KB - matches Enhanced Moshi H2 --&gt;
+               http2InitialWindowSize="2097152"  &lt;!-- 2MB: avoids flow-control round trips --&gt;
                http2MaxFrameSize="32768"         &lt;!-- 32KB - aligned with buffer management --&gt;
                http2MaxHeaderTableSize="8192"    &lt;!-- 8KB header table --&gt;
                http2MaxHeaderListSize="32768"    &lt;!-- 32KB header list --&gt;
@@ -144,7 +144,7 @@
 <table border="1">
 <tr><th>Parameter</th><th>Tomcat 11 Value</th><th>Optimization Purpose</th><th>WildFly Equivalent</th></tr>
 <tr><td><strong>http2MaxConcurrentStreams</strong></td><td>200</td><td>High multiplexing for large JSON APIs</td><td>http2-max-concurrent-streams="200"</td></tr>
-<tr><td><strong>http2InitialWindowSize</strong></td><td>65536 (64KB)</td><td>Aligned with Enhanced Moshi H2 buffers</td><td>http2-initial-window-size="65536"</td></tr>
+<tr><td><strong>http2InitialWindowSize</strong></td><td>2097152 (2MB)</td><td>Avoids flow-control round trips on large responses</td><td>http2-initial-window-size="2097152"</td></tr>
 <tr><td><strong>http2MaxFrameSize</strong></td><td>32768 (32KB)</td><td>Optimal for JSON streaming</td><td>http2-max-frame-size="32768"</td></tr>
 <tr><td><strong>maxPostSize</strong></td><td>104857600 (100MB)</td><td>Large JSON payload support</td><td>max-post-size="104857600"</td></tr>
 <tr><td><strong>connectionTimeout</strong></td><td>300000 (5min)</td><td>Large payload processing time</td><td>no-request-timeout="300000"</td></tr>
@@ -191,7 +191,7 @@
 
         &lt;!-- Coordination with Tomcat 11 HTTP/2 --&gt;
         &lt;parameter name="maxConcurrentStreams"&gt;200&lt;/parameter&gt;              &lt;!-- Matches Tomcat --&gt;
-        &lt;parameter name="initialWindowSize"&gt;65536&lt;/parameter&gt;               &lt;!-- 64KB - matches Tomcat --&gt;
+        &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt;             &lt;!-- 2MB: avoids flow-control round trips --&gt;
         &lt;parameter name="maxFrameSize"&gt;32768&lt;/parameter&gt;                    &lt;!-- 32KB - matches Tomcat --&gt;
         &lt;parameter name="maxConnectionsTotal"&gt;50&lt;/parameter&gt;
         &lt;parameter name="maxConnectionsPerRoute"&gt;10&lt;/parameter&gt;

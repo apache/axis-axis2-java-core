@@ -200,10 +200,16 @@ large-payload workloads. See
     <td>✅ WildFly manages 128 concurrent HTTP/2 streams, Moshi H2 handles async processing for large payloads</td>
 </tr>
 <tr>
-    <td><strong>Buffer Management</strong></td>
-    <td><code>http2-initial-window-size="65535"</code></td>
+    <td><strong>Flow Control Window</strong></td>
+    <td><code>http2-initial-window-size="2097152"</code></td>
+    <td><code>initialWindowSize="2097152"</code> (in axis2.xml)</td>
+    <td>✅ 2MB window prevents round-trip latency on large responses</td>
+</tr>
+<tr>
+    <td><strong>Streaming Flush Buffer</strong></td>
+    <td><code>buffer-size="65536"</code></td>
     <td><code>moshiStreamingBufferSize="65536"</code></td>
-    <td>✅ Aligned buffer sizes prevent memory waste and optimize streaming</td>
+    <td>✅ 64KB server-side flush interval — good TTFB, independent of flow-control window</td>
 </tr>
 <tr>
     <td><strong>Large Payload Handling</strong></td>
@@ -243,7 +249,7 @@ large-payload workloads. See
                 enable-http2="true"
                 http2-enable-push="false"
                 http2-header-table-size="4096"           &lt;!-- Conservative headers --&gt;
-                http2-initial-window-size="65536"        &lt;!-- Matches Enhanced Moshi H2 buffer --&gt;
+                http2-initial-window-size="2097152"      &lt;!-- 2MB: avoids flow-control round trips --&gt;
                 http2-max-concurrent-streams="100"       &lt;!-- Coordinated with transport-h2 --&gt;
                 http2-max-frame-size="32768"             &lt;!-- ALIGNED: Matches buffer pool --&gt;
                 http2-max-header-list-size="16384"       &lt;!-- Sufficient for JSON APIs --&gt;
@@ -305,10 +311,10 @@ Complete HTTP/2 + JSON Optimization Stack:
 </tr>
 <tr>
     <td><strong>Window Sizes</strong></td>
-    <td><code>http2-initial-window-size="65536"</code></td>
-    <td><code>initialWindowSize="65536"</code></td>
+    <td><code>http2-initial-window-size="2097152"</code></td>
+    <td><code>initialWindowSize="2097152"</code></td>
     <td><code>AsyncProcessingThreshold="1MB"</code></td>
-    <td>✅ <strong>COORDINATED</strong>: 64KB windows, 1MB async threshold</td>
+    <td>✅ <strong>TUNED</strong>: 2MB flow-control windows, 1MB async threshold</td>
 </tr>
 <tr>
     <td><strong>Stream Limits</strong></td>
@@ -390,7 +396,7 @@ Complete HTTP/2 + JSON Optimization Stack:
                        enable-http2="true"
                        http2-enable-push="false"
                        http2-header-table-size="4096"
-                       http2-initial-window-size="65536"        &lt;!-- Matches transport-h2 + Moshi --&gt;
+                       http2-initial-window-size="2097152"      &lt;!-- 2MB: avoids flow-control round trips --&gt;
                        http2-max-concurrent-streams="100"       &lt;!-- Matches transport-h2 limit --&gt;
                        http2-max-frame-size="32768"             &lt;!-- ALIGNED: Matches buffer pool --&gt;
                        http2-max-header-list-size="16384"
@@ -406,7 +412,7 @@ Complete HTTP/2 + JSON Optimization Stack:
                         enable-http2="true"
                         http2-enable-push="false"
                         http2-header-table-size="4096"
-                        http2-initial-window-size="65536"        &lt;!-- Matches transport-h2 + Moshi --&gt;
+                        http2-initial-window-size="2097152"      &lt;!-- 2MB: avoids flow-control round trips --&gt;
                         http2-max-concurrent-streams="100"       &lt;!-- Matches transport-h2 limit --&gt;
                         http2-max-frame-size="32768"             &lt;!-- ALIGNED: Matches buffer pool --&gt;
                         http2-max-header-list-size="16384"
@@ -464,7 +470,7 @@ Complete HTTP/2 + JSON Optimization Stack:
 
         &lt;!-- Coordination with WildFly HTTP/2 --&gt;
         &lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;              &lt;!-- Matches WildFly --&gt;
-        &lt;parameter name="initialWindowSize"&gt;65536&lt;/parameter&gt;               &lt;!-- Matches WildFly + Moshi --&gt;
+        &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt;             &lt;!-- 2MB: avoids flow-control round trips --&gt;
         &lt;parameter name="maxConnectionsTotal"&gt;50&lt;/parameter&gt;
         &lt;parameter name="maxConnectionsPerRoute"&gt;10&lt;/parameter&gt;
         &lt;parameter name="connectionTimeout"&gt;30000&lt;/parameter&gt;
