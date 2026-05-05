@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.gson.rpc;
+package org.apache.axis2.json.rpc;
 
 /**
  * Exception thrown by JSON-RPC service methods to signal a structured error

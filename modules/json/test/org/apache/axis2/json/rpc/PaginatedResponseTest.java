@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.gson.rpc;
+package org.apache.axis2.json.rpc;
 
 import org.junit.Test;
 

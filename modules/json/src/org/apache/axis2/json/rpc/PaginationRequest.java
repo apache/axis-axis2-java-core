@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.json.gson.rpc;
+package org.apache.axis2.json.rpc;
 
 /**
  * Pagination parameters that a client sends with a list query.

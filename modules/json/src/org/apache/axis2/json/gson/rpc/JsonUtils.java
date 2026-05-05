@@ -29,6 +29,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.rpc.Axis2JsonErrorResponse;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

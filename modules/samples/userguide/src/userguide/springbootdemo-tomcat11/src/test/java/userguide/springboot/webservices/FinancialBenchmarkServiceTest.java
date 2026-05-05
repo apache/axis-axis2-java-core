@@ -18,7 +18,7 @@
  */
 package userguide.springboot.webservices;
 
-import org.apache.axis2.json.gson.rpc.JsonRpcFaultException;
+import org.apache.axis2.json.rpc.JsonRpcFaultException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
