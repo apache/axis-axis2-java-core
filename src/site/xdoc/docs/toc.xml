@@ -193,7 +193,7 @@ Support</a></li>
         <li><a href="json-streaming-formatter.html#Problem_-_Large_HTTP_Responses_and_Reverse_Proxies">Problem: Large Responses and Reverse Proxies</a></li>
         <li><a href="json-streaming-formatter.html#Configuration">Configuration (axis2.xml / services.xml)</a></li>
         <li><a href="json-streaming-formatter.html#Services_That_Benefit">Services That Benefit (BigDataH2Service, FinancialBenchmarkService)</a></li>
-        <li><a href="json-streaming-formatter.html">Axis2/C Equivalent (ap_rflush)</a></li>
+        <li><a href="json-streaming-formatter.html#Axis2.2FC_Equivalent">Axis2/C Equivalent (ap_rflush)</a></li>
     </ul>
     </li>
     <li><strong>23.7 <a href="mcp-examples.html">MCP Examples — Financial Services Benchmarks</a></strong>

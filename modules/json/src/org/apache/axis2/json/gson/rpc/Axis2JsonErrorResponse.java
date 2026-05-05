@@ -175,13 +175,19 @@ public class Axis2JsonErrorResponse {
 
     /** Legacy error message field. Same value as {@link #getMessage()}. */
     public String getErrorMessage() { return errorMessage; }
-    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+        this.message = errorMessage; // keep new field in sync
+    }
 
     public String getError() { return error; }
     public void setError(String error) { this.error = error; }
 
     public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public void setMessage(String message) {
+        this.message = message;
+        this.errorMessage = message; // keep legacy field in sync
+    }
 
     public String getErrorRef() { return errorRef; }
     public void setErrorRef(String errorRef) { this.errorRef = errorRef; }
