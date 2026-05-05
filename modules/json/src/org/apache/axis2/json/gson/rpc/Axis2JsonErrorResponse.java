@@ -69,10 +69,24 @@ import java.util.UUID;
  */
 public class Axis2JsonErrorResponse {
 
+    // ── Legacy fields (backward compatibility) ─────────────────────────────
+    // Existing clients check these two fields to detect errors.  Removing them
+    // would break every caller that parses {"status":"FAILED","errorMessage":"..."}.
+    // Kept alongside the new structured fields so old and new clients both work
+    // from the same response body.
+
+    /** Always "FAILED" — matches the legacy PortfolioVarianceResponse.failed() contract. */
+    private final String status = "FAILED";
+
+    /** Human-readable error message (legacy field name).  Same value as {@link #message}. */
+    private String errorMessage;
+
+    // ── New structured fields ────────────────────────────────────────────────
+
     /** Error code — e.g. VALIDATION_ERROR, RATE_LIMITED, SERVICE_UNAVAILABLE, INTERNAL_ERROR */
     private String error;
 
-    /** Human-readable error message */
+    /** Human-readable error message (new field name, same value as errorMessage) */
     private String message;
 
     /** Opaque correlation ID for server-side log lookup */
@@ -91,6 +105,7 @@ public class Axis2JsonErrorResponse {
                                    String timestamp, Integer retryAfter) {
         this.error = error;
         this.message = message;
+        this.errorMessage = message;  // legacy field — same value
         this.errorRef = errorRef;
         this.timestamp = timestamp;
         this.retryAfter = retryAfter;
@@ -154,6 +169,13 @@ public class Axis2JsonErrorResponse {
     }
 
     // ── Getters / setters ────────────────────────────────────────────────────
+
+    /** Always "FAILED" — read-only for backward compatibility. */
+    public String getStatus() { return status; }
+
+    /** Legacy error message field. Same value as {@link #getMessage()}. */
+    public String getErrorMessage() { return errorMessage; }
+    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
 
     public String getError() { return error; }
     public void setError(String error) { this.error = error; }

@@ -228,10 +228,17 @@ class FinancialBenchmarkServiceTest {
         JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
             () -> service.portfolioVariance(null));
         assertEquals(422, ex.getHttpStatusCode());
+        // New structured fields
         assertEquals("VALIDATION_ERROR", ex.getErrorResponse().getError());
         assertNotNull(ex.getErrorResponse().getErrorRef(), "errorRef UUID must be present");
         assertNotNull(ex.getErrorResponse().getTimestamp(), "timestamp must be present");
         assertNull(ex.getErrorResponse().getRetryAfter(), "retryAfter should be null for 422");
+        // Legacy fields — backward compatible with clients that check
+        // {"status":"FAILED","errorMessage":"..."}
+        assertEquals("FAILED", ex.getErrorResponse().getStatus());
+        assertNotNull(ex.getErrorResponse().getErrorMessage());
+        assertEquals(ex.getErrorResponse().getMessage(), ex.getErrorResponse().getErrorMessage(),
+            "errorMessage must equal message for backward compatibility");
     }
 
     // ═══════════════════════════════════════════════════════════════════════
