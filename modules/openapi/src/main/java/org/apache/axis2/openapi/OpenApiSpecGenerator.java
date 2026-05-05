@@ -133,8 +133,8 @@ public class OpenApiSpecGenerator {
         // Add security schemes from configuration
         addSecuritySchemes(openApi);
 
-        // Add components/schemas section
-        addComponents(openApi);
+        // Add components/schemas section (needs request for Spring bean resolution)
+        addComponents(openApi, request);
 
         // Apply customizer if configured
         applyCustomizer(openApi);
@@ -416,6 +416,37 @@ public class OpenApiSpecGenerator {
         successResponse.setContent(content);
 
         responses.addApiResponse("200", successResponse);
+
+        // ── Error responses ───────────────────────────────────────────────────
+        // Every operation gets 422/429/503 error responses referencing the
+        // shared ErrorResponse schema (defined in addComponents()).  This
+        // matches the error taxonomy from Axis2JsonErrorResponse / JsonRpcFaultException:
+        //   422 = service threw JsonRpcFaultException.validationError()
+        //   429 = service threw JsonRpcFaultException.rateLimited()
+        //   503 = service threw JsonRpcFaultException.serviceUnavailable()
+        // All share the same JSON shape — only the "error" code field differs.
+        Content errorContent = new Content();
+        MediaType errorMediaType = new MediaType();
+        Schema errorRef = new Schema();
+        errorRef.set$ref("#/components/schemas/ErrorResponse");
+        errorMediaType.setSchema(errorRef);
+        errorContent.addMediaType("application/json", errorMediaType);
+
+        ApiResponse validationError = new ApiResponse();
+        validationError.setDescription("Validation error — request body failed input checks");
+        validationError.setContent(errorContent);
+        responses.addApiResponse("422", validationError);
+
+        ApiResponse rateLimitError = new ApiResponse();
+        rateLimitError.setDescription("Rate limited — too many requests");
+        rateLimitError.setContent(errorContent);
+        responses.addApiResponse("429", rateLimitError);
+
+        ApiResponse serviceUnavailable = new ApiResponse();
+        serviceUnavailable.setDescription("Service unavailable — downstream dependency or overload");
+        serviceUnavailable.setContent(errorContent);
+        responses.addApiResponse("503", serviceUnavailable);
+
         operation.setResponses(responses);
 
         return operation;
@@ -521,19 +552,313 @@ public class OpenApiSpecGenerator {
     }
 
     /**
-     * Add components section to OpenAPI specification.
+     * Add components section to OpenAPI specification, including the shared
+     * ErrorResponse schema and auto-generated request/response schemas from
+     * Java type introspection.
      */
-    private void addComponents(OpenAPI openApi) {
+    private void addComponents(OpenAPI openApi, HttpServletRequest request) {
         Components components = openApi.getComponents();
         if (components == null) {
             components = new Components();
             openApi.setComponents(components);
         }
 
-        // TODO: Add schema definitions for request/response models
-        // This can be enhanced to automatically generate schemas from service metadata
+        java.util.Map<String, Schema> schemas = components.getSchemas();
+        if (schemas == null) {
+            schemas = new java.util.LinkedHashMap<>();
+        }
 
+        // ── Shared ErrorResponse schema — matches Axis2JsonErrorResponse wire format ──
+        Schema<Object> errorSchema = new Schema<>();
+        errorSchema.setType("object");
+        errorSchema.setDescription("Structured error response for Axis2 JSON-RPC services");
+
+        Schema<String> errorCode = new Schema<>();
+        errorCode.setType("string");
+        errorCode.setDescription("Error code: VALIDATION_ERROR, RATE_LIMITED, SERVICE_UNAVAILABLE, BAD_REQUEST, INTERNAL_ERROR");
+
+        Schema<String> message = new Schema<>();
+        message.setType("string");
+        message.setDescription("Human-readable error message");
+
+        Schema<String> errorRefField = new Schema<>();
+        errorRefField.setType("string");
+        errorRefField.setDescription("Opaque correlation ID (UUID) for server-side log lookup");
+
+        Schema<String> timestamp = new Schema<>();
+        timestamp.setType("string");
+        timestamp.setFormat("date-time");
+        timestamp.setDescription("ISO 8601 timestamp of when the error occurred");
+
+        Schema<Integer> retryAfter = new Schema<>();
+        retryAfter.setType("integer");
+        retryAfter.setDescription("Seconds until the client should retry (present on 429/503)");
+
+        java.util.Map<String, Schema> errorProps = new java.util.LinkedHashMap<>();
+        errorProps.put("error", errorCode);
+        errorProps.put("message", message);
+        errorProps.put("errorRef", errorRefField);
+        errorProps.put("timestamp", timestamp);
+        errorProps.put("retryAfter", retryAfter);
+        errorSchema.setProperties(errorProps);
+
+        java.util.List<String> errorRequired = new java.util.ArrayList<>();
+        errorRequired.add("error");
+        errorRequired.add("message");
+        errorRequired.add("errorRef");
+        errorRequired.add("timestamp");
+        errorSchema.setRequired(errorRequired);
+        schemas.put("ErrorResponse", errorSchema);
+
+        // ── Auto-generate request/response schemas from service introspection ──
+        // This runs AFTER generatePaths() so all PathItem/Operation objects already
+        // exist.  For each operation we:
+        //   1. Reflect on the service method's parameter POJO → request schema
+        //   2. Reflect on the return type POJO → response schema
+        //   3. Update the already-generated operation to $ref these schemas
+        //      (replacing the generic {"type":"object"} placeholder)
+        //
+        // Introspection is best-effort: if the service class can't be loaded
+        // (e.g. Spring bean not yet initialized, or missing from classpath),
+        // the operation keeps its generic schema — no error, just less detail.
+        //
+        // Schema naming convention: {operationName}Request / {operationName}Response
+        // (e.g. portfolioVarianceRequest, portfolioVarianceResponse).
+        try {
+            AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+            com.fasterxml.jackson.databind.ObjectMapper jackson = io.swagger.v3.core.util.Json.mapper();
+
+            for (AxisService service : axisConfig.getServices().values()) {
+                if (isSystemService(service) || !shouldIncludeService(service)) continue;
+
+                // Resolve service class ONCE per service (expensive reflection),
+                // then reuse for all operations within this service.
+                Class<?> serviceClass = resolveServiceClass(service, request);
+
+                Iterator<AxisOperation> ops = service.getOperations();
+                while (ops.hasNext()) {
+                    AxisOperation op = ops.next();
+                    if (!shouldIncludeOperation(service, op)) continue;
+
+                    String opName = op.getName().getLocalPart();
+                    String path = "/services/" + service.getName() + "/" + opName;
+
+                    // ── Request schema: introspect the method's parameter POJO ──
+                    // Uses the serviceClass resolved once per service above.
+                    com.fasterxml.jackson.databind.node.ObjectNode requestSchemaNode =
+                            generateSchemaFromServiceClass(serviceClass, service.getName(), opName);
+                    if (requestSchemaNode != null) {
+                        String requestSchemaName = opName + "Request";
+                        try {
+                            // Convert Jackson ObjectNode → swagger-core Schema via
+                            // in-memory tree conversion (no intermediate String alloc).
+                            Schema<?> reqSchema = jackson.treeToValue(
+                                    requestSchemaNode, Schema.class);
+                            reqSchema.setDescription("Request body for " + service.getName()
+                                    + "/" + opName);
+                            schemas.put(requestSchemaName, reqSchema);
+
+                            // Update the operation's requestBody to reference this schema
+                            PathItem pathItem = openApi.getPaths() != null
+                                    ? openApi.getPaths().get(path) : null;
+                            if (pathItem != null && pathItem.getPost() != null) {
+                                RequestBody reqBody = pathItem.getPost().getRequestBody();
+                                if (reqBody != null && reqBody.getContent() != null) {
+                                    MediaType mt = reqBody.getContent().get("application/json");
+                                    if (mt != null) {
+                                        Schema refSchema = new Schema();
+                                        refSchema.set$ref("#/components/schemas/"
+                                                + requestSchemaName);
+                                        mt.setSchema(refSchema);
+                                    }
+                                }
+                            }
+                            log.debug("Added components/schemas/" + requestSchemaName
+                                    + " from Java type introspection");
+                        } catch (Exception e) {
+                            log.debug("Could not convert request schema for " + opName
+                                    + ": " + e.getMessage());
+                        }
+                    }
+
+                    // ── Response schema: introspect the method's return type POJO ──
+                    // Uses the serviceClass resolved once per service above.
+                    // Skips primitives, void, and java.* types (only POJOs get schemas).
+                    try {
+                        if (serviceClass != null) {
+                            java.lang.reflect.Method targetMethod = null;
+                            int candidateCount = 0;
+                            for (java.lang.reflect.Method m : serviceClass.getMethods()) {
+                                if (m.getName().equals(opName) && m.getParameterCount() == 1) {
+                                    if (targetMethod == null) {
+                                        targetMethod = m;
+                                    }
+                                    candidateCount++;
+                                }
+                            }
+                            if (candidateCount > 1) {
+                                log.warn("Ambiguous method '" + opName + "' in "
+                                        + serviceClass.getName() + " has " + candidateCount
+                                        + " one-argument overloads — generating response "
+                                        + "schema from first candidate");
+                            }
+                            if (targetMethod != null) {
+                                Class<?> returnType = targetMethod.getReturnType();
+                                if (!returnType.isPrimitive() && returnType != void.class
+                                        && returnType != Void.class
+                                        && !returnType.getName().startsWith("java.")) {
+                                    com.fasterxml.jackson.databind.node.ObjectNode respNode =
+                                            buildSchemaFromPojo(returnType);
+                                    if (respNode != null) {
+                                        String responseSchemaName = opName + "Response";
+                                        Schema<?> respSchema = jackson.treeToValue(
+                                                respNode, Schema.class);
+                                        respSchema.setDescription("Response body for "
+                                                + service.getName() + "/" + opName);
+                                        schemas.put(responseSchemaName, respSchema);
+
+                                        // Update the operation's 200 response to reference it
+                                        PathItem pathItem = openApi.getPaths() != null
+                                                ? openApi.getPaths().get(path) : null;
+                                        if (pathItem != null && pathItem.getPost() != null) {
+                                            ApiResponse ok = pathItem.getPost().getResponses()
+                                                    .get("200");
+                                            if (ok != null && ok.getContent() != null) {
+                                                MediaType mt = ok.getContent()
+                                                        .get("application/json");
+                                                if (mt != null) {
+                                                    Schema refSchema = new Schema();
+                                                    refSchema.set$ref(
+                                                            "#/components/schemas/"
+                                                            + responseSchemaName);
+                                                    mt.setSchema(refSchema);
+                                                }
+                                            }
+                                        }
+                                        log.debug("Added components/schemas/"
+                                                + responseSchemaName
+                                                + " from Java type introspection");
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.debug("Could not generate response schema for "
+                                + service.getName() + "/" + opName + ": " + e.getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Error during auto-schema generation for components", e);
+        }
+
+        components.setSchemas(schemas);
         openApi.setComponents(components);
+    }
+
+    /**
+     * Resolve the service implementation class for type introspection.
+     *
+     * <p>Resolution order:
+     * <ol>
+     *   <li>{@code ServiceClass} parameter in services.xml → direct classload</li>
+     *   <li>{@code SpringBeanName} parameter → resolve via Spring's
+     *       {@code WebApplicationContextUtils} (invoked reflectively to avoid
+     *       a compile-time Spring dependency in the openapi module)</li>
+     * </ol>
+     *
+     * <p>Returns null if neither path succeeds.  Callers should treat null
+     * as "schema generation not possible" and fall back to generic schemas.
+     *
+     * <p>This is factored out of {@link #generateSchemaFromServiceClass} so that
+     * both request and response schema generation can share the same lookup
+     * without loading the class twice per operation.
+     */
+    private Class<?> resolveServiceClass(AxisService service, HttpServletRequest request) {
+        try {
+            // Try 1: explicit ServiceClass parameter (e.g. POJO deployment).
+            // Use the service's own classloader — it has visibility to
+            // WEB-INF/classes and WEB-INF/lib in WAR deployments, whereas
+            // Thread.currentThread().getContextClassLoader() may not.
+            String className = getServiceClassName(service);
+            if (className != null) {
+                ClassLoader cl = service.getClassLoader();
+                if (cl == null) {
+                    cl = Thread.currentThread().getContextClassLoader();
+                }
+                return cl.loadClass(className);
+            }
+            // Try 2: Spring bean — uses reflection to call
+            // WebApplicationContextUtils.getWebApplicationContext(servletContext)
+            // so the openapi module compiles without spring-web on the classpath.
+            if (request != null) {
+                String beanName = null;
+                org.apache.axis2.description.Parameter springBeanParam =
+                        service.getParameter("SpringBeanName");
+                if (springBeanParam != null && springBeanParam.getValue() != null) {
+                    beanName = (String) springBeanParam.getValue();
+                }
+                if (beanName != null) {
+                    jakarta.servlet.ServletContext sc = request.getServletContext();
+                    Class<?> wacUtils = Class.forName(
+                            "org.springframework.web.context.support.WebApplicationContextUtils");
+                    java.lang.reflect.Method getWac = wacUtils.getMethod(
+                            "getWebApplicationContext", jakarta.servlet.ServletContext.class);
+                    Object ctx = getWac.invoke(null, sc);
+                    if (ctx != null) {
+                        java.lang.reflect.Method getBean = ctx.getClass().getMethod(
+                                "getBean", String.class);
+                        Object bean = getBean.invoke(ctx, beanName);
+                        if (bean != null) return bean.getClass();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.debug("Could not resolve service class for " + service.getName()
+                    + ": " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Build a JSON Schema ObjectNode from a POJO class using getter introspection.
+     * Reuses the same introspection pattern as {@link #generateSchemaFromServiceClass}
+     * but works on an arbitrary class (used for response types).
+     */
+    private com.fasterxml.jackson.databind.node.ObjectNode buildSchemaFromPojo(Class<?> pojoClass) {
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper =
+                    io.swagger.v3.core.util.Json.mapper();
+            com.fasterxml.jackson.databind.node.ObjectNode schema = mapper.createObjectNode();
+            schema.put("type", "object");
+            com.fasterxml.jackson.databind.node.ObjectNode properties =
+                    schema.putObject("properties");
+
+            for (java.lang.reflect.Method getter : pojoClass.getMethods()) {
+                String name = getter.getName();
+                if (name.equals("getClass") || getter.getParameterCount() != 0) continue;
+
+                String fieldName = null;
+                if (name.startsWith("get") && name.length() > 3) {
+                    fieldName = Character.toLowerCase(name.charAt(3)) + name.substring(4);
+                } else if (name.startsWith("is") && name.length() > 2
+                        && (getter.getReturnType() == boolean.class
+                            || getter.getReturnType() == Boolean.class)) {
+                    fieldName = Character.toLowerCase(name.charAt(2)) + name.substring(3);
+                }
+                if (fieldName == null) continue;
+
+                com.fasterxml.jackson.databind.node.ObjectNode prop =
+                        properties.putObject(fieldName);
+                mapJavaTypeToJsonSchema(getter.getReturnType(),
+                        getter.getGenericReturnType(), prop);
+            }
+            return schema;
+        } catch (Exception e) {
+            log.debug("Could not build schema from POJO " + pojoClass.getName()
+                    + ": " + e.getMessage());
+            return null;
+        }
     }
 
 
@@ -609,53 +934,23 @@ public class OpenApiSpecGenerator {
 
     private com.fasterxml.jackson.databind.node.ObjectNode generateSchemaFromServiceClass(
             AxisService service, String operationName, HttpServletRequest request) {
+        Class<?> serviceClass = resolveServiceClass(service, request);
+        return generateSchemaFromServiceClass(serviceClass, service.getName(), operationName);
+    }
+
+    /**
+     * Generate a JSON Schema from a pre-resolved service class and operation name.
+     * This overload avoids redundant class resolution when the caller has already
+     * resolved the class (e.g. once per service in addComponents).
+     *
+     * @param serviceClass the resolved service implementation class (may be null)
+     * @param serviceName  the service name (for logging)
+     * @param operationName the operation (method) name
+     * @return an ObjectNode containing the JSON Schema, or null
+     */
+    private com.fasterxml.jackson.databind.node.ObjectNode generateSchemaFromServiceClass(
+            Class<?> serviceClass, String serviceName, String operationName) {
         try {
-            Class<?> serviceClass = null;
-
-            // Try 1: explicit ServiceClass parameter
-            String className = getServiceClassName(service);
-            if (className != null) {
-                serviceClass = Thread.currentThread().getContextClassLoader().loadClass(className);
-            }
-
-            // Try 2: resolve Spring bean class from SpringBeanName via WebApplicationContext.
-            // Uses reflection to avoid a compile-time dependency on Spring Framework —
-            // the openapi module must work without Spring on the classpath.
-            // Mirrors the lookup in SpringServletContextObjectSupplier which uses
-            // WebApplicationContextUtils.getWebApplicationContext(servletContext).
-            if (serviceClass == null && request != null) {
-                try {
-                    String beanName = null;
-                    org.apache.axis2.description.Parameter springBeanParam =
-                            service.getParameter("SpringBeanName");
-                    if (springBeanParam != null && springBeanParam.getValue() != null) {
-                        beanName = (String) springBeanParam.getValue();
-                    }
-                    if (beanName != null) {
-                        jakarta.servlet.ServletContext sc = request.getServletContext();
-                        // Call WebApplicationContextUtils.getWebApplicationContext(sc) via reflection
-                        Class<?> wacUtils = Class.forName(
-                                "org.springframework.web.context.support.WebApplicationContextUtils");
-                        java.lang.reflect.Method getWac = wacUtils.getMethod(
-                                "getWebApplicationContext", jakarta.servlet.ServletContext.class);
-                        Object ctx = getWac.invoke(null, sc);
-                        if (ctx != null) {
-                            java.lang.reflect.Method getBean = ctx.getClass().getMethod(
-                                    "getBean", String.class);
-                            Object bean = getBean.invoke(ctx, beanName);
-                            if (bean != null) {
-                                serviceClass = bean.getClass();
-                                log.debug("[MCP] Resolved Spring bean '" + beanName
-                                        + "' -> " + serviceClass.getName());
-                            }
-                        }
-                    }
-                } catch (Exception springEx) {
-                    log.debug("[MCP] Could not resolve Spring bean for "
-                            + service.getName() + ": " + springEx.getMessage());
-                }
-            }
-
             if (serviceClass == null) return null;
             java.lang.reflect.Method targetMethod = null;
             for (java.lang.reflect.Method m : serviceClass.getMethods()) {
@@ -706,14 +1001,14 @@ public class OpenApiSpecGenerator {
             }
 
             return schema;
-        } catch (ClassNotFoundException | SecurityException e) {
-            log.debug("[MCP] Could not auto-generate schema for " + service.getName()
+        } catch (SecurityException e) {
+            log.debug("[MCP] Could not auto-generate schema for " + serviceName
                     + "/" + operationName + ": " + e.getClass().getSimpleName()
                     + " - " + e.getMessage());
             return null;
         } catch (Exception e) {
             log.warn("[MCP] Unexpected error during auto-schema generation for "
-                    + service.getName() + "/" + operationName, e);
+                    + serviceName + "/" + operationName, e);
             return null;
         }
     }
@@ -881,6 +1176,30 @@ public class OpenApiSpecGenerator {
             meta.put("contentType", "application/json");
             meta.put("authHeader", "Authorization: Bearer <token>");
             meta.put("tokenEndpoint", "POST /services/loginService/doLogin");
+
+            // ── Error contract in MCP _meta ──────────────────────────────────
+            // Describes the structured error envelope (Axis2JsonErrorResponse)
+            // that all operations may return on 4xx/5xx responses.  Mirrors the
+            // OpenAPI components/schemas/ErrorResponse definition.
+            //
+            // MCP clients can use this to:
+            //   1. Auto-parse error responses without per-operation handling
+            //   2. Display the errorRef to users for support correlation
+            //   3. Implement retry logic based on retryAfter (429/503)
+            com.fasterxml.jackson.databind.node.ObjectNode errorContract = meta.putObject("errorContract");
+            errorContract.put("schemaRef", "#/components/schemas/ErrorResponse");
+            com.fasterxml.jackson.databind.node.ObjectNode errorFields = errorContract.putObject("fields");
+            errorFields.put("error", "Error code: VALIDATION_ERROR | RATE_LIMITED | SERVICE_UNAVAILABLE | BAD_REQUEST | INTERNAL_ERROR");
+            errorFields.put("message", "Human-readable error message");
+            errorFields.put("errorRef", "UUID correlation ID — quote in support requests");
+            errorFields.put("timestamp", "ISO 8601 when the error occurred");
+            errorFields.put("retryAfter", "Seconds to wait before retrying (429/503 only, null otherwise)");
+            com.fasterxml.jackson.databind.node.ObjectNode statusMap = errorContract.putObject("httpStatusMapping");
+            statusMap.put("400", "BAD_REQUEST — malformed JSON or missing required fields");
+            statusMap.put("422", "VALIDATION_ERROR — valid JSON but fails business validation");
+            statusMap.put("429", "RATE_LIMITED — too many requests, check retryAfter");
+            statusMap.put("500", "INTERNAL_ERROR — server fault, errorRef logged server-side");
+            statusMap.put("503", "SERVICE_UNAVAILABLE — downstream dependency or overload");
 
             // Optional: natural key (ticker → assetId) resolution endpoint.
             // Set axis2.xml global parameter "mcpTickerResolveService" to the

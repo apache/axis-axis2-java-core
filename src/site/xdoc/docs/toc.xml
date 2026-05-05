@@ -62,6 +62,14 @@ Guide</a></li>
 <li>7.4 <a href="openapi-rest-userguide.html#Swagger_UI">Interactive Swagger UI</a></li>
 <li>7.5 <a href="openapi-rest-advanced-userguide.html">Advanced Enterprise OpenAPI Features</a></li>
 <li>7.6 <a href="openapi-rest-advanced-http2-userguide.html">OpenAPI + HTTP/2 Performance Integration</a></li>
+<li>7.7 <a href="openapi-jpa-schema.html">JPA/Hibernate Schema Generation</a>
+<ul>
+<li>7.7.1 <a href="openapi-jpa-schema.html#annotation_mode">JPA Annotation Mode (@Entity, @Column, @ManyToOne)</a></li>
+<li>7.7.2 <a href="openapi-jpa-schema.html#hbm_xml_mode">Hibernate XML Mapping Mode (.hbm.xml)</a></li>
+<li>7.7.3 <a href="openapi-jpa-schema.html#read_write_schemas">Read vs Write Schema Generation</a></li>
+<li>7.7.4 <a href="openapi-jpa-schema.html#custom_annotations">Custom Audit Annotation Support</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="axis2config.html">Configuration
@@ -194,6 +202,15 @@ Support</a></li>
         <li><a href="mcp-examples.html#demo-2-pre-trade-risk--should-i-add-this-name">Demo 2: Pre-Trade Risk</a></li>
         <li><a href="mcp-examples.html#demo-3-convergence--how-much-compute-do-i-actually-need">Demo 3: Convergence</a></li>
         <li><a href="mcp-examples.html#full-performance-summary">Full Performance Summary (C vs Java)</a></li>
+    </ul>
+    </li>
+    <li><strong>23.8 <a href="json-pagination.html">Offset/Limit Pagination for JSON-RPC Services</a></strong>
+    <ul>
+        <li>23.8.1 <a href="json-pagination.html#overview">Overview: PaginatedResponse and PaginationRequest</a></li>
+        <li>23.8.2 <a href="json-pagination.html#wire_format">Wire Format (data + pagination metadata)</a></li>
+        <li>23.8.3 <a href="json-pagination.html#service_integration">Service Integration (DAO offset/limit pattern)</a></li>
+        <li>23.8.4 <a href="json-pagination.html#frontend_patterns">Frontend Patterns (virtual scroll, page controls, infinite scroll)</a></li>
+        <li>23.8.5 <a href="json-pagination.html#safety">Safety: maxLimit clamping and input validation</a></li>
     </ul>
     </li>
 </ul>

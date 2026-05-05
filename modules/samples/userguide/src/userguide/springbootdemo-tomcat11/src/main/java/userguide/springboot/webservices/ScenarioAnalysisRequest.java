@@ -80,7 +80,7 @@ public class ScenarioAnalysisRequest {
      */
     public static class AssetScenario {
 
-        /** Unique asset identifier (e.g., security ID or fund-asset ID). */
+        /** Unique asset identifier (e.g., a security ID). */
         private long assetId;
 
         /** Current market price in currency units. Must be > 0. */

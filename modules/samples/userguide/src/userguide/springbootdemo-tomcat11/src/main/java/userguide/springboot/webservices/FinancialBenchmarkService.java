@@ -18,6 +18,7 @@
  */
 package userguide.springboot.webservices;
 
+import org.apache.axis2.json.gson.rpc.JsonRpcFaultException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -132,13 +133,21 @@ public class FinancialBenchmarkService {
      *   already annualized, pass {@code nPeriodsPerYear=1} and read
      *   {@code portfolioVolatility} (which equals the annualized vol in
      *   that case) instead of {@code annualizedVolatility}.
+     *
+     * @throws JsonRpcFaultException (HTTP 422) if input validation fails —
+     *         e.g. missing weights, dimension mismatch, weights not summing to 1.0.
+     *         The {@link JsonRpcMessageReceiver} catches the exception (wrapped in
+     *         {@link java.lang.reflect.InvocationTargetException} from Method.invoke())
+     *         and serializes the attached {@link Axis2JsonErrorResponse} as the JSON
+     *         response body with the appropriate HTTP status code.
      */
-    public PortfolioVarianceResponse portfolioVariance(PortfolioVarianceRequest request) {
+    public PortfolioVarianceResponse portfolioVariance(PortfolioVarianceRequest request)
+            throws JsonRpcFaultException {
         String uuid = UUID.randomUUID().toString();
         String logPrefix = "FinancialBenchmarkService.portfolioVariance uuid=" + uuid + " ";
 
         if (request == null || request.getWeights() == null) {
-            return PortfolioVarianceResponse.failed(
+            throw JsonRpcFaultException.validationError(
                 "Missing required field: \"weights\" array (nAssets elements summing to 1.0).");
         }
 
@@ -146,7 +155,7 @@ public class FinancialBenchmarkService {
         if (n <= 0 || n > MAX_ASSETS) {
             String err = "n_assets=" + n + " is out of range [1, " + MAX_ASSETS + "].";
             logger.warn("{} validation failed: {}", logPrefix, err);
-            return PortfolioVarianceResponse.failed(err);
+            throw JsonRpcFaultException.validationError(err);
         }
 
         // ── Resolve covariance matrix ─────────────────────────────────────────
@@ -155,19 +164,19 @@ public class FinancialBenchmarkService {
             String err = "Missing or malformed \"covarianceMatrix\": provide a " + n + "×" + n +
                 " 2D array or a flat array of " + (long) n * n + " elements in row-major order.";
             logger.warn("{} validation failed: {}", logPrefix, err);
-            return PortfolioVarianceResponse.failed(err);
+            throw JsonRpcFaultException.validationError(err);
         }
         if (cov.length != n) {
             String err = "covarianceMatrix row count " + cov.length + " != nAssets " + n + ".";
             logger.warn("{} validation failed: {}", logPrefix, err);
-            return PortfolioVarianceResponse.failed(err);
+            throw JsonRpcFaultException.validationError(err);
         }
         for (int i = 0; i < n; i++) {
             if (cov[i] == null || cov[i].length != n) {
                 String err = "covarianceMatrix row " + i + " has " +
                     (cov[i] == null ? 0 : cov[i].length) + " columns, expected " + n + ".";
                 logger.warn("{} validation failed: {}", logPrefix, err);
-                return PortfolioVarianceResponse.failed(err);
+                throw JsonRpcFaultException.validationError(err);
             }
         }
 
@@ -201,7 +210,7 @@ public class FinancialBenchmarkService {
                 String err = "normalizeWeights=true but weights sum to " + weightSum +
                     ". Cannot normalize a zero-weight portfolio.";
                 logger.warn("{} validation failed: {}", logPrefix, err);
-                return PortfolioVarianceResponse.failed(err);
+                throw JsonRpcFaultException.validationError(err);
             }
             if (Math.abs(weightSum - 1.0) > 1e-10) {
                 for (int i = 0; i < n; i++) weights[i] /= weightSum;
@@ -214,7 +223,7 @@ public class FinancialBenchmarkService {
                     ", expected 1.0 (tolerance 1e-4). " +
                     "Pass normalizeWeights=true to rescale automatically.";
                 logger.warn("{} validation failed: {}", logPrefix, err);
-                return PortfolioVarianceResponse.failed(err);
+                throw JsonRpcFaultException.validationError(err);
             }
         }
 
@@ -322,13 +331,17 @@ public class FinancialBenchmarkService {
      *     input and produce a confidently wrong VaR.  Callers running
      *     extreme scenarios must validate inputs upstream (e.g., reject
      *     {@code σ·√T > ~20}).
+     *
+     * @throws JsonRpcFaultException (HTTP 422) if input validation fails —
+     *         e.g. null request, non-positive initialValue, negative volatility.
      */
-    public MonteCarloResponse monteCarlo(MonteCarloRequest request) {
+    public MonteCarloResponse monteCarlo(MonteCarloRequest request)
+            throws JsonRpcFaultException {
         String uuid = UUID.randomUUID().toString();
         String logPrefix = "FinancialBenchmarkService.monteCarlo uuid=" + uuid + " ";
 
         if (request == null) {
-            return MonteCarloResponse.failed("Request must not be null.");
+            throw JsonRpcFaultException.validationError("Request must not be null.");
         }
 
         int nSims = Math.min(request.getNSimulations(), MAX_SIMULATIONS);
@@ -345,11 +358,11 @@ public class FinancialBenchmarkService {
         // zero or negative value reaches here via direct field access paths
         // and must be rejected at the service boundary.
         if (initialValue <= 0.0) {
-            return MonteCarloResponse.failed(
+            throw JsonRpcFaultException.validationError(
                 "initialValue must be > 0 (GBM is undefined for non-positive starting values).");
         }
         if (sigma < 0.0) {
-            return MonteCarloResponse.failed("volatility must be >= 0.");
+            throw JsonRpcFaultException.validationError("volatility must be >= 0.");
         }
 
         // ── Pre-computed GBM constants ────────────────────────────────────────
@@ -520,13 +533,18 @@ public class FinancialBenchmarkService {
      * study (O(1) vs O(n) lookup cost) and is independent of the financial
      * math.  It exists to give callers real numbers for the data-structure
      * choice when building their own scenario analysis pipelines.
+     *
+     * @throws JsonRpcFaultException (HTTP 422) if input validation fails —
+     *         e.g. missing assets, non-positive currentPrice, probability sums
+     *         deviating from 1.0 beyond the configured tolerance.
      */
-    public ScenarioAnalysisResponse scenarioAnalysis(ScenarioAnalysisRequest request) {
+    public ScenarioAnalysisResponse scenarioAnalysis(ScenarioAnalysisRequest request)
+            throws JsonRpcFaultException {
         String uuid = UUID.randomUUID().toString();
         String logPrefix = "FinancialBenchmarkService.scenarioAnalysis uuid=" + uuid + " ";
 
         if (request == null || request.getAssets() == null || request.getAssets().isEmpty()) {
-            return ScenarioAnalysisResponse.failed(
+            throw JsonRpcFaultException.validationError(
                 "Missing required field: \"assets\" array. " +
                 "Each entry must have assetId, currentPrice, positionSize, and scenarios " +
                 "[{price, probability}].");
@@ -537,7 +555,7 @@ public class FinancialBenchmarkService {
         if (nAssets > MAX_ASSETS) {
             String err = "assets count " + nAssets + " exceeds maximum " + MAX_ASSETS + ".";
             logger.warn("{} validation failed: {}", logPrefix, err);
-            return ScenarioAnalysisResponse.failed(err);
+            throw JsonRpcFaultException.validationError(err);
         }
 
         double probTolerance = request.getProbTolerance();
@@ -572,7 +590,7 @@ public class FinancialBenchmarkService {
                     "which is undefined for non-positive currentPrice.",
                     i, asset.getAssetId(), asset.getCurrentPrice());
                 logger.warn("{} validation failed: {}", logPrefix, err);
-                return ScenarioAnalysisResponse.failed(err);
+                throw JsonRpcFaultException.validationError(err);
             }
 
             if (asset.getScenarios() == null || asset.getScenarios().isEmpty()) {
@@ -581,7 +599,7 @@ public class FinancialBenchmarkService {
                     "At least one scenario {price, probability} is required.",
                     i, asset.getAssetId());
                 logger.warn("{} validation failed: {}", logPrefix, err);
-                return ScenarioAnalysisResponse.failed(err);
+                throw JsonRpcFaultException.validationError(err);
             }
 
             if (asset.getScenarios().size() > MAX_SCENARIOS) {
@@ -591,7 +609,7 @@ public class FinancialBenchmarkService {
                     i, asset.getAssetId(),
                     asset.getScenarios().size(), MAX_SCENARIOS);
                 logger.warn("{} validation failed: {}", logPrefix, err);
-                return ScenarioAnalysisResponse.failed(err);
+                throw JsonRpcFaultException.validationError(err);
             }
 
             double probSum = 0.0;
@@ -607,7 +625,7 @@ public class FinancialBenchmarkService {
                     i, asset.getAssetId(), probSum, probTolerance,
                     asset.getScenarios().size());
                 logger.warn("{} validation failed: {}", logPrefix, err);
-                return ScenarioAnalysisResponse.failed(err);
+                throw JsonRpcFaultException.validationError(err);
             }
         }
 

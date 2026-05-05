@@ -26,6 +26,9 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.json.factory.JsonConstant;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -102,17 +105,55 @@ public class JsonUtils {
      * @return an AxisFault safe to send to the client
      */
     static AxisFault createSecureFault(Exception e, String operationName, boolean isParsingError) {
+        return createSecureFault(e, operationName, isParsingError, null);
+    }
+
+    /**
+     * Build a secure {@link AxisFault} and, when an outgoing {@link MessageContext}
+     * is available, also set the structured {@link Axis2JsonErrorResponse} as the
+     * return object with the appropriate HTTP status code. This allows the JSON
+     * formatter to serialize a clean error envelope instead of a SOAP fault XML fragment.
+     *
+     * @param e             the caught exception
+     * @param operationName the Axis2 operation being dispatched (may be null)
+     * @param isParsingError {@code true} for malformed-input IOExceptions,
+     *                       {@code false} for internal reflection/invocation failures
+     * @param outMessage    the outgoing message context (may be null for backward compat)
+     * @return an AxisFault safe to send to the client
+     */
+    static AxisFault createSecureFault(Exception e, String operationName, boolean isParsingError,
+                                        MessageContext outMessage) {
         String errorRef = UUID.randomUUID().toString();
         String opDisplay = operationName != null ? operationName : "<unknown>";
+        Axis2JsonErrorResponse errorResponse;
+        int httpStatus;
         if (isParsingError) {
+            // Bad JSON from the client → 400.  Full stack trace logged server-side;
+            // only the errorRef UUID reaches the client (CWE-209 safe).
             log.error("[errorRef=" + errorRef + "] Bad Request parsing JSON-RPC body " +
                     "for operation '" + opDisplay + "': " + e.getMessage(), e);
-            return new AxisFault("Bad Request [errorRef=" + errorRef + "]");
+            errorResponse = Axis2JsonErrorResponse.badRequest(errorRef);
+            httpStatus = 400;
         } else {
+            // Unexpected internal failure (reflection, ClassCast, NPE, etc.) → 500.
             log.error("[errorRef=" + errorRef + "] Internal error invoking operation '" +
                     opDisplay + "': " + e.getMessage(), e);
-            return new AxisFault("Internal Server Error [errorRef=" + errorRef + "]");
+            errorResponse = Axis2JsonErrorResponse.internalError(errorRef);
+            httpStatus = 500;
         }
+        if (outMessage != null) {
+            // When we have the outgoing MessageContext, set the structured error
+            // as RETURN_OBJECT so the JSON formatter serializes it as a clean
+            // JSON envelope.  Also set HTTP_RESPONSE_STATE which AxisServlet /
+            // AbstractHTTPTransportSender reads to set the actual HTTP status code.
+            // Note: we still return an AxisFault below — the caller (invokeService)
+            // throws it, but the transport will prefer the already-set RETURN_OBJECT
+            // over the fault's XML representation for JSON content types.
+            outMessage.setProperty(Constants.HTTP_RESPONSE_STATE, String.valueOf(httpStatus));
+            outMessage.setProperty(JsonConstant.RETURN_OBJECT, errorResponse);
+            outMessage.setProperty(JsonConstant.RETURN_TYPE, Axis2JsonErrorResponse.class);
+        }
+        return new AxisFault(errorResponse.getMessage());
     }
 
     public static Method getOpMethod(String methodName, Method[] methodSet) {

@@ -18,6 +18,7 @@
  */
 package userguide.springboot.webservices;
 
+import org.apache.axis2.json.gson.rpc.JsonRpcFaultException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>Input validation: null, out-of-range, malformed arrays, probability sums</li>
  *   <li>Edge cases: single asset, zero volatility, weight normalization, seeded reproducibility</li>
  *   <li>New API fields: nPeriodsPerYear, percentiles, normalizeWeights, probTolerance</li>
+ *   <li>Error contracts: validation errors throw {@link JsonRpcFaultException} with HTTP 422</li>
  * </ul>
  */
 class FinancialBenchmarkServiceTest {
@@ -51,7 +53,7 @@ class FinancialBenchmarkServiceTest {
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    void testPortfolioVariance_twoAssets_knownResult() {
+    void testPortfolioVariance_twoAssets_knownResult() throws JsonRpcFaultException {
         // 50/50 portfolio, cov = [[0.04, 0.006],[0.006, 0.09]]
         // σ²_p = 0.5²×0.04 + 2×0.5×0.5×0.006 + 0.5²×0.09 = 0.01 + 0.003 + 0.0225 = 0.0355
         PortfolioVarianceRequest req = new PortfolioVarianceRequest();
@@ -71,7 +73,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testPortfolioVariance_singleAsset() {
+    void testPortfolioVariance_singleAsset() throws JsonRpcFaultException {
         // Diagonal 1×1: σ²_p = w² × σ² = 1² × 0.04 = 0.04
         PortfolioVarianceRequest req = new PortfolioVarianceRequest();
         req.setWeights(new double[]{1.0});
@@ -85,7 +87,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testPortfolioVariance_flatMatrixFormat() {
+    void testPortfolioVariance_flatMatrixFormat() throws JsonRpcFaultException {
         // Same 2-asset test, but using flat array
         PortfolioVarianceRequest req = new PortfolioVarianceRequest();
         req.setWeights(new double[]{0.5, 0.5});
@@ -98,7 +100,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testPortfolioVariance_nPeriodsPerYear() {
+    void testPortfolioVariance_nPeriodsPerYear() throws JsonRpcFaultException {
         // Monthly data: nPeriodsPerYear=12
         PortfolioVarianceRequest req = new PortfolioVarianceRequest();
         req.setWeights(new double[]{1.0});
@@ -113,7 +115,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testPortfolioVariance_normalizeWeights_rescalesAndReports() {
+    void testPortfolioVariance_normalizeWeights_rescalesAndReports() throws JsonRpcFaultException {
         // Weights sum to 2.0 — should be normalized to {0.5, 0.5}
         PortfolioVarianceRequest req = new PortfolioVarianceRequest();
         req.setWeights(new double[]{1.0, 1.0});
@@ -130,7 +132,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testPortfolioVariance_normalizeWeights_alreadyUnit_noRescale() {
+    void testPortfolioVariance_normalizeWeights_alreadyUnit_noRescale() throws JsonRpcFaultException {
         PortfolioVarianceRequest req = new PortfolioVarianceRequest();
         req.setWeights(new double[]{0.5, 0.5});
         req.setCovarianceMatrix(new double[][]{{0.04, 0.006}, {0.006, 0.09}});
@@ -143,14 +145,15 @@ class FinancialBenchmarkServiceTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // portfolioVariance — validation
+    // portfolioVariance — validation (now throws JsonRpcFaultException / 422)
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
     void testPortfolioVariance_nullRequest() {
-        PortfolioVarianceResponse resp = service.portfolioVariance(null);
-        assertEquals("FAILED", resp.getStatus());
-        assertNotNull(resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.portfolioVariance(null));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertNotNull(ex.getErrorResponse().getErrorRef());
     }
 
     @Test
@@ -158,10 +161,11 @@ class FinancialBenchmarkServiceTest {
         PortfolioVarianceRequest req = new PortfolioVarianceRequest();
         req.setWeights(new double[FinancialBenchmarkService.MAX_ASSETS + 1]);
         // No matrix set — should fail on nAssets check first
-        PortfolioVarianceResponse resp = service.portfolioVariance(req);
-        assertEquals("FAILED", resp.getStatus());
-        assertTrue(resp.getErrorMessage().contains("out of range"),
-            "error must mention out-of-range: " + resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.portfolioVariance(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("out of range"),
+            "error must mention out-of-range: " + ex.getMessage());
     }
 
     @Test
@@ -170,10 +174,11 @@ class FinancialBenchmarkServiceTest {
         req.setWeights(new double[]{0.5, 0.5});
         // No matrix set
 
-        PortfolioVarianceResponse resp = service.portfolioVariance(req);
-        assertEquals("FAILED", resp.getStatus());
-        assertTrue(resp.getErrorMessage().contains("covarianceMatrix"),
-            "error must mention covarianceMatrix: " + resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.portfolioVariance(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("covarianceMatrix"),
+            "error must mention covarianceMatrix: " + ex.getMessage());
     }
 
     @Test
@@ -182,10 +187,11 @@ class FinancialBenchmarkServiceTest {
         req.setWeights(new double[]{0.3, 0.3}); // sum=0.6
         req.setCovarianceMatrix(new double[][]{{0.04, 0.006}, {0.006, 0.09}});
 
-        PortfolioVarianceResponse resp = service.portfolioVariance(req);
-        assertEquals("FAILED", resp.getStatus());
-        assertTrue(resp.getErrorMessage().contains("normalizeWeights"),
-            "error should suggest normalizeWeights: " + resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.portfolioVariance(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("normalizeWeights"),
+            "error should suggest normalizeWeights: " + ex.getMessage());
     }
 
     @Test
@@ -195,10 +201,11 @@ class FinancialBenchmarkServiceTest {
         req.setCovarianceMatrix(new double[][]{{0.04, 0.006}, {0.006, 0.09}});
         req.setNormalizeWeights(true);
 
-        PortfolioVarianceResponse resp = service.portfolioVariance(req);
-        assertEquals("FAILED", resp.getStatus());
-        assertTrue(resp.getErrorMessage().contains("zero-weight"),
-            "error must mention zero-weight: " + resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.portfolioVariance(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("zero-weight"),
+            "error must mention zero-weight: " + ex.getMessage());
     }
 
     @Test
@@ -207,8 +214,24 @@ class FinancialBenchmarkServiceTest {
         req.setWeights(new double[]{0.5, 0.5});
         req.setCovarianceMatrixFlat(new double[]{0.04, 0.006, 0.006}); // length 3, expected 4
 
-        PortfolioVarianceResponse resp = service.portfolioVariance(req);
-        assertEquals("FAILED", resp.getStatus());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.portfolioVariance(req));
+        assertEquals(422, ex.getHttpStatusCode());
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // portfolioVariance — error response structure
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    void testPortfolioVariance_errorResponse_hasStructuredFields() {
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.portfolioVariance(null));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertEquals("VALIDATION_ERROR", ex.getErrorResponse().getError());
+        assertNotNull(ex.getErrorResponse().getErrorRef(), "errorRef UUID must be present");
+        assertNotNull(ex.getErrorResponse().getTimestamp(), "timestamp must be present");
+        assertNull(ex.getErrorResponse().getRetryAfter(), "retryAfter should be null for 422");
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -216,7 +239,7 @@ class FinancialBenchmarkServiceTest {
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    void testMonteCarlo_seededRunIsReproducible() {
+    void testMonteCarlo_seededRunIsReproducible() throws JsonRpcFaultException {
         MonteCarloRequest req1 = new MonteCarloRequest();
         req1.setNSimulations(1000);
         req1.setRandomSeed(42L);
@@ -234,7 +257,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testMonteCarlo_defaults_succeed() {
+    void testMonteCarlo_defaults_succeed() throws JsonRpcFaultException {
         MonteCarloResponse resp = service.monteCarlo(new MonteCarloRequest());
         assertEquals("SUCCESS", resp.getStatus());
         assertTrue(resp.getMeanFinalValue() > 0, "mean final value should be positive");
@@ -242,7 +265,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testMonteCarlo_zeroVolatility_allPathsEqual() {
+    void testMonteCarlo_zeroVolatility_allPathsEqual() throws JsonRpcFaultException {
         MonteCarloRequest req = new MonteCarloRequest();
         req.setNSimulations(100);
         req.setVolatility(0.0);
@@ -258,7 +281,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testMonteCarlo_customPercentiles() {
+    void testMonteCarlo_customPercentiles() throws JsonRpcFaultException {
         MonteCarloRequest req = new MonteCarloRequest();
         req.setNSimulations(1000);
         req.setRandomSeed(7L);
@@ -278,7 +301,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testMonteCarlo_nPeriodsPerYear_affectsDt() {
+    void testMonteCarlo_nPeriodsPerYear_affectsDt() throws JsonRpcFaultException {
         // Same parameters, different nPeriodsPerYear: monthly (12) vs daily (252)
         // Monthly has much larger per-step vol (σ×√(1/12) vs σ×√(1/252))
         // so final value distribution should be wider
@@ -305,7 +328,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testMonteCarlo_capsAtMaxSimulations() {
+    void testMonteCarlo_capsAtMaxSimulations() throws JsonRpcFaultException {
         MonteCarloRequest req = new MonteCarloRequest();
         req.setNSimulations(Integer.MAX_VALUE); // way over limit
 
@@ -323,10 +346,42 @@ class FinancialBenchmarkServiceTest {
         MonteCarloRequest req = new MonteCarloRequest();
         req.setVolatility(-0.1);
 
-        MonteCarloResponse resp = service.monteCarlo(req);
-        assertEquals("FAILED", resp.getStatus());
-        assertTrue(resp.getErrorMessage().contains("volatility"),
-            "error must mention volatility: " + resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.monteCarlo(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("volatility"),
+            "error must mention volatility: " + ex.getMessage());
+    }
+
+    @Test
+    void testMonteCarlo_nullRequest_fails() {
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.monteCarlo(null));
+        assertEquals(422, ex.getHttpStatusCode());
+    }
+
+    @Test
+    void testMonteCarlo_negativeInitialValue_fails() {
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setInitialValue(-100.0);
+
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.monteCarlo(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("initialValue"),
+            "error must mention initialValue: " + ex.getMessage());
+    }
+
+    @Test
+    void testMonteCarlo_zeroInitialValue_fails() {
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setInitialValue(0.0);
+
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.monteCarlo(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("initialValue"),
+            "error must mention initialValue for zero: " + ex.getMessage());
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -334,7 +389,7 @@ class FinancialBenchmarkServiceTest {
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    void testScenarioAnalysis_singleAsset_knownResult() {
+    void testScenarioAnalysis_singleAsset_knownResult() throws JsonRpcFaultException {
         // Asset: price=100, position=10 shares
         // Scenario 1: price=120, prob=0.6  → gain = 20×10 = 200
         // Scenario 2: price=80,  prob=0.4  → loss = 20×10 = 200
@@ -368,7 +423,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testScenarioAnalysis_hashLookup_fasterThanLinear_largePortfolio() {
+    void testScenarioAnalysis_hashLookup_fasterThanLinear_largePortfolio() throws JsonRpcFaultException {
         // Build 200-asset portfolio to make timing difference detectable
         List<ScenarioAnalysisRequest.AssetScenario> assets = new java.util.ArrayList<>();
         for (int i = 0; i < 200; i++) {
@@ -398,7 +453,7 @@ class FinancialBenchmarkServiceTest {
     }
 
     @Test
-    void testScenarioAnalysis_useHashLookupFalse_skipsHashBenchmark() {
+    void testScenarioAnalysis_useHashLookupFalse_skipsHashBenchmark() throws JsonRpcFaultException {
         ScenarioAnalysisRequest.AssetScenario asset = buildSimpleAsset(1L, 100.0, 1.0, 0.5, 0.5);
         ScenarioAnalysisRequest req = new ScenarioAnalysisRequest();
         req.setAssets(List.of(asset));
@@ -416,8 +471,9 @@ class FinancialBenchmarkServiceTest {
 
     @Test
     void testScenarioAnalysis_nullRequest_fails() {
-        ScenarioAnalysisResponse resp = service.scenarioAnalysis(null);
-        assertEquals("FAILED", resp.getStatus());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.scenarioAnalysis(null));
+        assertEquals(422, ex.getHttpStatusCode());
     }
 
     @Test
@@ -425,10 +481,11 @@ class FinancialBenchmarkServiceTest {
         ScenarioAnalysisRequest req = new ScenarioAnalysisRequest();
         req.setAssets(List.of());
 
-        ScenarioAnalysisResponse resp = service.scenarioAnalysis(req);
-        assertEquals("FAILED", resp.getStatus());
-        assertTrue(resp.getErrorMessage().contains("assets"),
-            "error must mention assets: " + resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.scenarioAnalysis(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("assets"),
+            "error must mention assets: " + ex.getMessage());
     }
 
     @Test
@@ -447,14 +504,15 @@ class FinancialBenchmarkServiceTest {
         ScenarioAnalysisRequest req = new ScenarioAnalysisRequest();
         req.setAssets(List.of(asset));
 
-        ScenarioAnalysisResponse resp = service.scenarioAnalysis(req);
-        assertEquals("FAILED", resp.getStatus());
-        assertTrue(resp.getErrorMessage().contains("probabilities sum"),
-            "error must mention probability sum: " + resp.getErrorMessage());
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.scenarioAnalysis(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("probabilities sum"),
+            "error must mention probability sum: " + ex.getMessage());
     }
 
     @Test
-    void testScenarioAnalysis_customProbTolerance_acceptsSlightlyOff() {
+    void testScenarioAnalysis_customProbTolerance_acceptsSlightlyOff() throws JsonRpcFaultException {
         // Probabilities sum to 0.999 — rejected with default 1e-4, accepted with 0.002
         ScenarioAnalysisRequest.Scenario s1 = new ScenarioAnalysisRequest.Scenario();
         s1.setPrice(110.0); s1.setProbability(0.5);
@@ -470,7 +528,8 @@ class FinancialBenchmarkServiceTest {
         // Default tolerance (1e-4) — should fail
         ScenarioAnalysisRequest reqTight = new ScenarioAnalysisRequest();
         reqTight.setAssets(List.of(asset));
-        assertEquals("FAILED", service.scenarioAnalysis(reqTight).getStatus(),
+        assertThrows(JsonRpcFaultException.class,
+            () -> service.scenarioAnalysis(reqTight),
             "tight tolerance should reject sum=0.999");
 
         // Loose tolerance (0.002) — should succeed
@@ -490,15 +549,20 @@ class FinancialBenchmarkServiceTest {
         MonteCarloRequest req = new MonteCarloRequest();
         req.setNSimulations(0);       // invalid → default 10,000
         req.setNPeriods(-1);          // invalid → default 252
-        req.setInitialValue(0.0);     // invalid → default 1,000,000
         req.setNPeriodsPerYear(0);    // invalid → default 252
         req.setPercentiles(null);     // null → default {0.01, 0.05}
 
         assertEquals(10_000, req.getNSimulations());
         assertEquals(252, req.getNPeriods());
-        assertEquals(1_000_000.0, req.getInitialValue(), 1e-9);
         assertEquals(252, req.getNPeriodsPerYear());
         assertArrayEquals(new double[]{0.01, 0.05}, req.getPercentiles(), 1e-9);
+
+        // initialValue getter returns the raw value (no clamping); the service
+        // itself validates non-positive values and throws JsonRpcFaultException.
+        // The field initializer supplies the default for the "never set" case.
+        MonteCarloRequest fresh = new MonteCarloRequest();
+        assertEquals(1_000_000.0, fresh.getInitialValue(), 1e-9,
+            "fresh request should have default initialValue=1,000,000");
     }
 
     // ═══════════════════════════════════════════════════════════════════════

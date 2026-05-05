@@ -77,7 +77,19 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
         try {
             int paramCount = paramClasses.length;
             JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount, enableJSONOnly);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
+            // Unwrap the ITE to log the real cause, not the reflection wrapper.
+            Throwable cause = e.getCause();
+            Exception rootCause;
+            if (cause instanceof Exception) {
+                rootCause = (Exception) cause;
+            } else if (cause != null) {
+                rootCause = new RuntimeException("Service threw non-Exception Throwable", cause);
+            } else {
+                rootCause = e;
+            }
+            throw JsonUtils.createSecureFault(rootCause, operation_name, false);
+        } catch (IllegalAccessException e) {
             throw JsonUtils.createSecureFault(e, operation_name, false);
         } catch (IOException e) {
             throw JsonUtils.createSecureFault(e, operation_name, true);

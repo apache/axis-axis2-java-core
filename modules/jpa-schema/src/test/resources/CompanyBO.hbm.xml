@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.example.bo">
+
+    <class name="CompanyBO" table="`COMPANY`"
+           dynamic-insert="true"
+           optimistic-lock="version"
+           lazy="true"
+           batch-size="300">
+
+        <id name="id" type="java.lang.Long" column="`companyID`">
+            <generator class="native"/>
+        </id>
+
+        <version name="version" type="java.lang.Long" access="field" column="OBJ_VERSION"/>
+
+        <property name="name" column="`name`"
+                  type="java.lang.String"
+                  not-null="true"/>
+
+        <property name="shortName" column="`shortName`"
+                  type="java.lang.String"
+                  not-null="false"/>
+
+        <property name="created" column="`created`"
+                  type="timestamp" not-null="true" length="6"/>
+
+        <property name="require2FactorAuth" column="`require2FactorAuth`"
+                  type="java.lang.Boolean" not-null="false"/>
+
+        <property name="maxUsers" column="`maxUsers`"
+                  type="java.lang.Integer" not-null="false"/>
+
+        <property name="annualFee" column="`annualFee`"
+                  type="java.lang.Double" not-null="false"/>
+
+        <property name="deleted" type="java.lang.Boolean">
+            <column name="deleted" not-null="true" default="0"/>
+        </property>
+
+        <many-to-one
+            name="createdUser"
+            column="`createdUserID`"
+            class="com.example.bo.UserBO"
+            not-null="true"/>
+
+        <many-to-one
+            name="passwordPolicy"
+            class="com.example.bo.PasswordPolicyBO"
+            column="`passwordPolicyID`"
+            not-null="false"/>
+
+        <set name="departments" table="`Department`"
+             inverse="true" cascade="all-delete-orphan" lazy="true">
+            <key column="`companyID`"/>
+            <one-to-many class="com.example.bo.DepartmentBO"/>
+        </set>
+
+        <component name="companyAddress" class="com.example.bo.component.Address">
+            <property name="address1" type="java.lang.String" column="`company_address1`" not-null="false"/>
+            <property name="city" type="java.lang.String" column="`company_city`" not-null="false"/>
+            <property name="state" type="java.lang.String" column="`company_state`" not-null="false"/>
+        </component>
+
+    </class>
+
+</hibernate-mapping>

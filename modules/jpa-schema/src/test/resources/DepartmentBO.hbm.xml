@@ -1,0 +1,213 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<!-- Sanitized production-grade HBM mapping: 70+ fields, multiple types,
+     collections, components, sql-type overrides, nested column defaults.
+     Tests that the parser handles real-world complexity. -->
+
+<hibernate-mapping package="com.example.bo">
+	<class name="DepartmentBO"
+               table="`DEPARTMENT`"
+               dynamic-update="false"
+               dynamic-insert="true"
+               select-before-update="false"
+               optimistic-lock="version"
+               lazy="true"
+               batch-size="300"
+        >
+
+	<id name="id" type="java.lang.Long" column="`departmentID`">
+            <generator class="native">
+                ${department_departmentid_seq}
+            </generator>
+	</id>
+        <version name="version" type="java.lang.Long" access="field" column="OBJ_VERSION"/>
+
+	<property name="name" column="`name`"
+                type="java.lang.String"
+		not-null="true" />
+
+	<property name="codeName" column="`codeName`"
+                type="java.lang.String"
+		not-null="false" />
+
+	<property name="created" column="`created`"
+                type="timestamp" not-null="true" length="6" />
+
+	<property name="modified" column="`modified`"
+                type="timestamp" not-null="true" length="6" />
+
+	<property name="trialBegin" column="`trialBegin`"
+                type="timestamp" not-null="false" length="6" />
+
+	<property name="trialEnd" column="`trialEnd`"
+                type="timestamp" not-null="false" length="6" />
+
+	<property name="active" column="`active`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="restrictDetails" column="`restrictDetails`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="dataDeletionRequested" column="`dataDeletionRequested`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="historicalDataApproved" column="`historicalDataApproved`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="historicalDataOptions" column="`historicalDataOptions`"
+		type="text" not-null="false" />
+
+	<property name="aggregateJobRunning" column="`aggregateJobRunning`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="aggregateJobQueued" column="`aggregateJobQueued`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="useBeta" column="`useBeta`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="isReportable" column="`isReportable`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<property name="ssoEnabled" column="`ssoEnabled`"
+		type="java.lang.Boolean" not-null="false" />
+
+	<!-- sql-type override: nvarchar(max) — no length constraint -->
+	<property name="ssoMetadataXML" type="java.lang.String">
+                <column name="`ssoMetadataXML`" sql-type="nvarchar(max)" not-null="false" />
+	</property>
+
+	<property name="ssoLoginURL" column="`ssoLoginURL`"
+		type="java.lang.String" not-null="false" length="8000" />
+
+	<property name="ssoLogoutURL" column="`ssoLogoutURL`"
+		type="java.lang.String" not-null="false" length="8000" />
+
+	<property name="usageScore" column="`usageScore`"
+             type="java.lang.Double" not-null="false" />
+
+	<property name="loginCount1Week" column="`loginCount1Week`"
+		type="java.lang.Long" not-null="false" />
+	<property name="loginCount4Week" column="`loginCount4Week`"
+		type="java.lang.Long" not-null="false" />
+	<property name="loginCount12Week" column="`loginCount12Week`"
+		type="java.lang.Long" not-null="false" />
+	<property name="loginCount52Week" column="`loginCount52Week`"
+		type="java.lang.Long" not-null="false" />
+
+	<property name="loginAvg1Week" column="`loginAvg1Week`"
+                type="java.lang.Double" not-null="false" />
+	<property name="loginAvg4Week" column="`loginAvg4Week`"
+                type="java.lang.Double" not-null="false" />
+	<property name="loginAvg12Week" column="`loginAvg12Week`"
+                type="java.lang.Double" not-null="false" />
+	<property name="loginAvg52Week" column="`loginAvg52Week`"
+                type="java.lang.Double" not-null="false" />
+
+	<property name="userCount1Week" column="`userCount1Week`"
+		type="java.lang.Long" not-null="false" />
+	<property name="userCount4Week" column="`userCount4Week`"
+		type="java.lang.Long" not-null="false" />
+
+	<property name="nonLocked" column="`nonLocked`"
+		type="java.lang.Boolean" not-null="true" />
+
+	<property name="dataModified" column="`dataModified`"
+                type="timestamp" not-null="false" length="6" />
+
+	<property name="modifiedAppInstance" column="`modifiedAppInstance`"
+		type="java.lang.String" not-null="false" />
+
+	<property name="createdDBUserName" column="`createdDBUserName`"
+		type="java.lang.String" not-null="false" />
+
+	<property name="modifiedDBUserName" column="`modifiedDBUserName`"
+		type="java.lang.String" not-null="false" />
+
+	<property name="require2FactorAuth" column="`require2FactorAuth`"
+                type="java.lang.Boolean" not-null="false" />
+
+	<property name="deleted" type="java.lang.Boolean">
+            <column name="deleted" not-null="true" default="0"/>
+        </property>
+
+	<property name="configurationOverrides" column="`configurationOverrides`"
+		type="text" not-null="false" />
+
+	<property name="layoutOverrides" column="`layoutOverrides`"
+		type="text" not-null="false" />
+
+	<property name="customMessage" column="`customMessage`"
+		type="text" not-null="false" />
+
+	<property name="customMessageExpiration" column="`customMessageExpiration`"
+                type="timestamp" not-null="false" length="6" />
+
+	<!-- Multiple many-to-one relationships -->
+        <many-to-one name="createdUser" column="`createdUserID`"
+                class="com.example.bo.UserBO" not-null="true"/>
+
+        <many-to-one name="modifiedUser" column="`modifiedUserID`"
+                class="com.example.bo.UserBO" not-null="true"/>
+
+        <many-to-one name="company" column="`companyID`"
+                class="com.example.bo.CompanyBO"
+                cascade="save-update" not-null="true"/>
+
+        <many-to-one name="passwordPolicy" column="`passwordPolicyID`"
+                class="com.example.bo.PasswordPolicyBO"
+                cascade="save-update" not-null="false"/>
+
+        <!-- Embedded component -->
+        <component name="departmentAddress" class="com.example.bo.component.Address">
+            <property name="address1" type="java.lang.String"
+                    column="`department_address1`" not-null="false"/>
+            <property name="address2" type="java.lang.String"
+                    column="`department_address2`" not-null="false"/>
+            <property name="city" type="java.lang.String"
+                    column="`department_city`" not-null="false"/>
+            <property name="state" type="java.lang.String"
+                    column="`department_state`" not-null="false"/>
+            <property name="zip" type="java.lang.Integer"
+                    column="`department_zip`" not-null="false"/>
+            <property name="country" type="java.lang.String"
+                    column="`department_country`" not-null="false"/>
+            <property name="phone" type="java.lang.String"
+                    column="`department_phone`" not-null="false"/>
+        </component>
+
+        <!-- Collection mappings (one-to-many via <set>) -->
+        <set name="ipAddressRanges" fetch="subselect" table="`IPADDRESSRANGE`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`departmentID`"/>
+            <one-to-many class="com.example.bo.IPAddressRangeBO"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+        <set name="users" fetch="subselect" table="`APPUSER`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`departmentID`"/>
+            <one-to-many class="com.example.bo.UserBO"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+        <set name="customFields" fetch="subselect" table="`CUSTOMFIELD`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`departmentID`"/>
+            <one-to-many class="com.example.bo.CustomFieldBO"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+        <set name="portfolios" fetch="subselect" table="`PORTFOLIO`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`departmentID`"/>
+            <one-to-many class="com.example.bo.PortfolioBO"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+	<filter name="deletedFilter"/>
+	</class>
+</hibernate-mapping>

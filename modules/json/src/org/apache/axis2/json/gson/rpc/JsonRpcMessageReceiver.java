@@ -20,6 +20,7 @@ package org.apache.axis2.json.gson.rpc;
 
 import com.google.gson.stream.JsonReader;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.json.gson.GsonXMLStreamReader;
@@ -35,7 +36,7 @@ import java.lang.reflect.Method;
 
 public class JsonRpcMessageReceiver extends RPCMessageReceiver {
     private static final Log log = LogFactory.getLog(RPCMessageReceiver.class);
-    
+
     @Override
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
         Object tempObj = inMessage.getProperty(JsonConstant.IS_JSON_STREAM);
@@ -81,10 +82,52 @@ public class JsonRpcMessageReceiver extends RPCMessageReceiver {
             outMes.setProperty(JsonConstant.RETURN_OBJECT, retObj);
             outMes.setProperty(JsonConstant.RETURN_TYPE, method.getReturnType());
 
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw JsonUtils.createSecureFault(e, operation_name, false);
+        } catch (InvocationTargetException e) {
+            // Method.invoke() wraps any exception thrown by the service method
+            // in InvocationTargetException.  Unwrap to inspect the real cause.
+            Throwable cause = e.getCause();
+
+            if (cause instanceof JsonRpcFaultException) {
+                // ── Structured error path (new) ──────────────────────────────
+                // Service explicitly signaled a typed error (e.g. validation 422).
+                // Set the HTTP status code and put the error response as RETURN_OBJECT
+                // so the JSON formatter serializes it as a normal JSON body — NOT
+                // through the SOAP fault path (which would produce XML-in-JSON).
+                // The transport layer (AxisServlet / AbstractHTTPTransportSender)
+                // reads HTTP_RESPONSE_STATE from the MessageContext to set the
+                // actual HTTP response code.
+                JsonRpcFaultException fault = (JsonRpcFaultException) cause;
+                Axis2JsonErrorResponse errorResponse = fault.getErrorResponse();
+                log.warn("[errorRef=" + errorResponse.getErrorRef() + "] " +
+                        errorResponse.getError() + " in operation '" + operation_name +
+                        "': " + errorResponse.getMessage());
+                outMes.setProperty(Constants.HTTP_RESPONSE_STATE,
+                        String.valueOf(fault.getHttpStatusCode()));
+                outMes.setProperty(JsonConstant.RETURN_OBJECT, errorResponse);
+                outMes.setProperty(JsonConstant.RETURN_TYPE, Axis2JsonErrorResponse.class);
+            } else {
+                // ── Opaque error path (existing behavior) ────────────────────
+                // Unexpected exception from the service — create a CWE-209-safe
+                // AxisFault with only an errorRef visible to the client.
+                // Log the root cause (unwrapped from ITE), not the wrapper.
+                Exception rootCause;
+                if (cause instanceof Exception) {
+                    rootCause = (Exception) cause;
+                } else if (cause != null) {
+                    // e.g. an Error — wrap so createSecureFault can log it
+                    rootCause = new RuntimeException("Service threw non-Exception Throwable", cause);
+                } else {
+                    // cause is null — fall back to the ITE itself to preserve stack trace
+                    rootCause = e;
+                }
+                throw JsonUtils.createSecureFault(rootCause, operation_name, false, outMes);
+            }
+        } catch (IllegalAccessException e) {
+            // Reflection access denied — should not happen in normal operation
+            throw JsonUtils.createSecureFault(e, operation_name, false, outMes);
         } catch (IOException e) {
-            throw JsonUtils.createSecureFault(e, operation_name, true);
+            // Malformed JSON input — parsing failed before the service was invoked
+            throw JsonUtils.createSecureFault(e, operation_name, true, outMes);
         }
     }
 }
