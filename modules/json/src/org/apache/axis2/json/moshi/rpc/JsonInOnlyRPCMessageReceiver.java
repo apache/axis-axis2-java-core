@@ -73,6 +73,10 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
         Class implClass = serviceObj.getClass();
         Method[] allMethods = implClass.getDeclaredMethods();
         Method method = JsonUtils.getOpMethod(operation_name, allMethods);
+        if (method == null) {
+            throw new AxisFault("Operation '" + operation_name
+                    + "' not found on service class " + implClass.getName());
+        }
         Class[] paramClasses = method.getParameterTypes();
         try {
             int paramCount = paramClasses.length;

@@ -337,10 +337,10 @@ public class PaginatedResponseTest {
         // Scenario: a lookup/reference table (e.g. list of 15 departments).
         // No pagination needed — return the full set with hasMore=false.
         List<String> departments = Arrays.asList(
-                "Equity Long/Short", "Fixed Income", "Macro", "Quant",
-                "Event Driven", "Multi-Strategy", "Credit", "Real Assets",
-                "Private Equity", "Venture", "Commodities", "FX",
-                "Emerging Markets", "Infrastructure", "Insurance-Linked");
+                "Department A", "Department B", "Department C", "Department D",
+                "Department E", "Department F", "Department G", "Department H",
+                "Department I", "Department J", "Department K", "Department L",
+                "Department M", "Department N", "Department O");
 
         PaginatedResponse<String> resp = PaginatedResponse.unpaginated(departments);
 
