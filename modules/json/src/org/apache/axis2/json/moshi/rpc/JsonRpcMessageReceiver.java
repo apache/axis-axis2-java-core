@@ -20,8 +20,11 @@ package org.apache.axis2.json.moshi.rpc;
 
 import com.squareup.moshi.JsonReader;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.json.gson.rpc.Axis2JsonErrorResponse;
+import org.apache.axis2.json.gson.rpc.JsonRpcFaultException;
 import org.apache.axis2.json.moshi.MoshiXMLStreamReader;
 import org.apache.axis2.json.factory.JsonConstant;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
@@ -35,7 +38,7 @@ import java.lang.reflect.Method;
 
 public class JsonRpcMessageReceiver extends RPCMessageReceiver {
     private static final Log log = LogFactory.getLog(RPCMessageReceiver.class);
-    
+
     @Override
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
         Object tempObj = inMessage.getProperty(JsonConstant.IS_JSON_STREAM);
@@ -69,7 +72,6 @@ public class JsonRpcMessageReceiver extends RPCMessageReceiver {
     }
 
     public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name, MessageContext outMes, String enableJSONOnly) throws AxisFault {
-        String msg;
         Class implClass = serviceObj.getClass();
         Method[] allMethods = implClass.getDeclaredMethods();
         Method method = JsonUtils.getOpMethod(operation_name, allMethods);
@@ -82,22 +84,43 @@ public class JsonRpcMessageReceiver extends RPCMessageReceiver {
             outMes.setProperty(JsonConstant.RETURN_OBJECT, retObj);
             outMes.setProperty(JsonConstant.RETURN_TYPE, method.getReturnType());
 
-        } catch (IllegalAccessException e) {
-            msg = "Does not have access to " +
-                    "the definition of the specified class, field, method or constructor";
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
-
         } catch (InvocationTargetException e) {
-            msg = "Exception occurred while trying to invoke service method " +
-                    (method != null ? method.getName() : "null");
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
+            // Method.invoke() wraps any exception thrown by the service method
+            // in InvocationTargetException.  Unwrap to inspect the real cause.
+            Throwable cause = e.getCause();
+
+            if (cause instanceof JsonRpcFaultException) {
+                // ── Structured error path ────────────────────────────────────
+                // Service explicitly signaled a typed error (e.g. validation 422).
+                // Set the HTTP status code and put the error response as RETURN_OBJECT
+                // so the Moshi formatter serializes it as a normal JSON body — NOT
+                // through the SOAP fault path.
+                JsonRpcFaultException fault = (JsonRpcFaultException) cause;
+                Axis2JsonErrorResponse errorResponse = fault.getErrorResponse();
+                log.warn("[errorRef=" + errorResponse.getErrorRef() + "] " +
+                        errorResponse.getError() + " in operation '" + operation_name +
+                        "': " + errorResponse.getMessage());
+                outMes.setProperty(Constants.HTTP_RESPONSE_STATE,
+                        String.valueOf(fault.getHttpStatusCode()));
+                outMes.setProperty(JsonConstant.RETURN_OBJECT, errorResponse);
+                outMes.setProperty(JsonConstant.RETURN_TYPE, Axis2JsonErrorResponse.class);
+            } else {
+                // ── Opaque error path ────────────────────────────────────────
+                // Unexpected exception — create a CWE-209-safe AxisFault.
+                Exception rootCause;
+                if (cause instanceof Exception) {
+                    rootCause = (Exception) cause;
+                } else if (cause != null) {
+                    rootCause = new RuntimeException("Service threw non-Exception Throwable", cause);
+                } else {
+                    rootCause = e;
+                }
+                throw JsonUtils.createSecureFault(rootCause, operation_name, false, outMes);
+            }
+        } catch (IllegalAccessException e) {
+            throw JsonUtils.createSecureFault(e, operation_name, false, outMes);
         } catch (IOException e) {
-            msg = "Exception occur while encording or " +
-                    "access to the input string at the JsonRpcMessageReceiver";
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
+            throw JsonUtils.createSecureFault(e, operation_name, true, outMes);
         }
     }
 }

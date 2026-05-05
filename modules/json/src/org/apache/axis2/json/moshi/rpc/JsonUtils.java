@@ -28,6 +28,12 @@ import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.gson.rpc.Axis2JsonErrorResponse;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -36,6 +42,7 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import jakarta.annotation.Nullable;
 
 
@@ -145,6 +152,50 @@ public class JsonUtils {
         }
         log.error("JsonUtils.getOpMethod() returning null, cannot find methodName: " +methodName+ " , from methodSet.length: " + methodSet.length);
         return null;
+    }
+
+    /**
+     * Build a secure {@link AxisFault} for any unexpected failure in the Moshi JSON-RPC
+     * message receivers.  Mirrors the Gson equivalent in
+     * {@link org.apache.axis2.json.gson.rpc.JsonUtils#createSecureFault}.
+     *
+     * <p>The full context is logged server-side under an opaque correlation ID;
+     * only {@code "Bad Request [errorRef=<uuid>]"} or
+     * {@code "Internal Server Error [errorRef=<uuid>]"} is returned to the caller.
+     * This prevents information disclosure (CWE-209).
+     */
+    static AxisFault createSecureFault(Exception e, String operationName, boolean isParsingError) {
+        return createSecureFault(e, operationName, isParsingError, null);
+    }
+
+    /**
+     * Build a secure {@link AxisFault} and, when an outgoing {@link MessageContext}
+     * is available, also set the structured {@link Axis2JsonErrorResponse} as the
+     * return object with the appropriate HTTP status code.
+     */
+    static AxisFault createSecureFault(Exception e, String operationName, boolean isParsingError,
+                                        MessageContext outMessage) {
+        String errorRef = UUID.randomUUID().toString();
+        String opDisplay = operationName != null ? operationName : "<unknown>";
+        Axis2JsonErrorResponse errorResponse;
+        int httpStatus;
+        if (isParsingError) {
+            log.error("[errorRef=" + errorRef + "] Bad Request parsing JSON-RPC body " +
+                    "for operation '" + opDisplay + "': " + e.getMessage(), e);
+            errorResponse = Axis2JsonErrorResponse.badRequest(errorRef);
+            httpStatus = 400;
+        } else {
+            log.error("[errorRef=" + errorRef + "] Internal error invoking operation '" +
+                    opDisplay + "': " + e.getMessage(), e);
+            errorResponse = Axis2JsonErrorResponse.internalError(errorRef);
+            httpStatus = 500;
+        }
+        if (outMessage != null) {
+            outMessage.setProperty(Constants.HTTP_RESPONSE_STATE, String.valueOf(httpStatus));
+            outMessage.setProperty(JsonConstant.RETURN_OBJECT, errorResponse);
+            outMessage.setProperty(JsonConstant.RETURN_TYPE, Axis2JsonErrorResponse.class);
+        }
+        return new AxisFault(errorResponse.getMessage());
     }
 
 }

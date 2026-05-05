@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
 
 public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
     private static final Log log = LogFactory.getLog(JsonInOnlyRPCMessageReceiver.class);
-    
+
     @Override
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
         Object tempObj = inMessage.getProperty(JsonConstant.IS_JSON_STREAM);
@@ -70,7 +70,6 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
     }
 
     public void invokeService(JsonReader jsonReader, Object serviceObj, String operation_name, String enableJSONOnly) throws AxisFault {
-        String msg;
         Class implClass = serviceObj.getClass();
         Method[] allMethods = implClass.getDeclaredMethods();
         Method method = JsonUtils.getOpMethod(operation_name, allMethods);
@@ -78,22 +77,22 @@ public class JsonInOnlyRPCMessageReceiver extends RPCInOnlyMessageReceiver {
         try {
             int paramCount = paramClasses.length;
             JsonUtils.invokeServiceClass(jsonReader, serviceObj, method, paramClasses, paramCount, enableJSONOnly);
-        } catch (IllegalAccessException e) {
-            msg = "Does not have access to " +
-                    "the definition of the specified class, field, method or constructor";
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
-
         } catch (InvocationTargetException e) {
-            msg = "Exception occurred while trying to invoke service method " +
-                    (method != null ? method.getName() : "null");
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
+            // Unwrap the ITE to log the real cause, not the reflection wrapper.
+            Throwable cause = e.getCause();
+            Exception rootCause;
+            if (cause instanceof Exception) {
+                rootCause = (Exception) cause;
+            } else if (cause != null) {
+                rootCause = new RuntimeException("Service threw non-Exception Throwable", cause);
+            } else {
+                rootCause = e;
+            }
+            throw JsonUtils.createSecureFault(rootCause, operation_name, false);
+        } catch (IllegalAccessException e) {
+            throw JsonUtils.createSecureFault(e, operation_name, false);
         } catch (IOException e) {
-            msg = "Exception occur while encording or " +
-                    "access to the input string at the JsonRpcMessageReceiver";
-            log.error(msg, e);
-            throw AxisFault.makeFault(e);
+            throw JsonUtils.createSecureFault(e, operation_name, true);
         }
     }
 }
