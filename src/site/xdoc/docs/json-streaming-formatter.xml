@@ -38,7 +38,7 @@
         their respective base formatters. No service code changes are required.</p>
         </section>
 
-        <section name="Problem: Large HTTP Responses and Reverse Proxies">
+        <section name="Problem - Large HTTP Responses and Reverse Proxies">
         <p>When an Axis2 service returns a large JSON response (hundreds of MB),
         the default formatter serializes the entire response into memory before
         writing it to the wire. A reverse proxy (nginx, AWS ALB, or similar) may

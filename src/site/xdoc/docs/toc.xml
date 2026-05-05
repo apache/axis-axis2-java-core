@@ -58,8 +58,8 @@ Guide</a></li>
 <ul>
 <li>7.1 <a href="openapi-rest-userguide.html#Introduction">Getting Started with OpenAPI</a></li>
 <li>7.2 <a href="openapi-rest-userguide.html#OpenAPI_Integration_Features">OpenAPI Integration Features</a></li>
-<li>7.3 <a href="openapi-rest-userguide.html#Samples">Complete Sample Application</a></li>
-<li>7.4 <a href="openapi-rest-userguide.html#Swagger_UI">Interactive Swagger UI</a></li>
+<li>7.3 <a href="openapi-rest-userguide.html#Sample_Services_Overview">Complete Sample Application</a></li>
+<li>7.4 <a href="openapi-rest-userguide.html#Interactive_Swagger_UI">Interactive Swagger UI</a></li>
 <li>7.5 <a href="openapi-rest-advanced-userguide.html">Advanced Enterprise OpenAPI Features</a></li>
 <li>7.6 <a href="openapi-rest-advanced-http2-userguide.html">OpenAPI + HTTP/2 Performance Integration</a></li>
 <li>7.7 <a href="openapi-jpa-schema.html">JPA/Hibernate Schema Generation</a>
@@ -91,11 +91,11 @@ Administrator's Guide</a></li>
 <li>12a.6 <a href="spring-boot-starter.html#what_stays">What Stays in Your Application</a></li>
 <li>12a.7 <a href="spring-boot-starter.html#openapi_mcp">OpenAPI and MCP Support</a></li>
 <li>12a.8 <a href="spring-boot-starter.html#migration">Migration from Manual Configuration</a></li>
-<li>12a.9 <a href="spring-boot-starter.html#containers">Container Support</a></li>
+<li>12a.9 <a href="spring-boot-starter.html#Container_matrix">Container Support</a></li>
 </ul>
 </li>
 <li><a href="modules.html">ModulesGuide</a></li>
-<li><a href="clustering-guide.html">Clustering Guide</a></li>
+<!-- Clustering removed: AXIS2-6107 -->
 <li>ADB Data Binding
 <ul>
 <li>14.1 <a href="adb/adb-howto.html">Architecture</a></li>
@@ -157,8 +157,8 @@ Support</a></li>
     <li><strong>23.3 <a href="openapi-rest-userguide.html">OpenAPI REST with JSON Support</a></strong>
     <ul>
         <li><a href="openapi-rest-userguide.html#OpenAPI_Integration_Features">Automatic OpenAPI 3.0.1 Generation</a></li>
-        <li><a href="openapi-rest-userguide.html#Samples">Complete JSON REST API Examples</a></li>
-        <li><a href="openapi-rest-userguide.html#Swagger_UI">Interactive API Testing with Swagger UI</a></li>
+        <li><a href="openapi-rest-userguide.html#Sample_Services_Overview">Complete JSON REST API Examples</a></li>
+        <li><a href="openapi-rest-userguide.html#Interactive_Swagger_UI">Interactive API Testing with Swagger UI</a></li>
         <li><a href="openapi-rest-advanced-userguide.html">Advanced Enterprise Features</a></li>
         <li><a href="openapi-rest-advanced-http2-userguide.html">HTTP/2 Performance Integration</a></li>
     </ul>
@@ -173,35 +173,36 @@ Support</a></li>
         <li><a href="json-rpc-mcp-guide.html#tested_features">Unit Test Feature Coverage</a></li>
         <li><a href="json-rpc-mcp-guide.html#not_implemented">Not Implemented / Limitations</a></li>
         <li><a href="json-streaming-formatter.html">Streaming Formatter for Large MCP Tool Responses</a></li>
-        <li><a href="json-rpc-mcp-guide.html#data_api_relationship">Relationship to Data API Vision</a></li>
+        <!-- data_api_relationship anchor removed from guide; link to top-level page -->
+        <li><a href="json-rpc-mcp-guide.html">Relationship to Data API Vision</a></li>
         <li><a href="json-rpc-mcp-guide.html#python_compat">Python MCP Compatibility Notes</a></li>
     </ul>
     </li>
     <li><strong>23.5 <a href="mcp-architecture.html">MCP Architecture — Multi-Protocol Design</a></strong>
     <ul>
-        <li><a href="mcp-architecture.html#current-state-2026-04-09">Current State</a></li>
-        <li><a href="mcp-architecture.html#track-a--openapi-driven-mcp-bridge">Track A: OpenAPI-Driven MCP Bridge</a></li>
-        <li><a href="mcp-architecture.html#track-b--native-mcp-transport-axis2-transport-mcp">Track B: Native MCP Transport</a></li>
-        <li><a href="mcp-architecture.html#security-architecture">Security Architecture (mTLS + X.509)</a></li>
-        <li><a href="mcp-architecture.html#key-design-decisions">Key Design Decisions</a></li>
+        <li><a href="mcp-architecture.html#Current_State_.282026-04-09.29">Current State</a></li>
+        <li><a href="mcp-architecture.html#Track_A_remaining">Track A: OpenAPI-Driven MCP Bridge</a></li>
+        <li><a href="mcp-architecture.html#Track_B">Track B: Native MCP Transport</a></li>
+        <li><a href="mcp-architecture.html#Security_Architecture">Security Architecture (mTLS + X.509)</a></li>
+        <li><a href="mcp-architecture.html#Key_Design_Decisions">Key Design Decisions</a></li>
     </ul>
     </li>
     <li><strong>23.6 <a href="json-streaming-formatter.html">Streaming JSON Message Formatter</a></strong>
     <ul>
         <li><a href="json-streaming-formatter.html#Overview">Overview</a></li>
-        <li><a href="json-streaming-formatter.html#Problem_Large_HTTP_Responses_and_Reverse_Proxies">Problem: Large Responses and Reverse Proxies</a></li>
+        <li><a href="json-streaming-formatter.html#Problem_-_Large_HTTP_Responses_and_Reverse_Proxies">Problem: Large Responses and Reverse Proxies</a></li>
         <li><a href="json-streaming-formatter.html#Configuration">Configuration (axis2.xml / services.xml)</a></li>
         <li><a href="json-streaming-formatter.html#Services_That_Benefit">Services That Benefit (BigDataH2Service, FinancialBenchmarkService)</a></li>
-        <li><a href="json-streaming-formatter.html#Axis2_C_Equivalent">Axis2/C Equivalent (ap_rflush)</a></li>
+        <li><a href="json-streaming-formatter.html">Axis2/C Equivalent (ap_rflush)</a></li>
     </ul>
     </li>
     <li><strong>23.7 <a href="mcp-examples.html">MCP Examples — Financial Services Benchmarks</a></strong>
     <ul>
-        <li><a href="mcp-examples.html#live-examples-tested-on-wildfly-32-0-1-final-2026-04-08">Live Examples (WildFly 32)</a></li>
-        <li><a href="mcp-examples.html#demo-1-stress-test--what-if-correlations-spike">Demo 1: Stress Test</a></li>
-        <li><a href="mcp-examples.html#demo-2-pre-trade-risk--should-i-add-this-name">Demo 2: Pre-Trade Risk</a></li>
-        <li><a href="mcp-examples.html#demo-3-convergence--how-much-compute-do-i-actually-need">Demo 3: Convergence</a></li>
-        <li><a href="mcp-examples.html#full-performance-summary">Full Performance Summary (C vs Java)</a></li>
+        <li><a href="mcp-examples.html#Live_Examples_.28Tested_on_WildFly_32.0.1.Final.2C_2026-04-08.29">Live Examples (WildFly 32)</a></li>
+        <li><a href="mcp-examples.html#Demo_1.3A_Stress-test_.E2.80.94_.E2.80.9CWhat_if_correlations_spike.3F.E2.80.9D">Demo 1: Stress Test</a></li>
+        <li><a href="mcp-examples.html#Demo_2.3A_Pre-trade_risk_.E2.80.94_.E2.80.9CShould_I_add_this_name.3F.E2.80.9D">Demo 2: Pre-Trade Risk</a></li>
+        <li><a href="mcp-examples.html#Demo_3.3A_Convergence_.E2.80.94_.E2.80.9CHow_much_compute_do_I_actually_need.3F.E2.80.9D">Demo 3: Convergence</a></li>
+        <li><a href="mcp-examples.html#Full_Performance_Summary">Full Performance Summary (C vs Java)</a></li>
     </ul>
     </li>
     <li><strong>23.8 <a href="json-pagination.html">Offset/Limit Pagination for JSON-RPC Services</a></strong>

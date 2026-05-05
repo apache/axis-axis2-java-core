@@ -70,7 +70,7 @@ The implementation is complete — see
 <code>modules/transport-h2</code> and
 <code>org.apache.axis2.json.streaming</code>.</em></p>
 
-<h2>How Axis2 HTTP/2 Differs From Other Frameworks</h2>
+<h2>How Axis2 HTTP2 Differs From Other Frameworks</h2>
 
 <p>Most web service frameworks treat HTTP/2 as a transparent transport
 upgrade — the servlet container (Tomcat, Undertow, Netty) negotiates

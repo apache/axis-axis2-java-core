@@ -46,7 +46,7 @@ native C services on edge devices, Android phones, and IoT gateways
 where a JVM cannot run. The same MCP client connects to both Axis2/Java
 (enterprise) and Axis2/C (embedded) with identical protocol and identical
 results. See the
-<a href="http://axis.apache.org/axis2/c/">Axis2/C site</a> for details.</p>
+<a href="https://axis.apache.org/axis2/c/core/">Axis2/C site</a> for details.</p>
 <p><strong>Apache Rampart 2.0.0 is ready for release</strong> and will ship
 immediately after Axis2/Java 2.0.1, on which it depends. Rampart 2.0.0
 brings WS-Security up to date with the Jakarta EE 9+ / Axis2 2.0.x line
