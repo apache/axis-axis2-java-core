@@ -471,7 +471,7 @@
         <httpcore.version>5.4.2</httpcore.version>
         <httpclient.version>5.6.1</httpclient.version>
         <jaxbri.version>4.0.3</jaxbri.version>
-        <jetty.version>12.1.8</jetty.version>
+        <jetty.version>12.1.9</jetty.version>
         <!-- jibx.version removed: AXIS2-6105 -->
         <maven.archiver.version>3.6.6</maven.archiver.version>
         <maven.version>3.9.15</maven.version>
