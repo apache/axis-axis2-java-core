@@ -365,15 +365,43 @@ public class FinancialBenchmarkService {
             throw JsonRpcFaultException.validationError("volatility must be >= 0.");
         }
 
-        // ── Pre-computed GBM constants ────────────────────────────────────────
+        // ── Model selection ────────────────────────────────────────────────────
+        boolean isMerton = "merton".equalsIgnoreCase(request.getModel());
+        double jumpIntensity = request.getJumpIntensity();
+        double jumpMean = request.getJumpMean();
+        double jumpVol = request.getJumpVol();
+
+        if (isMerton && jumpVol < 0.0) {
+            throw JsonRpcFaultException.validationError("jumpVol must be >= 0.");
+        }
+
+        // ── Pre-computed constants ────────────────────────────────────────────
         // dt         — length of one time step in years (e.g., 1/252 for one
         //              trading day when nPeriodsPerYear = 252)
-        // drift      — (μ − σ²/2)·dt.  The (−σ²/2) term is the Itô correction
-        //              that keeps E[S(T)] = S(0)·exp(μ·T).  Do not drop it.
+        // drift      — (μ − σ²/2 − λk)·dt for Merton, (μ − σ²/2)·dt for GBM.
+        //              The −λk term compensates for the expected jump so that
+        //              E[S(T)] = S(0)·exp(μ·T) regardless of jump parameters.
         // volSqrtDt  — σ·√dt.  Scales each standard-normal shock by the
         //              one-step standard deviation.
         double dt = 1.0 / npy;
-        double drift = (mu - 0.5 * sigma * sigma) * dt;
+        double jumpCompensation = 0.0;
+        double jumpLambdaDt = 0.0;
+        if (isMerton) {
+            double k = Math.exp(jumpMean + 0.5 * jumpVol * jumpVol) - 1.0;
+            jumpCompensation = jumpIntensity * k;
+            jumpLambdaDt = jumpIntensity * dt;
+            // The Bernoulli approximation for a Poisson process is only valid
+            // when λ·dt << 1. At λ·dt > 0.1 the probability of ≥2 jumps per
+            // step becomes non-negligible; at λ·dt ≥ 1 the trial degenerates
+            // to a deterministic jump every step. Fail fast.
+            if (jumpLambdaDt > 0.1) {
+                throw JsonRpcFaultException.validationError(
+                    "jumpIntensity too high for time step: lambda*dt=" +
+                    String.format("%.4f", jumpLambdaDt) + " > 0.1. " +
+                    "Reduce jumpIntensity or increase nPeriodsPerYear.");
+            }
+        }
+        double drift = (mu - 0.5 * sigma * sigma - jumpCompensation) * dt;
         double volSqrtDt = sigma * Math.sqrt(dt);
 
         // ── PRNG: seeded for reproducibility, unseeded for production ─────────
@@ -386,7 +414,6 @@ public class FinancialBenchmarkService {
 
         double[] finalValues = new double[nSims];
         double sumFinal = 0.0;
-        double sumSqFinal = 0.0;
         int profitCount = 0;
         double maxDrawdown = 0.0;
 
@@ -399,7 +426,18 @@ public class FinancialBenchmarkService {
 
             for (int period = 0; period < nPeriods; period++) {
                 double z = rng.nextGaussian();
-                value *= Math.exp(drift + volSqrtDt * z);
+                double exponent = drift + volSqrtDt * z;
+
+                // Merton jump component: compound Poisson process.
+                // At each step, a jump occurs with probability λ·dt.
+                // The jump magnitude is log-normal: J = exp(μ_J + σ_J · W)
+                // where W ~ N(0,1) is independent of the diffusion Z.
+                if (isMerton && rng.nextDouble() < jumpLambdaDt) {
+                    double w = rng.nextGaussian();
+                    exponent += jumpMean + jumpVol * w;
+                }
+
+                value *= Math.exp(exponent);
 
                 if (value > peak) {
                     peak = value;
@@ -411,7 +449,6 @@ public class FinancialBenchmarkService {
 
             finalValues[sim] = value;
             sumFinal += value;
-            sumSqFinal += value * value;
             if (value > initialValue) profitCount++;
             if (simMaxDrawdown > maxDrawdown) maxDrawdown = simMaxDrawdown;
         }
@@ -419,18 +456,28 @@ public class FinancialBenchmarkService {
         long elapsedUs = (System.nanoTime() - startNs) / 1_000;
 
         // ── Statistics ────────────────────────────────────────────────────────
+        // Two-pass algorithm for variance: the one-pass formula
+        // (sumSq/N − mean²) suffers catastrophic cancellation when
+        // stdDev << mean (common for low-vol strategies). Two-pass:
+        // compute mean first, then sum squared deviations.
         double mean = sumFinal / nSims;
-        double variance = (sumSqFinal / nSims) - (mean * mean);
-        if (variance < 0.0) variance = 0.0;
+        double sumSqDiff = 0.0;
+        for (int i = 0; i < nSims; i++) {
+            double d = finalValues[i] - mean;
+            sumSqDiff += d * d;
+        }
+        double variance = sumSqDiff / nSims;
 
         // Sort ascending so finalValues[0] is the worst outcome and
         // finalValues[nSims-1] is the best.  VaR and CVaR then become
-        // simple index lookups: the p-th percentile loss corresponds to
-        // finalValues[floor(p * nSims)].
+        // simple index lookups.
         Arrays.sort(finalValues);
 
-        int idx5  = (int)(0.05 * nSims);
-        int idx1  = (int)(0.01 * nSims);
+        // Percentile indexing: ceil(p·N) − 1 selects the k-th order
+        // statistic such that exactly floor(p·N) observations are strictly
+        // below the VaR level. Matches the standard quantile definition.
+        int idx5  = Math.max(0, (int) Math.ceil(0.05 * nSims) - 1);
+        int idx1  = Math.max(0, (int) Math.ceil(0.01 * nSims) - 1);
 
         // Sample median of a sorted array: for odd N take the middle element,
         // for even N average the two central elements.  Using a single index
@@ -467,7 +514,7 @@ public class FinancialBenchmarkService {
             for (int pi = 0; pi < maxPct; pi++) {
                 double p = request.getPercentiles()[pi];
                 if (p <= 0.0 || p >= 1.0) continue;
-                int idx = (int)(p * nSims);
+                int idx = Math.max(0, (int) Math.ceil(p * nSims) - 1);
                 if (idx >= nSims) idx = nSims - 1;
                 percentileVars.add(new MonteCarloResponse.PercentileVar(
                     p, initialValue - finalValues[idx]));
@@ -475,6 +522,7 @@ public class FinancialBenchmarkService {
         }
 
         MonteCarloResponse response = new MonteCarloResponse();
+        response.setModel(isMerton ? "merton" : "gbm");
         response.setStatus("SUCCESS");
         response.setMeanFinalValue(mean);
         response.setMedianFinalValue(median);

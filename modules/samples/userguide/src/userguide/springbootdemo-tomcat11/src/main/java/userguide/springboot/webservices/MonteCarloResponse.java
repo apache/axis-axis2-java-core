@@ -81,6 +81,9 @@ public class MonteCarloResponse {
     /** JVM heap used at response time in MB */
     private long memoryUsedMb;
 
+    /** Model used for this simulation: "gbm" or "merton" */
+    private String model;
+
     /** Echoed from request */
     private String requestId;
 
@@ -161,4 +164,7 @@ public class MonteCarloResponse {
 
     public String getRequestId() { return requestId; }
     public void setRequestId(String requestId) { this.requestId = requestId; }
+
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
 }

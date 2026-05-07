@@ -21,9 +21,22 @@ package userguide.springboot.webservices;
 /**
  * Request for Monte Carlo Value-at-Risk simulation.
  *
- * <p>Simulates portfolio value paths using Geometric Brownian Motion:
+ * <p>Simulates portfolio value paths using one of two stochastic models:
+ *
+ * <p><b>GBM</b> (model="gbm", default): Geometric Brownian Motion.
  * <pre>S(t+dt) = S(t) × exp((μ − σ²/2)·dt + σ·√dt·Z)</pre>
  * where dt = 1/nPeriodsPerYear and Z ~ N(0,1).
+ *
+ * <p><b>Merton jump-diffusion</b> (model="merton"): GBM plus a compound
+ * Poisson jump process that captures fat tails and discontinuities
+ * (crashes, gaps) that GBM systematically understates.
+ * <pre>S(t+dt) = S(t) × exp((μ − σ²/2 − λk)·dt + σ·√dt·Z) × J</pre>
+ * where J = exp(μ_J + σ_J·W) with probability λ·dt per step, else J = 1.
+ * Z, W ~ N(0,1) independent. k = exp(μ_J + σ_J²/2) − 1.
+ * The −λk drift correction preserves E[S(T)] = S(0)·exp(μ·T).
+ *
+ * <p>Reference: Merton, R. (1976). "Option pricing when underlying stock
+ * returns are discontinuous." J. Financial Economics, 3(1-2): 125-144.
  *
  * <p>All fields have defaults so a minimal {@code {}} request body is valid.
  *
@@ -196,6 +209,38 @@ public class MonteCarloRequest {
      */
     private double[] percentiles = {0.01, 0.05};
 
+    /**
+     * Simulation model: "gbm" (default) or "merton".
+     *
+     * <p>GBM is the textbook baseline — constant vol, continuous paths.
+     * Merton adds a compound Poisson jump process for fat tails.
+     * See class javadoc for the full model equations.
+     */
+    private String model = "gbm";
+
+    /**
+     * Jump intensity (Merton only): expected number of jumps per YEAR
+     * (Poisson λ). Must be &gt;= 0. Default: 1.0. At λ=1, approximately
+     * one jump per simulated year. Higher values increase kurtosis.
+     * Ignored when model="gbm".
+     */
+    private double jumpIntensity = 1.0;
+
+    /**
+     * Mean of the log-normal jump size distribution (Merton only).
+     * Negative values produce downward jumps on average (crashes).
+     * Default: -0.03 (average jump ≈ 3% drop). Ignored when model="gbm".
+     */
+    private double jumpMean = -0.03;
+
+    /**
+     * Volatility of the log-normal jump size (Merton only). Controls how
+     * variable individual jump magnitudes are. Must be &gt;= 0.
+     * Default: 0.05. At jumpVol=0 every jump has exactly size
+     * exp(jumpMean). Ignored when model="gbm".
+     */
+    private double jumpVol = 0.05;
+
     /** Optional identifier echoed in the response for request tracing. */
     private String requestId;
 
@@ -218,6 +263,10 @@ public class MonteCarloRequest {
     public int getNPeriodsPerYear() { return nPeriodsPerYear > 0 ? nPeriodsPerYear : 252; }
     public double[] getPercentiles() { return percentiles != null ? percentiles : new double[]{0.01, 0.05}; }
     public String getRequestId() { return requestId; }
+    public String getModel() { return model != null ? model : "gbm"; }
+    public double getJumpIntensity() { return jumpIntensity >= 0 ? jumpIntensity : 1.0; }
+    public double getJumpMean() { return jumpMean; }
+    public double getJumpVol() { return jumpVol >= 0 ? jumpVol : 0.05; }
 
     // ── setters ──────────────────────────────────────────────────────────────
 
@@ -230,4 +279,8 @@ public class MonteCarloRequest {
     public void setNPeriodsPerYear(int nPeriodsPerYear) { this.nPeriodsPerYear = nPeriodsPerYear; }
     public void setPercentiles(double[] percentiles) { this.percentiles = percentiles; }
     public void setRequestId(String requestId) { this.requestId = requestId; }
+    public void setModel(String model) { this.model = model; }
+    public void setJumpIntensity(double jumpIntensity) { this.jumpIntensity = jumpIntensity; }
+    public void setJumpMean(double jumpMean) { this.jumpMean = jumpMean; }
+    public void setJumpVol(double jumpVol) { this.jumpVol = jumpVol; }
 }
