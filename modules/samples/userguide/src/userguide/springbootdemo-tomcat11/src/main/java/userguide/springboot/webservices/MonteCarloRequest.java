@@ -192,17 +192,16 @@ public class MonteCarloRequest {
      * tail probability directly.
      *
      * <p>Estimator convention (important for reconciliation):
-     *   This service uses {@code floor(p × N)} to index into the
+     *   This service uses {@code ceil(p × N) − 1} to index into the
      *   ascending-sorted final-value array.  For {@code p = 0.05} and
-     *   {@code N = 10,000} that means index 500, which is the 501-st
-     *   smallest outcome.  Some risk systems instead use
-     *   {@code ceil(p × N) − 1} (index 499, the 500-th smallest).  The
-     *   two conventions differ by exactly one observation and produce
-     *   VaR estimates that agree to O(1/N) — immaterial for typical
-     *   N &gt; 1,000 but worth noting when reconciling against another
-     *   system.  The estimator here matches the CVaR estimator in the
-     *   service (CVaR averages indices 0 .. floor(p × N) − 1, so VaR is
-     *   the first value OUTSIDE that tail set).
+     *   {@code N = 10,000} that selects index 499 (the 500th smallest
+     *   outcome).  This corresponds to the k-th order statistic such
+     *   that at least {@code p × N} observations are less than or equal
+     *   to the VaR level — a standard quantile definition.  Some risk
+     *   systems use {@code floor(p × N)} (index 500, the 501st smallest),
+     *   which differs by exactly one observation; the difference is
+     *   O(1/N) and immaterial for typical N &gt; 1,000.  This estimator
+     *   matches Axis2/C for cross-platform reconciliation.
      *
      * <p>Default: [0.01, 0.05] (1% and 5% tail, i.e., 99% and 95% VaR).
      * Up to 8 entries; extras are silently truncated.
