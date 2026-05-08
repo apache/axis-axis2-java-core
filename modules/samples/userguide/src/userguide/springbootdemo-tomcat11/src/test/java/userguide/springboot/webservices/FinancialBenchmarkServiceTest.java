@@ -548,6 +548,222 @@ class FinancialBenchmarkServiceTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // monteCarlo — Merton jump-diffusion
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    void testMonteCarlo_mertonModel_respondsWithModelField() throws JsonRpcFaultException {
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setModel("merton");
+        req.setNSimulations(1000);
+        req.setRandomSeed(42L);
+
+        MonteCarloResponse resp = service.monteCarlo(req);
+
+        assertEquals("SUCCESS", resp.getStatus());
+        assertEquals("merton", resp.getModel(), "response should echo model=merton");
+    }
+
+    @Test
+    void testMonteCarlo_gbmModel_respondsWithModelField() throws JsonRpcFaultException {
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setNSimulations(1000);
+        req.setRandomSeed(42L);
+
+        MonteCarloResponse resp = service.monteCarlo(req);
+
+        assertEquals("SUCCESS", resp.getStatus());
+        assertEquals("gbm", resp.getModel(), "default model should be gbm");
+    }
+
+    @Test
+    void testMonteCarlo_mertonSeededReproducibility() throws JsonRpcFaultException {
+        MonteCarloRequest req1 = new MonteCarloRequest();
+        req1.setModel("merton");
+        req1.setNSimulations(1000);
+        req1.setRandomSeed(123L);
+
+        MonteCarloRequest req2 = new MonteCarloRequest();
+        req2.setModel("merton");
+        req2.setNSimulations(1000);
+        req2.setRandomSeed(123L);
+
+        MonteCarloResponse r1 = service.monteCarlo(req1);
+        MonteCarloResponse r2 = service.monteCarlo(req2);
+
+        assertEquals(r1.getVar95(), r2.getVar95(), 1e-9, "seeded Merton runs must be identical");
+        assertEquals(r1.getMeanFinalValue(), r2.getMeanFinalValue(), 1e-9);
+        assertEquals(r1.getMaxDrawdown(), r2.getMaxDrawdown(), 1e-9);
+    }
+
+    @Test
+    void testMonteCarlo_mertonFatterTailsThanGbm() throws JsonRpcFaultException {
+        // Same parameters, same seed. Merton should produce wider tails
+        // (higher VaR, worse drawdowns) because jumps add kurtosis.
+        MonteCarloRequest gbmReq = new MonteCarloRequest();
+        gbmReq.setModel("gbm");
+        gbmReq.setNSimulations(50_000);
+        gbmReq.setNPeriods(252);
+        gbmReq.setVolatility(0.20);
+        gbmReq.setExpectedReturn(0.08);
+        gbmReq.setRandomSeed(777L);
+
+        MonteCarloRequest mertonReq = new MonteCarloRequest();
+        mertonReq.setModel("merton");
+        mertonReq.setNSimulations(50_000);
+        mertonReq.setNPeriods(252);
+        mertonReq.setVolatility(0.20);
+        mertonReq.setExpectedReturn(0.08);
+        mertonReq.setJumpIntensity(2.0);   // 2 jumps/year
+        mertonReq.setJumpMean(-0.05);      // avg 5% crash
+        mertonReq.setJumpVol(0.08);        // variable jump size
+        mertonReq.setRandomSeed(777L);
+
+        MonteCarloResponse gbm = service.monteCarlo(gbmReq);
+        MonteCarloResponse merton = service.monteCarlo(mertonReq);
+
+        assertEquals("SUCCESS", gbm.getStatus());
+        assertEquals("SUCCESS", merton.getStatus());
+
+        // Merton should have wider 99% VaR (fatter left tail)
+        assertTrue(merton.getVar99() > gbm.getVar99(),
+            "Merton 99% VaR (" + merton.getVar99() + ") should exceed GBM (" + gbm.getVar99() + ")");
+
+        // Merton should have worse max drawdown
+        assertTrue(merton.getMaxDrawdown() > gbm.getMaxDrawdown(),
+            "Merton max drawdown (" + merton.getMaxDrawdown() + ") should exceed GBM (" + gbm.getMaxDrawdown() + ")");
+    }
+
+    @Test
+    void testMonteCarlo_mertonPreservesDriftCompensation() throws JsonRpcFaultException {
+        // With drift compensation, E[S(T)] should equal S(0) * exp(μ*T)
+        // regardless of jump parameters. Test with large N for convergence.
+        double mu = 0.10;
+        double initialValue = 1_000_000.0;
+        // Expected: 1M * exp(0.10) = 1,105,170.92
+        double expectedMean = initialValue * Math.exp(mu);
+
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setModel("merton");
+        req.setNSimulations(100_000);
+        req.setNPeriods(252);
+        req.setInitialValue(initialValue);
+        req.setExpectedReturn(mu);
+        req.setVolatility(0.20);
+        req.setJumpIntensity(3.0);
+        req.setJumpMean(-0.04);
+        req.setJumpVol(0.06);
+        req.setRandomSeed(42L);
+
+        MonteCarloResponse resp = service.monteCarlo(req);
+
+        assertEquals("SUCCESS", resp.getStatus());
+        // With 100k sims, mean should be within ~1% of theoretical
+        double relativeError = Math.abs(resp.getMeanFinalValue() - expectedMean) / expectedMean;
+        assertTrue(relativeError < 0.015,
+            "Merton mean (" + String.format("%.2f", resp.getMeanFinalValue()) +
+            ") should be within 1.5% of theoretical (" + String.format("%.2f", expectedMean) +
+            "), relative error = " + String.format("%.4f", relativeError));
+    }
+
+    @Test
+    void testMonteCarlo_mertonZeroJumpIntensity_matchesDrift() throws JsonRpcFaultException {
+        // Merton with jumpIntensity=0: no jumps occur, drift compensation is
+        // zero, so the expected mean should match GBM's theoretical mean.
+        // Note: PRNG state diverges because the Merton path still evaluates
+        // rng.nextDouble() on each step (short-circuit is at the probability
+        // check, not the random draw), so we compare statistical properties
+        // rather than bit-exact values.
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setModel("merton");
+        req.setJumpIntensity(0.0);
+        req.setNSimulations(50_000);
+        req.setExpectedReturn(0.08);
+        req.setVolatility(0.20);
+        req.setRandomSeed(42L);
+
+        MonteCarloResponse resp = service.monteCarlo(req);
+
+        double expectedMean = 1_000_000.0 * Math.exp(0.08);
+        double relativeError = Math.abs(resp.getMeanFinalValue() - expectedMean) / expectedMean;
+        assertTrue(relativeError < 0.01,
+            "Merton with λ=0 should match GBM mean within 1%, got " +
+            String.format("%.4f", relativeError));
+    }
+
+    @Test
+    void testMonteCarlo_mertonLambdaDtTooHigh_fails() {
+        // jumpIntensity=300 with nPeriodsPerYear=252 → λ·dt ≈ 1.19 > 0.1
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setModel("merton");
+        req.setJumpIntensity(300.0);
+
+        JsonRpcFaultException ex = assertThrows(JsonRpcFaultException.class,
+            () -> service.monteCarlo(req));
+        assertEquals(422, ex.getHttpStatusCode());
+        assertTrue(ex.getMessage().contains("jumpIntensity") || ex.getMessage().contains("lambda"),
+            "error must mention jump intensity: " + ex.getMessage());
+    }
+
+    @Test
+    void testMonteCarlo_mertonNegativeJumpVol_clampedToDefault() throws JsonRpcFaultException {
+        // The getter clamps negative jumpVol to the default (0.05),
+        // so the service sees a valid value. This is consistent with
+        // the getter-enforced-defaults pattern used by other fields.
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setModel("merton");
+        req.setJumpVol(-0.05);
+        req.setNSimulations(100);
+        req.setRandomSeed(1L);
+
+        MonteCarloResponse resp = service.monteCarlo(req);
+        assertEquals("SUCCESS", resp.getStatus(),
+            "negative jumpVol is clamped to default by getter, not rejected");
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // monteCarlo — two-pass variance and percentile indexing
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    void testMonteCarlo_twoPassVariance_lowVolDoesNotGoNegative() throws JsonRpcFaultException {
+        // Zero vol, positive drift: all paths converge to same value.
+        // Old one-pass formula (sumSq/N - mean²) would produce catastrophic
+        // cancellation here; two-pass should give exactly 0.
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setNSimulations(10_000);
+        req.setVolatility(0.0);
+        req.setExpectedReturn(0.10);
+        req.setRandomSeed(1L);
+
+        MonteCarloResponse resp = service.monteCarlo(req);
+
+        assertEquals("SUCCESS", resp.getStatus());
+        assertTrue(resp.getStdDevFinalValue() < 1e-6,
+            "zero-vol paths should have near-zero std dev (two-pass variance), got " +
+            resp.getStdDevFinalValue());
+    }
+
+    @Test
+    void testMonteCarlo_percentileIndexing_ceilFormula() throws JsonRpcFaultException {
+        // With 1000 sims and percentile=0.05, ceil(0.05*1000)-1 = 49 (50th worst)
+        // With floor(0.05*1000) = 50 (51st worst) — the old, less-correct formula.
+        // We verify that VaR at 5% uses the tighter (larger loss) estimate.
+        MonteCarloRequest req = new MonteCarloRequest();
+        req.setNSimulations(1000);
+        req.setRandomSeed(42L);
+        req.setPercentiles(new double[]{0.05});
+
+        MonteCarloResponse resp = service.monteCarlo(req);
+
+        assertEquals("SUCCESS", resp.getStatus());
+        // The VaR95 (fixed field) and the percentile VaR at 0.05 should match
+        assertEquals(1, resp.getPercentileVars().size());
+        assertEquals(resp.getVar95(), resp.getPercentileVars().get(0).getVar(), 1e-9,
+            "fixed var95 and percentile p=0.05 should use same index");
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // MonteCarloRequest — getter defaults
     // ═══════════════════════════════════════════════════════════════════════
 

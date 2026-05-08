@@ -371,10 +371,6 @@ public class FinancialBenchmarkService {
         double jumpMean = request.getJumpMean();
         double jumpVol = request.getJumpVol();
 
-        if (isMerton && jumpVol < 0.0) {
-            throw JsonRpcFaultException.validationError("jumpVol must be >= 0.");
-        }
-
         // ── Pre-computed constants ────────────────────────────────────────────
         // dt         — length of one time step in years (e.g., 1/252 for one
         //              trading day when nPeriodsPerYear = 252)
