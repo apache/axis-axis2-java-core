@@ -113,15 +113,14 @@ openapi.title=High-Performance Trading API
 openapi.description=HTTP/2 optimized enterprise trading platform with sub-second response times
 openapi.version=2.0.0-h2
 
-# HTTP/2 Performance Optimizations
-openapi.prettyPrint=false                    # Reduce JSON size for HTTP/2 streaming
+# OpenAPI UI settings (standard Swagger UI properties)
+openapi.prettyPrint=false                    # Reduce JSON size
 openapi.swaggerUi.deepLinking=true          # Enable efficient navigation
 openapi.swaggerUi.filter=true               # Optimize large API browsing
-openapi.enterprise.http2.enabled=true       # Enable HTTP/2 specific optimizations
 
-# Large Payload Support
-openapi.enterprise.streaming.enabled=true   # Enable streaming for large responses
-openapi.enterprise.memory.optimization=true # Optimize memory for concurrent requests
+# Note: HTTP/2 transport and streaming are configured in axis2.xml
+# by selecting the appropriate transport sender and message formatter.
+# No openapi.properties flags are needed for HTTP/2.
 </pre>
 
 <h3>3. Service Configuration</h3>
@@ -200,14 +199,10 @@ This results in up to 50% additional performance improvements in WildFly deploym
 
     &lt;display-name&gt;High-Performance OpenAPI + HTTP/2 Service&lt;/display-name&gt;
 
-    &lt;!-- Axis2 Servlet with HTTP/2 Support --&gt;
+    &lt;!-- Axis2 Servlet (HTTP/2 is configured in axis2.xml, not here) --&gt;
     &lt;servlet&gt;
         &lt;servlet-name&gt;AxisServlet&lt;/servlet-name&gt;
         &lt;servlet-class&gt;org.apache.axis2.transport.http.AxisServlet&lt;/servlet-class&gt;
-        &lt;init-param&gt;
-            &lt;param-name&gt;enableHTTP2&lt;/param-name&gt;
-            &lt;param-value&gt;true&lt;/param-value&gt;
-        &lt;/init-param&gt;
         &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
     &lt;/servlet&gt;
 
@@ -329,16 +324,10 @@ low overhead and simplified deployment, making it an excellent choice for high-p
 &lt;!-- axis2.xml - Tomcat 11 + HTTP/2 + OpenAPI Optimized Configuration --&gt;
 &lt;axisconfig name="AxisJava2.0-Tomcat11-HTTP2-OpenAPI"&gt;
 
-    &lt;!-- Tomcat HTTP/2 Integration Parameters --&gt;
-    &lt;parameter name="TomcatHttp2Integration"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="TomcatBufferAlignment"&gt;65536&lt;/parameter&gt;             &lt;!-- Match http2MaxFrameSize --&gt;
-    &lt;parameter name="TomcatStreamAlignment"&gt;200&lt;/parameter&gt;               &lt;!-- Match maxConcurrentStreams --&gt;
-    &lt;parameter name="TomcatCompressionOptimization"&gt;true&lt;/parameter&gt;     &lt;!-- Leverage Tomcat compression --&gt;
-
-    &lt;!-- OpenAPI Configuration for HTTP/2 --&gt;
-    &lt;parameter name="OpenApiHttp2Enabled"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="OpenApiSpecCacheTimeout"&gt;300&lt;/parameter&gt;            &lt;!-- 5 minutes --&gt;
-    &lt;parameter name="OpenApiLargeSpecThreshold"&gt;1048576&lt;/parameter&gt;      &lt;!-- 1MB threshold --&gt;
+    &lt;!-- HTTP/2 is negotiated by the transport sender below.
+         Tomcat's HTTP/2 connector (h2c/h2) is configured in server.xml,
+         not in axis2.xml.  No Tomcat-specific or OpenAPI-specific
+         parameters are needed here. --&gt;
 
     &lt;!-- HTTP/2 Transport Sender --&gt;
     &lt;transportSender name="h2"
@@ -378,28 +367,14 @@ low overhead and simplified deployment, making it an excellent choice for high-p
 
     &lt;display-name&gt;Enterprise OpenAPI + HTTP/2 on Tomcat 11&lt;/display-name&gt;
 
-    &lt;!-- Context Parameters for HTTP/2 + OpenAPI --&gt;
-    &lt;context-param&gt;
-        &lt;param-name&gt;axis2.http2.enabled&lt;/param-name&gt;
-        &lt;param-value&gt;true&lt;/param-value&gt;
-    &lt;/context-param&gt;
-    &lt;context-param&gt;
-        &lt;param-name&gt;openapi.http2.optimization&lt;/param-name&gt;
-        &lt;param-value&gt;true&lt;/param-value&gt;
-    &lt;/context-param&gt;
+    &lt;!-- HTTP/2 and streaming are configured in axis2.xml via message receiver
+         and formatter class selection, not via web.xml context-params.
+         See the axis2.xml HTTP/2 transport configuration section. --&gt;
 
-    &lt;!-- Axis2 Servlet with Tomcat HTTP/2 Support --&gt;
+    &lt;!-- Axis2 Servlet --&gt;
     &lt;servlet&gt;
         &lt;servlet-name&gt;AxisServlet&lt;/servlet-name&gt;
         &lt;servlet-class&gt;org.apache.axis2.transport.http.AxisServlet&lt;/servlet-class&gt;
-        &lt;init-param&gt;
-            &lt;param-name&gt;enableHTTP2&lt;/param-name&gt;
-            &lt;param-value&gt;true&lt;/param-value&gt;
-        &lt;/init-param&gt;
-        &lt;init-param&gt;
-            &lt;param-name&gt;tomcatHttp2Integration&lt;/param-name&gt;
-            &lt;param-value&gt;true&lt;/param-value&gt;
-        &lt;/init-param&gt;
         &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
         &lt;async-supported&gt;true&lt;/async-supported&gt;
     &lt;/servlet&gt;
@@ -428,10 +403,8 @@ export CATALINA_OPTS="$CATALINA_OPTS -Djava.net.preferIPv6Addresses=false"
 export CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.coyote.http2.Http2Protocol.maxConcurrentStreams=200"
 export CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.coyote.http2.Http2Protocol.initialWindowSize=131072"
 
-# OpenAPI Optimization
-export CATALINA_OPTS="$CATALINA_OPTS -Daxis2.openapi.http2.enabled=true"
-export CATALINA_OPTS="$CATALINA_OPTS -Daxis2.openapi.cache.enabled=true"
-export CATALINA_OPTS="$CATALINA_OPTS -Daxis2.openapi.compression.enabled=true"
+# Note: Axis2 HTTP/2 and OpenAPI are configured in axis2.xml, not via
+# system properties.  No -Daxis2.* flags are needed.
 
 # Performance Monitoring
 export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote"

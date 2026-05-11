@@ -271,24 +271,15 @@ options.setProperty("MAX_CONCURRENT_STREAMS", 20);
   <li><strong>Streaming Mode</strong> (50MB+): Memory-efficient streaming with chunked processing</li>
 </ul>
 
-<pre>
-// Configure payload-specific processing
-Options options = new Options();
-options.setProperty("HTTP2_PROCESSING_MODE", "streaming"); // or "multiplexing", "standard"
-options.setProperty("HTTP2_MEMORY_OPTIMIZATION", Boolean.TRUE);
-options.setProperty("HTTP2_STREAMING_ENABLED", Boolean.TRUE);
-</pre>
+<p>Streaming and memory optimization are controlled by the message formatter
+selected in axis2.xml (e.g. <code>MoshiStreamingMessageFormatter</code>).
+No client-side <code>Options</code> properties are required — the transport
+sender negotiates HTTP/2 framing and flow control automatically.</p>
 
 <h3>Performance Monitoring</h3>
 
-<p>HTTP/2 transport provides comprehensive performance metrics:</p>
-
-<pre>
-// Enable performance monitoring
-Options options = new Options();
-options.setProperty("HTTP2_PERFORMANCE_MONITORING", Boolean.TRUE);
-options.setProperty("HTTP2_METRICS_COLLECTION", Boolean.TRUE);
-</pre>
+<p>HTTP/2 transport performance can be monitored via JMX or application-level
+logging.  Enable JMX in the JVM startup flags (see the JVM Tuning section).</p>
 
 <p>Available metrics include:</p>
 <ul>
@@ -356,15 +347,12 @@ for web-app use cases with predictable resource dependencies:</p>
 
 <p>Individual services can specify HTTP/2 preferences in their services.xml:</p>
 
-<pre>
-&lt;service name="BigDataService"&gt;
-   &lt;parameter name="preferredTransport"&gt;h2&lt;/parameter&gt;
-   &lt;parameter name="enableHTTP2"&gt;true&lt;/parameter&gt;
-   &lt;parameter name="enableStreaming"&gt;true&lt;/parameter&gt;
-   &lt;parameter name="maxPayloadSize"&gt;104857600&lt;/parameter&gt; &lt;!-- 100MB --&gt;
-   &lt;parameter name="streamingThreshold"&gt;52428800&lt;/parameter&gt; &lt;!-- 50MB --&gt;
-&lt;/service&gt;
-</pre>
+<p>HTTP/2 is enabled at the transport level in axis2.xml, not per-service.
+Select the H2TransportSender in the <code>&lt;transportSender&gt;</code> section
+and configure its parameters there.  For streaming large payloads, use the
+streaming message formatter (e.g. <code>MoshiStreamingMessageFormatter</code>
+or <code>JSONStreamingMessageFormatter</code>) in the service's message
+receiver configuration.  No service-level parameters are required.</p>
 
 <h3>Client-Side HTTP/2 Usage for SOAP (for JSON, see curl and Apache HTTPComponents section)</h3>
 
@@ -382,13 +370,11 @@ Options options = new Options();
 options.setProperty(HTTPConstants.TRANSPORT_NAME, "h2");
 options.setTo(new EndpointReference("https://localhost:8443/services/BigDataService"));
 
-// HTTP/2 specific configurations
-options.setProperty("HTTP2_ENABLED", Boolean.TRUE);
-options.setProperty("HTTP2_STREAMING_ENABLED", Boolean.TRUE);
-options.setProperty("HTTP2_MEMORY_OPTIMIZATION", Boolean.TRUE);
-options.setProperty("HTTP2_MULTIPLEXING_ENABLED", Boolean.TRUE);
+// HTTP/2 is negotiated by the transport sender selected in axis2.xml.
+// No additional boolean flags are needed — the h2 transport handles
+// multiplexing, streaming, and flow control automatically.
 
-// Performance settings for large payloads
+// Timeout settings for large payloads
 options.setTimeOutInMilliSeconds(300000); // 5 minutes
 options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, 30000);
 options.setProperty(HTTPConstants.SO_TIMEOUT, 300000);

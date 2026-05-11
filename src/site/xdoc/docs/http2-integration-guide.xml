@@ -107,7 +107,8 @@ itself</strong>, not just the transport layer.</p>
       (<code>FieldFilteringMessageFormatter</code>). See
       <a href="json-streaming-formatter.html">Streaming JSON Formatter</a>.</li>
   <li><strong>C parity</strong> — the same architecture exists in
-      Axis2/C via Apache httpd <code>mod_h2</code> with
+      <a href="https://axis.apache.org/axis2/c/core/">Axis2/C</a> via
+      <a href="https://httpd.apache.org/">Apache httpd</a> <code>mod_h2</code> with
       <code>ap_rflush()</code> in the message formatter. Both
       implementations use the same 64 KB flush interval, producing
       identical HTTP/2 DATA frame patterns from both C and Java
@@ -330,13 +331,10 @@ client.getOptions().setTo(new EndpointReference("https://example.com/service"));
 </pre>
 
 <p><strong>3. Large Payload Optimization:</strong></p>
-<pre>
-// Configure for big data processing (50MB+ JSON)
-MessageContext msgContext = new MessageContext();
-msgContext.setProperty("HTTP2_STREAMING_ENABLED", true);
-msgContext.setProperty("HTTP2_MEMORY_OPTIMIZATION", true);
-msgContext.setProperty("FLOW_CONTROL_WINDOW_SIZE", 2097152); // 2MB
-</pre>
+<p>Streaming for large payloads is enabled by selecting a streaming message
+formatter (e.g. <code>MoshiStreamingMessageFormatter</code>) in axis2.xml.
+No programmatic property flags are required — the formatter handles
+chunked HTTP/2 DATA frames and flow control automatically.</p>
 
 <h3>Performance Tuning (Optional Overrides)</h3>
 
@@ -515,9 +513,11 @@ enableALPN = true                                          (Required for HTTP/2)
 <pre>
 -XX:+UseZGC                           # Low-latency garbage collector
 -XX:MaxDirectMemorySize=512m          # Direct memory for HTTP/2 buffers
--Daxis2.http2.enabled=true           # Enable HTTP/2 transport
--Daxis2.http2.streaming.enabled=true # Enable streaming for large payloads
 </pre>
+<p><em>Note:</em> HTTP/2 and streaming are enabled entirely through axis2.xml
+by selecting the appropriate message receiver and formatter classes (e.g.
+<code>EnhancedMoshiJsonFormatter</code>, <code>MoshiStreamingMessageFormatter</code>).
+No JVM system properties are required.</p>
 
 <h2>Testing Strategy</h2>
 
