@@ -130,19 +130,9 @@ connectionKeepAliveTime = 300000  # 5-minute balanced timeout
 connectionTimeout = 30000         # 30-second connection establishment
 responseTimeout = 300000          # 5-minute large payload tolerance
 
-# Enhanced Moshi H2 JSON Processing (Automatic) - Preferred for performance
-moshiAsyncProcessingThreshold = 1048576     # 1MB async processing
-moshiLargePayloadThreshold = 10485760       # 10MB large payload detection
-moshiMemoryOptimizationThreshold = 52428800 # 50MB memory optimization
-moshiStreamingBufferSize = 65536            # 64KB buffer alignment
-moshiFieldOptimizationsEnabled = true       # Field-specific parsing
-moshiPerformanceMetricsEnabled = true       # Performance monitoring
-moshiGarbageCollectionHintsEnabled = true   # Memory management
-
-# Enhanced GSON H2 JSON Processing (Alternative) - Wider ecosystem support
-# gsonAsyncProcessingThreshold = 1048576     # 1MB async processing
-# gsonLargePayloadThreshold = 10485760       # 10MB large payload detection
-# gsonMemoryOptimizationThreshold = 52428800 # 50MB memory optimization
+# JSON processing is configured by selecting the message builder and
+# formatter classes in axis2.xml (e.g. EnhancedMoshiJsonBuilder).
+# No additional threshold parameters are needed here.
 
 # Security and TLS (Automatic)
 supportedProtocols = "TLSv1.2,TLSv1.3"     # Modern TLS versions
@@ -174,7 +164,6 @@ enableALPN = true                           # HTTP/2 protocol negotiation
 
     <!-- Override defaults only if needed -->
     <parameter name="maxConcurrentStreams">200</parameter>           <!-- Higher for powerful servers -->
-    <parameter name="moshiAsyncProcessingThreshold">2097152</parameter> <!-- 2MB threshold -->
     <parameter name="responseTimeout">600000</parameter>            <!-- 10 minutes for very large payloads -->
 </transportSender>
 ]]>

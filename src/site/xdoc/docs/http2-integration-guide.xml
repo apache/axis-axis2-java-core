@@ -357,12 +357,7 @@ initialWindowSize = 2097152       (2MB: avoids flow-control round trips)
 streamingBufferSize = 65536       (64KB chunks for 50MB+ processing)
 connectionKeepAliveTime = 300000  (5 minutes balanced timeout)
 responseTimeout = 300000          (5 minutes for large payload processing)
-memoryPressureThreshold = 0.8     (80% heap usage trigger for GC hints)
 
-&lt;!-- Enhanced Moshi H2 Integration (Automatic) --&gt;
-moshiAsyncProcessingThreshold = 1048576     (1MB async processing)
-moshiLargePayloadThreshold = 10485760       (10MB large payload detection)
-moshiMemoryOptimizationThreshold = 52428800 (50MB memory optimization)
 </pre>
 
 <p><strong>Override Only If Required (Advanced Tuning):</strong></p>
@@ -370,21 +365,24 @@ moshiMemoryOptimizationThreshold = 52428800 (50MB memory optimization)
 &lt;!-- Example: Custom tuning for specific enterprise requirements --&gt;
 &lt;parameter name="maxConcurrentStreams"&gt;200&lt;/parameter&gt;     &lt;!-- Higher concurrency for powerful servers --&gt;
 &lt;parameter name="initialWindowSize"&gt;131072&lt;/parameter&gt;     &lt;!-- 128KB for very large payloads --&gt;
-&lt;parameter name="moshiAsyncProcessingThreshold"&gt;2097152&lt;/parameter&gt; &lt;!-- 2MB async threshold --&gt;
 </pre>
 
 <h2>Performance Expectations</h2>
 
-<h3>Quantified Benefits</h3>
+<h3>Expected Benefits</h3>
 
-<table border="1">
-<tr><th>Metric</th><th>HTTP/1.1 Baseline</th><th>HTTP/2 Target</th><th>Improvement</th></tr>
-<tr><td>Request Latency</td><td>500ms</td><td>350ms</td><td>30% reduction</td></tr>
-<tr><td>JSON Processing (50MB)</td><td>12s</td><td>7.2s</td><td>40% improvement</td></tr>
-<tr><td>Memory Usage</td><td>1.8GB peak</td><td>1.4GB peak</td><td>20% reduction</td></tr>
-<tr><td>Concurrent Connections</td><td>50</td><td>10 (multiplexed)</td><td>80% reduction</td></tr>
-<tr><td>Connection Setup Time</td><td>100ms</td><td>20ms</td><td>80% reduction</td></tr>
-</table>
+<p>HTTP/2 provides structural improvements over HTTP/1.1. Actual gains
+depend on payload size, network conditions, and JVM configuration:</p>
+
+<ul>
+  <li><strong>Connection multiplexing</strong> — many concurrent streams over a single TCP connection,
+    eliminating the 6-8 connection limit of HTTP/1.1</li>
+  <li><strong>Header compression</strong> — HPACK reduces per-request overhead, especially for
+    APIs with large or repetitive headers</li>
+  <li><strong>Streaming</strong> — large JSON responses can be flushed incrementally via
+    HTTP/2 DATA frames, reducing time-to-first-byte</li>
+  <li><strong>Fewer connections</strong> — multiplexing typically reduces connection count by 80%+</li>
+</ul>
 
 <h3>Memory Optimization Strategy</h3>
 

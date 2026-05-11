@@ -31,16 +31,17 @@
 
 <div style="background-color: #e8f5e8; border: 1px solid #4CAF50; padding: 15px; margin: 15px 0;">
 <strong>🚀 HTTP/2 + OpenAPI Integration:</strong> Apache Axis2 provides comprehensive HTTP/2 optimization
-specifically designed for OpenAPI services, delivering significant performance improvements for modern
-REST API deployments through native transport integration and intelligent configuration.
+specifically designed for OpenAPI services, delivering performance improvements for modern
+REST API deployments through native transport integration.
 </div>
 
 <h2>Overview</h2>
 
 <p>This guide demonstrates how Apache Axis2's native HTTP/2 transport delivers significant performance
 improvements for OpenAPI-enabled REST services. By combining Axis2's enterprise-grade OpenAPI implementation
-with its production-ready HTTP/2 transport, you can achieve 30-40% performance improvements while maintaining
-full compatibility with existing applications.</p>
+with its production-ready HTTP/2 transport, you can achieve meaningful performance improvements while maintaining
+full compatibility with existing applications. Actual gains depend on payload size, network conditions,
+and server configuration.</p>
 
 <p><strong>Key Benefits:</strong></p>
 <ul>
@@ -59,6 +60,7 @@ full compatibility with existing applications.</p>
 extensive security definitions, and numerous endpoints. HTTP/2 connection multiplexing dramatically improves
 the delivery of these large specifications:</p>
 
+<p><em>(Illustrative estimates — actual results depend on payload, network, and JVM configuration.)</em></p>
 <table border="1">
 <tr><th>Specification Size</th><th>HTTP/1.1 (baseline)</th><th>HTTP/2 Performance</th><th>Improvement</th></tr>
 <tr><td>1-3MB (typical enterprise)</td><td>2.5s</td><td>1.8s</td><td>28% faster</td></tr>
@@ -74,7 +76,7 @@ delivers all assets over a single connection, eliminating connection setup overh
 <ul>
   <li><strong>HTTP/1.1</strong>: 6-8 separate connections for UI assets (connection overhead: ~800ms)</li>
   <li><strong>HTTP/2</strong>: Single multiplexed connection for all assets (overhead: ~150ms)</li>
-  <li><strong>Result</strong>: 650ms faster UI initialization (81% improvement)</li>
+  <li><strong>Result</strong>: Significantly faster UI initialization (illustrative estimate; actual improvement depends on asset count and network latency)</li>
 </ul>
 
 <h3>Large API Response Optimization</h3>
@@ -152,7 +154,7 @@ public class AnalyticsService {
 <div style="background-color: #f0f8ff; border: 1px solid #0066cc; padding: 10px; margin: 10px 0;">
 <strong>🏢 WildFly Integration:</strong> Axis2 provides deep integration with WildFly's Undertow HTTP/2
 implementation, delivering cooperative optimization through aligned buffer management and connection pooling.
-This results in up to 50% additional performance improvements in WildFly deployments.
+This can yield additional performance improvements in WildFly deployments, depending on workload characteristics.
 </div>
 
 <h3>WildFly HTTP/2 Configuration</h3>
@@ -228,7 +230,7 @@ low overhead and simplified deployment, making it an excellent choice for high-p
 <table border="1">
 <tr><th>Aspect</th><th>Tomcat 11</th><th>WildFly 32</th><th>Advantage</th></tr>
 <tr><td><strong>Configuration Complexity</strong></td><td>~15 lines (server.xml)</td><td>~150 lines (standalone.xml)</td><td><strong>Tomcat</strong>: 90% simpler</td></tr>
-<tr><td><strong>HTTP/2 Performance</strong></td><td>15-20% faster JSON processing</td><td>Baseline performance</td><td><strong>Tomcat</strong>: Better optimization</td></tr>
+<tr><td><strong>HTTP/2 Performance</strong></td><td>Lightweight, low-overhead HTTP/2</td><td>Full Jakarta EE HTTP/2 stack</td><td>Depends on workload</td></tr>
 <tr><td><strong>Memory Usage</strong></td><td>30% lower baseline memory</td><td>Higher JEE overhead</td><td><strong>Tomcat</strong>: More efficient</td></tr>
 <tr><td><strong>SSL Setup Time</strong></td><td>2-5 minutes</td><td>15-30 minutes</td><td><strong>Tomcat</strong>: 6x faster setup</td></tr>
 <tr><td><strong>OpenAPI Integration</strong></td><td>Zero classloader conflicts</td><td>Complex module system</td><td><strong>Tomcat</strong>: Seamless deployment</td></tr>
@@ -343,11 +345,8 @@ low overhead and simplified deployment, making it an excellent choice for high-p
         &lt;parameter name="connectionTimeout"&gt;60000&lt;/parameter&gt;               &lt;!-- 1 minute --&gt;
         &lt;parameter name="responseTimeout"&gt;300000&lt;/parameter&gt;                &lt;!-- 5 minutes --&gt;
 
-        &lt;!-- Tomcat Integration Optimizations --&gt;
-        &lt;parameter name="tomcatHttp2Coordination"&gt;true&lt;/parameter&gt;
-        &lt;parameter name="tomcatCompressionAware"&gt;true&lt;/parameter&gt;           &lt;!-- Leverage Tomcat JSON compression --&gt;
-        &lt;parameter name="tomcatKeepAliveOptimization"&gt;true&lt;/parameter&gt;      &lt;!-- Use Tomcat keep-alive settings --&gt;
-        &lt;parameter name="tomcatSslSessionReuse"&gt;true&lt;/parameter&gt;            &lt;!-- Optimize TLS performance --&gt;
+        &lt;!-- Tomcat HTTP/2 tuning (compression, keep-alive, TLS session reuse)
+             is configured in Tomcat's server.xml, not here. --&gt;
     &lt;/transportSender&gt;
 
 &lt;/axisconfig&gt;

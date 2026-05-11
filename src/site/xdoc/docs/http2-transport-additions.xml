@@ -220,11 +220,6 @@ load) and larger <code>initialWindowSize</code> (eliminates per-stream flow-cont
    &lt;parameter name="streamingEnabled"&gt;true&lt;/parameter&gt;
    &lt;parameter name="memoryOptimized"&gt;true&lt;/parameter&gt;
 
-   &lt;!-- Performance Tuning --&gt;
-   &lt;parameter name="compressionEnabled"&gt;true&lt;/parameter&gt;
-   &lt;parameter name="adaptiveFlowControl"&gt;true&lt;/parameter&gt;
-   &lt;parameter name="bufferPooling"&gt;true&lt;/parameter&gt;
-
    &lt;!-- Connection Management: sized for concurrent large-payload fan-out --&gt;
    &lt;parameter name="maxConnTotal"&gt;64&lt;/parameter&gt;
    &lt;parameter name="maxConnPerRoute"&gt;32&lt;/parameter&gt;
@@ -257,8 +252,8 @@ significantly improving performance for concurrent operations:</p>
 // Enable HTTP/2 multiplexing in client code
 Options options = new Options();
 options.setProperty(HTTPConstants.TRANSPORT_NAME, "h2");
-options.setProperty("HTTP2_MULTIPLEXING_ENABLED", Boolean.TRUE);
-options.setProperty("MAX_CONCURRENT_STREAMS", 20);
+// HTTP/2 multiplexing is automatic when using the h2 transport.
+// No additional boolean flags are needed.
 </pre>
 
 <h3>Large Payload Processing</h3>
@@ -291,49 +286,32 @@ Axis2 log configuration provides per-request timing details.</p>
   <li>Connection reuse statistics</li>
 </ul>
 
-<h3>Flow Control Configuration</h3>
+<h3>Flow Control</h3>
 
-<p>HTTP/2 provides advanced flow control mechanisms. The transport sender includes
-progressive flow control that adapts to network conditions:</p>
+<p>HTTP/2 flow control is handled automatically by the transport layer.
+The <code>initialWindowSize</code> parameter on the transport sender controls
+the initial flow-control window; beyond that, the HTTP/2 implementation
+manages window updates and back-pressure without additional configuration.</p>
 
-<pre>
-&lt;parameter name="adaptiveFlowControl"&gt;true&lt;/parameter&gt;
-&lt;parameter name="flowControlStrategy"&gt;progressive&lt;/parameter&gt;
-&lt;parameter name="windowUpdateRatio"&gt;0.5&lt;/parameter&gt;
-&lt;parameter name="maxWindowSize"&gt;16777215&lt;/parameter&gt;
-</pre>
+<h3>Compression</h3>
 
-<h3>Compression Optimization</h3>
-
-<p>The HTTP/2 transport includes intelligent compression optimized for JSON payloads:</p>
-
-<pre>
-&lt;parameter name="compressionEnabled"&gt;true&lt;/parameter&gt;
-&lt;parameter name="compressionLevel"&gt;balanced&lt;/parameter&gt;
-&lt;parameter name="jsonOptimization"&gt;true&lt;/parameter&gt;
-&lt;parameter name="compressionThreshold"&gt;1024&lt;/parameter&gt;
-</pre>
+<p>Response compression is handled by the servlet container (Tomcat, WildFly, etc.),
+not by the Axis2 transport. Configure compression in your container's server
+configuration (e.g., Tomcat's <code>server.xml</code> <code>compression</code>
+attribute, or WildFly's Undertow content-encoding filter). HTTP/2 header
+compression (HPACK) is always active and requires no Axis2 configuration.</p>
 
 <h3>Memory Management</h3>
 
-<p>Advanced buffer management for enterprise memory constraints:</p>
-
-<pre>
-&lt;parameter name="bufferPooling"&gt;true&lt;/parameter&gt;
-&lt;parameter name="maxBufferPoolSize"&gt;73728000&lt;/parameter&gt; &lt;!-- ~73MB --&gt;
-&lt;parameter name="bufferSizeCategories"&gt;8KB,64KB,512KB,2MB&lt;/parameter&gt;
-&lt;parameter name="memoryPressureThreshold"&gt;0.8&lt;/parameter&gt;
-</pre>
+<p>Buffer management is handled internally by Apache HttpComponents 5.x.
+The JVM's <code>-XX:MaxDirectMemorySize</code> flag controls the upper bound
+on direct memory used for HTTP/2 I/O buffers.</p>
 
 <h3>Error Handling and Fallback</h3>
 
-<p>The H2TransportSender provides automatic fallback to HTTP/1.1 when HTTP/2 is not supported:</p>
-
-<pre>
-&lt;parameter name="http2FallbackEnabled"&gt;true&lt;/parameter&gt;
-&lt;parameter name="fallbackTransport"&gt;http&lt;/parameter&gt;
-&lt;parameter name="protocolNegotiationTimeout"&gt;5000&lt;/parameter&gt;
-</pre>
+<p>When the remote server does not support HTTP/2, the TLS ALPN negotiation
+falls back to HTTP/1.1 automatically. No explicit fallback parameters are
+required — Apache HttpComponents handles protocol negotiation.</p>
 
 <h3>Server Push</h3>
 
@@ -385,7 +363,9 @@ serviceClient.setOptions(options);
 
 <h3>Performance Comparison: HTTP/1.1 vs HTTP/2</h3>
 
-<p>Based on performance benchmarks, HTTP/2 transport provides:</p>
+<p>HTTP/2 transport can provide substantial improvements over HTTP/1.1.
+The following are illustrative estimates — actual results depend on payload size,
+network conditions, and JVM configuration:</p>
 
 <table border="1">
 <tr><th>Metric</th><th>HTTP/1.1</th><th>HTTP/2</th><th>Improvement</th></tr>
@@ -408,17 +388,15 @@ System.setProperty("java.security.properties", "jdk.tls.alpnCharset=UTF-8");
 
 <h4>Memory Issues with Large Payloads</h4>
 <pre>
-// Increase heap size and enable memory optimization
--Xmx4g -XX:+UseG1GC
-options.setProperty("HTTP2_MEMORY_OPTIMIZATION", Boolean.TRUE);
+// Increase heap size for large JSON payloads
+-Xmx4g -XX:+UseG1GC -XX:MaxDirectMemorySize=512m
 </pre>
 
 <h4>Connection Issues</h4>
-<pre>
-// Enable HTTP/2 fallback
-&lt;parameter name="http2FallbackEnabled"&gt;true&lt;/parameter&gt;
-&lt;parameter name="protocolNegotiationTimeout"&gt;10000&lt;/parameter&gt;
-</pre>
+<p>HTTP/2 fallback to HTTP/1.1 is automatic via TLS ALPN negotiation.
+If the server does not advertise h2, the client falls back transparently.
+Increase <code>connectionTimeout</code> on the transport sender if ALPN
+negotiation is slow on your network.</p>
 
 <h3>Migration from HTTP/1.1 to HTTP/2</h3>
 

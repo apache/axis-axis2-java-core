@@ -159,16 +159,9 @@
 &lt;!-- axis2.xml - Tomcat 11 + HTTP/2 + Enhanced Moshi H2 Configuration --&gt;
 &lt;axisconfig name="AxisJava2.0-Tomcat11-HTTP2-EnhancedMoshiH2"&gt;
 
-    &lt;!-- Enhanced Moshi H2 Parameters (coordinated with Tomcat) --&gt;
-    &lt;parameter name="JSONProcessingMode"&gt;ENHANCED_MOSHI_H2&lt;/parameter&gt;
-    &lt;parameter name="AsyncProcessingThreshold"&gt;1048576&lt;/parameter&gt;        &lt;!-- 1MB --&gt;
-    &lt;parameter name="LargePayloadThreshold"&gt;10485760&lt;/parameter&gt;           &lt;!-- 10MB --&gt;
-    &lt;parameter name="MemoryOptimizationThreshold"&gt;52428800&lt;/parameter&gt;     &lt;!-- 50MB --&gt;
-
-    &lt;!-- Tomcat HTTP/2 Integration Settings --&gt;
-    &lt;parameter name="TomcatHttp2Integration"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="TomcatBufferAlignment"&gt;32768&lt;/parameter&gt;             &lt;!-- Match http2MaxFrameSize --&gt;
-    &lt;parameter name="TomcatStreamAlignment"&gt;200&lt;/parameter&gt;               &lt;!-- Match maxConcurrentStreams --&gt;
+    &lt;!-- JSON processing mode and Tomcat HTTP/2 tuning are configured in
+         Tomcat's server.xml (compression, keep-alive, buffer sizes, etc.),
+         not in axis2.xml.  Use the standard JSON message builder below. --&gt;
 
     &lt;!-- Enhanced JSON Message Builder --&gt;
     &lt;messageBuilder contentType="application/json"
@@ -198,17 +191,9 @@
         &lt;parameter name="connectionTimeout"&gt;60000&lt;/parameter&gt;               &lt;!-- 1 minute connection --&gt;
         &lt;parameter name="responseTimeout"&gt;300000&lt;/parameter&gt;                &lt;!-- 5min response timeout --&gt;
 
-        &lt;!-- Enhanced Moshi H2 Integration (aligned with Tomcat buffers) --&gt;
-        &lt;parameter name="enableMoshiH2Processing"&gt;true&lt;/parameter&gt;
-        &lt;parameter name="moshiStreamingBufferSize"&gt;32768&lt;/parameter&gt;        &lt;!-- Match Tomcat frame size --&gt;
-        &lt;parameter name="moshiAsyncProcessingThreshold"&gt;1048576&lt;/parameter&gt;  &lt;!-- 1MB threshold --&gt;
-        &lt;parameter name="moshiLargePayloadThreshold"&gt;10485760&lt;/parameter&gt;   &lt;!-- 10MB threshold --&gt;
-        &lt;parameter name="moshiPerformanceMetricsEnabled"&gt;true&lt;/parameter&gt;
-
-        &lt;!-- Tomcat Integration Optimization --&gt;
-        &lt;parameter name="tomcatHttp2Coordination"&gt;true&lt;/parameter&gt;
-        &lt;parameter name="tomcatCompressionAware"&gt;true&lt;/parameter&gt;           &lt;!-- Leverage Tomcat JSON compression --&gt;
-        &lt;parameter name="tomcatKeepAliveOptimization"&gt;true&lt;/parameter&gt;      &lt;!-- Use Tomcat keep-alive settings --&gt;
+        &lt;!-- JSON streaming and compression are handled by the message formatter
+             and Tomcat's server.xml respectively — no additional transport
+             sender parameters are needed for Moshi or Tomcat integration. --&gt;
     &lt;/transportSender&gt;
 
 &lt;/axisconfig&gt;
