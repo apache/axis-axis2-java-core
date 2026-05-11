@@ -324,23 +324,17 @@ sender configuration to your axis2.xml file:</p>
     &lt;parameter name="connectionTimeout"&gt;30000&lt;/parameter&gt;
     &lt;parameter name="responseTimeout"&gt;300000&lt;/parameter&gt;
     &lt;parameter name="streamingBufferSize"&gt;65536&lt;/parameter&gt;
-    &lt;parameter name="memoryPressureThreshold"&gt;0.8&lt;/parameter&gt;
-    &lt;!-- Enterprise Big Data Configuration --&gt;
-    &lt;parameter name="enableStreamingOptimization"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="enableMemoryOptimization"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="largePayloadThreshold"&gt;52428800&lt;/parameter&gt; &lt;!-- 50MB --&gt;
 &lt;/transportSender&gt;
 </pre>
 
 <h3>HTTP/2 Configuration Parameters</h3>
 
 <ul>
-<li><strong>maxConcurrentStreams:</strong> Maximum concurrent HTTP/2 streams (default: 100 for 2GB heap)</li>
-<li><strong>initialWindowSize:</strong> HTTP/2 flow control window size (default: 64KB)</li>
-<li><strong>responseTimeout:</strong> Timeout for large payload processing (default: 5 minutes)</li>
-<li><strong>streamingBufferSize:</strong> Buffer size for streaming operations (default: 64KB)</li>
-<li><strong>memoryPressureThreshold:</strong> Memory usage threshold for adaptive flow control (default: 80%)</li>
-<li><strong>largePayloadThreshold:</strong> Size threshold for streaming optimization (default: 50MB)</li>
+<li><strong>maxConcurrentStreams:</strong> Maximum concurrent HTTP/2 streams (default: 100)</li>
+<li><strong>initialWindowSize:</strong> HTTP/2 flow control window size (default: 64KB, 2MB recommended for large payloads)</li>
+<li><strong>connectionTimeout:</strong> Connection establishment timeout in ms (default: 30000)</li>
+<li><strong>responseTimeout:</strong> Timeout for large payload processing (default: 300000 = 5 minutes)</li>
+<li><strong>streamingBufferSize:</strong> Buffer size for streaming operations (default: 65536 = 64KB)</li>
 </ul>
 
 <h3>Client Usage with cURL</h3>

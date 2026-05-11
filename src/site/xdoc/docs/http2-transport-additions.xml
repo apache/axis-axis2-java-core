@@ -46,14 +46,11 @@
    &lt;!-- Large Payload Optimization --&gt;
    &lt;parameter name="maxConcurrentStreams"&gt;20&lt;/parameter&gt;
    &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt; &lt;!-- 2MB window --&gt;
-   &lt;parameter name="streamingEnabled"&gt;true&lt;/parameter&gt;
-
-   &lt;!-- Cloud-Optimized Timeouts --&gt;
+   &lt;!-- Timeouts --&gt;
    &lt;parameter name="connectionTimeout"&gt;30000&lt;/parameter&gt; &lt;!-- 30s connect --&gt;
    &lt;parameter name="responseTimeout"&gt;300000&lt;/parameter&gt; &lt;!-- 5min response --&gt;
 
-   &lt;!-- Fallback for Load Balancers --&gt;
-   &lt;parameter name="http2FallbackEnabled"&gt;true&lt;/parameter&gt;
+   &lt;!-- HTTP/2 fallback to HTTP/1.1 is automatic via TLS ALPN --&gt;
 &lt;/transportSender&gt;
 </pre>
 
@@ -149,10 +146,9 @@ synchronous round-trip.</p>
 <tr><th>Parameter</th><th>Description</th><th>Default</th><th>Range</th></tr>
 <tr><td>maxConcurrentStreams</td><td>Maximum concurrent streams per connection. Lower values (4-8) force the connection pool to spread streams across multiple TCP connections — better for workloads with few concurrent large payloads. Higher values (50-100) maximize multiplexing efficiency for many small concurrent requests.</td><td>100</td><td>1-1000</td></tr>
 <tr><td>initialWindowSize</td><td>HTTP/2 per-stream flow-control window (bytes). Determines how much data can be in-flight per stream before the sender waits for a WINDOW_UPDATE. For payloads above 1 MB, use at least 1-2 MB to avoid excessive round-trips. Not related to the server-side FlushingOutputStream 64 KB flush interval.</td><td>2097152</td><td>64KB-16MB</td></tr>
-<tr><td>serverPushEnabled</td><td>Enable HTTP/2 server push</td><td>false</td><td>true/false</td></tr>
-<tr><td>memoryOptimized</td><td>Enable adaptive memory management</td><td>true</td><td>true/false</td></tr>
-<tr><td>largePayloadThreshold</td><td>Threshold for large payload optimization</td><td>52428800</td><td>10MB-500MB</td></tr>
-<tr><td>compressionEnabled</td><td>Enable intelligent compression</td><td>true</td><td>true/false</td></tr>
+<tr><td>streamingBufferSize</td><td>Buffer size for streaming flush interval</td><td>65536</td><td>8KB-1MB</td></tr>
+<tr><td>connectionTimeout</td><td>Connection establishment timeout (ms)</td><td>30000</td><td>1000-60000</td></tr>
+<tr><td>responseTimeout</td><td>Response timeout for large payloads (ms)</td><td>300000</td><td>30000-600000</td></tr>
 </table>
 
 <h3>Tuning for Different Workloads</h3>
@@ -216,8 +212,7 @@ load) and larger <code>initialWindowSize</code> (eliminates per-stream flow-cont
    &lt;parameter name="maxFrameSize"&gt;32768&lt;/parameter&gt;
 
    &lt;!-- Large Payload Optimization --&gt;
-   &lt;parameter name="largePayloadThreshold"&gt;52428800&lt;/parameter&gt;
-   &lt;parameter name="streamingEnabled"&gt;true&lt;/parameter&gt;
+   &lt;parameter name="streamingBufferSize"&gt;65536&lt;/parameter&gt;
    &lt;parameter name="memoryOptimized"&gt;true&lt;/parameter&gt;
 
    &lt;!-- Connection Management: sized for concurrent large-payload fan-out --&gt;
@@ -423,7 +418,7 @@ negotiation is slow on your network.</p>
    &lt;parameter name="PROTOCOL"&gt;HTTP/2.0&lt;/parameter&gt;
    &lt;parameter name="maxConcurrentStreams"&gt;100&lt;/parameter&gt;
    &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt;
-   &lt;parameter name="http2FallbackEnabled"&gt;true&lt;/parameter&gt;
+   &lt;!-- Fallback to HTTP/1.1 is automatic via TLS ALPN negotiation --&gt;
 &lt;/transportSender&gt;
 </pre>
 
@@ -585,7 +580,7 @@ set the cached HTTP/2 client using the CACHED_HTTP2_ASYNC_CLIENT property before
 
 <p>HTTP/2 requires TLS 1.2+ with ALPN. Use OpenJDK 11+ (ALPN built in).
 If ALPN negotiation fails, the transport falls back to HTTP/1.1
-automatically when <code>http2FallbackEnabled=true</code>.</p>
+automatically (no configuration flag required).</p>
 
 </body>
 </html>

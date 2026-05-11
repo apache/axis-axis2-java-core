@@ -197,8 +197,8 @@ depend on payload size, network conditions, and JVM configuration):</em>
 <tr>
     <td><strong>Connection Management</strong></td>
     <td><code>http2-max-concurrent-streams="128"</code></td>
-    <td><code>AsyncProcessingThreshold="1048576"</code> (1MB)</td>
-    <td>✅ WildFly manages 128 concurrent HTTP/2 streams, Moshi H2 handles async processing for large payloads</td>
+    <td><code>maxConcurrentStreams="128"</code> (axis2.xml)</td>
+    <td>✅ WildFly manages 128 concurrent HTTP/2 streams, transport sender matches</td>
 </tr>
 <tr>
     <td><strong>Flow Control Window</strong></td>
@@ -209,20 +209,20 @@ depend on payload size, network conditions, and JVM configuration):</em>
 <tr>
     <td><strong>Streaming Flush Buffer</strong></td>
     <td><code>buffer-size="65536"</code></td>
-    <td><code>moshiStreamingBufferSize="65536"</code></td>
+    <td><code>streamingBufferSize="65536"</code> (in axis2.xml)</td>
     <td>✅ 64KB server-side flush interval — good TTFB, independent of flow-control window</td>
 </tr>
 <tr>
     <td><strong>Large Payload Handling</strong></td>
     <td><code>http2-max-frame-size="16384"</code></td>
-    <td><code>LargePayloadThreshold="10485760"</code> (10MB)</td>
-    <td>✅ WildFly chunks large payloads efficiently, Moshi H2 applies optimization for 10MB+ payloads</td>
+    <td>(handled by message formatter)</td>
+    <td>✅ WildFly chunks large payloads via HTTP/2 DATA frames; streaming formatter handles large JSON</td>
 </tr>
 <tr>
     <td><strong>Memory Optimization</strong></td>
     <td><code>http2-header-table-size="4096"</code></td>
-    <td><code>MemoryOptimizationThreshold="52428800"</code> (50MB)</td>
-    <td>✅ Conservative header caching + aggressive JSON memory management for large payloads</td>
+    <td>(JVM <code>-XX:MaxDirectMemorySize</code>)</td>
+    <td>✅ Conservative header caching; JVM direct memory controls HTTP/2 buffer limits</td>
 </tr>
 <tr>
     <td><strong>Push Disabled</strong></td>
@@ -307,15 +307,15 @@ Complete HTTP/2 + JSON Optimization Stack:
     <td><strong>Buffer Sizes</strong></td>
     <td><code>buffer-size="32768"</code><br/><code>http2-max-frame-size="32768"</code></td>
     <td><code>streamingBufferSize="32768"</code></td>
-    <td><code>moshiStreamingBufferSize="32768"</code></td>
+    <td><code>streamingBufferSize="32768"</code></td>
     <td>✅ <strong>ALIGNED</strong>: All using 32KB</td>
 </tr>
 <tr>
     <td><strong>Window Sizes</strong></td>
     <td><code>http2-initial-window-size="2097152"</code></td>
     <td><code>initialWindowSize="2097152"</code></td>
-    <td><code>AsyncProcessingThreshold="1MB"</code></td>
-    <td>✅ <strong>TUNED</strong>: 2MB flow-control windows, 1MB async threshold</td>
+    <td>(automatic)</td>
+    <td>✅ <strong>TUNED</strong>: 2MB flow-control windows across both layers</td>
 </tr>
 <tr>
     <td><strong>Stream Limits</strong></td>
@@ -328,7 +328,7 @@ Complete HTTP/2 + JSON Optimization Stack:
     <td><strong>Large Payloads</strong></td>
     <td><code>max-post-size="104857600"</code> (100MB)<br/><code>no-request-timeout="300000"</code> (5min)</td>
     <td><code>responseTimeout="300000"</code> (5min)</td>
-    <td><code>LargePayloadThreshold="10MB"</code></td>
+    <td>(handled by formatter)</td>
     <td>✅ <strong>COORDINATED</strong>: Timeout alignment</td>
 </tr>
 <tr>
