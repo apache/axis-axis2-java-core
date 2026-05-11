@@ -1,0 +1,211 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>JPA/Hibernate Schema Generation for OpenAPI</title></head>
+<body>
+
+<h1>JPA/Hibernate Schema Generation for OpenAPI</h1>
+
+<p>The <code>axis2-jpa-schema</code> module generates JSON Schema definitions
+from JPA annotations or Hibernate XML mappings (<code>.hbm.xml</code>).
+These schemas can be embedded in OpenAPI 3.0 specifications to document
+request/response bodies that map directly to database entities.</p>
+
+<p><strong>Module:</strong> <code>modules/jpa-schema</code><br/>
+<strong>Package:</strong> <code>org.apache.axis2.jpa.schema</code></p>
+
+<h2 id="annotation_mode">JPA Annotation Mode</h2>
+
+<p>The <code>AnnotationIntrospector</code> reads standard Jakarta Persistence
+annotations (<code>@Entity</code>, <code>@Column</code>, <code>@Id</code>,
+<code>@ManyToOne</code>, <code>@OneToMany</code>, etc.) and produces an
+<code>EntitySchemaModel</code> that the <code>JpaSchemaGenerator</code>
+converts to JSON Schema.</p>
+
+<h3>Supported Annotations</h3>
+
+<table border="1">
+<tr><th>Annotation</th><th>Schema Effect</th></tr>
+<tr><td><code>@Entity</code></td><td>Entity is eligible for introspection</td></tr>
+<tr><td><code>@Table(name="...")</code></td><td>Recorded in schema description</td></tr>
+<tr><td><code>@Id</code></td><td>Marked as required; <code>readOnly=true</code> in read schema</td></tr>
+<tr><td><code>@GeneratedValue</code></td><td>Excluded from write schema (server-managed)</td></tr>
+<tr><td><code>@Column(nullable, length)</code></td><td>Maps to <code>required</code> and <code>maxLength</code></td></tr>
+<tr><td><code>@Version</code></td><td>Excluded from write schema (server-managed)</td></tr>
+<tr><td><code>@Transient</code></td><td>Excluded from all schemas</td></tr>
+<tr><td><code>@Enumerated(STRING)</code></td><td>Emitted as <code>{"type":"string","enum":[...]}</code></td></tr>
+<tr><td><code>@ManyToOne</code></td><td>Emitted as <code>{"$ref":"#/components/schemas/Entity"}</code></td></tr>
+<tr><td><code>@OneToMany</code></td><td>Emitted as <code>{"type":"array","items":{"$ref":"..."}}</code></td></tr>
+</table>
+
+<h3>Example</h3>
+
+<pre>
+@Entity
+@Table(name = "PRODUCT")
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private BigDecimal productID;
+
+    @Column(nullable = false, length = 200)
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
+
+    @Version
+    private Long objVersion;
+
+    @ManyToOne
+    private Department department;
+
+    @OneToMany
+    private List&lt;LineItem&gt; lineItems;
+}
+</pre>
+
+<pre>
+AnnotationIntrospector introspector = new AnnotationIntrospector();
+EntitySchemaModel model = introspector.introspect(Product.class);
+ObjectNode readSchema = JpaSchemaGenerator.generateReadSchema(model);
+ObjectNode writeSchema = JpaSchemaGenerator.generateWriteSchema(model);
+</pre>
+
+<h2 id="read_write_schemas">Read vs Write Schema Generation</h2>
+
+<p>The generator produces two schema variants per entity:</p>
+
+<table border="1">
+<tr><th>Variant</th><th>Includes</th><th>Use Case</th></tr>
+<tr><td><strong>Read schema</strong></td><td>All fields (IDs as <code>readOnly</code>)</td><td>GET response bodies</td></tr>
+<tr><td><strong>Write schema</strong></td><td>Excludes <code>@GeneratedValue</code> IDs, <code>@Version</code>, and custom audit fields</td><td>POST/PUT request bodies</td></tr>
+</table>
+
+<p>The <code>generateBothSchemas()</code> method returns both at once:</p>
+<pre>
+Map&lt;String, ObjectNode&gt; schemas = JpaSchemaGenerator.generateBothSchemas(model);
+// "Product"      → read schema
+// "ProductWrite" → write schema
+</pre>
+
+<h3>What Gets Excluded from Write</h3>
+<ul>
+  <li><code>@Id @GeneratedValue</code> — server assigns the ID</li>
+  <li><code>@Version</code> — server manages optimistic locking</li>
+  <li><code>@Transient</code> — excluded from both read and write</li>
+  <li>Custom annotations (see below)</li>
+</ul>
+
+<h2 id="custom_annotations">Custom Audit Annotation Support</h2>
+
+<p>Many enterprise codebases have project-specific annotations that mark
+fields as server-managed (e.g., <code>@IgnoreChanges</code> for audit
+timestamps, <code>@CreatedBy</code>, <code>@LastModifiedDate</code>).
+Register these with the introspector to exclude them from write schemas:</p>
+
+<pre>
+AnnotationIntrospector introspector = new AnnotationIntrospector();
+introspector.addWriteExcludeAnnotation("com.example.IgnoreChanges");
+introspector.addWriteExcludeAnnotation("com.example.audit.CreatedBy");
+
+EntitySchemaModel model = introspector.introspect(Product.class);
+// Fields annotated with @IgnoreChanges or @CreatedBy are now
+// excluded from the write schema but present in the read schema.
+</pre>
+
+<h2 id="hbm_xml_mode">Hibernate XML Mapping Mode (.hbm.xml)</h2>
+
+<p>For codebases that use Hibernate XML mappings instead of (or alongside)
+JPA annotations, the <code>HbmXmlIntrospector</code> parses <code>.hbm.xml</code>
+files and produces the same <code>EntitySchemaModel</code>:</p>
+
+<pre>
+HbmXmlIntrospector introspector = new HbmXmlIntrospector();
+try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
+    EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+    ObjectNode readSchema = JpaSchemaGenerator.generateReadSchema(model);
+}
+</pre>
+
+<h3>Supported HBM XML Elements</h3>
+
+<table border="1">
+<tr><th>HBM XML Element</th><th>Schema Effect</th></tr>
+<tr><td><code>&lt;id&gt;</code> with <code>&lt;generator&gt;</code></td><td>Required, <code>readOnly</code>, excluded from write</td></tr>
+<tr><td><code>&lt;version&gt;</code></td><td>Excluded from write schema</td></tr>
+<tr><td><code>&lt;property&gt;</code></td><td>Mapped by Hibernate type → JSON Schema type</td></tr>
+<tr><td><code>&lt;many-to-one&gt;</code></td><td><code>$ref</code> to referenced entity</td></tr>
+<tr><td><code>&lt;set&gt;</code> / <code>&lt;list&gt;</code></td><td>Array of <code>$ref</code></td></tr>
+<tr><td><code>&lt;component&gt;</code></td><td>Flattened with dot-notation prefix (e.g., <code>address.city</code>)</td></tr>
+<tr><td>Nested <code>&lt;column not-null="true"&gt;</code></td><td>Maps to required</td></tr>
+</table>
+
+<h3>Type Mapping</h3>
+
+<table border="1">
+<tr><th>Hibernate / Java Type</th><th>JSON Schema</th></tr>
+<tr><td><code>string</code>, <code>text</code></td><td><code>{"type":"string"}</code></td></tr>
+<tr><td><code>integer</code>, <code>int</code></td><td><code>{"type":"integer","format":"int32"}</code></td></tr>
+<tr><td><code>long</code>, <code>big_integer</code></td><td><code>{"type":"integer","format":"int64"}</code></td></tr>
+<tr><td><code>double</code>, <code>float</code>, <code>big_decimal</code></td><td><code>{"type":"number"}</code></td></tr>
+<tr><td><code>boolean</code>, <code>yes_no</code></td><td><code>{"type":"boolean"}</code></td></tr>
+<tr><td><code>timestamp</code>, <code>date</code></td><td><code>{"type":"string","format":"date-time"}</code></td></tr>
+</table>
+
+<h2>Test Coverage</h2>
+
+<p>The <code>JpaSchemaGeneratorTest</code> class provides comprehensive tests:</p>
+<ul>
+  <li><strong>Annotation introspection</strong> (12 tests): entity detection, ID fields,
+    column constraints, version, transient, enums, ManyToOne, OneToMany,
+    custom write-exclude annotations</li>
+  <li><strong>Schema generation</strong> (6 tests): read includes all fields, write excludes
+    server-managed fields, required array, relationship $refs, enum values,
+    generateBothSchemas</li>
+  <li><strong>HBM XML introspection</strong> (10 tests): parses CompanyBO and DepartmentBO
+    (70+ field production-grade entity), verifies type mapping, relationships,
+    collections, component flattening, nested column not-null</li>
+</ul>
+
+<h2>Relationship $ref Convention</h2>
+
+<p>Relationships are emitted as <code>$ref</code> pointers using the OpenAPI
+components convention:</p>
+
+<pre>
+// ManyToOne
+{"$ref": "#/components/schemas/Department"}
+
+// OneToMany
+{"type": "array", "items": {"$ref": "#/components/schemas/LineItem"}}
+
+// Write schema uses "Write" suffix
+{"$ref": "#/components/schemas/DepartmentWrite"}
+</pre>
+
+<p>The caller is responsible for ensuring that referenced entity schemas
+are also generated and added to the OpenAPI components section.</p>
+
+</body>
+</html>

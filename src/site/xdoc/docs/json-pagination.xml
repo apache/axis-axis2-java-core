@@ -1,0 +1,172 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>Offset/Limit Pagination for JSON-RPC Services</title></head>
+<body>
+
+<h1 id="overview">Offset/Limit Pagination for JSON-RPC Services</h1>
+
+<p>Axis2 provides a generic pagination framework for JSON-RPC services
+backed by SQL databases. The two classes —
+<code>PaginationRequest</code> and <code>PaginatedResponse&lt;T&gt;</code> —
+map directly to JPA/Hibernate's <code>setFirstResult(offset)</code> and
+<code>setMaxResults(limit)</code> pattern.</p>
+
+<p><strong>Package:</strong> <code>org.apache.axis2.json.rpc</code></p>
+
+<h2 id="wire_format">Wire Format</h2>
+
+<p>A paginated response wraps the result list with metadata:</p>
+
+<pre>
+{
+  "response": {
+    "data": [ ... ],
+    "pagination": {
+      "offset": 0,
+      "limit": 50,
+      "totalCount": 1247,
+      "hasMore": true
+    }
+  }
+}
+</pre>
+
+<ul>
+  <li><strong>offset</strong> — zero-based index of the first item in this page</li>
+  <li><strong>limit</strong> — maximum items requested (page size)</li>
+  <li><strong>totalCount</strong> — total items matching the query across all pages</li>
+  <li><strong>hasMore</strong> — true when <code>offset + limit &lt; totalCount</code></li>
+</ul>
+
+<h2 id="service_integration">Service Integration</h2>
+
+<p>A typical service method delegates offset/limit to the DAO:</p>
+
+<pre>
+public PaginatedResponse&lt;AssetBO&gt; findAssets(AssetQuery query) {
+    List&lt;AssetBO&gt; items = dao.findList(query.getOffset(), query.getLimit());
+    long total = dao.count(query);
+    return PaginatedResponse.of(items, query.getOffset(), query.getLimit(), total);
+}
+</pre>
+
+<p>The request POJO can embed <code>PaginationRequest</code> fields directly
+or accept them as separate parameters:</p>
+
+<pre>
+// Client sends:
+{
+  "searchTerm": "AAPL",
+  "offset": 100,
+  "limit": 50
+}
+</pre>
+
+<h3>Unpaginated Responses</h3>
+
+<p>For small lookup tables (e.g., a list of 15 departments), use the
+convenience factory to wrap the full list with <code>hasMore=false</code>:</p>
+
+<pre>
+return PaginatedResponse.unpaginated(departments);
+// → offset=0, limit=15, totalCount=15, hasMore=false
+</pre>
+
+<h2 id="safety">Safety: maxLimit Clamping and Input Validation</h2>
+
+<p><code>PaginationRequest</code> enforces safety constraints at the getter level:</p>
+
+<table border="1">
+<tr><th>Input</th><th>Behavior</th></tr>
+<tr><td><code>offset &lt; 0</code></td><td>Clamped to 0</td></tr>
+<tr><td><code>limit &lt;= 0</code></td><td>Default: 50</td></tr>
+<tr><td><code>limit &gt; maxLimit</code></td><td>Capped at maxLimit (default: 2000)</td></tr>
+</table>
+
+<p>Services that handle expensive entities can lower the cap per-operation:</p>
+
+<pre>
+// Large text fields — cap at 100 per page
+request.setMaxLimit(100);
+int safeLimit = request.getLimit(); // capped at 100
+</pre>
+
+<h2 id="frontend_patterns">Frontend Patterns</h2>
+
+<h3>Page Controls ("Showing 151–200 of 1,247")</h3>
+<pre>
+// JavaScript / TypeScript
+const { offset, limit, totalCount } = pagination;
+const currentPage = Math.floor(offset / limit) + 1;
+const totalPages = Math.ceil(totalCount / limit);
+const showingFrom = offset + 1;
+const showingTo = offset + data.length;
+</pre>
+
+<h3>Virtual Scroll / Infinite Scroll</h3>
+<pre>
+// Load next chunk when user scrolls
+const nextOffset = pagination.offset + pagination.limit;
+if (pagination.hasMore) {
+    fetchPage(nextOffset, pagination.limit);
+}
+</pre>
+
+<h3>SmartClient startRow/endRow</h3>
+<pre>
+// SmartClient sends startRow=300, endRow=350
+// Service translates: offset = startRow, limit = endRow - startRow
+int offset = startRow;
+int limit = endRow - startRow;
+</pre>
+
+<h2>Why Offset/Limit Instead of Cursor</h2>
+
+<ul>
+  <li><strong>DAO compatibility</strong> — existing Hibernate/JPA DAOs use
+    <code>query.setFirstResult(offset)</code> and <code>query.setMaxResults(limit)</code>.
+    Cursor pagination requires a stable sort key and stateful server-side tokens.</li>
+  <li><strong>Frontend grids</strong> — SmartClient, AG Grid, and React Table natively
+    speak offset/limit via <code>startRow</code>/<code>endRow</code> or
+    <code>page</code>/<code>pageSize</code>.</li>
+  <li><strong>totalCount</strong> — enables "Showing 1–50 of 1,247" UI patterns
+    and page-count calculations. Cursor APIs typically omit total counts because
+    they are expensive for the cursor model, but they are cheap when the DAO
+    already runs <code>SELECT COUNT(*)</code>.</li>
+</ul>
+
+<h2>Test Coverage</h2>
+
+<p>The <code>PaginatedResponseTest</code> class provides 20 tests covering:</p>
+<ul>
+  <li>First page, last page, partial last page, single page, empty result</li>
+  <li>Null data treated as empty list</li>
+  <li>Unpaginated convenience factory</li>
+  <li>Negative offset clamping, zero/negative limit defaults, maxLimit enforcement</li>
+  <li>Enterprise scenarios: 8,543-item virtual scroll, soft-delete filtering,
+    service-specific maxLimit, SmartClient startRow/endRow translation</li>
+  <li>Request → response round-trip simulation</li>
+</ul>
+
+</body>
+</html>

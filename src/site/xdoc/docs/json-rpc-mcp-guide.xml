@@ -602,9 +602,11 @@ Each item notes whether the gap is architectural (won't be added to Axis2) or de
   <td>When set to <code>ServiceName/operationName</code>, <code>_meta.tickerResolveEndpoint</code> is added to the catalog. Omitted entirely when not configured so deployments without a ticker service are unaffected.</td>
 </tr>
 <tr>
-  <td>Cursor-based pagination</td>
-  <td>Not implemented</td>
-  <td>Axis2 operations return their full result sets. Cursor-based pagination would need to be implemented in a separate REST layer.</td>
+  <td>Pagination</td>
+  <td><strong>Offset/limit implemented</strong> — see <a href="json-pagination.html">Pagination Guide</a></td>
+  <td>Axis2 provides <code>PaginatedResponse&lt;T&gt;</code> and <code>PaginationRequest</code>
+    for offset/limit pagination with maxLimit clamping.
+    Cursor-based pagination is not implemented (offset/limit maps directly to JPA/Hibernate DAO patterns).</td>
 </tr>
 <tr>
   <td>RFC 7807 Problem Details error format</td>
@@ -638,7 +640,7 @@ uses determines what limitations apply:</p>
 <tr><td>Auth</td><td>email + password → Bearer token (loginService)</td><td>API key + secret → scoped JWT</td></tr>
 <tr><td>Query semantics</td><td>Per-operation parameters in arg0</td><td>Uniform filter/sort/fields on every resource</td></tr>
 <tr><td>Error format</td><td>SOAP fault with correlation ID UUID</td><td>RFC 7807 Problem Details (JSON, per-field)</td></tr>
-<tr><td>Pagination</td><td>Full result sets only</td><td>Cursor-based</td></tr>
+<tr><td>Pagination</td><td>Offset/limit (<a href="json-pagination.html">PaginatedResponse</a>)</td><td>Cursor-based</td></tr>
 <tr><td>inputSchema</td><td>Full JSON Schema via <code>mcpInputSchema</code> in services.xml (hand-authored)</td><td>Full JSON Schema from OpenAPI annotations (auto-generated)</td></tr>
 </table>
 
