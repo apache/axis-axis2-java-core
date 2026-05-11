@@ -213,9 +213,14 @@ public class DataManagementService {
 }
 </pre>
 
-<h3>Request/Response Models with Moshi</h3>
+<h3>Request/Response Models</h3>
 
-<p>Axis2 uses Moshi for JSON processing, providing clean, efficient serialization:</p>
+<p>Axis2 supports multiple JSON libraries — Moshi, Gson, and a streaming
+formatter — each with standard and HTTP/2-enhanced variants. Select the
+library by choosing the corresponding message builder and formatter
+classes in axis2.xml. The examples below use Moshi's <code>@Json</code>
+annotation; Gson provides equivalent functionality with
+<code>@SerializedName</code>:</p>
 
 <pre>
 public class LoginRequest {
@@ -550,7 +555,7 @@ public DataResponse processData(DataRequest request)
 <h3>Performance Optimizations</h3>
 
 <ul>
-<li><strong>Moshi JSON Processing:</strong> High-performance JSON serialization optimized for large payloads</li>
+<li><strong>JSON Processing:</strong> Choice of Moshi, Gson, or streaming formatters — each with HTTP/2-enhanced variants for large payloads</li>
 <li><strong>Service Caching:</strong> OpenAPI spec generation results are cached for improved response times</li>
 <li><strong>CORS Optimization:</strong> Efficient CORS header handling for browser-based applications</li>
 <li><strong>Memory Management:</strong> Streaming support for large request/response payloads</li>
