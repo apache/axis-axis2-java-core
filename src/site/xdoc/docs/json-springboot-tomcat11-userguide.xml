@@ -140,9 +140,7 @@ For comprehensive HTTP/2 configuration details and advanced features, see the
 <a href="http2-transport-additions.html">HTTP/2 Transport documentation</a>.</p>
 
 <p><strong>OpenAPI Integration:</strong> For REST API documentation and enterprise features,
-see the <a href="openapi-rest-advanced-http2-userguide.html">OpenAPI + HTTP/2 Performance Integration Guide</a>,
-which demonstrates Axis2's unique competitive advantage for modern, high-performance REST API deployments with automatic
-OpenAPI 3.0.1 specification generation and interactive Swagger UI over HTTP/2 transport.</p>
+see the <a href="openapi-rest-userguide.html">OpenAPI REST User Guide</a>.</p>
 
 <h3>Key HTTP/2 Benefits</h3>
 
