@@ -406,14 +406,8 @@ export CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.coyote.http2.Http2Protocol.ini
 # Note: Axis2 HTTP/2 and OpenAPI are configured in axis2.xml, not via
 # system properties.  No -Daxis2.* flags are needed.
 
-# Performance Monitoring
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote"
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.port=9999"
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.ssl=false"
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.authenticate=false"
-
-# Tomcat HTTP/2 Metrics
-export CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.coyote.http2.Http2Protocol.jmxMetrics=true"
+# For production monitoring, use Micrometer with Prometheus/Grafana
+# or Spring Boot Actuator endpoints rather than raw JMX.
 </pre>
 
 </body>

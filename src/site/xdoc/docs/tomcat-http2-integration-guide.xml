@@ -282,18 +282,6 @@ export CATALINA_OPTS="$CATALINA_OPTS -Daxis2.json.moshi.h2.async.threshold=10485
                 Compression:%{Accept-Encoding}i" /&gt;
 </pre>
 
-<h4>JMX Monitoring Integration</h4>
-<pre>
-# Enable JMX for HTTP/2 metrics monitoring
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote"
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.port=9999"
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.ssl=false"
-export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote.authenticate=false"
-
-# HTTP/2 specific metrics
-export CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.coyote.http2.Http2Protocol.jmxMetrics=true"
-</pre>
-
 <h2>Production Deployment Guide</h2>
 
 <h3>1. Step-by-Step Deployment</h3>

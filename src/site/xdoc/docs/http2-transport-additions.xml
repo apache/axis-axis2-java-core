@@ -278,8 +278,9 @@ sender negotiates HTTP/2 framing and flow control automatically.</p>
 
 <h3>Performance Monitoring</h3>
 
-<p>HTTP/2 transport performance can be monitored via JMX or application-level
-logging.  Enable JMX in the JVM startup flags (see the JVM Tuning section).</p>
+<p>For production monitoring, use Micrometer with Prometheus/Grafana or
+Spring Boot Actuator endpoints.  Application-level logging via the
+Axis2 log configuration provides per-request timing details.</p>
 
 <p>Available metrics include:</p>
 <ul>

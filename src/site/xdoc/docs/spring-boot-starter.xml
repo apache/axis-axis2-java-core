@@ -78,7 +78,7 @@ new configurator implementation — work that is planned but not yet complete.</
 long-running, stateful service deployments typical of Axis2 workloads:</p>
 
 <ul>
-<li>Container-managed thread pools, connection pools, and JMX monitoring</li>
+<li>Container-managed thread pools, connection pools, and monitoring (Actuator/Micrometer)</li>
 <li>Hot-redeploy via exploded WAR without JVM restart</li>
 <li>Central TLS/certificate management (Tomcat's <code>server.xml</code>, WildFly's Elytron)</li>
 <li>Established operational tooling (WildFly CLI, Tomcat Manager, deployment scanners)</li>
