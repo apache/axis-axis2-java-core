@@ -35,8 +35,23 @@ request/response bodies that map directly to database entities.</p>
 
 <h2 id="annotation_mode">JPA Annotation Mode</h2>
 
-<p>The <code>AnnotationIntrospector</code> reads standard Jakarta Persistence
-annotations (<code>@Entity</code>, <code>@Column</code>, <code>@Id</code>,
+<p>The <code>AnnotationIntrospector</code> uses Java reflection to read
+Jakarta Persistence annotations from compiled <code>@Entity</code> classes.
+Unlike the <a href="#hbm_xml_mode">HBM XML mode</a> (which reads raw XML
+files and has a standalone CLI tool), annotation mode requires the entity
+classes to be compiled and on the classpath.  Typical integration points:</p>
+
+<ul>
+  <li><strong>At startup</strong> — a Spring bean or context listener scans
+    entity classes and generates schemas on first request</li>
+  <li><strong>At build time</strong> — a Maven/Gradle task that runs after
+    compilation (e.g., in the <code>process-classes</code> phase)</li>
+  <li><strong>In unit tests</strong> — call
+    <code>introspector.introspect(Product.class)</code> directly</li>
+</ul>
+
+<p>The introspector reads standard Jakarta Persistence annotations
+(<code>@Entity</code>, <code>@Column</code>, <code>@Id</code>,
 <code>@ManyToOne</code>, <code>@OneToMany</code>, etc.) and produces an
 <code>EntitySchemaModel</code> that the <code>JpaSchemaGenerator</code>
 converts to JSON Schema.</p>
