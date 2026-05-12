@@ -52,7 +52,7 @@ import java.util.List;
  *       Cursor pagination requires a stable sort key and stateful server-side
  *       tokens — added complexity with no benefit when the underlying query is
  *       already offset-based.</li>
- *   <li>Frontend grids (SmartClient, AG Grid, React Table) natively speak
+ *   <li>Frontend grids (AG Grid, React Table, etc.) natively speak
  *       offset/limit via {@code startRow}/{@code endRow} or
  *       {@code page}/{@code pageSize}. Cursor tokens require client-side
  *       adaptation.</li>
@@ -64,8 +64,8 @@ import java.util.List;
  *
  * <h3>Usage in a service method</h3>
  * <pre>{@code
- * public PaginatedResponse<AssetBO> findAssets(AssetQuery query) {
- *     List<AssetBO> items = dao.findList(query.getOffset(), query.getLimit());
+ * public PaginatedResponse<Product> findProducts(ProductQuery query) {
+ *     List<Product> items = dao.findList(query.getOffset(), query.getLimit());
  *     long total = dao.count(query);
  *     return PaginatedResponse.of(items, query.getOffset(), query.getLimit(), total);
  * }

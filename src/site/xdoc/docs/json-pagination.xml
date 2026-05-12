@@ -63,8 +63,8 @@ map directly to JPA/Hibernate's <code>setFirstResult(offset)</code> and
 <p>A typical service method delegates offset/limit to the DAO:</p>
 
 <pre>
-public PaginatedResponse&lt;AssetBO&gt; findAssets(AssetQuery query) {
-    List&lt;AssetBO&gt; items = dao.findList(query.getOffset(), query.getLimit());
+public PaginatedResponse&lt;Product&gt; findProducts(ProductQuery query) {
+    List&lt;Product&gt; items = dao.findList(query.getOffset(), query.getLimit());
     long total = dao.count(query);
     return PaginatedResponse.of(items, query.getOffset(), query.getLimit(), total);
 }
@@ -132,9 +132,9 @@ if (pagination.hasMore) {
 }
 </pre>
 
-<h3>SmartClient startRow/endRow</h3>
+<h3>Grid startRow/endRow Translation</h3>
 <pre>
-// SmartClient sends startRow=300, endRow=350
+// Grid sends startRow=300, endRow=350
 // Service translates: offset = startRow, limit = endRow - startRow
 int offset = startRow;
 int limit = endRow - startRow;
@@ -146,7 +146,7 @@ int limit = endRow - startRow;
   <li><strong>DAO compatibility</strong> — existing Hibernate/JPA DAOs use
     <code>query.setFirstResult(offset)</code> and <code>query.setMaxResults(limit)</code>.
     Cursor pagination requires a stable sort key and stateful server-side tokens.</li>
-  <li><strong>Frontend grids</strong> — SmartClient, AG Grid, and React Table natively
+  <li><strong>Frontend grids</strong> — data grids (AG Grid, React Table, etc.) natively
     speak offset/limit via <code>startRow</code>/<code>endRow</code> or
     <code>page</code>/<code>pageSize</code>.</li>
   <li><strong>totalCount</strong> — enables "Showing 1–50 of 1,247" UI patterns
@@ -164,7 +164,7 @@ int limit = endRow - startRow;
   <li>Unpaginated convenience factory</li>
   <li>Negative offset clamping, zero/negative limit defaults, maxLimit enforcement</li>
   <li>Enterprise scenarios: 8,543-item virtual scroll, soft-delete filtering,
-    service-specific maxLimit, SmartClient startRow/endRow translation</li>
+    service-specific maxLimit, grid startRow/endRow translation</li>
   <li>Request → response round-trip simulation</li>
 </ul>
 

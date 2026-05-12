@@ -270,7 +270,7 @@ public class PaginatedResponseTest {
 
     @Test
     public void testEnterprise_virtualScroll_startRowEndRow() {
-        // Scenario: SmartClient-style grid sends startRow=300, endRow=350.
+        // Scenario: data grid sends startRow=300, endRow=350.
         // The service translates: offset = startRow, limit = endRow - startRow.
         int startRow = 300;
         int endRow = 350;
