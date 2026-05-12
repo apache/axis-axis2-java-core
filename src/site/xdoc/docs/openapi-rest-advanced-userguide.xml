@@ -174,26 +174,26 @@ openapi.security.bearer.description=JWT Bearer token authentication
 
 <pre>
 @Path("/api/v2")
-@Api(value = "Financial Services API v2")
+@Tag(name = "Financial Services API v2", description = "Financial Services API v2")
 public class FinancialServicesController {
 
     @POST
     @Path("/trades")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-        value = "Create new trade",
-        notes = "Create a new trade with Bearer token authentication",
-        authorizations = @Authorization(value = "bearerAuth")
+    @Operation(
+        summary = "Create new trade",
+        description = "Create a new trade with Bearer token authentication",
+        security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
-        @ApiResponse(code = 201, message = "Trade created successfully"),
-        @ApiResponse(code = 401, message = "Unauthorized - invalid token"),
-        @ApiResponse(code = 403, message = "Forbidden - insufficient permissions")
+        @ApiResponse(responseCode = "201", description = "Trade created successfully"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - invalid token"),
+        @ApiResponse(responseCode = "403", description = "Forbidden - insufficient permissions")
     })
     public TradeResponse createTrade(
             @HeaderParam("Authorization") String bearerToken,
-            @ApiParam("Trade details") @Valid TradeRequest request) {
+            @Parameter(description = "Trade details") @Valid TradeRequest request) {
 
         // Extract JWT token from Bearer header
         String jwt = extractJwtFromBearerHeader(bearerToken);
@@ -262,23 +262,20 @@ openapi.security.oauth2.scopes=read:markets,write:trades,admin:users,read:report
 
 <pre>
 @Path("/api/v2/reports")
-@Api(value = "Financial Reports API")
+@Tag(name = "Financial Reports API", description = "Financial Reports API")
 public class ReportsController {
 
     @GET
     @Path("/portfolio/{portfolioId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-        value = "Get portfolio report",
-        notes = "Requires 'read:reports' scope",
-        authorizations = @Authorization(
-            value = "oauth2",
-            scopes = @AuthorizationScope(scope = "read:reports", description = "Read access to reports")
-        )
+    @Operation(
+        summary = "Get portfolio report",
+        description = "Requires 'read:reports' scope",
+        security = @SecurityRequirement(name = "oauth2", scopes = {"read:reports"})
     )
     public PortfolioReport getPortfolioReport(
             @HeaderParam("Authorization") String bearerToken,
-            @PathParam("portfolioId") @ApiParam("Portfolio identifier") String portfolioId) {
+            @PathParam("portfolioId") @Parameter(description = "Portfolio identifier") String portfolioId) {
 
         // Validate OAuth2 token and scopes
         OAuth2TokenInfo tokenInfo = oauth2Validator.validateToken(bearerToken);
@@ -307,20 +304,20 @@ openapi.security.apikey.description=Enterprise API key for programmatic access
 
 <pre>
 @Path("/api/v2/market-data")
-@Api(value = "Market Data API")
+@Tag(name = "Market Data API", description = "Market Data API")
 public class MarketDataController {
 
     @GET
     @Path("/quotes/{symbol}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-        value = "Get real-time quote",
-        notes = "Requires valid API key",
-        authorizations = @Authorization(value = "apiKeyAuth")
+    @Operation(
+        summary = "Get real-time quote",
+        description = "Requires valid API key",
+        security = @SecurityRequirement(name = "apiKeyAuth")
     )
     public QuoteResponse getQuote(
-            @HeaderParam("X-API-Key") @ApiParam("API Key") String apiKey,
-            @PathParam("symbol") @ApiParam("Stock symbol") String symbol) {
+            @HeaderParam("X-API-Key") @Parameter(description = "API Key") String apiKey,
+            @PathParam("symbol") @Parameter(description = "Stock symbol") String symbol) {
 
         // Validate API key and get associated permissions
         ApiKeyInfo keyInfo = apiKeyService.validateKey(apiKey);
@@ -897,7 +894,7 @@ public class CustomResourceScanner implements ResourceScanner {
         // Custom logic for finding REST controllers
         return ClasspathScanner.scan("com.company.api")
             .filter(clazz -> clazz.isAnnotationPresent(Path.class))
-            .filter(clazz -> clazz.isAnnotationPresent(Api.class))
+            .filter(clazz -> clazz.isAnnotationPresent(Tag.class))
             .collect(Collectors.toSet());
     }
 
@@ -926,7 +923,7 @@ public class CustomResourceScanner implements ResourceScanner {
 
 <pre>
 @Path("/api/v2/trading")
-@Api(value = "Trading API", description = "Enterprise trading services with comprehensive security")
+@Tag(name = "Trading API", description = "Enterprise trading services with comprehensive security")
 @Component
 public class TradingController {
 
@@ -940,27 +937,26 @@ public class TradingController {
     @Path("/orders")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-        value = "Place trading order",
-        notes = "Execute trading order with comprehensive validation and risk checks",
-        response = OrderResponse.class,
-        authorizations = @Authorization(value = "jwtBearer")
+    @Operation(
+        summary = "Place trading order",
+        description = "Execute trading order with comprehensive validation and risk checks",
+        security = @SecurityRequirement(name = "jwtBearer")
     )
     @ApiResponses({
-        @ApiResponse(code = 201, message = "Order placed successfully",
-                    response = OrderResponse.class),
-        @ApiResponse(code = 400, message = "Invalid order parameters",
-                    response = ErrorResponse.class),
-        @ApiResponse(code = 401, message = "Authentication required",
-                    response = ErrorResponse.class),
-        @ApiResponse(code = 403, message = "Insufficient trading permissions",
-                    response = ErrorResponse.class),
-        @ApiResponse(code =429, message = "Rate limit exceeded",
-                    response = ErrorResponse.class)
+        @ApiResponse(responseCode = "201", description = "Order placed successfully",
+            content = @Content(schema = @Schema(implementation = OrderResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid order parameters",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Authentication required",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Insufficient trading permissions",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "429", description = "Rate limit exceeded",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public Response placeOrder(
-            @HeaderParam("Authorization") @ApiParam("Bearer JWT token") String bearerToken,
-            @ApiParam("Order details") @Valid OrderRequest orderRequest,
+            @HeaderParam("Authorization") @Parameter(description = "Bearer JWT token") String bearerToken,
+            @Parameter(description = "Order details") @Valid OrderRequest orderRequest,
             @Context HttpServletRequest request) {
 
         try {
@@ -1014,15 +1010,14 @@ public class TradingController {
     @GET
     @Path("/orders/{orderId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-        value = "Get order status",
-        notes = "Retrieve detailed order information and execution status",
-        response = OrderStatusResponse.class,
-        authorizations = @Authorization(value = "jwtBearer")
+    @Operation(
+        summary = "Get order status",
+        description = "Retrieve detailed order information and execution status",
+        security = @SecurityRequirement(name = "jwtBearer")
     )
     public Response getOrderStatus(
             @HeaderParam("Authorization") String bearerToken,
-            @PathParam("orderId") @ApiParam("Order identifier") String orderId) {
+            @PathParam("orderId") @Parameter(description = "Order identifier") String orderId) {
 
         String jwt = extractJwtToken(bearerToken);
         JwtClaims claims = tokenValidator.validateToken(jwt);
@@ -1086,99 +1081,99 @@ public class TradingController {
 
 <pre>
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(description = "Trading order request with comprehensive validation")
+@Schema(description = "Trading order request with comprehensive validation")
 public class OrderRequest {
 
     @NotNull(message = "Symbol is required")
     @Pattern(regexp = "[A-Z]{1,5}", message = "Invalid symbol format")
-    @ApiModelProperty(value = "Stock symbol", required = true, example = "AAPL")
+    @Schema(description = "Stock symbol", required = true, example = "AAPL")
     private String symbol;
 
     @NotNull(message = "Order side is required")
-    @ApiModelProperty(value = "Order side", required = true, allowableValues = "BUY,SELL")
+    @Schema(description = "Order side", required = true, allowableValues = {"BUY", "SELL"})
     private OrderSide side;
 
     @NotNull(message = "Quantity is required")
     @DecimalMin(value = "0.01", message = "Quantity must be positive")
-    @ApiModelProperty(value = "Order quantity", required = true, example = "100")
+    @Schema(description = "Order quantity", required = true, example = "100")
     private BigDecimal quantity;
 
     @NotNull(message = "Order type is required")
-    @ApiModelProperty(value = "Order type", required = true, allowableValues = "MARKET,LIMIT,STOP,STOP_LIMIT")
+    @Schema(description = "Order type", required = true, allowableValues = {"MARKET", "LIMIT", "STOP", "STOP_LIMIT"})
     private OrderType orderType;
 
-    @ApiModelProperty(value = "Limit price (required for LIMIT and STOP_LIMIT orders)", example = "150.50")
+    @Schema(description = "Limit price (required for LIMIT and STOP_LIMIT orders)", example = "150.50")
     private BigDecimal limitPrice;
 
-    @ApiModelProperty(value = "Stop price (required for STOP and STOP_LIMIT orders)", example = "145.00")
+    @Schema(description = "Stop price (required for STOP and STOP_LIMIT orders)", example = "145.00")
     private BigDecimal stopPrice;
 
     @NotNull(message = "Time in force is required")
-    @ApiModelProperty(value = "Time in force", required = true, allowableValues = "DAY,GTC,IOC,FOK")
+    @Schema(description = "Time in force", required = true, allowableValues = {"DAY", "GTC", "IOC", "FOK"})
     private TimeInForce timeInForce;
 
-    @ApiModelProperty(value = "Client order ID for tracking", example = "CLIENT-ORDER-123")
+    @Schema(description = "Client order ID for tracking", example = "CLIENT-ORDER-123")
     private String clientOrderId;
 
     @Valid
-    @ApiModelProperty(value = "Additional order parameters")
+    @Schema(description = "Additional order parameters")
     private OrderParameters parameters;
 
     // Constructors, getters, setters, builder pattern
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(description = "Trading order response with execution details")
+@Schema(description = "Trading order response with execution details")
 public class OrderResponse {
 
-    @ApiModelProperty(value = "Unique order identifier", example = "ORD-12345678")
+    @Schema(description = "Unique order identifier", example = "ORD-12345678")
     private String orderId;
 
-    @ApiModelProperty(value = "Current order status", allowableValues = "PENDING,FILLED,PARTIALLY_FILLED,CANCELLED,REJECTED")
+    @Schema(description = "Current order status", allowableValues = {"PENDING", "FILLED", "PARTIALLY_FILLED", "CANCELLED", "REJECTED"})
     private OrderStatus status;
 
-    @ApiModelProperty(value = "Order submission timestamp", example = "2023-12-21T15:30:00Z")
+    @Schema(description = "Order submission timestamp", example = "2023-12-21T15:30:00Z")
     private Instant submissionTime;
 
-    @ApiModelProperty(value = "Execution price (if filled)", example = "150.25")
+    @Schema(description = "Execution price (if filled)", example = "150.25")
     private BigDecimal executionPrice;
 
-    @ApiModelProperty(value = "Filled quantity", example = "100")
+    @Schema(description = "Filled quantity", example = "100")
     private BigDecimal filledQuantity;
 
-    @ApiModelProperty(value = "Remaining quantity", example = "0")
+    @Schema(description = "Remaining quantity", example = "0")
     private BigDecimal remainingQuantity;
 
-    @ApiModelProperty(value = "Commission charged", example = "0.99")
+    @Schema(description = "Commission charged", example = "0.99")
     private BigDecimal commission;
 
-    @ApiModelProperty(value = "Estimated settlement date", example = "2023-12-23")
+    @Schema(description = "Estimated settlement date", example = "2023-12-23")
     private LocalDate estimatedSettlement;
 
     @Valid
-    @ApiModelProperty(value = "Risk metrics for this order")
+    @Schema(description = "Risk metrics for this order")
     private RiskMetrics riskMetrics;
 
-    @ApiModelProperty(value = "Execution venue", example = "NASDAQ")
+    @Schema(description = "Execution venue", example = "NASDAQ")
     private String venue;
 
     // Constructors, getters, setters, builder pattern
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(description = "Risk metrics and compliance information")
+@Schema(description = "Risk metrics and compliance information")
 public class RiskMetrics {
 
-    @ApiModelProperty(value = "Position delta after execution", example = "0.15")
+    @Schema(description = "Position delta after execution", example = "0.15")
     private BigDecimal positionDelta;
 
-    @ApiModelProperty(value = "Portfolio value at risk", example = "25000.00")
+    @Schema(description = "Portfolio value at risk", example = "25000.00")
     private BigDecimal valueAtRisk;
 
-    @ApiModelProperty(value = "Regulatory compliance status")
+    @Schema(description = "Regulatory compliance status")
     private ComplianceStatus complianceStatus;
 
-    @ApiModelProperty(value = "Risk limit utilization percentage", example = "45.5")
+    @Schema(description = "Risk limit utilization percentage", example = "45.5")
     private BigDecimal riskUtilization;
 
     // Additional risk metrics...
