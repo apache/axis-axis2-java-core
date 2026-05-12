@@ -194,7 +194,7 @@ Support</a></li>
     </li>
     <li><strong>23.7 <a href="mcp-examples.html">MCP Examples — Financial Services Benchmarks</a></strong>
     <ul>
-        <li><a href="mcp-examples.html#Live_Examples_.28Tested_on_WildFly_32.0.1.Final.2C_2026-04-08.29">Live Examples (WildFly 32)</a></li>
+        <li><a href="mcp-examples.html#Live_Examples_.28Tested_on_WildFly_32.29">Live Examples (WildFly 32)</a></li>
         <li><a href="mcp-examples.html#Demo_1.3A_Stress-test_.E2.80.94_.E2.80.9CWhat_if_correlations_spike.3F.E2.80.9D">Demo 1: Stress Test</a></li>
         <li><a href="mcp-examples.html#Demo_2.3A_Pre-trade_risk_.E2.80.94_.E2.80.9CShould_I_add_this_name.3F.E2.80.9D">Demo 2: Pre-Trade Risk</a></li>
         <li><a href="mcp-examples.html#Demo_3.3A_Convergence_.E2.80.94_.E2.80.9CHow_much_compute_do_I_actually_need.3F.E2.80.9D">Demo 3: Convergence</a></li>

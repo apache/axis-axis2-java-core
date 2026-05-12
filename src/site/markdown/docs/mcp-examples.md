@@ -93,7 +93,7 @@ All curl examples below include paired MCP stdio equivalents.
 
 ---
 
-## Live Examples (Tested on WildFly 32.0.1.Final, 2026-04-08)
+## Live Examples (Tested on WildFly 32)
 
 ### Portfolio Variance — 5 assets
 

@@ -205,7 +205,114 @@ components convention:</p>
 </pre>
 
 <p>The caller is responsible for ensuring that referenced entity schemas
-are also generated and added to the OpenAPI components section.</p>
+are also generated and added to the OpenAPI components section.  The
+batch generator (below) handles this automatically by processing all
+HBM files in a directory at once.</p>
+
+<h2 id="batch_generation">Batch Generation from HBM XML Directory</h2>
+
+<p><code>HbmBatchSchemaGenerator</code> is a standalone command-line tool
+that scans a directory of <code>*.hbm.xml</code> files and produces a single
+OpenAPI 3.0 JSON document containing read and write schemas for every
+entity found.  This is the recommended approach for projects with many
+HBM-mapped entities.</p>
+
+<h3>Command Line</h3>
+<pre>
+java -cp axis2-jpa-schema.jar:jackson-databind.jar:jackson-core.jar:jackson-annotations.jar:commons-logging.jar \
+  org.apache.axis2.jpa.schema.HbmBatchSchemaGenerator \
+  src/main/resources \
+  resources-axis2/openapi-schemas.json
+</pre>
+
+<h3>Ant Integration</h3>
+
+<p>The batch generator follows the same pattern as Hibernate Tools'
+<code>hbm2java</code> and <code>hbm2ddl</code> tasks — same HBM input
+directory, different output artifact:</p>
+
+<pre>
+&lt;target name="openapi-schema"
+        description="Generate OpenAPI schemas from HBM XML mappings"&gt;
+    &lt;java classname="org.apache.axis2.jpa.schema.HbmBatchSchemaGenerator"
+          fork="true" failonerror="true"&gt;
+        &lt;classpath&gt;
+            &lt;fileset dir="lib" includes="axis2-jpa-schema*.jar,jackson-*.jar,commons-logging*.jar"/&gt;
+        &lt;/classpath&gt;
+        &lt;!-- Input: directory containing *.hbm.xml --&gt;
+        &lt;arg value="src/main/resources"/&gt;
+        &lt;!-- Output: OpenAPI 3.0 JSON with all schemas --&gt;
+        &lt;arg value="build/openapi-schemas.json"/&gt;
+    &lt;/java&gt;
+&lt;/target&gt;
+</pre>
+
+<h3>Output</h3>
+
+<p>The tool produces a valid OpenAPI 3.0 document:</p>
+
+<pre>
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Generated from 146 HBM XML mappings",
+    "version": "1.0.0"
+  },
+  "components": {
+    "schemas": {
+      "CompanyBO": { "type": "object", "properties": { ... } },
+      "CompanyBOWrite": { "type": "object", "properties": { ... } },
+      "DepartmentBO": { ... },
+      "DepartmentBOWrite": { ... },
+      "ProductBO": { ... },
+      "ProductBOWrite": { ... }
+    }
+  }
+}
+</pre>
+
+<p>Each entity produces two schemas:</p>
+<ul>
+  <li><strong>EntityBO</strong> — read schema (GET responses): all fields,
+    generated IDs marked <code>readOnly</code></li>
+  <li><strong>EntityBOWrite</strong> — write schema (POST/PUT requests):
+    excludes generated IDs, version fields, and custom audit annotations</li>
+</ul>
+
+<p>Console output reports each entity processed:</p>
+<pre>
+  OK   CompanyBO.hbm.xml → CompanyBO (12 fields, 2 relationships)
+  OK   DepartmentBO.hbm.xml → DepartmentBO (58 fields, 8 relationships)
+  OK   ProductBO.hbm.xml → ProductBO (8 fields, 1 relationships)
+  OK   OrderBO.hbm.xml → OrderBO (15 fields, 3 relationships)
+  SKIP HistoryData.hbm.xml (no entity found)
+
+Generated 8 schemas (4 entities × 2 [read + write]) from 5 HBM files
+Output: /path/to/resources-axis2/openapi-schemas.json
+</pre>
+
+<h3>Build Pipeline Position</h3>
+
+<p>The schema generator reads HBM XML files directly — it does not
+depend on compiled Java classes, a running database, or a Hibernate
+<code>SessionFactory</code>.  This means it can run:</p>
+
+<ul>
+  <li><strong>Before <code>codegen</code></strong> — HBM files are the
+    source of truth; the generator reads them before Java classes are
+    generated</li>
+  <li><strong>In CI</strong> — no database connection required, so it
+    runs in any CI environment</li>
+  <li><strong>On schema change</strong> — regenerate whenever an HBM
+    file changes; diff the output JSON to see exactly which fields or
+    relationships changed</li>
+</ul>
+
+<p>For projects that use Ant with Hibernate Tools, add
+<code>openapi-schema</code> to your existing build pipeline after
+code generation and before packaging.  The schemas will reflect the
+same entity definitions that the generated Java code and DDL use.</p>
 
 </body>
 </html>
+
