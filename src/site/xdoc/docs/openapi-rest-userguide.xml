@@ -119,7 +119,7 @@ and annotations - ideal for new services</li>
 
 <ul>
 <li><strong>API Compatibility:</strong> Maintain existing endpoint paths, request/response formats</li>
-<li><strong>Authentication Patterns:</strong> Support for custom headers (bigdataToken, apiKey) and Bearer tokens</li>
+<li><strong>Authentication Patterns:</strong> Support for custom headers and standard Bearer tokens</li>
 <li><strong>Frontend Support:</strong> Compatible with TypeScript clients, Excel Add-ins, React apps</li>
 <li><strong>Migration Path:</strong> Gradual service-by-service replacement without breaking changes</li>
 </ul>
@@ -156,62 +156,64 @@ different aspects of enterprise REST API development:</p>
 <li><strong>ExcelIntegrationService:</strong> Excel Add-in specific endpoints and metadata</li>
 </ul>
 
-<h3>Authentication Service - Custom Token Patterns</h3>
+<h3>Authentication Service</h3>
 
-<p>The AuthenticationService demonstrates custom authentication patterns compatible with
-existing frontend applications:</p>
+<p>The AuthenticationService demonstrates token-based authentication using
+OpenAPI 3.x annotations (from <code>io.swagger.v3.oas.annotations</code>):</p>
 
 <pre>
-@Path("/bigdataservice")
-@Api(value = "Authentication API")
+@Path("/api/auth")
+@Tag(name = "authentication", description = "User authentication and token management")
 public class AuthenticationService {
 
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "User authentication",
-                  notes = "Authenticate user and return access token")
+    @Operation(summary = "User authentication",
+               description = "Authenticate user and return access token")
     public LoginResponse login(LoginRequest request) {
         // Token generation and validation logic
-        // Compatible with existing frontend patterns
     }
 }
 </pre>
 
-<p><strong>Drop-in Compatibility:</strong> The service maintains existing request/response formats
-and custom header patterns (bigdataToken instead of standard Authorization) to ensure
-frontend applications continue working without modifications.</p>
+<h3>Data Service</h3>
 
-<h3>Data Management Service - Financial Services API</h3>
-
-<p>The DataManagementService showcases enterprise data processing patterns:</p>
+<p>A data service with authenticated endpoints:</p>
 
 <pre>
-@Path("/bigdataservice")
-@Api(value = "Data Management API")
-public class DataManagementService {
+@Path("/api/data")
+@Tag(name = "data", description = "Data management operations")
+public class DataService {
 
     @POST
-    @Path("/marketSummary")
-    @ApiOperation(value = "Get market summary data",
-                  notes = "Retrieve market performance and allocation data")
-    public MarketSummaryResponse getMarketSummary(
-            @ApiParam("Request parameters") MarketSummaryRequest request,
-            @HeaderParam("bigdataToken") String token) {
-        // Market data processing logic
+    @Path("/query")
+    @Operation(summary = "Query dataset",
+               description = "Retrieve filtered data with pagination")
+    public QueryResponse query(
+            @Parameter(description = "Query parameters") QueryRequest request,
+            @HeaderParam("Authorization") String bearerToken) {
+        // Data processing logic
     }
 
     @POST
-    @Path("/financialCalculation")
-    @ApiOperation(value = "Perform financial calculations")
-    public FinancialCalculationResponse calculateFinancials(
-            FinancialCalculationRequest request,
-            @HeaderParam("bigdataToken") String token) {
-        // Financial calculation logic
+    @Path("/calculate")
+    @Operation(summary = "Run calculation")
+    public CalculationResponse calculate(
+            CalculationRequest request,
+            @HeaderParam("Authorization") String bearerToken) {
+        // Calculation logic
     }
 }
 </pre>
+
+<p><strong>Note:</strong> Axis2's OpenAPI integration uses
+<code>io.swagger.v3.oas.annotations</code> (OpenAPI 3.x), not the older
+Swagger 1.x annotations (<code>@Api</code>, <code>@ApiOperation</code>,
+<code>@ApiParam</code>).  See the
+<a href="https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations">
+Swagger 2.x annotation guide</a> for the full reference.</p>
 
 <h3>Request/Response Models</h3>
 
