@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+
+<!--
+  Sanitized HBM mapping for batch generator testing.
+  Models a stock exchange with trading hours, location, and relationships.
+  Exercises: id+generator, version, not-null properties, nullable properties,
+  many-to-one, set collection, nested column element with default.
+-->
+<hibernate-mapping package="org.example.bo">
+	<class name="StockExchangeBO" table="STOCK_EXCHANGE" dynamic-update="false"
+		dynamic-insert="true" select-before-update="false" optimistic-lock="version"
+		lazy="true" batch-size="300">
+
+		<id name="id" type="java.lang.Long" column="exchangeID">
+			<generator class="native"/>
+		</id>
+		<version name="version" type="java.lang.Long" access="field"
+			column="OBJ_VERSION" />
+
+		<property name="name" column="name" type="java.lang.String"
+			unique="true" not-null="true" />
+		<property name="micCode" column="micCode"
+			type="java.lang.String" not-null="false" />
+		<property name="operatingMicCode" column="operatingMicCode"
+			type="java.lang.String" not-null="false" />
+		<property name="country" column="country"
+			type="java.lang.String" not-null="false" />
+		<property name="isoCountryCode" column="isoCountryCode"
+			type="java.lang.String" not-null="false" />
+		<property name="city" column="city"
+			type="java.lang.String" not-null="false" />
+		<property name="website" column="website"
+			type="java.lang.String" not-null="false" />
+		<property name="openTimeLocal" column="openTimeLocal"
+			type="java.lang.String" not-null="false" />
+		<property name="closeTimeLocal" column="closeTimeLocal"
+			type="java.lang.String" not-null="false" />
+		<property name="timeZoneName" column="timeZoneName"
+			type="java.lang.String" not-null="false" />
+
+		<many-to-one name="region"
+			class="org.example.bo.RegionBO"
+			column="regionID" cascade="save-update" />
+
+		<set name="closedDates" table="ExchangeClosed" inverse="true" lazy="true">
+			<key>
+				<column name="exchangeID" not-null="true" />
+			</key>
+			<one-to-many class="org.example.bo.ExchangeClosedDateBO" />
+		</set>
+
+		<property name="deleted" type="java.lang.Boolean">
+			<column name="deleted" not-null="true" default="0" />
+		</property>
+
+	</class>
+</hibernate-mapping>
