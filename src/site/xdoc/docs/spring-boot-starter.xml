@@ -34,6 +34,44 @@ from a multi-day configuration project to a single Maven dependency. It handles
 servlet registration, repository configuration, and OpenAPI/MCP endpoint activation
 with sensible defaults — for both SOAP and JSON-RPC services.</p>
 
+<h3>What Axis2 brings to Spring Boot</h3>
+
+<ul>
+<li><strong>Large JSON streaming (10MB–1GB+)</strong> — the
+    <a href="json-streaming-formatter.html">streaming JSON formatter</a>
+    flushes HTTP/2 DATA frames every 64KB, keeping server memory flat
+    regardless of response size. No reactive stack required.</li>
+<li><strong>Native HTTP/2 with backpressure</strong> — the
+    <a href="http2-transport-additions.html">H2TransportSender</a>
+    provides connection multiplexing, flow control, and ALPN negotiation
+    as a drop-in transport layer.</li>
+<li><strong>AI-ready services (MCP)</strong> — Axis2 auto-generates an
+    <a href="json-rpc-mcp-guide.html">MCP tool catalog</a> from deployed
+    services. AI assistants discover and call your services as tools
+    without hand-authored definitions.</li>
+<li><strong>Response field selection</strong> — the
+    <a href="json-streaming-formatter.html#Field_Selection"><code>?fields=</code></a>
+    query parameter lets clients request only the fields they need,
+    reducing payload size and AI token consumption at the serialization
+    layer with zero application code.</li>
+<li><strong>OpenAPI schemas from Hibernate mappings</strong> — the
+    <a href="openapi-jpa-schema.html">JPA/Hibernate schema generator</a>
+    produces read and write JSON Schemas directly from
+    <code>@Entity</code> annotations or <code>.hbm.xml</code> files.
+    No hand-authored API contracts — the schema stays in sync with
+    the database model by construction.</li>
+<li><strong>Built-in pagination</strong> — the
+    <a href="json-pagination.html"><code>PaginatedResponse</code></a>
+    wrapper provides offset/limit pagination with server-enforced
+    safety limits, <code>totalCount</code> for page controls, and
+    <code>hasMore</code> for infinite scroll — mapping directly to
+    JPA/Hibernate's <code>setFirstResult</code>/<code>setMaxResults</code>.</li>
+<li><strong>SOAP + JSON from the same services</strong> — serve both
+    SOAP/XML and JSON-RPC from the same Spring beans, selected by
+    configuration. Useful for enterprises maintaining both legacy
+    and modern clients.</li>
+</ul>
+
 <p>This starter supports both <strong>WAR deployment</strong> to an external container
 (Tomcat 11, WildFly 32/39) and <strong>embedded Tomcat</strong> for local development.
 For embedded mode, set <code>axis2.repo</code> in <code>application.properties</code>
@@ -164,13 +202,22 @@ are not tested.</p>
 
 <h3>Embedded mode limitations</h3>
 
-<p>The current embedded Tomcat support requires a pre-built exploded WAR
-on the filesystem (via <code>axis2.repo</code>). A future improvement
-would be a <code>ClasspathBasedAxisConfigurator</code> that discovers
-services and modules directly from the classpath, eliminating the need
-for a filesystem layout entirely. Contributions are welcome — see the
-<a href="https://github.com/apache/axis-axis2-java-core/blob/master/AXIS2_MODERNIZATION_PLAN.md">Axis2 Modernization Plan</a>
-for the full roadmap.</p>
+<p>Embedded Tomcat requires a pre-built exploded WAR on the filesystem
+(pointed to by <code>axis2.repo</code>). This means you must run
+<code>mvn install</code> before <code>mvn spring-boot:run</code> so
+that the <code>.aar</code> service archives and <code>axis2.xml</code>
+are staged in the build output directory. Changes to service metadata
+(operations, message receivers, MCP descriptions) require a rebuild.</p>
+
+<p>Note that the service <em>code</em> itself is a Spring
+<code>@Component</code> bean on the classpath — the <code>.aar</code>
+file contains only metadata (<code>services.xml</code>) that tells
+Axis2 which Spring bean to call, which operations to expose, and
+which message receivers to use. The <code>SpringBeanName</code>
+parameter in <code>services.xml</code> bridges Axis2 service
+dispatch to Spring's application context. A future improvement
+could scan for <code>services.xml</code> resources on the classpath,
+eliminating the filesystem requirement entirely.</p>
 
 <!-- ============================================================ -->
 <a name="quickstart"/>
@@ -199,10 +246,12 @@ for the full roadmap.</p>
 etc.) and eliminates the need for a hand-coded <code>Axis2WebAppInitializer</code>
 or <code>OpenApiServlet</code> class.</p>
 
-<p>The starter auto-registers <code>AxisServlet</code> at <code>/services/*</code>
-and — when <code>axis2-openapi</code> is on the classpath — registers the OpenAPI
-servlet at <code>/openapi.json</code>, <code>/openapi.yaml</code>,
-<code>/swagger-ui</code>, and <code>/openapi-mcp.json</code>.</p>
+<p>The starter auto-registers <code>AxisServlet</code> at <code>/services/*</code>.
+If you also add the optional <code>axis2-openapi</code> dependency (shown above),
+the starter additionally registers endpoints for OpenAPI spec generation
+(<code>/openapi.json</code>), Swagger UI (<code>/swagger-ui</code>), and MCP
+tool discovery (<code>/openapi-mcp.json</code>). See
+<a href="#openapi_mcp">Section 7</a> for details.</p>
 
 <!-- ============================================================ -->
 <a name="how_axisservlet_works"/>
@@ -374,20 +423,66 @@ does not already exist. If your Maven build pre-stages it (e.g., via
 <a name="openapi_mcp"/>
 <h2>7. OpenAPI and MCP Support</h2>
 
-<p>When <code>axis2-openapi</code> is on the classpath, the starter automatically
-registers the OpenAPI servlet. No additional code is needed in the consuming app.</p>
+<p><code>axis2-openapi</code> is a separate Axis2 module (Maven artifact:
+<code>org.apache.axis2:axis2-openapi</code>) that auto-generates an
+<a href="https://en.wikipedia.org/wiki/OpenAPI_Specification">OpenAPI</a>
+3.0.1 specification and
+<a href="https://en.wikipedia.org/wiki/Model_Context_Protocol">MCP</a>
+(Model Context Protocol) tool catalog from your deployed Axis2 services.
+OpenAPI is a standard format for describing REST APIs — tools like
+<a href="https://swagger.io/tools/swagger-ui/">Swagger UI</a> use it to
+generate interactive documentation. MCP is a protocol that lets AI
+assistants (Claude, ChatGPT, etc.) discover and call your services
+as tools.</p>
 
-<p>The servlet provides:</p>
+<p>The module auto-generates both from your deployed Axis2 services.
+It reads each service's <code>services.xml</code> (inside the <code>.aar</code>
+file) at runtime — specifically the operation names, message receiver types,
+and MCP metadata parameters — and produces the specification automatically.
+No annotations on your service code are needed.</p>
+
+<p><strong>How it works with the starter:</strong> The starter detects
+<code>axis2-openapi</code> on the classpath via Spring Boot's
+<code>@ConditionalOnClass(OpenApiModule.class)</code> and automatically
+registers a servlet that delegates to Axis2's
+<a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/openapi/src/main/java/org/apache/axis2/openapi/SwaggerUIHandler.java">SwaggerUIHandler</a>.
+No additional code is needed in your application.</p>
+
+<p>To enable it, add the dependency to your <code>pom.xml</code>:</p>
+
+<pre>
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
+    &lt;artifactId&gt;axis2-openapi&lt;/artifactId&gt;
+    &lt;version&gt;2.0.1&lt;/version&gt;
+&lt;/dependency&gt;
+</pre>
+
+<p>Your Maven build must also copy the <code>axis2-openapi</code> JAR as a
+<code>.mar</code> (Module Archive) into <code>WEB-INF/modules/</code> so the
+Axis2 engine can load it:</p>
+
+<pre>
+&lt;!-- In maven-antrun-plugin, prepare-package phase --&gt;
+&lt;copy file="${settings.localRepository}/org/apache/axis2/axis2-openapi/${axis2.version}/axis2-openapi-${axis2.version}.jar"
+      tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/modules/openapi-${axis2.version}.mar"
+      overwrite="true"/&gt;
+</pre>
+
+<p>Once deployed, the following endpoints are available (no auth required):</p>
 <ul>
-<li><code>GET /openapi.json</code> — OpenAPI 3.0.1 specification</li>
+<li><code>GET /openapi.json</code> — OpenAPI 3.0.1 specification (JSON)</li>
 <li><code>GET /openapi.yaml</code> — same in YAML format</li>
 <li><code>GET /swagger-ui</code> — interactive Swagger UI</li>
-<li><code>GET /openapi-mcp.json</code> — MCP tool catalog for AI assistants</li>
+<li><code>GET /openapi-mcp.json</code> — MCP tool catalog for AI assistants
+    (includes operation names, input schemas, and payload templates)</li>
 </ul>
 
-<p>See the <a href="json-rpc-mcp-guide.html">JSON-RPC MCP Integration Guide</a>
-for details on the MCP catalog format, the Axis2 JSON-RPC envelope, and how
-AI assistants discover and call Axis2 services.</p>
+<p>The MCP catalog is generated from <code>services.xml</code> parameters
+like <code>mcpDescription</code> and <code>mcpInputSchema</code>.
+See the <a href="json-rpc-mcp-guide.html">JSON-RPC MCP Integration Guide</a>
+for the full catalog format and how AI assistants discover and call Axis2
+services.</p>
 
 <!-- ============================================================ -->
 <a name="migration"/>
