@@ -73,7 +73,23 @@ class Axis2AutoConfigurationTest {
         assertEquals("json", props.getMode(), "axis2.mode defaults to json");
         assertEquals("/services", props.getServicesPath(), "axis2.services-path defaults to /services");
         assertEquals("", props.getConfigurationFile(), "axis2.configuration-file defaults to empty");
+        assertEquals("", props.getRepo(), "axis2.repo defaults to empty");
         assertTrue(props.getOpenapi().isEnabled(), "axis2.openapi.enabled defaults to true");
+    }
+
+    @Test
+    void repoPropertyOverridesDefault() {
+        Axis2Properties props = new Axis2Properties();
+        props.setRepo("target/deploy/myapp/WEB-INF");
+        assertEquals("target/deploy/myapp/WEB-INF", props.getRepo());
+    }
+
+    @Test
+    void emptyRepoPropertyDoesNotOverride() {
+        Axis2Properties props = new Axis2Properties();
+        // Empty string means "use ServletContext.getRealPath() as before"
+        assertTrue(props.getRepo().isEmpty(),
+                "Empty repo should not trigger the embedded mode path");
     }
 
     @Test

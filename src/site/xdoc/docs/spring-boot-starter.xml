@@ -34,14 +34,14 @@ from a multi-day configuration project to a single Maven dependency. It handles
 servlet registration, repository configuration, and OpenAPI/MCP endpoint activation
 with sensible defaults — for both SOAP and JSON-RPC services.</p>
 
-<p><strong>Important — WAR deployment only.</strong> This starter requires deployment
-as a WAR file to an external servlet container (Tomcat 11, WildFly 32/39, or similar).
-Spring Boot's embedded Tomcat mode (<code>java -jar</code>) is <strong>not
-supported</strong> in this release. See <a href="#deployment_model">Deployment Model</a>
-for details and rationale.</p>
+<p>This starter supports both <strong>WAR deployment</strong> to an external container
+(Tomcat 11, WildFly 32/39) and <strong>embedded Tomcat</strong> for local development.
+For embedded mode, set <code>axis2.repo</code> in <code>application.properties</code>
+to the exploded WAR directory from your build.
+See <a href="#deployment_model">Deployment Model</a> for details.</p>
 
 <ul>
-<li><a href="#deployment_model">0. Deployment Model (WAR Only)</a></li>
+<li><a href="#deployment_model">0. Deployment Model (WAR + Embedded)</a></li>
 <li><a href="#quickstart">1. Quick Start</a></li>
 <li><a href="#how_axisservlet_works">2. How AxisServlet Works (SOAP vs JSON)</a></li>
 <li><a href="#properties">3. Configuration Properties</a></li>
@@ -162,12 +162,13 @@ above 17.</p>
 <p>Other Jakarta EE 9+ containers (WebSphere Liberty, Payara) should work but
 are not tested.</p>
 
-<h3>Will embedded mode be supported in the future?</h3>
+<h3>Embedded mode limitations</h3>
 
-<p>Embedded Tomcat support is planned for a future release. It requires a
-<code>ClasspathBasedAxisConfigurator</code> that discovers services and modules
-from the classpath rather than from <code>WEB-INF/</code>. Contributions
-are welcome — see the
+<p>The current embedded Tomcat support requires a pre-built exploded WAR
+on the filesystem (via <code>axis2.repo</code>). A future improvement
+would be a <code>ClasspathBasedAxisConfigurator</code> that discovers
+services and modules directly from the classpath, eliminating the need
+for a filesystem layout entirely. Contributions are welcome — see the
 <a href="https://github.com/apache/axis-axis2-java-core/blob/master/AXIS2_MODERNIZATION_PLAN.md">Axis2 Modernization Plan</a>
 for the full roadmap.</p>
 
@@ -469,7 +470,8 @@ identical in structure to the configuration used by the legacy userguide
 <h3>Container matrix</h3>
 
 <p>See <a href="#deployment_model">Section 0</a> for the full container
-compatibility matrix and the rationale for WAR-only deployment.</p>
+compatibility matrix covering WAR deployment (Tomcat 11, WildFly 32/39)
+and embedded Tomcat for local development.</p>
 
 <!-- ============================================================ -->
 <a name="http2"/>
@@ -499,7 +501,8 @@ JSON message formatter pipeline:</p>
       with zero overhead when not used. See
       <a href="json-streaming-formatter.html#Field_Selection">Field Selection</a>.</li>
   <li><strong>C parity</strong> — the same streaming architecture exists
-      in Axis2/C via Apache httpd <code>mod_h2</code>. Both
+      in <a href="https://axis.apache.org/axis2/c/core/">Axis2/C</a> via
+      Apache httpd <code>mod_h2</code>. Both
       implementations use the same 64 KB flush interval, producing
       identical HTTP/2 DATA frame patterns.</li>
 </ul>

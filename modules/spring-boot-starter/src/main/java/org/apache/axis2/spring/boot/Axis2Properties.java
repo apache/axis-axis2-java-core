@@ -83,6 +83,22 @@ public class Axis2Properties {
     private String configurationFile = "";
 
     /**
+     * Explicit path to the Axis2 repository (WEB-INF directory containing
+     * conf/axis2.xml, services/*.aar, and modules/*.mar).
+     *
+     * <p>When set, this overrides {@code ServletContext.getRealPath("/WEB-INF")}
+     * and enables embedded Tomcat support — embedded mode creates a temp
+     * docbase that lacks the Axis2 directory structure.
+     *
+     * <p>For embedded mode, point this to the exploded WAR from the build:
+     * <pre>axis2.repo=target/deploy/axis2-json-api/WEB-INF</pre>
+     *
+     * <p>For external container (WAR) deployment, leave this empty —
+     * the path is resolved automatically from the servlet context.
+     */
+    private String repo = "";
+
+    /**
      * OpenAPI and MCP sub-configuration.
      */
     private OpenApi openapi = new OpenApi();
@@ -117,6 +133,14 @@ public class Axis2Properties {
 
     public void setConfigurationFile(String configurationFile) {
         this.configurationFile = configurationFile;
+    }
+
+    public String getRepo() {
+        return repo;
+    }
+
+    public void setRepo(String repo) {
+        this.repo = repo;
     }
 
     public OpenApi getOpenapi() {

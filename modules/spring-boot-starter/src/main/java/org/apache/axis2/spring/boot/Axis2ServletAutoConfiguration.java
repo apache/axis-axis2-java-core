@@ -66,15 +66,50 @@ public class Axis2ServletAutoConfiguration {
         axisServlet.setLoadOnStartup(1);
 
         // Set repository path — the critical init-parameter for WarBasedAxisConfigurator.
+        // Priority: axis2.repo property > ServletContext.getRealPath("/WEB-INF")
         // getRealPath() is called eagerly here to avoid WildFly VFS lazy-init issues.
-        String webInfPath = servletContext.getRealPath("/WEB-INF");
+        // Embedded Tomcat returns null for getRealPath() — axis2.repo is required.
+        String webInfPath = (properties.getRepo() != null && !properties.getRepo().isEmpty())
+                ? properties.getRepo()
+                : servletContext.getRealPath("/WEB-INF");
         if (webInfPath != null) {
             axisServlet.setInitParameter(
                     WarBasedAxisConfigurator.PARAM_AXIS2_REPOSITORY_PATH, webInfPath);
             log.info("axis2.repository.path = " + webInfPath);
+
+            // Also set axis2.xml.path so WarBasedAxisConfigurator loads the
+            // correct axis2.xml (with JSON builders, enableJSONOnly, etc.)
+            // instead of falling back to the minimal classpath default.
+            // Critical for embedded Tomcat where servletContext.getResourceAsStream
+            // ("/WEB-INF/conf/axis2.xml") returns null.
+            java.io.File axis2xml = new java.io.File(webInfPath, "conf/axis2.xml");
+            if (!axis2xml.isFile() && properties.getRepo() != null && !properties.getRepo().isEmpty()) {
+                // axis2.repo was explicitly set but axis2.xml is missing — fail fast
+                // instead of letting WarBasedAxisConfigurator silently load the minimal
+                // classpath default (which lacks JSON message builders).
+                throw new IllegalStateException(
+                        "axis2.repo is set to " + webInfPath
+                        + " but conf/axis2.xml does not exist at " + axis2xml
+                        + ". Run 'mvn clean install' first to build the exploded WAR.");
+            }
+            if (axis2xml.isFile()) {
+                try {
+                    axisServlet.setInitParameter(
+                            WarBasedAxisConfigurator.PARAM_AXIS2_XML_PATH,
+                            axis2xml.getCanonicalPath());
+                    log.info("axis2.xml.path = " + axis2xml.getCanonicalPath());
+                } catch (java.io.IOException e) {
+                    log.warn("Could not get canonical path for axis2.xml: "
+                            + e.getMessage() + ". Falling back to absolute path.");
+                    axisServlet.setInitParameter(
+                            WarBasedAxisConfigurator.PARAM_AXIS2_XML_PATH,
+                            axis2xml.getAbsolutePath());
+                }
+            }
         } else {
-            log.warn("ServletContext.getRealPath(\"/WEB-INF\") returned null — "
-                    + "AxisServlet will attempt to resolve the repository path itself");
+            log.warn("Cannot resolve Axis2 repository path — "
+                    + "for embedded mode, set axis2.repo in application.properties "
+                    + "or via -Daxis2.repo=target/deploy/.../WEB-INF");
         }
 
         // Map to configured path

@@ -80,10 +80,17 @@ public class Axis2RepositoryAutoConfiguration {
     }
 
     private void stageAxis2Config(ServletContext servletContext, Axis2Properties properties) {
-        String webInfPath = servletContext.getRealPath("/WEB-INF");
+        // Priority: axis2.repo property > ServletContext.getRealPath("/WEB-INF")
+        // Embedded Tomcat returns null for getRealPath() because the temp
+        // docbase has no WEB-INF directory. The axis2.repo property points
+        // to the exploded WAR from the build.
+        String webInfPath = (properties.getRepo() != null && !properties.getRepo().isEmpty())
+                ? properties.getRepo()
+                : servletContext.getRealPath("/WEB-INF");
         if (webInfPath == null) {
             log.warn("Cannot resolve WEB-INF path — axis2.xml staging skipped. "
-                    + "Ensure axis2.xml is pre-staged in WEB-INF/conf/");
+                    + "For embedded mode, set axis2.repo in application.properties "
+                    + "or via -Daxis2.repo=target/deploy/.../WEB-INF");
             return;
         }
 
