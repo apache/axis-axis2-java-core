@@ -129,7 +129,8 @@ public class Axis2Application extends SpringBootServletInitializer {
         @jakarta.annotation.PostConstruct
         void checkDevInsecureProfile() {
             devInsecureActive = activeProfiles != null
-                    && activeProfiles.contains("dev-insecure");
+                    && java.util.Arrays.asList(activeProfiles.split(","))
+                           .contains("dev-insecure");
             if (devInsecureActive) {
                 logger.warn("***********************************************************");
                 logger.warn("*  SECURITY BYPASSED: 'dev-insecure' profile is active.   *");
@@ -147,8 +148,9 @@ public class Axis2Application extends SpringBootServletInitializer {
             @Override
             public boolean matches(HttpServletRequest request) {
                 String logPrefix = "AnonRequestMatcher.matches , ";
-                boolean result = request.getRequestURI().toLowerCase().contains(
-                        "/services/loginservice");
+                String uri = request.getRequestURI().toLowerCase();
+                boolean result = uri.equals("/services/loginservice")
+                        || uri.startsWith("/services/loginservice/");
                 // Allow all service requests without auth when the
                 // "dev-insecure" Spring profile is active. This is for
                 // local/embedded testing only. Activate via:

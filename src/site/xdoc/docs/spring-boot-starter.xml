@@ -110,10 +110,11 @@ mvn spring-boot:run -Pembedded \
   -Dspring-boot.run.jvmArguments="-Daxis2.repo=target/deploy/axis2-json-api/WEB-INF"
 </pre>
 
-<p>For local testing without JWT authentication, activate the
-<code>dev-insecure</code> profile (bypasses auth for all
-<code>/services/*</code> requests — <strong>never use in
-production</strong>):</p>
+<p>For local testing without JWT authentication, the sample application
+implements a <code>dev-insecure</code> Spring profile that bypasses
+auth for all <code>/services/*</code> requests. This is a pattern you
+can replicate in your own application — it is not a built-in starter
+feature. <strong>Never use in production.</strong></p>
 
 <pre>
 mvn spring-boot:run -Pembedded \
