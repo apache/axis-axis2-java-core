@@ -22,14 +22,27 @@
           xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
-        <title>HTTP/2 Java Client for Axis2 JSON-RPC Services</title>
+        <title>HTTP/2 Java Client — Sample Code</title>
     </properties>
 
     <body>
-        <section name="HTTP/2 Java Client">
+        <section name="HTTP/2 Java Client — Sample Code">
 
-        <p>A standalone Java client for calling Axis2 JSON-RPC services over
-        HTTP/2. Uses Apache HttpClient 5 async with ALPN negotiation over TLS.</p>
+        <p><strong>What this is:</strong> A standalone sample client
+        (<code>Http2JsonClient</code>) that demonstrates how to call Axis2
+        JSON-RPC services over HTTP/2 from plain Java using Apache HttpClient 5.
+        It is <em>not</em> part of the Axis2 framework — it is example code
+        in the userguide samples that you can copy and adapt for your own
+        project.</p>
+
+        <p><strong>Why it exists:</strong> Java's built-in
+        <code>HttpURLConnection</code> does not support HTTP/2. Apache
+        HttpClient 5's convenience classes (<code>SimpleHttpRequest</code> /
+        <code>SimpleHttpResponse</code>) support HTTP/2 but silently buffer
+        the entire response in memory, defeating the streaming benefit.
+        This sample shows the correct pattern — using
+        <code>AbstractBinResponseConsumer</code> with the async API — so
+        you don't have to rediscover it the hard way.</p>
 
         <p>Two execution modes:</p>
         <ul>
@@ -47,16 +60,17 @@
 
         </section>
 
-        <section name="Why Not SimpleHttpRequest / SimpleHttpResponse">
+        <section name="The SimpleHttp* Pitfall">
 
         <p>Apache HttpClient 5 provides <code>SimpleHttpRequest</code> and
         <code>SimpleHttpResponse</code> as convenience classes for async
-        requests. <strong>Do not use them for HTTP/2 workloads.</strong></p>
+        requests. <strong>Do not use them for HTTP/2 workloads with large
+        responses.</strong> They appear to work, but they silently defeat
+        HTTP/2 streaming.</p>
 
         <p><code>SimpleHttpResponse</code> is a buffering response object —
         it accumulates the entire response body in memory before returning
-        it to the caller. This completely defeats the core benefit of HTTP/2
-        streaming. For a 100MB response:</p>
+        it to the caller. For a 100MB response:</p>
 
         <ul>
             <li><code>SimpleHttpResponse</code>: allocates 100MB+ of heap
@@ -68,20 +82,19 @@
                 set</li>
         </ul>
 
-        <p>The <code>Http2JsonClient</code> uses
-        <code>AbstractBinResponseConsumer</code> for all requests.  Even the
-        buffered <code>execute()</code> method delegates to
-        <code>executeStreaming()</code> with a
-        <code>ByteArrayOutputStream</code> — same final heap usage as
-        <code>SimpleHttpResponse</code>, but without the internal overhead
-        and with proper HTTP/2 flow control backpressure via
-        <code>capacityIncrement()</code>.</p>
+        <p>This is not obvious from the HttpClient 5 documentation, and
+        it is easy to write code that uses <code>SimpleHttpResponse</code>,
+        observes correct HTTP/2 ALPN negotiation in the logs, and concludes
+        that HTTP/2 streaming is working — when in fact the response is
+        fully buffered before your code runs. The sample client avoids this
+        by using <code>AbstractBinResponseConsumer</code> for all requests,
+        including the buffered convenience method.</p>
 
         </section>
 
         <section name="Dependencies">
 
-        <p>Requires Java 11+ and Apache HttpClient 5.4+:</p>
+        <p>Requires Java 11+ (ALPN built in) and Apache HttpClient 5.4+:</p>
 
 <source>
 &lt;!-- Maven --&gt;
@@ -96,6 +109,10 @@
     &lt;version&gt;5.4.1&lt;/version&gt;
 &lt;/dependency&gt;
 </source>
+
+        <p>These are the same dependencies used by Axis2's own
+        <code>H2TransportSender</code>. If you are already running Axis2
+        with HTTP/2 transport, they are already on your classpath.</p>
 
         </section>
 
@@ -181,9 +198,13 @@ try {
 
         <section name="Source Code">
 
-        <p>The complete client is available in the userguide samples:</p>
+        <p>The complete sample client is available on GitHub:</p>
 
-        <p><code>modules/samples/userguide/src/userguide/springbootdemo-tomcat11/src/main/java/userguide/springboot/client/Http2JsonClient.java</code></p>
+        <p><a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/samples/userguide/src/userguide/springbootdemo-tomcat11/src/main/java/userguide/springboot/client/Http2JsonClient.java">
+        Http2JsonClient.java on GitHub</a></p>
+
+        <p>Copy and adapt it for your project. It has no dependency on
+        Axis2 itself — only Apache HttpClient 5 and httpcore5-h2.</p>
 
         </section>
 
