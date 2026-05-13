@@ -369,9 +369,10 @@
           Embedded Tomcat profile: adds spring-boot-starter-web so the
           application can run standalone without an external container.
 
-          Usage:
-            mvn spring-boot:run -Pembedded
-            mvn package -Pembedded && java -jar target/*.war
+          Usage (must build first, then run from the project directory):
+            mvn clean install -DskipTests
+            mvn spring-boot:run -Pembedded \
+              -Dspring-boot.run.jvmArguments="-Daxis2.repo=target/deploy/axis2-json-api/WEB-INF"
 
           The default (no profile) build produces a WAR for external
           Tomcat/WildFly deployment with jakarta.servlet-api as provided.

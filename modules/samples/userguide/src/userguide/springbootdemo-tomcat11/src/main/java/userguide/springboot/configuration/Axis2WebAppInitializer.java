@@ -104,8 +104,13 @@ public class Axis2WebAppInitializer implements ServletContextInitializer {
             // returns null because the temp docbase is empty.
             java.io.File axis2xml = new java.io.File(repoDir, "conf/axis2.xml");
             if (axis2xml.isFile()) {
-                dispatcher.setInitParameter(WarBasedAxisConfigurator.PARAM_AXIS2_XML_PATH,
-                    axis2xml.getAbsolutePath());
+                try {
+                    dispatcher.setInitParameter(WarBasedAxisConfigurator.PARAM_AXIS2_XML_PATH,
+                        axis2xml.getCanonicalPath());
+                } catch (java.io.IOException e) {
+                    dispatcher.setInitParameter(WarBasedAxisConfigurator.PARAM_AXIS2_XML_PATH,
+                        axis2xml.getAbsolutePath());
+                }
                 logger.info("addAxis2Servlet: axis2.xml.path = " + axis2xml.getAbsolutePath());
             }
         }

@@ -116,30 +116,6 @@ public class Axis2Application extends SpringBootServletInitializer {
     public static class SecurityConfigurationTokenWebServices {
         private static final Logger logger = LogManager.getLogger(SecurityConfigurationTokenWebServices.class);
 
-        /**
-         * When the "dev-insecure" Spring profile is active, all /services/*
-         * requests bypass JWT authentication. For local/embedded testing only.
-         * Activate via: --spring.profiles.active=dev-insecure
-         */
-        @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:}")
-        private String activeProfiles;
-
-        private boolean devInsecureActive;
-
-        @jakarta.annotation.PostConstruct
-        void checkDevInsecureProfile() {
-            devInsecureActive = activeProfiles != null
-                    && java.util.Arrays.asList(activeProfiles.split(","))
-                           .contains("dev-insecure");
-            if (devInsecureActive) {
-                logger.warn("***********************************************************");
-                logger.warn("*  SECURITY BYPASSED: 'dev-insecure' profile is active.   *");
-                logger.warn("*  All /services/* requests skip JWT authentication.      *");
-                logger.warn("*  DO NOT use this profile in production or staging.      *");
-                logger.warn("***********************************************************");
-            }
-        }
-
         public SecurityConfigurationTokenWebServices() {
         }
 
@@ -147,22 +123,15 @@ public class Axis2Application extends SpringBootServletInitializer {
 
             @Override
             public boolean matches(HttpServletRequest request) {
-                String logPrefix = "AnonRequestMatcher.matches , ";
-                String uri = request.getRequestURI().toLowerCase();
-                boolean result = uri.equals("/services/loginservice")
-                        || uri.startsWith("/services/loginservice/");
-                // Allow all service requests without auth when the
-                // "dev-insecure" Spring profile is active. This is for
-                // local/embedded testing only. Activate via:
-                //   mvn spring-boot:run -Pembedded -Dspring-boot.run.profiles=dev-insecure
-                if (!result && devInsecureActive) {
-                    result = request.getRequestURI().startsWith("/services/");
+                String uri = request.getRequestURI();
+                boolean result = uri.equalsIgnoreCase("/services/loginService")
+                        || uri.toLowerCase(java.util.Locale.ROOT).startsWith("/services/loginservice/");
+                if (logger.isDebugEnabled()) {
+                    String safeUri = uri.replaceAll("[\\r\\n]", "_");
+                    logger.debug("AnonRequestMatcher.matches , result: "
+                            + result + " , uri: " + safeUri
+                            + " , method: " + request.getMethod());
                 }
-                logger.debug(logPrefix
-                        + "inside AnonRequestMatcher.matches, will return result: "
-                        + result + " , on request.getRequestURI() : "
-                        + request.getRequestURI() + " , request.getMethod() : "
-                        + request.getMethod());
                 return result;
             }
 

@@ -110,20 +110,30 @@ mvn spring-boot:run -Pembedded \
   -Dspring-boot.run.jvmArguments="-Daxis2.repo=target/deploy/axis2-json-api/WEB-INF"
 </pre>
 
-<p>For local testing without JWT authentication, the sample application
-implements a <code>dev-insecure</code> Spring profile that bypasses
-auth for all <code>/services/*</code> requests. This is a pattern you
-can replicate in your own application — it is not a built-in starter
-feature. <strong>Never use in production.</strong></p>
+<p>The sample application requires authentication. Log in first to
+obtain a token, then pass it as a Bearer token on subsequent
+requests:</p>
 
 <pre>
-mvn spring-boot:run -Pembedded \
-  -Dspring-boot.run.arguments="--server.port=9090 --spring.profiles.active=dev-insecure" \
-  -Dspring-boot.run.jvmArguments="-Daxis2.repo=target/deploy/axis2-json-api/WEB-INF"
+# 1. Log in (sample credentials)
+TOKEN=$(curl -s http://localhost:9090/services/loginService \
+  -H 'Content-Type: application/json' \
+  -d '{"doLogin":[{"arg0":{"email":"java-dev@axis.apache.org","credentials":"userguide"}}]}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['response']['token'])")
+
+# 2. Call a service with the token
+curl -s http://localhost:9090/services/FinancialBenchmarkService \
+  -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"portfolioVariance":[{"arg0":{"weights":[0.5,0.5],"covarianceMatrix":[[0.04,0.006],[0.006,0.09]]}}]}'
 </pre>
 
-<p>The sample login service accepts hardcoded credentials for testing:
-<code>java-dev@axis.apache.org</code> / <code>userguide</code>.</p>
+<p>OpenAPI and MCP endpoints do not require authentication:</p>
+
+<pre>
+curl -s http://localhost:9090/openapi.json
+curl -s http://localhost:9090/openapi-mcp.json
+</pre>
 
 <p>For production, external containers remain the recommended deployment:</p>
 
