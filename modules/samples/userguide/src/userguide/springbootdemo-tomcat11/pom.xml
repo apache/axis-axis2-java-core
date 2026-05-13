@@ -364,4 +364,28 @@
 
     </build>
 
+    <profiles>
+        <!--
+          Embedded Tomcat profile: adds spring-boot-starter-web so the
+          application can run standalone without an external container.
+
+          Usage:
+            mvn spring-boot:run -Pembedded
+            mvn package -Pembedded && java -jar target/*.war
+
+          The default (no profile) build produces a WAR for external
+          Tomcat/WildFly deployment with jakarta.servlet-api as provided.
+        -->
+        <profile>
+            <id>embedded</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                    <version>3.4.3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
 </project>

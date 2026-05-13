@@ -71,12 +71,43 @@ public class Axis2WebAppInitializer implements ServletContextInitializer {
           "AxisServlet", new AxisServlet());
         dispatcher.setLoadOnStartup(1);
 
-        // Explicitly set the Axis2 repository path so WarBasedAxisConfigurator finds
-        // WEB-INF/services/*.aar on both Tomcat and WildFly (bypasses getRealPath() VFS issues).
-        String webInfPath = container.getRealPath("/WEB-INF");
+        // Set the Axis2 repository path so WarBasedAxisConfigurator finds
+        // WEB-INF/conf/axis2.xml, services/*.aar, and modules/*.mar.
+        //
+        // Priority:
+        // 1. System property "axis2.repo" — for embedded mode or custom layouts
+        //    (e.g., -Daxis2.repo=/path/to/exploded-war/WEB-INF)
+        // 2. ServletContext.getRealPath("/WEB-INF") — works on external Tomcat/WildFly
+        //
+        // Embedded Tomcat creates a temp docbase that lacks the Axis2 directory
+        // structure. When running via "mvn spring-boot:run -Pembedded", pass
+        // -Daxis2.repo=target/deploy/axis2-json-api/WEB-INF to point to the
+        // exploded WAR from the build.
+        String webInfPath = System.getProperty("axis2.repo");
+        if (webInfPath == null) {
+            webInfPath = container.getRealPath("/WEB-INF");
+        }
         logger.info("addAxis2Servlet: axis2.repository.path = " + webInfPath);
         if (webInfPath != null) {
+            java.io.File repoDir = new java.io.File(webInfPath);
+            if (!repoDir.isDirectory() || !new java.io.File(repoDir, "conf").isDirectory()) {
+                logger.warn("axis2.repository.path does not contain conf/ directory: " + webInfPath
+                    + ". For embedded mode, set -Daxis2.repo=target/deploy/axis2-json-api/WEB-INF");
+            }
             dispatcher.setInitParameter(WarBasedAxisConfigurator.PARAM_AXIS2_REPOSITORY_PATH, webInfPath);
+
+            // Also set axis2.xml.path so the configurator loads the correct
+            // axis2.xml (with JSON message builders, enableJSONOnly, etc.)
+            // instead of falling back to the minimal classpath default.
+            // This is critical for embedded Tomcat where
+            // servletContext.getResourceAsStream("/WEB-INF/conf/axis2.xml")
+            // returns null because the temp docbase is empty.
+            java.io.File axis2xml = new java.io.File(repoDir, "conf/axis2.xml");
+            if (axis2xml.isFile()) {
+                dispatcher.setInitParameter(WarBasedAxisConfigurator.PARAM_AXIS2_XML_PATH,
+                    axis2xml.getAbsolutePath());
+                logger.info("addAxis2Servlet: axis2.xml.path = " + axis2xml.getAbsolutePath());
+            }
         }
 
         Set<String> mappingConflicts = dispatcher.addMapping(SERVICES_MAPPING);

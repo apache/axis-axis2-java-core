@@ -116,16 +116,46 @@ public class Axis2Application extends SpringBootServletInitializer {
     public static class SecurityConfigurationTokenWebServices {
         private static final Logger logger = LogManager.getLogger(SecurityConfigurationTokenWebServices.class);
 
+        /**
+         * When the "dev-insecure" Spring profile is active, all /services/*
+         * requests bypass JWT authentication. For local/embedded testing only.
+         * Activate via: --spring.profiles.active=dev-insecure
+         */
+        @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:}")
+        private String activeProfiles;
+
+        private boolean devInsecureActive;
+
+        @jakarta.annotation.PostConstruct
+        void checkDevInsecureProfile() {
+            devInsecureActive = activeProfiles != null
+                    && activeProfiles.contains("dev-insecure");
+            if (devInsecureActive) {
+                logger.warn("***********************************************************");
+                logger.warn("*  SECURITY BYPASSED: 'dev-insecure' profile is active.   *");
+                logger.warn("*  All /services/* requests skip JWT authentication.      *");
+                logger.warn("*  DO NOT use this profile in production or staging.      *");
+                logger.warn("***********************************************************");
+            }
+        }
+
         public SecurityConfigurationTokenWebServices() {
         }
 
         class AnonRequestMatcher implements RequestMatcher {
-            
+
             @Override
             public boolean matches(HttpServletRequest request) {
                 String logPrefix = "AnonRequestMatcher.matches , ";
                 boolean result = request.getRequestURI().toLowerCase().contains(
                         "/services/loginservice");
+                // Allow all service requests without auth when the
+                // "dev-insecure" Spring profile is active. This is for
+                // local/embedded testing only. Activate via:
+                //   mvn spring-boot:run -Pembedded -Dspring-boot.run.profiles=dev-insecure
+                if (!result && devInsecureActive) {
+                    result = request.getRequestURI().startsWith("/services/");
+                }
                 logger.debug(logPrefix
                         + "inside AnonRequestMatcher.matches, will return result: "
                         + result + " , on request.getRequestURI() : "
@@ -133,7 +163,7 @@ public class Axis2Application extends SpringBootServletInitializer {
                         + request.getMethod());
                 return result;
             }
-            
+
         }
 
         class AuthorizationFailHandler implements AccessDeniedHandler {
