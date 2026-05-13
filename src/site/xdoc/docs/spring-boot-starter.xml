@@ -56,26 +56,75 @@ for details and rationale.</p>
 
 <!-- ============================================================ -->
 <a name="deployment_model"/>
-<h2>0. Deployment Model (WAR Only)</h2>
+<h2>0. Deployment Model</h2>
 
-<p>This starter supports <strong>WAR deployment to an external servlet
-container</strong> — the same deployment model used by most organizations running
-Axis2 in production. Your Spring Boot application must extend
-<code>SpringBootServletInitializer</code> and be packaged as a WAR.</p>
+<p>Axis2 supports two Spring Boot deployment modes:</p>
 
-<p><strong>Spring Boot embedded Tomcat (<code>java -jar</code>) is not supported.</strong></p>
+<table border="1">
+<tr><th>Mode</th><th>How</th><th>Use Case</th></tr>
+<tr>
+  <td><strong>External container (WAR)</strong></td>
+  <td>Package as WAR, deploy to Tomcat 11 or WildFly 32+</td>
+  <td>Production — the recommended deployment model</td>
+</tr>
+<tr>
+  <td><strong>Embedded Tomcat</strong></td>
+  <td><code>mvn spring-boot:run -Pembedded</code></td>
+  <td>Local development and testing</td>
+</tr>
+</table>
 
-<h3>Why not embedded?</h3>
+<h3>External container (production)</h3>
 
-<p>Axis2's <code>WarBasedAxisConfigurator</code> requires a real filesystem layout:
-<code>WEB-INF/conf/axis2.xml</code>, <code>WEB-INF/services/*.aar</code>, and
-<code>WEB-INF/modules/*.mar</code>. An embedded Spring Boot application runs from
-a fat JAR with no exploded WAR directory. Supporting this would require runtime
-classpath scanning for <code>.aar</code> files, temp directory staging, and a
-new configurator implementation — work that is planned but not yet complete.</p>
+<p>For production, deploy as a WAR to an external servlet container.
+Your Spring Boot application must extend
+<code>SpringBootServletInitializer</code> and be packaged as a WAR.
+External containers provide operational advantages for long-running
+Axis2 deployments:</p>
 
-<p>Additionally, external containers provide operational advantages for the
-long-running, stateful service deployments typical of Axis2 workloads:</p>
+<ul>
+<li>Container-managed TLS, thread pools, and connection pools</li>
+<li>Hot-redeploy via exploded WAR without JVM restart</li>
+<li>Central certificate management (Tomcat's <code>server.xml</code>, WildFly's Elytron)</li>
+<li>HTTP/2 with ALPN (via container connector, not application code)</li>
+</ul>
+
+<h3>Embedded Tomcat (development)</h3>
+
+<p>For local development and testing, the sample application supports
+Spring Boot's embedded Tomcat via a Maven profile. Axis2's
+<code>WarBasedAxisConfigurator</code> requires a filesystem layout
+(<code>WEB-INF/conf/axis2.xml</code>, <code>WEB-INF/services/*.aar</code>,
+<code>WEB-INF/modules/*.mar</code>) that embedded Tomcat does not
+provide from its temp docbase. The <code>-Daxis2.repo</code> system
+property tells the configurator where to find the exploded WAR
+from the build:</p>
+
+<pre>
+# Build first (creates the exploded WAR with services and modules)
+mvn clean install -DskipTests
+
+# Run with embedded Tomcat
+mvn spring-boot:run -Pembedded \
+  -Dspring-boot.run.arguments="--server.port=9090" \
+  -Dspring-boot.run.jvmArguments="-Daxis2.repo=target/deploy/axis2-json-api/WEB-INF"
+</pre>
+
+<p>For local testing without JWT authentication, activate the
+<code>dev-insecure</code> profile (bypasses auth for all
+<code>/services/*</code> requests — <strong>never use in
+production</strong>):</p>
+
+<pre>
+mvn spring-boot:run -Pembedded \
+  -Dspring-boot.run.arguments="--server.port=9090 --spring.profiles.active=dev-insecure" \
+  -Dspring-boot.run.jvmArguments="-Daxis2.repo=target/deploy/axis2-json-api/WEB-INF"
+</pre>
+
+<p>The sample login service accepts hardcoded credentials for testing:
+<code>java-dev@axis.apache.org</code> / <code>userguide</code>.</p>
+
+<p>For production, external containers remain the recommended deployment:</p>
 
 <ul>
 <li>Container-managed thread pools, connection pools, and monitoring (Actuator/Micrometer)</li>

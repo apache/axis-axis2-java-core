@@ -81,7 +81,7 @@ Administrator's Guide</a></li>
 <li><a href="spring.html">Spring Guide</a></li>
 <li><a href="spring-boot-starter.html">Spring Boot Starter</a>
 <ul>
-<li>12a.0 <a href="spring-boot-starter.html#deployment_model">Deployment Model (WAR Only — Embedded Not Supported)</a></li>
+<li>12a.0 <a href="spring-boot-starter.html#deployment_model">Deployment Model (WAR + Embedded Tomcat)</a></li>
 <li>12a.1 <a href="spring-boot-starter.html#quickstart">Quick Start (Single Dependency)</a></li>
 <li>12a.2 <a href="spring-boot-starter.html#how_axisservlet_works">How AxisServlet Works (SOAP vs JSON)</a></li>
 <li>12a.3 <a href="spring-boot-starter.html#properties">Configuration Properties</a></li>

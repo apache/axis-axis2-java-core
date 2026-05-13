@@ -32,10 +32,10 @@
 <div style="background-color: #e8f5e8; border: 1px solid #4CAF50; padding: 10px; margin: 10px 0;">
 <strong>Using Spring Boot?</strong> For new projects, the
 <a href="spring-boot-starter.html">Spring Boot Starter</a> is the
-recommended way to deploy Axis2 services. One Maven dependency, no
-manual WAR assembly, and full support for JSON-RPC, OpenAPI, HTTP/2,
-and MCP. The guide below covers the traditional standalone and servlet
-container installation methods.
+recommended way to deploy Axis2 services. Supports both WAR deployment
+(Tomcat 11, WildFly 32+) and embedded Tomcat for local development,
+with full JSON-RPC, OpenAPI, HTTP/2, and MCP support.
+The guide below covers the traditional standalone installation methods.
 </div>
 
 <p>This document provides information on Axis2 distribution
