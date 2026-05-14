@@ -392,7 +392,7 @@ architecture.
 interactive time budgets — portfolio variance in under 1 ms, Monte Carlo
 100K paths in ~1.4 seconds on Java. For workloads where even this latency
 is a concern, the same financial benchmark operations are available on
-[Axis2/C](http://axis.apache.org/axis2/c/), which runs 2-3x faster:
+[Axis2/C](https://axis.apache.org/axis2/c/core/), which runs 2-3x faster:
 Monte Carlo 100K paths in ~0.7 seconds, 500-asset portfolio variance in
 232 μs vs Java's 660 μs (see [performance comparison](mcp-examples.md#full-performance-summary)).
 Both implementations expose identical MCP tool schemas — an AI assistant
