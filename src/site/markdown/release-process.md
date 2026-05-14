@@ -218,7 +218,7 @@ If you have multiple keys, you can define a ~/.gnupg/gpg.conf file for a default
     *   A link to the Nexus staging repository.
     *   A link to the directory containing the distributions
         (<https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/x.y.x/>).
-    *   A link to the preview of the Maven site (<http://axis.apache.org/axis2/java/core-staging/>).
+    *   A link to the preview of the Maven site (<https://axis.apache.org/axis2/java/core-staging/>).
 
 If the vote passes, execute the following steps:
 

@@ -7,7 +7,7 @@
   ~ "License"); you may not use this file except in compliance
   ~ with the License. You may obtain a copy of the License at
   ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ https://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing,
   ~ software distributed under the License is distributed on an
@@ -185,7 +185,7 @@ border="0"/></p>
 
 <p>The service can be deployed by simply dropping the ".aar" file into the
 "services" directory in "/webapps/axis2/WEB-INF" of your servlet container.
-We recommend using <a href="http://tomcat.apache.org/">Apache Tomcat</a> as
+We recommend using <a href="https://tomcat.apache.org/">Apache Tomcat</a> as
 the servlet container. <strong>Please Note that the services directory is
 available only after axis2.war has been exploded by Tomcat. However, the easiest
 way to do it is to start Tomcat after axis2.war is copied to the webapps
@@ -415,13 +415,14 @@ the semantics of scope, and how to engage modules in those scopes.</p>
 <p>* If a handler is added to a service or an operation, it will be invoked
 for every request received by that service or operation</p>
 
-<p>Axis2 provides a number of built in Modules (such as <a
-href="">addressing</a>,<a href="">Security</a>, <a href="">WS-Reliable
-Messaging</a>), and they can be engaged as shown above. Please refer to each
-module on how to use and configure them. You can also <a
-href="modules.html">create your own modules with Axis2</a>. Also refer to <a
-href="axis2config.html#Global_Configuration">Axis2 Configuration Guide</a>
-for a reference on the module.xml file.</p>
+<p>Axis2 provides a number of built in Modules (such as
+<a href="../modules/index.html">addressing</a> and
+<a href="https://ws.apache.org/rampart/">Security (Rampart)</a>),
+and they can be engaged as shown above. Please refer to each
+module on how to use and configure them. You can also
+<a href="../modules/index.html">create your own modules with Axis2</a>.
+Also refer to <a href="axis2config.html#Global_Configuration">Axis2
+Configuration Guide</a> for a reference on the module.xml file.</p>
 
 <h3>WS-Addressing Support</h3>
 
@@ -457,7 +458,7 @@ transportSender tags to axis2.xml. To learn how to configure and use
 different transports, please refer to the following documents.</p>
 <ol>
   <li><a href="http-transport.html">HTTP Transports</a></li>
-  <li><a href="http://ws.apache.org/commons/transport/">WS-Commons Transport project</a></li>
+  <li><a href="https://ws.apache.org/commons/transport/">WS-Commons Transport project</a></li>
 </ol>
 
 <h3>Attachments</h3>
@@ -470,7 +471,7 @@ information.</p>
 <h3>Security</h3>
 
 <p>WS-Security support for Axis2 is provided by <a
-href="http://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>.</p>
+href="https://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>.</p>
 
 <h3>REST Web Service</h3>
 

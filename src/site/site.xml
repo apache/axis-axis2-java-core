@@ -8,7 +8,7 @@
   ~ "License"); you may not use this file except in compliance
   ~ with the License. You may obtain a copy of the License at
   ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ https://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing,
   ~ software distributed under the License is distributed on an
@@ -26,16 +26,16 @@
     </skin>
     <bannerLeft>
         <name>Apache Axis2</name>
-        <src>http://www.apache.org/images/asf_logo_wide.png</src>
-        <href>http://www.apache.org/</href>
+        <src>https://www.apache.org/images/asf_logo_wide.png</src>
+        <href>https://www.apache.org/</href>
     </bannerLeft>
     <bannerRight>
-        <src>http://axis.apache.org/axis2/java/core/images/axis.jpg</src>
-        <href>http://axis.apache.org/axis2/java/core/</href>
+        <src>https://axis.apache.org/axis2/java/core/images/axis.jpg</src>
+        <href>https://axis.apache.org/axis2/java/core/</href>
     </bannerRight>
     <body>
         <breadcrumbs>
-            <item name="Apache" href="http://www.apache.org" />
+            <item name="Apache" href="https://www.apache.org" />
             <item name="Axis2/Java" href="index.html" />
         </breadcrumbs>
 
@@ -79,7 +79,7 @@
         <menu name="Resources">
             <item name="FAQ" href="faq.html" />
             <item name="Articles" href="articles.html" />
-            <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2/" />
+            <item name="Wiki" href="https://wiki.apache.org/ws/FrontPage/Axis2/" />
             <item name="Reference Library" href="refLib.html" />
             <item name="Online Java Docs" href="apidocs/index.html" />
         </menu>
@@ -100,10 +100,10 @@
         </menu>
         <menu name="Apache" inherit="bottom">
             <item name="License"
-                  href="http://www.apache.org/licenses/LICENSE-2.0.html" />
-            <item name="Sponsorship" href="http://www.apache.org/foundation/sponsorship.html"/>
-            <item name="Thanks" href="http://www.apache.org/foundation/thanks.html"/>
-            <item name="Security" href="http://www.apache.org/security/"/>
+                  href="https://www.apache.org/licenses/LICENSE-2.0.html" />
+            <item name="Sponsorship" href="https://www.apache.org/foundation/sponsorship.html"/>
+            <item name="Thanks" href="https://www.apache.org/foundation/thanks.html"/>
+            <item name="Security" href="https://www.apache.org/security/"/>
         </menu>
     </body>
 </project>

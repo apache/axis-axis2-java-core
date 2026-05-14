@@ -44,32 +44,38 @@ with sensible defaults — for both SOAP and JSON-RPC services.</p>
 <li><strong>Native HTTP/2 with backpressure</strong> — the
     <a href="http2-transport-additions.html">H2TransportSender</a>
     provides connection multiplexing, flow control, and ALPN negotiation
-    as a drop-in transport layer.</li>
+    as a drop-in transport layer. See also the
+    <a href="http2-integration-guide.html">HTTP/2 overview</a>.</li>
 <li><strong>AI-ready services (MCP)</strong> — Axis2 auto-generates an
     <a href="json-rpc-mcp-guide.html">MCP tool catalog</a> from deployed
     services. AI assistants discover and call your services as tools
-    without hand-authored definitions.</li>
+    without hand-authored definitions. See
+    <a href="mcp-examples.html">MCP examples</a> for live demos.</li>
 <li><strong>Response field selection</strong> — the
     <a href="json-streaming-formatter.html#Field_Selection"><code>?fields=</code></a>
     query parameter lets clients request only the fields they need,
-    reducing payload size and AI token consumption at the serialization
-    layer with zero application code.</li>
+    reducing payload size and AI token consumption at the
+    <a href="json-streaming-formatter.html">serialization layer</a>
+    with zero application code.</li>
 <li><strong>OpenAPI schemas from Hibernate mappings</strong> — the
     <a href="openapi-jpa-schema.html">JPA/Hibernate schema generator</a>
     produces read and write JSON Schemas directly from
-    <code>@Entity</code> annotations or <code>.hbm.xml</code> files.
-    No hand-authored API contracts — the schema stays in sync with
-    the database model by construction.</li>
+    <code>@Entity</code> annotations or <code>.hbm.xml</code> files,
+    including a <a href="openapi-jpa-schema.html#batch_generation">batch CLI tool</a>
+    for large codebases. No hand-authored API contracts — the schema stays
+    in sync with the database model by construction.</li>
 <li><strong>Built-in pagination</strong> — the
     <a href="json-pagination.html"><code>PaginatedResponse</code></a>
-    wrapper provides offset/limit pagination with server-enforced
-    safety limits, <code>totalCount</code> for page controls, and
-    <code>hasMore</code> for infinite scroll — mapping directly to
+    wrapper provides offset/limit pagination with
+    <a href="json-pagination.html#safety">server-enforced safety limits</a>,
+    <code>totalCount</code> for
+    <a href="json-pagination.html#frontend_patterns">page controls</a>,
+    and <code>hasMore</code> for infinite scroll — mapping directly to
     JPA/Hibernate's <code>setFirstResult</code>/<code>setMaxResults</code>.</li>
 <li><strong>SOAP + JSON from the same services</strong> — serve both
     SOAP/XML and JSON-RPC from the same Spring beans, selected by
-    configuration. Useful for enterprises maintaining both legacy
-    and modern clients.</li>
+    <a href="#soap_vs_json">configuration</a>. Useful for enterprises
+    maintaining both legacy and modern clients.</li>
 </ul>
 
 <p>This starter supports both <strong>WAR deployment</strong> to an external container

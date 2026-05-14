@@ -50,11 +50,37 @@
         during GSON/Moshi serialization. The proxy never sees the full response
         body as a single buffer; it forwards chunks as they arrive.</p>
 
-        <p><strong>What this does NOT solve:</strong> Large HTTP <em>request</em>
-        bodies (client to server). If a client sends a very large POST body and
-        the proxy rejects it, the fix is client-side: break the request into
-        smaller payloads (for example, date-range chunking) or add a pre-send
-        size guard. The streaming formatter operates on the response path only.</p>
+        <p><strong>Request path (client to server):</strong> The streaming
+        formatter operates on the <em>response</em> path only. For large
+        HTTP POST request bodies, note that neither
+        <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.6">HTTP/1.1 (RFC 9110)</a>
+        nor <a href="https://www.rfc-editor.org/rfc/rfc9113">HTTP/2 (RFC 9113)</a>
+        define a limit on request body size. HTTP/2 is actually better
+        suited for large requests because the body is sent as DATA frames
+        with flow control — the sender and receiver negotiate how much
+        data to send at a time, preventing buffer overflow. In practice,
+        size rejections come from infrastructure layers, not the HTTP
+        spec:</p>
+
+        <ul>
+            <li><strong>Reverse proxies</strong> (CloudFlare, nginx) —
+                <code>client_max_body_size</code> or equivalent; increase
+                or remove the limit</li>
+            <li><strong>Load balancers</strong> (AWS ALB/NLB) — ALB imposes
+                no body size limit when routing to EC2/ECS targets.
+                The 1MB limit applies only to the ALB→Lambda integration
+                path (an AWS hard limit that cannot be increased).
+                NLB operates at TCP level and has no body size limit</li>
+            <li><strong>Web servers</strong> (Tomcat, WildFly) —
+                <code>maxPostSize</code> / <code>max-post-size</code>;
+                set to <code>-1</code> for unlimited</li>
+        </ul>
+
+        <p>When a large POST is rejected, debug the specific error and
+        the infrastructure layer that imposed the limit — the fix is
+        usually a configuration change, not a code refactor. Breaking
+        requests into smaller payloads is a last resort when the
+        infrastructure limit cannot be changed.</p>
         </section>
 
         <section name="Available Variants">
@@ -259,12 +285,14 @@ OutputStream flushingStream = new FlushingOutputStream(outputStream, flushInterv
         </section>
 
         <section name="Axis2/C Equivalent">
-        <p>The same pattern applies to Axis2/C services using Apache httpd
-        with mod_axis2. During JSON response generation, call
-        <code>ap_rflush(r)</code> periodically to flush the response
-        bucket brigade. This causes mod_h2 to emit HTTP/2 DATA frames
-        incrementally, achieving the same proxy-friendly streaming behavior
-        as the Java formatter.</p>
+        <p><a href="https://axis.apache.org/axis2/c/core/">Axis2/C</a>
+        achieves the same streaming behavior natively through Apache httpd's
+        <code>mod_h2</code>. During JSON response generation, the C service
+        calls <code>ap_rflush(r)</code> periodically to flush the response
+        bucket brigade. This causes <code>mod_h2</code> to emit HTTP/2 DATA
+        frames incrementally — the same 64KB chunked pattern as the Java
+        formatter, with identical proxy behavior. Both implementations
+        produce matching HTTP/2 frame sequences for the same payload.</p>
         </section>
 
     </body>

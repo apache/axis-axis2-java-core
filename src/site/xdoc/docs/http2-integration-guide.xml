@@ -507,15 +507,11 @@ enableALPN = true                                          (Required for HTTP/2)
   <li>Connection efficiency (target: 80% fewer connections via multiplexing)</li>
 </ul>
 
-<h3>JVM Monitoring Parameters</h3>
-<pre>
--XX:+UseZGC                           # Low-latency garbage collector
--XX:MaxDirectMemorySize=512m          # Direct memory for HTTP/2 buffers
-</pre>
-<p><em>Note:</em> HTTP/2 and streaming are enabled entirely through axis2.xml
+<h3>JVM Parameters</h3>
+<p>HTTP/2 and streaming are enabled entirely through axis2.xml
 by selecting the appropriate message receiver and formatter classes (e.g.
 <code>EnhancedMoshiJsonFormatter</code>, <code>MoshiStreamingMessageFormatter</code>).
-No JVM system properties are required.</p>
+No JVM system properties are required for HTTP/2 support.</p>
 
 <h2>Testing Strategy</h2>
 

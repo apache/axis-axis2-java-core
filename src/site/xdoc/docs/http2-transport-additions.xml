@@ -299,8 +299,9 @@ compression (HPACK) is always active and requires no Axis2 configuration.</p>
 <h3>Memory Management</h3>
 
 <p>Buffer management is handled internally by Apache HttpComponents 5.x.
-The JVM's <code>-XX:MaxDirectMemorySize</code> flag controls the upper bound
-on direct memory used for HTTP/2 I/O buffers.</p>
+The JVM's default direct memory limit (equal to <code>-Xmx</code>) is
+sufficient for most deployments. No additional JVM flags are needed
+for HTTP/2 buffer management.</p>
 
 <h3>Error Handling and Fallback</h3>
 
@@ -384,7 +385,7 @@ System.setProperty("java.security.properties", "jdk.tls.alpnCharset=UTF-8");
 <h4>Memory Issues with Large Payloads</h4>
 <pre>
 // Increase heap size for large JSON payloads
--Xmx4g -XX:+UseG1GC -XX:MaxDirectMemorySize=512m
+-Xmx4g -XX:+UseG1GC
 </pre>
 
 <h4>Connection Issues</h4>
