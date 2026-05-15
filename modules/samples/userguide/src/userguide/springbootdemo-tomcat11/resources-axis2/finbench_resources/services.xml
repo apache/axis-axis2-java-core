@@ -49,7 +49,7 @@
         </messageReceivers>
     </operation>
     <operation name="monteCarlo">
-        <parameter name="mcpDescription">Monte Carlo VaR simulation using Geometric Brownian Motion. Returns VaR at caller-specified percentiles, CVaR (expected shortfall), max drawdown, probability of profit, and throughput metrics. All parameters have sensible defaults — an empty request body is valid.</parameter>
+        <parameter name="mcpDescription">Monte Carlo VaR simulation with model selection: GBM (constant vol) or Merton jump-diffusion (fat tails). Returns VaR at caller-specified percentiles, CVaR (expected shortfall), max drawdown, probability of profit, and throughput metrics. All parameters have sensible defaults — an empty request body is valid.</parameter>
         <parameter name="mcpInputSchema">{
           "type": "object",
           "required": [],
@@ -59,6 +59,10 @@
             "initialValue":    {"type": "number",  "default": 1000000, "description": "Starting portfolio value in currency units"},
             "expectedReturn":  {"type": "number",  "default": 0.08, "description": "Annualized expected return (0.08 = 8%)"},
             "volatility":      {"type": "number",  "default": 0.20, "description": "Annualized volatility (0.20 = 20%)"},
+            "model":           {"type": "string",  "default": "gbm", "enum": ["gbm", "merton"], "description": "Simulation model: gbm (constant vol) or merton (jump-diffusion with fat tails)"},
+            "jumpIntensity":   {"type": "number",  "default": 1.0, "description": "Merton only: expected jumps per year (Poisson lambda). Default 1.0"},
+            "jumpMean":        {"type": "number",  "default": -0.03, "description": "Merton only: mean log-jump size. Negative = downward crashes. Default -0.03"},
+            "jumpVol":         {"type": "number",  "default": 0.05, "description": "Merton only: volatility of jump size. Default 0.05"},
             "randomSeed":      {"type": "integer", "default": 0, "description": "RNG seed for reproducibility. 0 = non-deterministic"},
             "nPeriodsPerYear": {"type": "integer", "default": 252, "description": "Periods per year for GBM dt calculation"},
             "percentiles":     {"type": "array", "items": {"type": "number"}, "default": [0.01, 0.05], "description": "VaR percentiles, e.g. [0.01, 0.05] for 99% and 95%"},
