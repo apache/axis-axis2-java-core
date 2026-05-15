@@ -168,10 +168,9 @@ Support</a></li>
         <li><a href="json-rpc-mcp-guide.html#envelope">Axis2 JSON-RPC Envelope Format</a></li>
         <li><a href="json-rpc-mcp-guide.html#auth">Two-Phase Bearer Token Authentication</a></li>
         <li><a href="json-rpc-mcp-guide.html#error_handling">Error Handling: Correlation ID Pattern</a></li>
-        <li><a href="json-rpc-mcp-guide.html#tested_features">Unit Test Feature Coverage</a></li>
         <li><a href="json-rpc-mcp-guide.html#not_implemented">Not Implemented / Limitations</a></li>
         <li><a href="json-streaming-formatter.html">Streaming Formatter for Large MCP Tool Responses</a></li>
-        <li><a href="json-rpc-mcp-guide.html#python_compat">Python MCP Compatibility Notes</a></li>
+        <li><a href="json-rpc-mcp-guide.html#python_compat">Python MCP Client Example</a></li>
     </ul>
     </li>
     <li><strong>23.5 <a href="mcp-architecture.html">MCP Architecture — Multi-Protocol Design</a></strong>
