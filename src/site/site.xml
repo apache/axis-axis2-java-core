@@ -78,25 +78,18 @@
         </menu>
         <menu name="Resources">
             <item name="FAQ" href="faq.html" />
-            <item name="Articles" href="articles.html" />
-            <item name="Wiki" href="https://wiki.apache.org/ws/FrontPage/Axis2/" />
-            <item name="Reference Library" href="refLib.html" />
-            <item name="Online Java Docs" href="apidocs/index.html" />
+            <item name="Source Code" href="https://github.com/apache/axis-axis2-java-core" />
         </menu>
         <menu name="Get Involved">
             <item name="Overview" href="overview.html" />
-            <item name="Checkout the Source" href="git.html" />
             <item name="Mailing Lists" href="mail-lists.html" />
             <item name="Release Process" href="release-process.html"/>
             <item name="Developer Guidelines" href="guidelines.html" />
-            <item name="Build the Site" href="siteHowTo.html" />    
+            <item name="Build the Site" href="siteHowTo.html" />
         </menu>
         <menu name="Project Information">
-            <item name="Project Team" href="team-list.html" />
-            <item name="Issue Tracking" href="issue-tracking.html" />
-            <item name="Source Code"
-                  href="https://github.com/apache/axis-axis2-java-core" />
-            <item name="Acknowledgements" href="thanks.html" />
+            <item name="Contributors" href="https://github.com/apache/axis-axis2-java-core/graphs/contributors" />
+            <item name="Issues" href="https://github.com/apache/axis-axis2-java-core/issues" />
         </menu>
         <menu name="Apache" inherit="bottom">
             <item name="License"

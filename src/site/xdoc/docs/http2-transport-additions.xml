@@ -88,7 +88,7 @@ request.setEntity(new StringEntity(jsonPayload, ContentType.APPLICATION_JSON));
 <p>H2TransportSender provides enterprise-grade HTTP/2 transport capabilities using HttpClient 5.x
 with advanced features for large payload processing, connection multiplexing, and performance optimization.
 This transport is specifically designed for big data applications requiring 50MB+ JSON payload support
-within enterprise memory constraints (2GB heap).</p>
+with memory-efficient 64 KB flush intervals.</p>
 
 <p>HTTP/2 offers significant advantages over HTTP/1.1:</p>
 <ul>

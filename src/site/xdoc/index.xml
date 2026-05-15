@@ -93,108 +93,55 @@ message formatter.
 Legacy SOAP services continue to work unchanged &#x2014; the SOAP handler chain,
 WS-Security (<a href="https://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>),
 and WS-Addressing are fully supported.</p>
-<p>Axis2 comes with many new features, enhancements and industry
-specification implementations. The key features offered are as
-follows:</p>
+<h3>Key Features</h3>
 <ul>
-<li>
-<p style="margin-bottom: 0in"><strong>Speed</strong> - Axis2 uses
-its own object model and StAX (Streaming API for XML) parsing to
-achieve significantly greater speed than earlier versions of Apache
-Axis.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Low memory foot
-print</strong>- Axis2 was designed ground-up keeping low memory
-foot print in mind.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>AXIOM</strong> - Axis2 comes
-with its own light-weight object model, AXIOM, for message
-processing which is extensible, highly performant and is developer
-convenient.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong><a name="Hot_Deployment" id=
-"Hot_Deployment"></a>Hot Deployment</strong> - Axis2 is equipped
-with the capability of deploying Web services and handlers while
-the system is up and running. In other words, new services can be
-added to the system without having to shut down the server. Simply
-drop the required Web service archive into the services directory
-in the repository, and the deployment model will automatically
-deploy the service and make it available for use.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Asynchronous Web
-services</strong> - Axis2 now supports asynchronous Web services
-and asynchronous Web services invocation using non-blocking clients
-and transports.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Flexibility</strong> - The
-Axis2 architecture gives the developer complete freedom to insert
-extensions into the engine for custom header processing, system
-management, and <em>anything else you can imagine</em>.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Stability</strong> - Axis2
-defines a set of published interfaces which change relatively
-slowly compared to the rest of Axis.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Component-oriented
-Deployment</strong> - You can easily define reusable networks of
-Handlers to implement common patterns of processing for your
-applications, or to distribute to partners.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Transport Framework</strong>
-- We have a clean and simple abstraction for integrating and using
-Transports (i.e., senders and listeners for SOAP over various
-protocols such as SMTP, FTP, message-oriented middleware, etc), and
-the core of the engine is completely transport-independent.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>WSDL support</strong> - Axis2
-supports the Web Service Description Language, version <a href=
-"http://www.w3.org/TR/wsdl">1.1</a>, which allows you to easily
-build stubs to access remote services, and also to automatically
-export machine-readable descriptions of your deployed services from
-Axis2.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>JSON support</strong> - Axis2
-supports the creation of Web Services using JavaScript Object Notation, with <a href=
-"https://github.com/google/gson">GSON</a> and <a href=
-"https://github.com/square/moshi">Moshi</a>, which allows you to easily
-build POJO based services that receive and return JSON.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>OpenAPI support</strong> - Axis2
-supports automatic generation of <a href=
-"https://spec.openapis.org/oas/latest.html">OpenAPI 3.0</a> specifications for REST and JSON services, with integrated <a href=
-"https://swagger.io/tools/swagger-ui/">Swagger UI</a> for interactive API documentation and testing, enabling modern API development workflows.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>MCP support</strong> - Axis2
-supports <a href="https://modelcontextprotocol.io/">Model Context Protocol</a> (MCP),
-enabling AI assistants (Claude, custom agents) to discover and call Axis2 services
-as tools. The <a href="docs/json-rpc-mcp-guide.html">MCP tool catalog</a> is
-auto-generated from deployed services at <code>/openapi-mcp.json</code> with full
-parameter schemas, types, and defaults. An <a href="docs/mcp-architecture.html">MCP
-bridge</a> (stdio JAR) connects Claude Desktop to any Axis2 deployment over
-HTTPS+mTLS. See <a href="docs/mcp-examples.html">live benchmark examples</a> with
-performance data.</p>
-</li>
-<li>
-<p style="margin-bottom: 0in"><strong>Composition and
-Extensibility</strong> - Modules and phases improve support for
-composability and extensibility. Modules support composability and
-can also support new WS-* specifications in a simple and clean
-manner. They are however not <a href="#Hot_Deployment">hot
-deployable</a> as they change the overall behavior of the
-system.</p>
-</li>
+<li><strong>JSON-RPC with
+<a href="https://github.com/google/gson">Gson</a> and
+<a href="https://github.com/square/moshi">Moshi</a></strong> &#x2014;
+build POJO-based services that receive and return JSON. Streaming
+formatters flush every 64 KB for memory-efficient large responses.</li>
+
+<li><strong><a href="docs/openapi-rest-userguide.html">OpenAPI 3.0</a>
+auto-generation</strong> &#x2014; specifications generated from deployed
+services with integrated
+<a href="https://swagger.io/tools/swagger-ui/">Swagger UI</a> for
+interactive API testing.</li>
+
+<li><strong><a href="docs/json-rpc-mcp-guide.html">MCP tool catalogs</a>
+for AI agents</strong> &#x2014; AI assistants discover and call your services
+as tools via the auto-generated catalog at <code>/openapi-mcp.json</code>.
+See <a href="docs/mcp-examples.html">live examples</a>.</li>
+
+<li><strong><a href="docs/http2-integration-guide.html">HTTP/2
+streaming</a></strong> &#x2014; integrated into the serialization pipeline,
+not just the transport layer. Response
+<a href="docs/json-streaming-formatter.html#Field_Selection">field
+selection</a> (<code>?fields=</code>) filters at serialization time.</li>
+
+<li><strong><a href="docs/spring-boot-starter.html">Spring Boot
+Starter</a></strong> &#x2014; one Maven dependency for servlet registration,
+repository configuration, and OpenAPI/MCP activation. Supports WAR
+deployment and embedded Tomcat.</li>
+
+<li><strong><a href="docs/openapi-jpa-schema.html">OpenAPI schemas
+from Hibernate</a></strong> &#x2014; generate read/write JSON Schemas from
+JPA annotations or <code>.hbm.xml</code> files, keeping API contracts
+in sync with the database model.</li>
+
+<li><strong><a href="docs/json-pagination.html">Built-in
+pagination</a></strong> &#x2014; offset/limit with server-enforced safety
+limits, mapping directly to JPA/Hibernate DAOs.</li>
+
+<li><strong><a name="Hot_Deployment" id="Hot_Deployment"></a>Hot
+deployment</strong> &#x2014; add or update services without restarting the
+server by dropping <code>.aar</code> archives into the services
+directory.</li>
+
+<li><strong>SOAP legacy</strong> &#x2014; full SOAP 1.1/1.2 support
+including WSDL, WS-Security
+(<a href="https://axis.apache.org/axis2/java/rampart/">Apache Rampart</a>),
+WS-Addressing, MTOM attachments, and the pluggable handler chain
+architecture from the original 2004 design.</li>
 </ul>
 <p>We hope you enjoy using Axis2. Please note that this is an
 open-source effort. If you feel the code could use new features or

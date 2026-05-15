@@ -341,7 +341,7 @@ chunked HTTP/2 DATA frames and flow control automatically.</p>
 <div style="background-color: #e8f5e8; border: 1px solid #4CAF50; padding: 10px; margin: 10px 0;">
 <strong>✅ Automatic Optimization:</strong> Intelligent defaults are already optimized for:
 <ul>
-  <li><strong>Memory-Constrained Environments</strong> (2GB heap) - Conservative connection limits</li>
+  <li><strong>Memory-Constrained Environments</strong> - Conservative connection limits for smaller deployments</li>
   <li><strong>Enterprise Big Data Processing</strong> - 64KB buffers for 50MB+ JSON payloads</li>
   <li><strong>Enhanced Moshi H2 Integration</strong> - Async processing thresholds and memory management (GSON H2 also supported)</li>
 </ul>
@@ -481,7 +481,7 @@ enableALPN = true                                          (Required for HTTP/2)
 <h3>Production-Ready Defaults</h3>
 
 <ul>
-  <li><strong>Memory-Constrained Optimization</strong>: Defaults tuned for 2GB heap environments</li>
+  <li><strong>Memory-Constrained Optimization</strong>: Defaults are conservative and work across deployment sizes</li>
   <li><strong>Large Payload Support</strong>: Automatic 64KB buffer alignment for 50MB+ JSON</li>
   <li><strong>Enterprise Integration</strong>: Enhanced Moshi H2 parameters pre-configured</li>
   <li><strong>Security Hardening</strong>: Modern TLS and cipher suite defaults</li>
@@ -501,10 +501,10 @@ enableALPN = true                                          (Required for HTTP/2)
 
 <h3>Key Performance Indicators</h3>
 <ul>
-  <li>Request latency (target: 30% reduction vs HTTP/1.1)</li>
-  <li>JSON processing time (target: 40% improvement for 50MB payloads)</li>
+  <li>Request latency improvement vs HTTP/1.1</li>
+  <li>JSON processing time for large payloads</li>
   <li>Memory usage (target: 20% reduction in peak usage)</li>
-  <li>Connection efficiency (target: 80% fewer connections via multiplexing)</li>
+  <li>Connection efficiency (multiplexing reduces connection count)</li>
 </ul>
 
 <h3>JVM Parameters</h3>
@@ -533,7 +533,7 @@ No JVM system properties are required for HTTP/2 support.</p>
   <li>Large JSON Payload Tests (50MB+): Core business requirement</li>
   <li>JSON-RPC over HTTP/2: Verify HTTP/2 multiplexing benefits</li>
   <li>Performance Benchmarks: HTTP/1.1 vs HTTP/2 comparison</li>
-  <li>Memory Constraint Testing: Operation within 2GB heap limits</li>
+  <li>Memory usage under load</li>
 </ul>
 
 <h4>Phase 3: HTTP/2 Specific Feature Tests</h4>
@@ -560,7 +560,7 @@ No JVM system properties are required for HTTP/2 support.</p>
 <h3>Overall Project Success</h3>
 <ul>
   <li>✅ <strong>Performance</strong>: 30% latency reduction, 40% JSON processing improvement</li>
-  <li>✅ <strong>Memory</strong>: 20% reduction in peak memory usage</li>
+  <li>✅ <strong>Memory</strong>: Reduced peak memory usage via streaming</li>
   <li>✅ <strong>Stability</strong>: No regression in existing functionality</li>
   <li>✅ <strong>Scalability</strong>: Support for 100+ concurrent streams</li>
   <li>✅ <strong>Production</strong>: Successful deployment with modern JVM and garbage collection</li>
