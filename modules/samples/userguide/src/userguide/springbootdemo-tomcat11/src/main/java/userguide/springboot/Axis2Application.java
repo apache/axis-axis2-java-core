@@ -123,11 +123,14 @@ public class Axis2Application extends SpringBootServletInitializer {
 
             @Override
             public boolean matches(HttpServletRequest request) {
-                String uri = request.getRequestURI();
-                boolean result = uri.equalsIgnoreCase("/services/loginService")
-                        || uri.toLowerCase(java.util.Locale.ROOT).startsWith("/services/loginservice/");
+                // Match loginService regardless of context root prefix.
+                // Embedded Tomcat: /services/loginService
+                // WildFly: /axis2-json-api/services/loginService
+                String uriLower = request.getRequestURI().toLowerCase(java.util.Locale.ROOT);
+                boolean result = uriLower.endsWith("/services/loginservice")
+                        || uriLower.endsWith("/services/loginservice/");
                 if (logger.isDebugEnabled()) {
-                    String safeUri = uri.replaceAll("[\\r\\n]", "_");
+                    String safeUri = uriLower.replaceAll("[\\r\\n]", "_");
                     logger.debug("AnonRequestMatcher.matches , result: "
                             + result + " , uri: " + safeUri
                             + " , method: " + request.getMethod());
