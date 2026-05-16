@@ -1,10 +1,11 @@
-# MCP Examples: Financial Services on Axis2/Java + WildFly
+# MCP Examples: Financial Services on Axis2/Java
 
 **Summary**: Apache Axis2/Java serves the same financial calculations as Axis2/C —
-portfolio variance, Monte Carlo VaR, scenario analysis — over JSON on WildFly 32
-with Spring Security JWT authentication. This document shows the same live demos
-as the Axis2/C `MCP_EXAMPLES.md`, run against the Java implementation, with
-head-to-head performance numbers.
+portfolio variance, Monte Carlo VaR (GBM and Merton jump-diffusion), scenario
+analysis — over JSON on WildFly 32/39 and Tomcat 11 with Spring Security JWT
+authentication. This document shows the same live demos as the Axis2/C
+`MCP_EXAMPLES.md`, run against the Java implementation, with head-to-head
+performance numbers.
 
 The financial results are identical (same algorithms, same inputs, same outputs).
 The implementations compete only on performance.
@@ -93,7 +94,7 @@ All curl examples below include paired MCP stdio equivalents.
 
 ---
 
-## Live Examples (Tested on WildFly 32)
+## Live Examples (Tested on WildFly 32/39 and Tomcat 11)
 
 ### Portfolio Variance — 5 assets
 
@@ -175,9 +176,12 @@ just wrapped in `tools/call` JSON-RPC as shown above.)
 ### Monte Carlo VaR — 100K simulations
 
 Monte Carlo Value at Risk estimates portfolio loss at a given confidence
-level by simulating thousands of random price paths using Geometric
-Brownian Motion: `S(t+dt) = S(t) × exp((μ − σ²/2)·dt + σ·√dt·Z)` where
-Z ~ N(0,1). Run 100,000 paths, sort the terminal values, read off the
+level by simulating thousands of random price paths. The default model is
+Geometric Brownian Motion (GBM): `S(t+dt) = S(t) × exp((μ − σ²/2)·dt + σ·√dt·Z)`
+where Z ~ N(0,1). A Merton jump-diffusion model is also available
+(`"model":"merton"`) which adds Poisson-distributed jumps for fat-tailed
+scenarios — configurable via `jumpIntensity`, `jumpMean`, and `jumpVol`
+parameters. Run 100,000 paths, sort the terminal values, read off the
 1st percentile loss — that's your 99% VaR. Production risk systems run
 this nightly for regulatory capital calculations.
 
@@ -583,10 +587,10 @@ GET https://localhost:8443/axis2-json-api/openapi-mcp.json
 ```
 
 This endpoint returns the same tool schema structure that Claude Desktop
-and other MCP clients consume. The three financial tools (`portfolioVariance`,
-`monteCarlo`, `scenarioAnalysis`) are described with full input schemas,
-parameter types, constraints, and defaults — identical in capability to the
-Axis2/C MCP stdio server.
+and other MCP clients consume. The catalog includes `doLogin`,
+`portfolioVariance`, `monteCarlo`, and `scenarioAnalysis` — each with full
+input schemas, parameter types, constraints, and defaults. The three
+financial tools are identical in capability to the Axis2/C MCP stdio server.
 
 ---
 
@@ -685,12 +689,12 @@ See the sample READMEs for the complete test flow covering all services.
 
 ---
 
-## WildFly 32 Deployment Notes
+## WildFly Deployment Notes
 
 See `WILDFLY32_DEPLOY_STATE.md` in the Axis2/C repo for the full deployment
-walkthrough. Key points:
+walkthrough. Key points (apply to both WildFly 32 and WildFly 39):
 
-- WildFly 32.0.1.Final with `--add-modules=java.se` in `standalone.conf`
+- WildFly 32.0.1.Final or WildFly 39 with `--add-modules=java.se` in `standalone.conf`
 - `jboss-deployment-structure.xml` from production deployment template (includes `jdk.net` module dependency)
 - `beans.xml` with `bean-discovery-mode="none"` (satisfies Weld without CDI scanning)
 - Spring Boot 3.4.3 starts in ~0.9 seconds inside WildFly
