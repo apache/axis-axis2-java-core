@@ -89,7 +89,7 @@
         </menu>
         <menu name="Project Information">
             <item name="Contributors" href="https://github.com/apache/axis-axis2-java-core/graphs/contributors" />
-            <item name="Issues" href="https://github.com/apache/axis-axis2-java-core/issues" />
+            <item name="Issues" href="https://issues.apache.org/jira/projects/AXIS2/issues" />
         </menu>
         <menu name="Apache" inherit="bottom">
             <item name="License"
