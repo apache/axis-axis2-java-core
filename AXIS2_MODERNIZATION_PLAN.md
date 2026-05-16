@@ -514,6 +514,65 @@ Apache blog post, migration guide, reference implementation documentation.
 
 ---
 
+## JSON Wire Format: Axis2 Convention vs JSON-RPC 2.0
+
+Axis2's JSON support uses a custom RPC-over-JSON convention, not the formal
+JSON-RPC 2.0 specification. The convention predates JSON-RPC 2.0's adoption
+(the spec was finalized in 2010; Axis2's JSON support dates to 2008-2010)
+and reflects the framework's SOAP/XML heritage.
+
+### Wire format comparison
+
+**Axis2 JSON convention** (what `JsonRpcMessageReceiver` expects):
+```json
+{"portfolioVariance": [{"arg0": {"nAssets": 5, "weights": [0.6, 0.4]}}]}
+```
+
+**JSON-RPC 2.0** (what MCP and Ethereum use):
+```json
+{"jsonrpc": "2.0", "id": 1, "method": "portfolioVariance", "params": {"nAssets": 5, "weights": [0.6, 0.4]}}
+```
+
+### Why the difference
+
+The Axis2 JSON formatters (Gson, Moshi) translate between JSON and the internal
+Axiom `OMElement` XML tree. The envelope structure mirrors SOAP conventions:
+
+- **Operation name as envelope key** — equivalent to the SOAP body's root element
+- **Array wrapper `[...]`** — maps to the SOAP body's child element list, one entry per Java method parameter
+- **`arg0`** — the default WSDL parameter name for the first method argument (`arg0`, `arg1`, etc.); read by the parser but the key itself is ignored — only the value is deserialized into the Java POJO
+
+When a service method takes a single POJO parameter (the common case), the POJO's
+fields serialize as standard JSON inside the `arg0` wrapper. The POJO content is
+idiomatic JSON; the wrapping layers are the SOAP-era artifact.
+
+### What Axis2 2.0.1 provides without migration
+
+| Consumer | Protocol | Compliance |
+|----------|----------|------------|
+| Existing callers | Axis2 JSON convention | Unchanged — no migration needed |
+| AI agents (Claude, Cursor) | JSON-RPC 2.0 via `axis2-mcp-bridge` | Spec-compliant MCP |
+| Developers / API consumers | REST + OpenAPI via `/openapi.json`, `/swagger-ui` | Standard OpenAPI 3.0.1 |
+
+The MCP bridge (`modules/mcp-bridge/`) translates between standard JSON-RPC 2.0
+and the Axis2 envelope, so AI clients see clean, spec-compliant calls. OpenAPI
+provides REST discoverability regardless of the underlying wire format. Together
+they give Axis2 services three protocol faces from a single deployment without
+changing the existing JSON convention or breaking callers.
+
+### What strict JSON-RPC 2.0 compliance would add
+
+- **Batch requests** — array of calls in one HTTP POST (useful for dashboard loading)
+- **Request ID correlation** — `id` field echoed in response for multiplexed calls
+- **Standardized error codes** — `{"code": -32600, "message": "Invalid Request"}`
+- **Off-the-shelf client libraries** — Python `jsonrpcclient`, JS `jayson`, etc.
+
+These are real capabilities but do not justify a breaking migration for existing
+deployments. The bridge pattern provides JSON-RPC 2.0 compliance where it matters
+(AI agents) without disrupting existing callers.
+
+---
+
 ## End State
 
 A single Axis2 service deployment, configured once, serves:
