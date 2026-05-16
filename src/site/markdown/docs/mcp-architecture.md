@@ -7,13 +7,13 @@ novel Apache contribution) implements `axis2-transport-mcp` so Axis2 speaks MCP
 directly — no wrapper. One service deployment, three protocols: JSON-RPC, REST, MCP.
 
 MCP is JSON-RPC 2.0. The three required methods are `initialize`, `tools/list`, and
-`tools/call`. Everything else (transport: stdio or HTTP/SSE, tool schema format,
+`tools/call`. Everything else (transport: stdio, tool schema format,
 capability negotiation) is specified by the MCP protocol document at
 modelcontextprotocol.io.
 
 ---
 
-## Current State (2026-04-09)
+## Current State (2026-05-16)
 
 ### What exists today
 
@@ -27,7 +27,6 @@ modelcontextprotocol.io.
 | X.509 Spring Security | ✅ Done | `X509AuthenticationFilter` at `@Order(2)`, CN → `ROLE_X509_CLIENT` |
 | A3 end-to-end validation | ✅ Done | `Claude Desktop → bridge → mTLS 8443 → BigDataH2Service` confirmed |
 | `axis2-spring-boot-starter` | ❌ Not started | Phase 1 of modernization plan |
-| A4 HTTP/SSE transport | ❌ Not started | Post-demo, deferred |
 | `axis2-transport-mcp` native | ❌ Not started | Track B — novel Apache contribution |
 
 ### Reference implementations
@@ -43,9 +42,9 @@ springbootdemo-tomcat11 base URL: https://localhost:8443/axis2-json-api
 
 springbootdemo-wildfly base URL: https://localhost:8443/axis2-json-api
   - LoginService                (JWT auth)
-  - FinancialBenchmarkService   (portfolioVariance, monteCarlo VaR, scenarioAnalysis)
+  - FinancialBenchmarkService   (portfolioVariance, monteCarlo VaR with Merton jump-diffusion, scenarioAnalysis)
   - BigDataH2Service            (HTTP/2 streaming)
-  Deployed and validated on WildFly 32.0.1 (2026-04-09)
+  Deployed and validated on WildFly 32 and WildFly 39
 ```
 
 `BigDataH2Service` request format (confirmed working via MCP bridge):
@@ -158,6 +157,29 @@ Client presents cert → Tomcat TLS handshake (certificateVerification=required)
         }
       },
       "endpoint": "POST /services/FinancialBenchmarkService/portfolioVariance"
+    },
+    {
+      "name": "monteCarlo",
+      "description": "Monte Carlo VaR simulation using Geometric Brownian Motion or Merton jump-diffusion...",
+      "inputSchema": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "nSimulations":    {"type": "integer", "default": 10000, "maximum": 1000000},
+          "nPeriods":        {"type": "integer", "default": 252},
+          "initialValue":    {"type": "number",  "default": 1000000},
+          "expectedReturn":  {"type": "number",  "default": 0.08},
+          "volatility":      {"type": "number",  "default": 0.20},
+          "model":           {"type": "string",  "default": "gbm", "enum": ["gbm", "merton"]},
+          "jumpIntensity":   {"type": "number",  "default": 1.0},
+          "jumpMean":        {"type": "number",  "default": -0.03},
+          "jumpVol":         {"type": "number",  "default": 0.05},
+          "nPeriodsPerYear": {"type": "integer", "default": 252},
+          "randomSeed":      {"type": "integer", "default": 0},
+          "percentiles":     {"type": "array",   "default": [0.01, 0.05]}
+        }
+      },
+      "endpoint": "POST /services/FinancialBenchmarkService/monteCarlo"
     }
   ]
 }
@@ -228,16 +250,6 @@ Tomcat log confirmation:
 X509AuthenticationFilter: authenticated CN=axis2-mcp-bridge on port 8443
 ```
 
-### A4 — HTTP/SSE transport (deferred)
-
-Adds persistent server mode (multiple Claude sessions sharing one bridge). Required for
-production. Additive — no changes to Axis2 side or tool catalog format.
-
-```
-POST /mcp       → JSON-RPC request
-GET  /mcp/sse   → SSE stream for server-initiated messages
-```
-
 ---
 
 ## Track B — Native MCP Transport (`axis2-transport-mcp`)
@@ -267,13 +279,6 @@ axis2-transport-mcp
 MCP tools/call result (JSON-RPC 2.0)
 ```
 
-### Sequencing within Track B
-
-1. **stdio first** — simpler, no connection management, validates the
-   JSON-RPC 2.0 ↔ MessageContext translation layer end-to-end
-2. **HTTP/SSE second** — reuses Axis2's existing HTTP infrastructure, adds
-   SSE for progress notifications on long-running service operations
-
 ### Tool schema generation
 
 Populated from `axis2-openapi` Phase 2 output. `initialize` response includes
@@ -283,8 +288,7 @@ Populated from `axis2-openapi` Phase 2 output. `initialize` response includes
 
 ```properties
 axis2.transport.mcp.enabled=true
-axis2.transport.mcp.transport=stdio   # or http
-axis2.transport.mcp.path=/mcp         # only for http transport
+axis2.transport.mcp.transport=stdio
 ```
 
 ### End state
@@ -292,7 +296,7 @@ axis2.transport.mcp.path=/mcp         # only for http transport
 ```
 Claude Desktop / AI agent  →  MCP (axis2-transport-mcp, native)
                                          ↓
-REST clients               →  REST (@RestMapping, Phase 3)  →  Axis2 Service
+REST clients               →  REST (planned, Phase 3)       →  Axis2 Service
                                          ↑                      (one Java class)
 Existing JSON-RPC callers  →  JSON-RPC (unchanged)
 ```
@@ -301,9 +305,9 @@ Existing JSON-RPC callers  →  JSON-RPC (unchanged)
 
 ## Key Design Decisions
 
-**Why stdio first for both tracks**: Simplest MCP transport, zero port conflicts,
-works immediately with Claude Desktop and Cursor. Validates the translation layer before
-adding HTTP connection management complexity.
+**Why stdio transport**: Simplest MCP transport, zero port conflicts,
+works immediately with Claude Desktop and Cursor. No market demand yet for
+HTTP/SSE transport — stdio covers all current use cases.
 
 **Why OpenAPI as the bridge, not direct Axis2 introspection**: `/openapi-mcp.json`
 decouples the bridge from Axis2 internals. The bridge works against any HTTP service
@@ -325,11 +329,6 @@ enforces the TLS handshake before any HTTP processing. Invalid client certs are 
 at the TCP layer — Spring Security never sees them. `X509AuthenticationFilter` only
 needs to extract identity from an already-verified cert, not verify it.
 
-**Why not JAX-RS instead of `@RestMapping`**: JAX-RS brings a second framework
-dependency and its own lifecycle. `@RestMapping` is a thin annotation processed by
-Axis2's existing REST dispatcher — no container dependency, backwards compatible,
-opt-in per-operation.
-
 ---
 
 ## Next Steps
@@ -339,13 +338,11 @@ opt-in per-operation.
 | Step | Work | Notes |
 |------|------|-------|
 | `mcpInputSchema` in services.xml | ✅ Done | All financial benchmark tools + login have full parameter schemas |
-| A4 HTTP/SSE | Persistent bridge server mode | Required for production, additive |
 
 ### Track B
 
 1. `modules/transport-mcp/` — new module scaffolding
-2. stdio transport first (B1) — validates JSON-RPC 2.0 ↔ MessageContext translation
-3. HTTP/SSE transport (B2) — reuses Axis2 HTTP infrastructure
+2. stdio transport (B1) — validates JSON-RPC 2.0 ↔ MessageContext translation
 
 ### Testing matrix
 
@@ -397,13 +394,6 @@ Monte Carlo 100K paths in ~0.7 seconds, 500-asset portfolio variance in
 232 μs vs Java's 660 μs (see [performance comparison](mcp-examples.md#full-performance-summary)).
 Both implementations expose identical MCP tool schemas — an AI assistant
 configured with either backend gets the same financial capabilities.
-
-### Stdio transport only (HTTP/SSE deferred)
-
-The MCP bridge currently supports stdio transport only (Claude Desktop
-subprocess model). HTTP/SSE transport (A4) — which would enable Claude
-API tool use, multi-user bridge sharing, and remote MCP clients — is
-deferred. Contributions welcome.
 
 ### Auto-generated inputSchema from Java types
 
