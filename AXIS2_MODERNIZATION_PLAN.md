@@ -1,7 +1,7 @@
 ---
 type: architecture
 created: 2026-04-06
-updated: 2026-05-04
+updated: 2026-05-16
 status: Active
 ---
 
@@ -35,7 +35,7 @@ entirely. No other Java framework can do all three from the same service deploym
 | Phase B — MCP Schema Completion | **DONE** | Java type introspection for request/response schemas in both OpenAPI and MCP catalog. mcpAuthScope, mcpStreaming parameters. |
 | Phase 2 — OpenAPI Annotation Bridge | PARTIAL | POJO introspection done. springdoc @Operation/@Parameter annotation processing not yet started. |
 | Phase 3 — REST Transport | NOT STARTED | Dual-protocol JSON-RPC + REST from same service |
-| Phase 4 — MCP Bridge | NOT STARTED | OpenAPI-driven MCP wrapper |
+| Phase 4 — MCP Bridge | **DONE** | `axis2-mcp-bridge` stdio JAR in `modules/mcp-bridge/` |
 | Phase 5 — HTTP/2 Publication | NOT STARTED | transport-h2 graduation to supported module |
 | Phase 6 — Native MCP Transport | DEFERRED | Bridge approach sufficient; prove MCP catalog adoption first |
 | Phase 7 — Community | NOT STARTED | Blog post, migration guide |
@@ -339,9 +339,9 @@ generic type erasure.
 
 ### Key files
 
-- `modules/json/src/org/apache/axis2/json/gson/rpc/PaginatedResponse.java`
-- `modules/json/src/org/apache/axis2/json/gson/rpc/PaginationRequest.java`
-- `modules/json/test/org/apache/axis2/json/gson/rpc/PaginatedResponseTest.java` (22 tests)
+- `modules/json/src/org/apache/axis2/json/rpc/PaginatedResponse.java`
+- `modules/json/src/org/apache/axis2/json/rpc/PaginationRequest.java`
+- `modules/json/test/org/apache/axis2/json/rpc/PaginatedResponseTest.java` (22 tests)
 
 ### Dependency
 
@@ -384,10 +384,11 @@ Axis2/C implementation — tracked separately in axis-axis2-c-core repo.
 
 Axis2/C implementation — tracked separately.
 
-### Step D3 — Populate `mcpInputSchema` in all 5 financial benchmark operations
+### Step D3 — Populate `mcpInputSchema` in all services
 
-**DONE.** All three Java financial benchmark operations have explicit `mcpInputSchema`
-in services.xml with full JSON Schema definitions.
+**DONE.** All five MCP-exposed operations (doLogin, portfolioVariance, monteCarlo,
+scenarioAnalysis, processBigDataSet) have explicit `mcpInputSchema` in services.xml
+with full JSON Schema definitions.
 
 ---
 
@@ -448,12 +449,16 @@ Phase 1 (starter), Phase 2 (REST paths in OpenAPI spec).
 
 ---
 
-## Phase 4 — MCP Path 1: OpenAPI-Driven MCP Wrapper
+## Phase 4 — MCP Bridge (`axis2-mcp-bridge`)
 
-**Status: NOT STARTED.**
+**Status: DONE.**
 
-Thin Spring Boot app that reads `/openapi-mcp.json` and implements MCP protocol
-(initialize, tools/list, tools/call). Forwards calls to Axis2 endpoints.
+Standalone stdio JAR (`modules/mcp-bridge/`) that reads `/openapi-mcp.json` at startup
+and implements MCP protocol (initialize, tools/list, tools/call). Forwards calls to
+Axis2 endpoints over HTTPS. Supports both mTLS (Tomcat) and JWT (WildFly) auth.
+No MCP SDK dependency — JSON-RPC 2.0 implemented directly with Jackson + Java stdlib
+HttpClient (Apache 2.0 license constraint). End-to-end validated with Claude Desktop.
+See `mcp-architecture.md` for full details.
 
 ### Dependency
 Phase 2 (requires `/openapi-mcp.json` endpoint — **satisfied**).
@@ -502,7 +507,7 @@ Apache blog post, migration guide, reference implementation documentation.
 | **TX** | Transaction demarcation .mar module | PLANNED |
 | **2** | OpenAPI annotation bridge (springdoc) | PARTIAL |
 | **3** | REST transport + dual-protocol | NOT STARTED |
-| **4** | MCP bridge wrapper | NOT STARTED |
+| **4** | MCP bridge (`axis2-mcp-bridge` stdio JAR) | **DONE** |
 | **5** | HTTP/2 transport publication | NOT STARTED |
 | **6** | Native MCP transport | DEFERRED |
 | **7** | Community posts, migration guide | NOT STARTED |
@@ -514,7 +519,7 @@ Apache blog post, migration guide, reference implementation documentation.
 A single Axis2 service deployment, configured once, serves:
 
 ```
-Claude Desktop / AI agent  →  MCP (bridge Phase 4, or native Phase 6)
+Claude Desktop / AI agent  →  MCP (axis2-mcp-bridge, done)
                                          ↓
 Data API / React frontend  →  REST (Phase 3)    ──►  Axis2 Service
                                          ↑           (one implementation)
