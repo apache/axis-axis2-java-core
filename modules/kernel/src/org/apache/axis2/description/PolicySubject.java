@@ -29,8 +29,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PolicySubject {
+    private static final AtomicLong VERSION_COUNTER = new AtomicLong();
+    private volatile long version = VERSION_COUNTER.incrementAndGet();
+    @Deprecated
     private Date lastUpdatedTime = new Date();
     
     private ConcurrentHashMap<String, PolicyComponent> attachedPolicyComponents = new ConcurrentHashMap<String, PolicyComponent>();
@@ -113,5 +117,10 @@ public class PolicySubject {
 
     public void setLastUpdatedTime(Date lastUpdatedTime) {
         this.lastUpdatedTime = lastUpdatedTime;
+        this.version = VERSION_COUNTER.incrementAndGet();
+    }
+
+    public long getVersion() {
+        return version;
     }
 }
