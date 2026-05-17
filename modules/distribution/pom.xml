@@ -93,26 +93,13 @@
         </dependency>
         <!-- removed: AXIS2-6105 -->
         <!-- axis2-fastinfoset removed: AXIS2-6105 -->
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-openapi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-mcp-bridge</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jpa-schema</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- axis2-openapi, axis2-mcp-bridge, axis2-spring-boot-starter, and
+             axis2-jpa-schema are published to Maven Central as standalone
+             artifacts. They are NOT included in the binary distribution ZIP
+             because they bring transitive dependencies (Spring Framework,
+             Jackson, HttpComponents 5) that conflict with the WSDL2Java
+             codegen classpath used by the Ant-based samples. Users add these
+             modules via Maven <dependency>, not from the distribution lib/. -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxbri-codegen</artifactId>
