@@ -68,6 +68,7 @@ public class AxisMessage extends AxisDescription {
 
     private volatile Policy effectivePolicy = null;
     private volatile Date lastPolicyCalculatedTime = null;
+    private volatile long lastPolicyCalculatedVersion = -1;
 
     public String getMessagePartName() {
         return messagePartName;
@@ -237,11 +238,12 @@ public class AxisMessage extends AxisDescription {
     }
 
     public Policy getEffectivePolicy() {
-        if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
+        if (isPolicyUpdated()) {
             synchronized (this) {
-                if (lastPolicyCalculatedTime == null || isPolicyUpdated()) {
+                if (isPolicyUpdated()) {
                     effectivePolicy = calculateEffectivePolicy();
                     lastPolicyCalculatedTime = new Date();
+                    lastPolicyCalculatedVersion = getMaxPolicyVersion();
                 }
             }
         }
@@ -284,31 +286,33 @@ public class AxisMessage extends AxisDescription {
     }
 
     public boolean isPolicyUpdated() {
-        // AxisMessage
-        if (getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
-        }
+        return getMaxPolicyVersion() > lastPolicyCalculatedVersion;
+    }
+
+    /**
+     * Returns the maximum policy version across the description hierarchy.
+     * Uses monotonic counter instead of Date to avoid the millisecond-
+     * granularity race condition in AXIS2-5904.
+     */
+    private long getMaxPolicyVersion() {
+        long max = getPolicySubject().getVersion();
         // AxisOperation
         AxisOperation axisOperation = (AxisOperation) parent;
-        if (axisOperation != null
-                && axisOperation.getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
+        if (axisOperation != null) {
+            max = Math.max(max, axisOperation.getPolicySubject().getVersion());
         }
         // AxisService
         AxisService axisService = (axisOperation == null) ? null
                 : axisOperation.getAxisService();
-        if (axisService != null
-                && axisService.getPolicySubject().getLastUpdatedTime().after(
-                lastPolicyCalculatedTime)) {
-            return true;
+        if (axisService != null) {
+            max = Math.max(max, axisService.getPolicySubject().getVersion());
         }
         // AxisConfiguration
         AxisConfiguration axisConfiguration = (axisService == null) ? null
                 : axisService.getAxisConfiguration();
-        return axisConfiguration != null
-               && axisConfiguration.getPolicySubject().getLastUpdatedTime()
-                .after(lastPolicyCalculatedTime);
+        if (axisConfiguration != null) {
+            max = Math.max(max, axisConfiguration.getPolicySubject().getVersion());
+        }
+        return max;
     }
 }
