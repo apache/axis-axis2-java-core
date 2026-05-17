@@ -120,6 +120,13 @@ public class PolicySubject {
         this.version = VERSION_COUNTER.incrementAndGet();
     }
 
+    /**
+     * Returns the current version of the policy set, represented by a
+     * monotonically increasing number. This version number changes every
+     * time a policy is attached, detached, updated, or cleared.
+     *
+     * @return the current policy version
+     */
     public long getVersion() {
         return version;
     }
