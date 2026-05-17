@@ -35,7 +35,7 @@
     <description>
         Stdio MCP (Model Context Protocol) bridge for Apache Axis2. Fetches the
         /openapi-mcp.json tool catalog from a running Axis2 deployment and exposes
-        those operations as MCP tools to Claude Desktop and other MCP clients.
+        those operations as MCP tools to compatible MCP clients.
         Runs as a subprocess launched by an MCP client; communicates via
         newline-delimited JSON-RPC 2.0 on stdin/stdout.
     </description>
