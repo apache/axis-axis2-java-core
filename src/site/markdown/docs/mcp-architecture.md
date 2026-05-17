@@ -211,8 +211,17 @@ handshake is straightforward enough to hand-roll correctly.
 **Build**: maven-shade-plugin 3.6.0 produces `axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar`
 (classifier: `exe`) with `MainClass=McpBridgeMain`.
 
-**Axis2 JSON-RPC envelope**: `tools/call` wraps arguments as `{toolName: [arguments]}`
-before POSTing to the Axis2 endpoint, matching the existing JSON-RPC convention.
+**Axis2 JSON envelope translation**: The bridge translates between standard MCP
+JSON-RPC 2.0 and Axis2's internal JSON convention. MCP sends clean named parameters
+(`{"nAssets":5, "weights":[...]}`); the bridge wraps them into the envelope that
+Axis2's `JsonRpcMessageReceiver` expects: `{"operationName":[{arguments}]}`. The
+array wrapper and operation-name-as-key pattern are artifacts of Axis2's SOAP/XML
+heritage — the JSON formatter maps the request body to an Axiom `OMElement` tree
+where the operation name is the root element and each array entry corresponds to
+a Java method parameter. When the service method takes a single POJO argument,
+callers see `{"operationName":[{"arg0":{...}}]}` where `arg0` is the default WSDL
+parameter name. The bridge hides this from AI clients so they see only standard
+JSON-RPC 2.0.
 
 **Notifications**: MCP `notifications/initialized` (no `id` field) is silently consumed
 with no response, as required by JSON-RPC 2.0.
