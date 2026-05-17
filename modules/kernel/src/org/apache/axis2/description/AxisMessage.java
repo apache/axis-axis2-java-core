@@ -37,7 +37,6 @@ import org.apache.ws.commons.schema.XmlSchemaObject;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 
@@ -67,7 +66,6 @@ public class AxisMessage extends AxisDescription {
     private boolean wrapped = true;
 
     private volatile Policy effectivePolicy = null;
-    private volatile Date lastPolicyCalculatedTime = null;
     private volatile long lastPolicyCalculatedVersion = -1;
 
     public String getMessagePartName() {
@@ -241,9 +239,9 @@ public class AxisMessage extends AxisDescription {
         if (isPolicyUpdated()) {
             synchronized (this) {
                 if (isPolicyUpdated()) {
+                    final long newVersion = getMaxPolicyVersion();
                     effectivePolicy = calculateEffectivePolicy();
-                    lastPolicyCalculatedTime = new Date();
-                    lastPolicyCalculatedVersion = getMaxPolicyVersion();
+                    lastPolicyCalculatedVersion = newVersion;
                 }
             }
         }

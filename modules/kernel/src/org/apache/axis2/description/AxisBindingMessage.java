@@ -33,7 +33,6 @@ import org.apache.neethi.PolicyComponent;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +51,6 @@ public class AxisBindingMessage extends AxisDescription {
     private boolean fault = false;
 
     private volatile Policy effectivePolicy = null;
-    private volatile Date lastPolicyCalculatedTime = null;
     private volatile long lastPolicyCalculatedVersion = -1;
 
     public boolean isFault() {
@@ -221,9 +219,9 @@ public class AxisBindingMessage extends AxisDescription {
         if (isPolicyUpdated()) {
             synchronized (this) {
                 if (isPolicyUpdated()) {
+                    final long newVersion = getMaxPolicyVersion();
                     effectivePolicy = calculateEffectivePolicy();
-                    lastPolicyCalculatedTime = new Date();
-                    lastPolicyCalculatedVersion = getMaxPolicyVersion();
+                    lastPolicyCalculatedVersion = newVersion;
                 }
             }
         }
