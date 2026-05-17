@@ -180,7 +180,7 @@ If you have multiple keys, you can define a ~/.gnupg/gpg.conf file for a default
 
     When asked for a tag name, accept the default value (in the following format: `vX.Y.Z`).
 
-2.  Perform the release using the following command - though be aware you cannot rollback as shown above after that. That may need to happen if there are site problems further below. To start over, use 'git reset --hard last-hash-before-release-started' , then 'git push --delete origin vX.Y.Z':
+2.  Perform the release using the following command - though be aware you cannot rollback as shown above after that. That may need to happen if there are site problems further below. To start over, see the "Recovering from a failed release" section below.
 
         mvn release:perform
 
@@ -261,3 +261,61 @@ of Axis2, because not everybody subscribed to that list knows about the project.
 3.  Remove old (archived) releases from <https://dist.apache.org/repos/dist/release/axis/axis2/java/core/>.
 
 4.  Create an empty release note for the next release under `src/site/markdown/release-notes`.
+
+### Branch protection (`.asf.yaml`)
+
+The repository has ASF-mandated branch protection rules in `.asf.yaml` that prevent
+force-push and branch deletion on `master` and `release/*` branches. This is a supply
+chain security measure applied across all ASF repositories (see PR #1200).
+
+Under normal development, these rules are transparent — regular `git push` works as
+before. The protection only matters during release recovery (see below).
+
+### Recovering from a failed release
+
+If `mvn release:prepare` or `mvn release:perform` fails and you need to start over,
+the recovery requires `git push --force` which is blocked by branch protection.
+
+**Recovery procedure:**
+
+1.  Temporarily disable force-push protection by editing `.asf.yaml` — remove or
+    comment out `restrict_force_push: true`. Commit and push this change:
+
+        # Edit .asf.yaml to remove restrict_force_push: true
+        git add .asf.yaml
+        git commit -m "Temporarily disable force-push protection for release recovery"
+        git push
+
+    Wait a minute for the GitHub ruleset to update.
+
+2.  Perform the recovery:
+
+        git reset --hard <last-commit-before-release-started>
+        git push --force
+        git push --delete origin vX.Y.Z
+
+3.  **Immediately restore protection** by reverting the `.asf.yaml` change:
+
+        git revert HEAD~1  # reverts the .asf.yaml disable commit
+        git push
+
+    **Do not skip this step.** The risk of leaving force-push unprotected (credential
+    compromise, accidental history rewrite) is higher than the inconvenience of the
+    toggle. If the `.asf.yaml` change is accidentally included in a release commit,
+    force-push protection will be silently disabled until someone notices.
+
+4.  Verify protection is restored: check the repository Settings → Rules → Rulesets
+    page on GitHub to confirm force-push is blocked again.
+
+**Why not just leave force-push enabled?** The ASF infrastructure team rolled out
+branch protection across all repositories after supply chain attacks (xz-utils, 2024)
+demonstrated the risk of history rewriting in open source projects. If a committer's
+credentials are compromised, force-push protection prevents an attacker from rewriting
+master to inject malicious code. The Axis2 project accepts this tradeoff: a small
+inconvenience during rare release failures in exchange for continuous protection
+against a real threat.
+
+**Known issue:** The Maven site plugin has a bug with Git SCM URLs (MSITE-1033,
+status: IN PROGRESS) that can cause site deployment failures during the release
+process. This is a separate issue from branch protection but can compound the need
+for release restarts.
