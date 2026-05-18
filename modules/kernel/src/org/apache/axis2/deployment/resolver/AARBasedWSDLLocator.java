@@ -70,8 +70,17 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
      */
     public InputSource getImportInputSource(String parentLocation, String importLocation) {
         lastImportLocation = URI.create(parentLocation).resolve(importLocation);
+        String loc = lastImportLocation.toString();
 
-        if (isAbsolute(lastImportLocation.toString())) {
+        if (isAbsolute(loc)) {
+            // Block remote URLs to prevent SSRF in WSDL imports
+            if (loc.regionMatches(true, 0, "http:", 0, 5)
+                    || loc.regionMatches(true, 0, "https:", 0, 6)
+                    || loc.regionMatches(true, 0, "ftp:", 0, 4)
+                    || loc.regionMatches(true, 0, "jar:", 0, 4)) {
+                throw new RuntimeException(
+                        "Remote WSDL import blocked: " + loc);
+            }
             return super.resolveEntity(
                     null, importLocation, parentLocation);
         } else {

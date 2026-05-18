@@ -41,15 +41,25 @@ public class WarFileBasedURIResolver extends DefaultURIResolver {
             String targetNamespace,
             String schemaLocation,
             String baseUri) {
-        //no issue with
-        if (isAbsolute(schemaLocation)) {
-            // Block remote URLs to prevent SSRF. Only allow resolution
-            // of absolute URIs that are local file paths.
-            if (schemaLocation.regionMatches(true, 0, "http:", 0, 5)
-                    || schemaLocation.regionMatches(true, 0, "https:", 0, 6)
-                    || schemaLocation.regionMatches(true, 0, "ftp:", 0, 4)
-                    || schemaLocation.regionMatches(true, 0, "jar:", 0, 4)) {
-                log.warn("Blocked remote schema resolution in WAR deployment: " + schemaLocation);
+        // Resolve against base URI first to catch relative + remote base bypass
+        URI resolvedURI;
+        try {
+            resolvedURI = (baseUri != null)
+                    ? URI.create(baseUri).resolve(schemaLocation)
+                    : URI.create(schemaLocation);
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid URI syntax for schema location: " + schemaLocation);
+            return new InputSource(new java.io.ByteArrayInputStream(new byte[0]));
+        }
+        String resolved = resolvedURI.toString();
+
+        if (isAbsolute(resolved)) {
+            // Block remote URLs to prevent SSRF
+            if (resolved.regionMatches(true, 0, "http:", 0, 5)
+                    || resolved.regionMatches(true, 0, "https:", 0, 6)
+                    || resolved.regionMatches(true, 0, "ftp:", 0, 4)
+                    || resolved.regionMatches(true, 0, "jar:", 0, 4)) {
+                log.warn("Blocked remote schema resolution in WAR deployment: " + resolved);
                 return new InputSource(new java.io.ByteArrayInputStream(new byte[0]));
             }
             return super.resolveEntity(
@@ -60,10 +70,7 @@ public class WarFileBasedURIResolver extends DefaultURIResolver {
                 throw new RuntimeException(
                         "Unsupported schema location " + schemaLocation);
             }
-
-            URI lastImportLocation = URI.create(baseUri).resolve(schemaLocation);
-            String searchingStr = lastImportLocation.toString();
-            return new InputSource(classLoader.getResourceAsStream(searchingStr));
+            return new InputSource(classLoader.getResourceAsStream(resolved));
         }
     }
 }

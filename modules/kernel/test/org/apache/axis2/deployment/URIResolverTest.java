@@ -62,4 +62,20 @@ public class URIResolverTest extends TestCase {
         assertNull("AAR resolver must block remote https URLs (SSRF)",
                 inputSource.getSystemId());
     }
+
+    /**
+     * Verify that a relative schemaLocation with a remote baseUri is
+     * blocked — prevents the bypass where a relative path resolves to
+     * a remote URL via the base URI.
+     */
+    public void testRelativePathWithRemoteBaseBlocked() {
+        WarFileBasedURIResolver war = new WarFileBasedURIResolver(null);
+        InputSource inputSource = war.resolveEntity(null,
+                "evil.xsd",
+                "http://attacker.example.com/wsdl/");
+        assertNotNull(inputSource);
+        // Resolved URI is http://attacker.example.com/wsdl/evil.xsd — must be blocked
+        assertNull("WAR resolver must block relative path resolving to remote URL",
+                inputSource.getSystemId());
+    }
 }

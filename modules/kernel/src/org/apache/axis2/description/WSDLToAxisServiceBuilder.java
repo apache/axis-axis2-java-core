@@ -154,13 +154,22 @@ public abstract class WSDLToAxisServiceBuilder {
                             delegate = new org.apache.ws.commons.schema.resolver.DefaultURIResolver();
                     public org.xml.sax.InputSource resolveEntity(
                             String ns, String loc, String base) {
-                        if (loc != null
-                                && (loc.regionMatches(true, 0, "http:", 0, 5)
-                                 || loc.regionMatches(true, 0, "https:", 0, 6)
-                                 || loc.regionMatches(true, 0, "ftp:", 0, 4)
-                                 || loc.regionMatches(true, 0, "jar:", 0, 4))) {
+                        // Resolve against base URI before checking —
+                        // a relative loc with a remote base must be caught
+                        String resolved = loc;
+                        if (base != null && loc != null) {
+                            try {
+                                resolved = java.net.URI.create(base).resolve(loc).toString();
+                            } catch (IllegalArgumentException ignored) {
+                            }
+                        }
+                        if (resolved != null
+                                && (resolved.regionMatches(true, 0, "http:", 0, 5)
+                                 || resolved.regionMatches(true, 0, "https:", 0, 6)
+                                 || resolved.regionMatches(true, 0, "ftp:", 0, 4)
+                                 || resolved.regionMatches(true, 0, "jar:", 0, 4))) {
                             throw new RuntimeException(
-                                    "Remote schemaLocation blocked: " + loc
+                                    "Remote schemaLocation blocked: " + resolved
                                     + " (use setCustomResolver to opt in)");
                         }
                         return delegate.resolveEntity(ns, loc, base);
