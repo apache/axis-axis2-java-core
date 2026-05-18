@@ -154,23 +154,30 @@ public abstract class WSDLToAxisServiceBuilder {
                             delegate = new org.apache.ws.commons.schema.resolver.DefaultURIResolver();
                     public org.xml.sax.InputSource resolveEntity(
                             String ns, String loc, String base) {
-                        // Resolve against base URI before checking —
-                        // a relative loc with a remote base must be caught
-                        String resolved = loc;
-                        if (base != null && loc != null) {
-                            try {
-                                resolved = java.net.URI.create(base).resolve(loc).toString();
-                            } catch (IllegalArgumentException ignored) {
+                        // Allowlist: only permit relative paths resolved
+                        // against the base URI. Block all absolute URIs
+                        // (http, https, ftp, file, jar, etc.) to prevent
+                        // both SSRF and LFI. Co-packaged schemas in .aar
+                        // deployments use relative paths and are safe.
+                        if (loc != null) {
+                            String resolved = loc;
+                            if (base != null) {
+                                try {
+                                    resolved = java.net.URI.create(base)
+                                            .resolve(loc).toString();
+                                } catch (IllegalArgumentException ignored) {
+                                }
                             }
-                        }
-                        if (resolved != null
-                                && (resolved.regionMatches(true, 0, "http:", 0, 5)
-                                 || resolved.regionMatches(true, 0, "https:", 0, 6)
-                                 || resolved.regionMatches(true, 0, "ftp:", 0, 4)
-                                 || resolved.regionMatches(true, 0, "jar:", 0, 4))) {
-                            throw new RuntimeException(
-                                    "Remote schemaLocation blocked: " + resolved
-                                    + " (use setCustomResolver to opt in)");
+                            try {
+                                java.net.URI uri = new java.net.URI(resolved);
+                                if (uri.isAbsolute()) {
+                                    throw new RuntimeException(
+                                        "Absolute schemaLocation blocked: "
+                                        + resolved + " (use setCustomResolver"
+                                        + " to opt in)");
+                                }
+                            } catch (java.net.URISyntaxException ignored) {
+                            }
                         }
                         return delegate.resolveEntity(ns, loc, base);
                     }
