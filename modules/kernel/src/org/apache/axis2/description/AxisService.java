@@ -2372,8 +2372,16 @@ public class AxisService extends AxisDescription {
             String namespaceURI = doc.getDocumentElement().getNamespaceURI();
             if (Constants.NS_URI_WSDL11.equals(namespaceURI)) {
                 WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
-                reader.setFeature("javax.wsdl.importDocuments", true);
-                Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
+                boolean allowImports = Boolean.getBoolean("axis2.wsdl.importDocuments");
+                reader.setFeature("javax.wsdl.importDocuments", allowImports);
+                Definition wsdlDefinition;
+                if (allowImports) {
+                    // Use hardened WSDLLocator to prevent XXE in imported documents
+                    wsdlDefinition = reader.readWSDL(
+                            new org.apache.axis2.util.SecureWSDLLocator(wsdlURL.toString()));
+                } else {
+                    wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
+                }
                 if (wsdlDefinition != null) {
                     wsdlDefinition.setDocumentBaseURI(getDocumentURI(wsdlURL.toString()));
                 }

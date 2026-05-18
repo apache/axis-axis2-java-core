@@ -122,6 +122,15 @@ public class XMLUtils {
         try {
             dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
+            // XXE hardening — Axis2 never processes DTDs in any protocol
+            // (SOAP, WSDL, XSD are all XML Schema-based). Disabling DOCTYPE
+            // declarations at the factory level provides defense-in-depth
+            // beyond the DefaultEntityResolver applied at parse time.
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
         }
         catch (Exception e) {
             //log.error(Messages.getMessage("exception00"), e );

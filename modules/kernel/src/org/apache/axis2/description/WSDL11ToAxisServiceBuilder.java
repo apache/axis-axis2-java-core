@@ -2317,6 +2317,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // switch off the verbose mode for all usecases
         reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);
+        // Import resolution is enabled here because WSDL11ToAxisServiceBuilder
+        // processes local/classpath WSDLs (e.g., from .aar deployment) where
+        // imports are safe and necessary. The remote-URL code path in
+        // AxisService.createClientSideAxisService() defaults to false and uses
+        // a hardened WSDLLocator when opt-in is enabled.
         reader.setFeature("javax.wsdl.importDocuments", true);
 
         Definition def;
