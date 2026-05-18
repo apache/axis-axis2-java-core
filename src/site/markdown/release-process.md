@@ -111,11 +111,20 @@ You may also execute a dry run of the release process: mvn release:prepare -Ddry
 
 3. Check that the Maven site can be generated and deployed successfully, and that it has the expected content.
 
-To generate the entire documentation in one place, complete with working inter-module links, execute the site-deploy phase (and check the files under target/staging). A quick and reliable way of doing that is to use the following command: mvn -Dmaven.test.skip=true clean package site-deploy
+    To generate the entire documentation in one place, complete with working inter-module links, execute the site-deploy phase (and check the files under target/staging). A quick and reliable way of doing that is to use the following command: mvn -Dmaven.test.skip=true clean package site-deploy
 
-4.  Check that the source distribution is buildable.
+4.  Verify that `src/site/site.xml` includes the new release version in the Release Notes
+    sidebar navigation. If missing, add an entry like:
 
-5.  Check that the source tree is buildable with an empty local Maven repository.
+        <item name="X.Y.Z" href="release-notes/X.Y.Z.html"/>
+
+    Also create an empty placeholder release note for the *next* version under
+    `src/site/markdown/release-notes/` (e.g., `2.0.2.md`). The distribution assembly
+    references this file and the build will fail without it.
+
+5.  Check that the source distribution is buildable.
+
+6.  Check that the source tree is buildable with an empty local Maven repository.
 
 If any problems are detected, they should be fixed on the trunk (except for issues specific to the
 release branch) and then merged to the release branch.
@@ -190,7 +199,28 @@ If you have multiple keys, you can define a ~/.gnupg/gpg.conf file for a default
 3.  Login to Nexus and close the staging repository. For more details about this step, see
     [here](https://maven.apache.org/developers/release/maven-project-release-procedure.html) and [here](https://infra.apache.org/publishing-maven-artifacts.html#promote).
 
-4.  Execute the `target/checkout/etc/dist.py` script to upload the source and binary distributions to the development area of the <a href="https://dist.apache.org/repos/dist/"> repository. </a>
+4.  Upload the source and binary distributions to the ASF dist area. The artifacts
+    are in `target/checkout/modules/distribution/target/`. Before uploading, verify
+    the GPG signatures and SHA512 checksums:
+
+        cd target/checkout/modules/distribution/target
+        for f in axis2-*.zip; do
+          echo "=== $f ==="
+          gpg --verify "$f.asc" "$f"
+          sha512sum "$f" | cut -d' ' -f1
+          cat "$f.sha512" | cut -d' ' -f1
+        done
+
+    Then copy to your local SVN checkout of the ASF dist area and commit:
+
+        mkdir -p /path/to/dist/axis/axis2/java/core/X.Y.Z
+        cp axis2-X.Y.Z-bin.zip axis2-X.Y.Z-bin.zip.asc axis2-X.Y.Z-bin.zip.sha512 \
+           axis2-X.Y.Z-src.zip axis2-X.Y.Z-src.zip.asc axis2-X.Y.Z-src.zip.sha512 \
+           axis2-X.Y.Z-war.zip axis2-X.Y.Z-war.zip.asc axis2-X.Y.Z-war.zip.sha512 \
+           /path/to/dist/axis/axis2/java/core/X.Y.Z/
+        cd /path/to/dist/axis
+        svn add axis2/java/core/X.Y.Z
+        svn commit -m "Stage Axis2 X.Y.Z release candidate"
 
 5.  Create a staging area for the Maven site:
 
