@@ -43,6 +43,15 @@ public class WarFileBasedURIResolver extends DefaultURIResolver {
             String baseUri) {
         //no issue with
         if (isAbsolute(schemaLocation)) {
+            // Block remote URLs to prevent SSRF. Only allow resolution
+            // of absolute URIs that are local file paths.
+            if (schemaLocation.regionMatches(true, 0, "http:", 0, 5)
+                    || schemaLocation.regionMatches(true, 0, "https:", 0, 6)
+                    || schemaLocation.regionMatches(true, 0, "ftp:", 0, 4)
+                    || schemaLocation.regionMatches(true, 0, "jar:", 0, 4)) {
+                log.warn("Blocked remote schema resolution in WAR deployment: " + schemaLocation);
+                return new InputSource(new java.io.ByteArrayInputStream(new byte[0]));
+            }
             return super.resolveEntity(
                     targetNamespace, schemaLocation, baseUri);
         } else {

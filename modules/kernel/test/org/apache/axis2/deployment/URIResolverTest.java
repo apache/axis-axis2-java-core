@@ -27,17 +27,39 @@ import org.xml.sax.InputSource;
 
 public class URIResolverTest extends TestCase {
 
-    public void testResolveEntity() {
+    /**
+     * Verify that remote http/https URLs are blocked by the SSRF
+     * hardening in AAR and WAR resolvers. The resolvers should return
+     * an empty InputSource instead of fetching the remote URL.
+     */
+    public void testRemoteUrlBlocked() {
         AARFileBasedURIResolver aar = new AARFileBasedURIResolver(null);
-        WarFileBasedURIResolver war = new WarFileBasedURIResolver(null);
         InputSource inputSource = aar.resolveEntity(null,
                 "http://www.test.org/test.xsd",
                 "http://www.test.org/schema.xsd");
         assertNotNull(inputSource);
-        assertEquals(inputSource.getSystemId(), "http://www.test.org/test.xsd");
+        // Should return empty InputSource, not one with the remote URL
+        assertNull("AAR resolver must block remote http URLs (SSRF)",
+                inputSource.getSystemId());
+
+        WarFileBasedURIResolver war = new WarFileBasedURIResolver(null);
         inputSource = war.resolveEntity(null, "http://www.test.org/test.xsd",
                 "http://www.test.org/schema.xsd");
         assertNotNull(inputSource);
-        assertEquals(inputSource.getSystemId(), "http://www.test.org/test.xsd");
+        assertNull("WAR resolver must block remote http URLs (SSRF)",
+                inputSource.getSystemId());
+    }
+
+    /**
+     * Verify that https URLs are also blocked.
+     */
+    public void testHttpsUrlBlocked() {
+        AARFileBasedURIResolver aar = new AARFileBasedURIResolver(null);
+        InputSource inputSource = aar.resolveEntity(null,
+                "https://www.test.org/test.xsd",
+                "https://www.test.org/schema.xsd");
+        assertNotNull(inputSource);
+        assertNull("AAR resolver must block remote https URLs (SSRF)",
+                inputSource.getSystemId());
     }
 }

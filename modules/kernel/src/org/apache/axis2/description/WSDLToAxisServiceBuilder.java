@@ -141,6 +141,31 @@ public abstract class WSDLToAxisServiceBuilder {
 
         if (customResolver != null) {
             schemaCollection.setSchemaResolver(customResolver);
+        } else {
+            // Install a restrictive resolver that blocks remote schema
+            // resolution (SSRF via absolute schemaLocation URLs). The
+            // default URIResolver in xmlschema-core follows any absolute
+            // URI including http://, https://, ftp://, and jar://.
+            // Local file:// and relative paths are allowed for co-packaged
+            // schemas in .aar/.war deployments.
+            schemaCollection.setSchemaResolver(
+                new org.apache.ws.commons.schema.resolver.URIResolver() {
+                    private final org.apache.ws.commons.schema.resolver.DefaultURIResolver
+                            delegate = new org.apache.ws.commons.schema.resolver.DefaultURIResolver();
+                    public org.xml.sax.InputSource resolveEntity(
+                            String ns, String loc, String base) {
+                        if (loc != null
+                                && (loc.regionMatches(true, 0, "http:", 0, 5)
+                                 || loc.regionMatches(true, 0, "https:", 0, 6)
+                                 || loc.regionMatches(true, 0, "ftp:", 0, 4)
+                                 || loc.regionMatches(true, 0, "jar:", 0, 4))) {
+                            throw new RuntimeException(
+                                    "Remote schemaLocation blocked: " + loc
+                                    + " (use setCustomResolver to opt in)");
+                        }
+                        return delegate.resolveEntity(ns, loc, base);
+                    }
+                });
         }
 
         return schemaCollection.read(element);

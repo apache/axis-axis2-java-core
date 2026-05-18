@@ -58,6 +58,16 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
 
          lastImportLocation = URI.create(baseUri).resolve(schemaLocation);
         if (isAbsolute(lastImportLocation.toString())) {
+            // Block remote URLs to prevent SSRF. Only allow resolution
+            // of absolute URIs that are local file paths.
+            String loc = lastImportLocation.toString();
+            if (loc.regionMatches(true, 0, "http:", 0, 5)
+                    || loc.regionMatches(true, 0, "https:", 0, 6)
+                    || loc.regionMatches(true, 0, "ftp:", 0, 4)
+                    || loc.regionMatches(true, 0, "jar:", 0, 4)) {
+                log.warn("Blocked remote schema resolution in AAR deployment: " + loc);
+                return new InputSource(new java.io.ByteArrayInputStream(new byte[0]));
+            }
             return super.resolveEntity(
                     targetNamespace, schemaLocation, baseUri);
         } else {
