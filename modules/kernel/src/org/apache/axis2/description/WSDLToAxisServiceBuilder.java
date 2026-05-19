@@ -154,26 +154,17 @@ public abstract class WSDLToAxisServiceBuilder {
                             delegate = new org.apache.ws.commons.schema.resolver.DefaultURIResolver();
                     public org.xml.sax.InputSource resolveEntity(
                             String ns, String loc, String base) {
-                        // Allowlist: only permit relative paths resolved
-                        // against the base URI. Block all absolute URIs
-                        // (http, https, ftp, file, jar, etc.) to prevent
-                        // both SSRF and LFI. Co-packaged schemas in .aar
-                        // deployments use relative paths and are safe.
+                        // Block absolute schemaLocation URIs to prevent
+                        // SSRF and LFI. Relative paths (e.g., "wsat.xsd")
+                        // are safe — they resolve against the local base
+                        // URI of the WSDL document.
                         if (loc != null) {
-                            String resolved = loc;
-                            if (base != null) {
-                                try {
-                                    resolved = java.net.URI.create(base)
-                                            .resolve(loc).toString();
-                                } catch (IllegalArgumentException ignored) {
-                                }
-                            }
                             try {
-                                java.net.URI uri = new java.net.URI(resolved);
-                                if (uri.isAbsolute()) {
+                                java.net.URI locUri = new java.net.URI(loc);
+                                if (locUri.isAbsolute()) {
                                     throw new RuntimeException(
                                         "Absolute schemaLocation blocked: "
-                                        + resolved + " (use setCustomResolver"
+                                        + loc + " (use setCustomResolver"
                                         + " to opt in)");
                                 }
                             } catch (java.net.URISyntaxException ignored) {
