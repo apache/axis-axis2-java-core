@@ -41,7 +41,7 @@
     </description>
 
     <properties>
-        <jackson.version>2.21.3</jackson.version>
+        <jackson.version>2.21.4</jackson.version>
     </properties>
 
     <dependencies>
