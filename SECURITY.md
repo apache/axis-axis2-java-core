@@ -150,6 +150,7 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 | JMS | Authentication delegated to JMS broker. |
 | TCP | Raw sockets. No encryption or authentication. Trusted networks only. |
 | UDP | No encryption, no authentication, no reliability. Trusted networks only. |
+| Mail | Depends on mail server authentication. |
 
 ## CVE History and Lessons Learned
 
