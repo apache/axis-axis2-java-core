@@ -67,13 +67,21 @@ The clustering module was removed due to unvalidated `ObjectInputStream`
 deserialization on network input. Scan for any remaining paths where
 `ObjectInputStream.readObject()` processes data reachable from untrusted
 input, ensuring all network transports (HTTP, JMS, TCP, etc.) are
-considered as sources. The known remaining use is `SafeObjectInputStream`
-(whitelist-based)
-in context externalization — verify the whitelist is complete and not
-bypassable.
+considered as sources.
+
+The remaining use of Java serialization is `SafeObjectInputStream`
+(whitelist-based) in the context externalization code — `readExternal()`
+methods on `MessageContext`, `OperationContext`, `ServiceContext`,
+`SessionContext`, `Options`, `EndpointReference`, and related classes.
+This externalization code is vestigial from the removed clustering
+feature and has no remaining untrusted input path in current
+deployments. Verify that no new code path feeds untrusted data into
+these `readExternal()` methods.
 
 Key files:
 - `modules/kernel/src/org/apache/axis2/context/externalize/SafeObjectInputStream.java`
+- `modules/kernel/src/org/apache/axis2/context/MessageContext.java` (readExternal)
+- `modules/kernel/src/org/apache/axis2/util/ObjectStateUtils.java`
 
 ### 4. HTTP Transport Entry Points
 
