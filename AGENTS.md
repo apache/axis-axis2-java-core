@@ -66,7 +66,9 @@ Key files:
 The clustering module was removed due to unvalidated `ObjectInputStream`
 deserialization on network input. Scan for any remaining paths where
 `ObjectInputStream.readObject()` processes data reachable from untrusted
-input. The known remaining use is `SafeObjectInputStream` (whitelist-based)
+input, ensuring all network transports (HTTP, JMS, TCP, etc.) are
+considered as sources. The known remaining use is `SafeObjectInputStream`
+(whitelist-based)
 in context externalization — verify the whitelist is complete and not
 bypassable.
 
