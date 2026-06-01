@@ -66,7 +66,17 @@ Key files:
 - `modules/kernel/src/org/apache/axis2/builder/MultipartFormDataBuilder.java`
 - `modules/webapp/src/main/java/org/apache/axis2/webapp/AdminActions.java`
 
-### 5. HTTP Transport Entry Points
+### 5. Admin Console (webapp)
+
+The admin console has a history of web vulnerabilities (CVE-2010-3981:
+CSRF/XSS). Scan for common web security issues including authentication,
+authorization, session management, and input validation.
+
+Key files:
+- `modules/webapp/src/main/java/org/apache/axis2/webapp/`
+- `modules/webapp/src/main/webapp/axis2-web/`
+
+### 6. HTTP Transport Entry Points
 
 The HTTP transport is the primary attack surface. Scan for header
 injection, request smuggling, and URI parsing issues.

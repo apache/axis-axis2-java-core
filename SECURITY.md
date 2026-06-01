@@ -67,8 +67,10 @@ WildFly) or embedded via Spring Boot.
   visible. This is documented behavior controllable via `axis2.xml`.
 - **Denial of service at the network level.** SYN floods, slowloris, or
   transport-layer attacks are mitigated by the servlet container, not Axis2.
-- **Vulnerabilities in optional, external modules.** Rampart (WS-Security)
-  is a separate repository with its own security process.
+- **Vulnerabilities *within* optional, external modules.** For example,
+  a flaw in Rampart's cryptographic implementation would be handled by
+  the Rampart project. However, a flaw in Axis2's handler pipeline that
+  allows the Rampart module to be bypassed *is* a vulnerability in Axis2.
 
 ## Architecture and Attack Surface
 
@@ -156,16 +158,14 @@ weight these areas accordingly.
 
 ### 1. Deserialization of Untrusted Data (most severe)
 
-**Clustering feature (removed in 2.0.1):**
-The Axis2 clustering module reused Apache Tribes for inter-node
-communication without enabling Tribes' encryption. An attacker with
-network access to port 4000 could send crafted serialized Java objects
-to `Axis2ChannelListener#messageReceived`, achieving RCE via standard
-deserialization gadget chains (e.g., commons-collections
-`InvokerTransformer`). Reported by Huawei security team (May 2025).
-Resolved by complete removal of the clustering module in 40+ files
-([AXIS2-6097](https://issues.apache.org/jira/browse/AXIS2-6097),
-commit `e6f53b230b`). CVE pending publication with 2.0.1 release.
+**Clustering module (removed):**
+A previous version of Axis2 included a clustering module for multi-node
+coordination using Apache Tribes. This module exposed a network listener
+that deserialized Java objects from untrusted network streams without
+validation, enabling Remote Code Execution (RCE) via standard
+deserialization gadget chains. Resolved by complete removal of the
+clustering module in 40+ files
+([AXIS2-6097](https://issues.apache.org/jira/browse/AXIS2-6097)).
 
 **Lesson:** Any `ObjectInputStream.readObject()` on network input is a
 critical-severity finding. The remaining use of Java serialization in
