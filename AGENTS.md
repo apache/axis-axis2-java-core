@@ -81,9 +81,16 @@ The HTTP transport is the network entry point for all protocols
 (JSON-RPC, REST, SOAP). Scan for header injection, request smuggling,
 and URI parsing issues.
 
-Key files:
+Key files (HTTP/1.1 — primary inbound path):
 - `modules/transport/http/src/main/java/org/apache/axis2/transport/http/AxisServlet.java`
 - `modules/transport/http/src/main/java/org/apache/axis2/transport/http/HTTPWorker.java`
+
+Key files (HTTP/2 — outbound sender via HttpClient5):
+- `modules/transport-h2/src/main/java/org/apache/axis2/transport/h2/impl/httpclient5/H2TransportSender.java`
+- `modules/transport-h2/src/main/java/org/apache/axis2/transport/h2/impl/httpclient5/H2FlowControlManager.java`
+- `modules/transport-h2/src/main/java/org/apache/axis2/transport/h2/impl/httpclient5/H2StreamingRequestImpl.java`
+- `modules/transport-h2/src/main/java/org/apache/axis2/transport/h2/impl/httpclient5/H2ErrorHandler.java`
+- `modules/transport-h2/src/main/java/org/apache/axis2/transport/h2/impl/httpclient5/ALPNProtocolSelector.java`
 
 ### 5. XML Parsing (XXE/SSRF via third-party libraries, secondary)
 
@@ -132,6 +139,7 @@ modules/
   kernel/       Core engine: message pipeline, handlers, deployment,
                 XML parsing, dispatchers, context
   transport/    Pluggable transports: HTTP, local, JMS, TCP, UDP, mail
+  transport-h2/ HTTP/2 transport sender (HttpClient5, ALPN, flow control, streaming)
   openapi/      OpenAPI schema generation, Swagger UI, MCP catalog
   mcp-bridge/   MCP stdio bridge for AI agent integration
   webapp/       Admin console WAR
