@@ -741,6 +741,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             }
             File webLocation = new File(webLocationString);
             File out = new File(webLocation, serviceFileName);
+            String outPath = out.getCanonicalPath();
             int BUFFER = 1024;
             byte data[] = new byte[BUFFER];
             FileInputStream fin = new FileInputStream(in);
@@ -753,10 +754,21 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     String fileName = zip.getName();
                     fileName = fileName.substring("WWW/".length(),
                             fileName.length());
+                    File target = new File(out, fileName);
+                    // A WWW/ entry name can contain ../ sequences; reject any that
+                    // resolve outside the web resource directory so a crafted
+                    // archive cannot write to an arbitrary path (zip slip).
+                    String targetPath = target.getCanonicalPath();
+                    if (!targetPath.equals(outPath)
+                            && !targetPath.startsWith(outPath + File.separator)) {
+                        log.warn("Skipping web resource entry outside target directory: "
+                                + zip.getName());
+                        continue;
+                    }
                     if (zip.isDirectory()) {
-                        new File(out, fileName).mkdirs();
+                        target.mkdirs();
                     } else {
-                        FileOutputStream tempOut = new FileOutputStream(new File(out, fileName));
+                        FileOutputStream tempOut = new FileOutputStream(target);
                         int count;
                         while ((count = zin.read(data, 0, BUFFER)) != -1) {
                             tempOut.write(data, 0, count);
