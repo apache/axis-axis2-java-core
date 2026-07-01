@@ -320,6 +320,11 @@ public class SOAPPartImpl extends SOAPPart {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            // Reject DTDs and external entities so a StreamSource carrying a
+            // DOCTYPE cannot pull in local files or remote URLs (XXE).
+            inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            inputFactory.setProperty(
+                    XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
             XMLStreamReader reader;
 
             if (source instanceof StreamSource) {
