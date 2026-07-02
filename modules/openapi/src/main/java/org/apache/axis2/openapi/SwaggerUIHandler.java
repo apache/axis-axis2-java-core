@@ -392,7 +392,7 @@ public class SwaggerUIHandler {
               .append("        window.onload = function() {\n")
               .append("            const ui = SwaggerUIBundle(Object.assign(")
               .append(configJs).append(", {\n")
-              .append("                url: '").append(openApiUrl).append("',\n")
+              .append("                url: '").append(escapeJs(openApiUrl)).append("',\n")
               .append("                dom_id: '#swagger-ui',\n")
               .append("                presets: [\n")
               .append("                    SwaggerUIBundle.presets.apis,\n")
@@ -558,6 +558,32 @@ public class SwaggerUIHandler {
                    .replace(">", "&gt;")
                    .replace("\"", "&quot;")
                    .replace("'", "&#x27;");
+    }
+
+    /**
+     * Escape a value for embedding inside a single-quoted JavaScript string
+     * literal. HTML escaping is not sufficient here because the browser does
+     * not decode entities inside a {@code <script>} element, so a raw quote or
+     * a {@code </script>} sequence would break out of the string or the script.
+     */
+    private String escapeJs(String text) {
+        if (text == null) return "";
+        StringBuilder sb = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '\\': sb.append("\\\\"); break;
+                case '\'': sb.append("\\'"); break;
+                case '"':  sb.append("\\\""); break;
+                case '\n': sb.append("\\n"); break;
+                case '\r': sb.append("\\r"); break;
+                case '<':  sb.append("\\u003C"); break;
+                case '>':  sb.append("\\u003E"); break;
+                case '&':  sb.append("\\u0026"); break;
+                default:   sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     // ========== Getters for Configuration Access ==========
