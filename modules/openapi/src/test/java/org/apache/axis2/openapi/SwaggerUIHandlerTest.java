@@ -180,6 +180,35 @@ public class SwaggerUIHandlerTest extends TestCase {
     }
 
     /**
+     * The OpenAPI URL is derived from the request (server name / Host) and is
+     * embedded in the single-quoted JS string of the Swagger init script. A
+     * crafted server name must not break out of that string.
+     */
+    public void testOpenApiUrlEscapedInInitScript() throws Exception {
+        mockRequest.setScheme("http");
+        mockRequest.setServerName("x'});alert(document.domain);//");
+        mockRequest.setServerPort(80);
+        mockRequest.setContextPath("");
+
+        handler.handleSwaggerUIRequest(mockRequest, mockResponse);
+        String html = mockResponse.getWriterContent();
+
+        assertFalse("raw quote from server name must not reach the init script",
+                html.contains("x'});alert"));
+        assertTrue("server name should be JS-escaped in the url field",
+                html.contains("x\\'});alert"));
+
+        // A </script> injected through the same field must not terminate the
+        // inline script element.
+        mockResponse = new MockHttpServletResponse();
+        mockRequest.setServerName("</script><script>alert(1)</script>");
+        handler.handleSwaggerUIRequest(mockRequest, mockResponse);
+        html = mockResponse.getWriterContent();
+        assertFalse("must not contain an un-escaped closing script tag from the url field",
+                html.contains("</script><script>alert"));
+    }
+
+    /**
      * Test error handling in JSON generation.
      * Verifies graceful handling when specification generation fails.
      */
