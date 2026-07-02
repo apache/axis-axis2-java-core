@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -109,7 +110,7 @@ public class SwaggerUIHandler {
         addSecurityHeaders(response);
 
         // Build OpenAPI specification URL from configuration
-        String openApiUrl = buildOpenApiUrl(request);
+        URI openApiUrl = buildOpenApiUrl(request);
 
         // Generate customized Swagger UI HTML
         String swaggerHtml = generateSwaggerUIHtml(openApiUrl, request);
@@ -227,26 +228,23 @@ public class SwaggerUIHandler {
     /**
      * Build the URL for the OpenAPI specification endpoint using configuration.
      */
-    private String buildOpenApiUrl(HttpServletRequest request) {
+    private URI buildOpenApiUrl(HttpServletRequest request) {
         // Check if URL is configured in SwaggerUiConfig
         if (swaggerUiConfig != null && swaggerUiConfig.getUrl() != null) {
             String configuredUrl = swaggerUiConfig.getUrl();
             if (configuredUrl.startsWith("http")) {
-                return configuredUrl; // Absolute URL
+                return URI.create(configuredUrl); // Absolute URL
             } else if (configuredUrl.startsWith("/")) {
                 // Relative URL - build full URL
-                return buildBaseUrl(request) + configuredUrl;
+                return URI.create(buildBaseUrl(request) + configuredUrl);
             } else {
                 // Relative path - append to current path
-                return buildBaseUrl(request) + "/" + configuredUrl;
+                return URI.create(buildBaseUrl(request) + "/" + configuredUrl);
             }
         }
 
         // Build default URL
-        StringBuilder url = new StringBuilder();
-        url.append(buildBaseUrl(request));
-        url.append("/openapi.json");
-        return url.toString();
+        return URI.create(buildBaseUrl(request) + "/openapi.json");
     }
 
     /**
@@ -273,7 +271,7 @@ public class SwaggerUIHandler {
     /**
      * Generate HTML for Swagger UI page with configuration-driven customization.
      */
-    private String generateSwaggerUIHtml(String openApiUrl, HttpServletRequest request) {
+    private String generateSwaggerUIHtml(URI openApiUrl, HttpServletRequest request) {
         String swaggerUiVersion = configuration.getSwaggerUiVersion() != null ?
                 configuration.getSwaggerUiVersion() : DEFAULT_SWAGGER_UI_VERSION;
 
@@ -384,7 +382,7 @@ public class SwaggerUIHandler {
     /**
      * Generate Swagger UI initialization script with configuration.
      */
-    private String generateSwaggerUIScript(String openApiUrl) {
+    private String generateSwaggerUIScript(URI openApiUrl) {
         String configJs = swaggerUiConfig.toJavaScriptConfig();
 
         StringBuilder script = new StringBuilder();
@@ -392,7 +390,7 @@ public class SwaggerUIHandler {
               .append("        window.onload = function() {\n")
               .append("            const ui = SwaggerUIBundle(Object.assign(")
               .append(configJs).append(", {\n")
-              .append("                url: '").append(openApiUrl).append("',\n")
+              .append("                url: '").append(openApiUrl.toString()).append("',\n")
               .append("                dom_id: '#swagger-ui',\n")
               .append("                presets: [\n")
               .append("                    SwaggerUIBundle.presets.apis,\n")
