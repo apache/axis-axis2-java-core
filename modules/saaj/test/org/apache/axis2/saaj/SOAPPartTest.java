@@ -36,10 +36,15 @@ import jakarta.xml.soap.SOAPEnvelope;
 import jakarta.xml.soap.SOAPHeader;
 import jakarta.xml.soap.SOAPHeaderElement;
 import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPPart;
 import jakarta.xml.soap.Text;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.StringReader;
 import java.util.Iterator;
 
 /**
@@ -80,6 +85,35 @@ public class SOAPPartTest extends Assert {
         SOAPBody body = message.getSOAPBody();
         Iterator iter2 = body.getChildElements();
         getContents(iter2, "");
+    }
+
+    @Test
+    public void testSetContentRejectsExternalEntity() throws Exception {
+        File secret = File.createTempFile("saaj-xxe", ".txt");
+        secret.deleteOnExit();
+        String marker = "SAAJ_XXE_SECRET_MARKER";
+        try (FileWriter w = new FileWriter(secret)) {
+            w.write(marker);
+        }
+        String xml =
+                "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE x [ <!ENTITY xxe SYSTEM \"" + secret.toURI() + "\"> ]>\n" +
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                "<soapenv:Body><item>&xxe;</item></soapenv:Body></soapenv:Envelope>";
+
+        SOAPMessage message = MessageFactory.newInstance().createMessage();
+        SOAPPart soapPart = message.getSOAPPart();
+        try {
+            soapPart.setContent(new StreamSource(new StringReader(xml)));
+            message.saveChanges();
+        } catch (SOAPException expected) {
+            // DTD rejected outright is also fine
+            return;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        message.writeTo(out);
+        assertFalse("external entity must not be expanded into the message",
+                    out.toString("UTF-8").contains(marker));
     }
 
     public void getContents(Iterator iterator, String indent) {
