@@ -469,7 +469,7 @@
         <commons.logging.version>1.4.0</commons.logging.version>
         <!-- fi.version removed: AXIS2-6105 -->
         <google.gson.version>2.14.0</google.gson.version>
-        <groovy.version>5.0.6</groovy.version>
+        <groovy.version>5.0.7</groovy.version>
         <httpcore.version>5.4.3</httpcore.version>
         <httpclient.version>5.6.1</httpclient.version>
         <jaxbri.version>4.0.3</jaxbri.version>
