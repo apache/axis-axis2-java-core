@@ -106,13 +106,17 @@
 &lt;dependency&gt;
     &lt;groupId&gt;org.apache.httpcomponents.core5&lt;/groupId&gt;
     &lt;artifactId&gt;httpcore5-h2&lt;/artifactId&gt;
-    &lt;version&gt;5.4.1&lt;/version&gt;
+    &lt;version&gt;5.4.3&lt;/version&gt;
 &lt;/dependency&gt;
 </source>
 
         <p>These are the same dependencies used by Axis2's own
         <code>H2TransportSender</code>. If you are already running Axis2
         with HTTP/2 transport, they are already on your classpath.</p>
+
+        <p>The per-probe TCP-keepalive settings shown under Production
+        Hardening (<code>setTcpKeepIdle/Interval/Count</code>) require
+        httpcore5 5.3 or later.</p>
 
         </section>
 
@@ -172,6 +176,123 @@ Server (MoshiStreamingMessageFormatter)
   → Http2JsonClient.data() callback
   → your OutputStream
 </source>
+
+        </section>
+
+        <section name="Production Hardening">
+
+        <p>The examples above establish HTTP/2 connectivity, but a long-lived
+        pooled client that runs for days against a load-balanced service needs
+        more than that to stay healthy across upstream restarts and network
+        blips. Learned in production: without the four defenses below, a routine
+        upstream restart or a briefly dropped network path leaves the client
+        dispatching requests onto dead connections that hang until the socket
+        timeout. Each defense is a few lines on the client builder, and the
+        sample applies all four.</p>
+
+        <subsection name="1. Stale-connection defenses">
+        <p>A connection pool will hand out a connection the server (or an
+        intermediary) has since closed. After an upstream restart the pool keeps
+        dispatching onto dead, half-open connections; each request hangs until the
+        socket timeout. Three settings prevent this:</p>
+<source>
+ConnectionConfig connectionConfig = ConnectionConfig.custom()
+    .setConnectTimeout(Timeout.ofSeconds(30))
+    .setValidateAfterInactivity(TimeValue.ofSeconds(10))  // re-check idle connections on lease
+    .setTimeToLive(TimeValue.ofMinutes(5))                // cap connection lifetime
+    .build();
+// ...setDefaultConnectionConfig(connectionConfig) on the connection manager
+
+HttpAsyncClients.custom()
+    // ...
+    .evictExpiredConnections()
+    .evictIdleConnections(TimeValue.ofSeconds(90))        // background drain of idle connections
+    .build();
+</source>
+        <p><code>validateAfterInactivity</code> revalidates a pooled connection
+        before it is leased if it has been idle beyond the threshold;
+        <code>timeToLive</code> retires connections regardless of traffic; the
+        background evictor drains idle/expired connections so a restart-killed
+        connection dies proactively rather than being discovered on the next
+        request. All three act only on pooled/idle connections — an in-flight
+        request is never cut.</p>
+        </subsection>
+
+        <subsection name="2. TCP keepalive">
+        <p>The defenses above catch a connection the peer closed cleanly (FIN/RST).
+        They do not catch a <em>silently</em> dead peer — a hard kill, or an idle
+        TCP flow dropped by a NAT gateway or load balancer without notifying either
+        end. Only TCP keepalive detects that:</p>
+<source>
+IOReactorConfig.custom()
+    .setSoKeepAlive(true)
+    .setTcpKeepIdle(45)       // seconds idle before the first probe
+    .setTcpKeepInterval(10)   // seconds between probes
+    .setTcpKeepCount(3)       // probes before declaring the peer dead
+    .build();
+</source>
+        <p>With these, a dead peer is detected in roughly 75-105s instead of the
+        OS keepalive default (commonly two hours). Two caveats:</p>
+        <ul>
+            <li>The per-probe knobs (<code>TcpKeepIdle/Interval/Count</code>) use
+            <code>jdk.net.ExtendedSocketOptions</code> and require Java 11+ on
+            Linux or macOS. On other platforms <code>setSoKeepAlive(true)</code>
+            still works but falls back to the OS default idle time.</li>
+            <li>Keep the idle time <strong>below the shortest idle-drop on the
+            network path</strong>. NAT gateways commonly reset idle flows at ~350s;
+            cloud load-balancer idle timeouts vary and can be as low as 60s. A
+            keepalive idle longer than the path's timeout defeats the purpose — the
+            flow is already gone before the first probe.</li>
+        </ul>
+        </subsection>
+
+        <subsection name="3. Retry on stale-connection failures">
+        <p>Even with validation there is a race: a connection can die between the
+        lease-time check and the request being written. It then fails with a
+        recognizable connection-level exception rather than a response, and
+        retrying once on a fresh connection recovers transparently:</p>
+<source>
+if (cause instanceof ConnectionClosedException          // GOAWAY race / not-executed
+        || cause instanceof HttpStreamResetException    // stream reset (incl. H2)
+        || cause instanceof H2ConnectionException
+        || cause instanceof ClosedChannelException
+        || cause instanceof ConnectionRequestTimeoutException
+        || cause instanceof DeadlineTimeoutException     // pool-lease timeout
+        || cause instanceof SocketException
+        || cause instanceof ConnectException
+        || cause instanceof SocketTimeoutException) {
+    // transient — safe to retry on a fresh, validated connection
+}
+</source>
+        <p>Two rules keep retry safe:</p>
+        <ul>
+            <li><strong>Idempotency</strong> — only retry operations that can run
+            twice without side effects. A read/query is fine; a non-idempotent
+            write is not.</li>
+            <li><strong>No partial output</strong> — when streaming to a caller's
+            <code>OutputStream</code>, retry only while zero bytes have been
+            written; once any body byte has flowed the stream cannot be rewound, so
+            the failure must surface. (The buffered <code>execute</code> path uses a
+            fresh buffer per attempt, so it is always safe.)</li>
+        </ul>
+        <p>A first-attempt <code>Future.get()</code> <code>TimeoutException</code> is
+        also worth retrying once: it is the common signature of a request dispatched
+        onto a dead pooled connection, and retrying on a validated connection avoids
+        a full-timeout hang without tripling the worst-case latency of a genuinely
+        slow request.</p>
+        </subsection>
+
+        <subsection name="4. Fail fast on the response status">
+        <p>This is why the sample uses <code>AbstractBinResponseConsumer</code>
+        rather than <code>SimpleHttpResponse</code> for <em>every</em> request,
+        including the buffered one. The consumer's <code>start()</code> callback
+        receives the status code the moment response headers arrive — before any
+        body. A failing intermediary (for example a load balancer whose target died
+        mid-request) can return error headers and then never terminate the body
+        stream; code that waits for the full body before checking the status parks
+        for the entire timeout. Reacting to the status in <code>start()</code> turns
+        that multi-minute hang into an immediate, retryable failure.</p>
+        </subsection>
 
         </section>
 
