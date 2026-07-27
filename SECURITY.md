@@ -164,9 +164,13 @@ A previous version of Axis2 included a clustering module for multi-node
 coordination using Apache Tribes. This module exposed a network listener
 that deserialized Java objects from untrusted network streams without
 validation, enabling Remote Code Execution (RCE) via standard
-deserialization gadget chains. Resolved by complete removal of the
-clustering module in 40+ files
-([AXIS2-6097](https://issues.apache.org/jira/browse/AXIS2-6097)).
+deserialization gadget chains. This affected all releases through 2.0.0
+on Apache Tomcat, but only when the Tribes-based clustering feature was
+manually enabled (it was off by default). Assigned
+[CVE-2026-66713](https://www.cve.org/CVERecord?id=CVE-2026-66713) and
+resolved by complete removal of the clustering module in 40+ files
+([AXIS2-6097](https://issues.apache.org/jira/browse/AXIS2-6097)) in
+release 2.0.1.
 
 **Lesson:** Any `ObjectInputStream.readObject()` on network input is a
 critical-severity finding. The remaining use of Java serialization in
