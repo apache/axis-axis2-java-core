@@ -1054,7 +1054,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.5.1</version>
                     <!-- AXIS2-6040: Automatic-Module-Name defined per-module (not global).
                          A global ${project.artifactId} approach fails because hyphens in
                          artifactIds (e.g., axis2-resource-bundle) are invalid in Java
