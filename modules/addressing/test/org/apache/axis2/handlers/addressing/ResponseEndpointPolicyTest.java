@@ -69,7 +69,24 @@ public class ResponseEndpointPolicyTest extends TestCase {
         assertFalse(ResponseEndpointPolicy.isAllowed(metadata, messageContext));
     }
 
-    public void testLoopbackAndPrivateAddressesAreBlockedByDefault() {
+    /**
+     * A callback endpoint on loopback or inside the same private network is how
+     * most real decoupled deployments are wired — Axis2's own
+     * ThirdPartyResponseRawXMLTest replies to 127.0.0.1 — so the default policy
+     * must not refuse them.
+     */
+    public void testLoopbackAndPrivateAddressesAreAllowedByDefault() {
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://127.0.0.1:8080/sink"), messageContext));
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://10.1.2.3/internal"), messageContext));
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://192.168.1.10/admin"), messageContext));
+    }
+
+    /** Opting in to the strict posture refuses them. */
+    public void testLoopbackAndPrivateAddressesBlockedWhenOptedIn() throws Exception {
+        setParameter(ResponseEndpointPolicy.BLOCK_PRIVATE_NETWORKS, "true");
         assertFalse(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("http://127.0.0.1:8080/sink"), messageContext));
         assertFalse(ResponseEndpointPolicy.isAllowed(
@@ -78,6 +95,17 @@ public class ResponseEndpointPolicyTest extends TestCase {
                 new EndpointReference("http://192.168.1.10/admin"), messageContext));
         assertFalse(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("http://172.16.5.5/admin"), messageContext));
+    }
+
+    /**
+     * Wildcard and multicast are never a legitimate reply destination, so they
+     * are refused without opting in.
+     */
+    public void testWildcardAndMulticastAlwaysBlocked() {
+        assertFalse(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://0.0.0.0/sink"), messageContext));
+        assertFalse(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://239.1.2.3/sink"), messageContext));
     }
 
     /**
@@ -117,7 +145,7 @@ public class ResponseEndpointPolicyTest extends TestCase {
      */
     public void testNonHttpSchemeStillGetsTheRangeCheck() {
         assertFalse(ResponseEndpointPolicy.isAllowed(
-                new EndpointReference("tcp://127.0.0.1:6060/svc"), messageContext));
+                new EndpointReference("tcp://169.254.169.254:6060/svc"), messageContext));
     }
 
     public void testSchemeListIsConfigurable() throws Exception {
@@ -165,11 +193,13 @@ public class ResponseEndpointPolicyTest extends TestCase {
     }
 
     /**
-     * Turning the range check off restores the pre-2.0.2 behaviour for operators
-     * who need it.
+     * The instance-metadata block holds even with the private-range option
+     * explicitly off: link-local is refused unconditionally.
      */
-    public void testPrivateRangeCheckCanBeDisabled() throws Exception {
+    public void testMetadataAddressStillBlockedWithPrivateRangeCheckOff() throws Exception {
         setParameter(ResponseEndpointPolicy.BLOCK_PRIVATE_NETWORKS, "false");
+        assertFalse(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://169.254.169.254/latest/meta-data/"), messageContext));
         assertTrue(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("http://127.0.0.1:8080/sink"), messageContext));
     }

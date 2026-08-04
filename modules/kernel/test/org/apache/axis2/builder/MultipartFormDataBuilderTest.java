@@ -26,6 +26,8 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.kernel.http.HTTPConstants;
 
@@ -38,13 +40,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests that the multipart builder does not leave its temporary files behind.
+ * Tests for the multipart builder's request-size ceilings and temporary file handling.
  *
  * <p>A part larger than the disk threshold is written to a temp file. Before
  * this was addressed, nothing ever deleted those files and they accumulated for
  * the lifetime of the JVM.
  */
-public class MultipartTempFileCleanupTest extends TestCase {
+public class MultipartFormDataBuilderTest extends TestCase {
 
     private static final String BOUNDARY = "axis2TestBoundary";
 
@@ -56,6 +58,55 @@ public class MultipartTempFileCleanupTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         tempDirectory = new File(System.getProperty("java.io.tmpdir"));
+    }
+
+    /**
+     * The ceiling is enforced through the real builder, not merely resolved.
+     *
+     * <p>Worth stating why this test exists separately from
+     * {@link RequestSizeLimitsTest}: that one covers parameter resolution, and
+     * the reporter's own proof-of-concept checks the limit by reconstructing its
+     * own upload object rather than going through {@code processDocument}, so
+     * neither actually demonstrates that an oversized body is refused.
+     */
+    public void testOversizedRequestIsRejected() throws Exception {
+        MessageContext messageContext = newMessageContext(buildBody("bigFile", "big.bin"));
+        messageContext.getConfigurationContext().getAxisConfiguration().addParameter(
+                new Parameter(RequestSizeLimits.MULTIPART_MAX_REQUEST_SIZE,
+                        Integer.toString(PART_SIZE / 4)));
+
+        try {
+            new MultipartFormDataBuilder().processDocument(null, multipartContentType(),
+                    messageContext);
+            fail("A body over the configured ceiling should have been refused");
+        } catch (AxisFault expected) {
+            // The builder wraps the upload failure; what matters is that the
+            // oversized body did not get materialised.
+        }
+    }
+
+    /** A body within the ceiling still goes through untouched. */
+    public void testRequestWithinTheLimitIsAccepted() throws Exception {
+        MessageContext messageContext = newMessageContext(buildBody("bigFile", "big.bin"));
+        messageContext.getConfigurationContext().getAxisConfiguration().addParameter(
+                new Parameter(RequestSizeLimits.MULTIPART_MAX_REQUEST_SIZE,
+                        Integer.toString(PART_SIZE * 4)));
+
+        assertNotNull(new MultipartFormDataBuilder().processDocument(null,
+                multipartContentType(), messageContext));
+    }
+
+    /**
+     * The shipped default has to be a real number rather than the -1 the sink
+     * used to leave in place.
+     */
+    public void testDefaultCeilingIsFinite() throws Exception {
+        MessageContext messageContext = newMessageContext(buildBody("bigFile", "big.bin"));
+        long limit = RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.MULTIPART_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_MULTIPART_MAX_REQUEST_SIZE);
+        assertTrue("The default request ceiling must be bounded", limit > 0);
+        assertEquals(RequestSizeLimits.DEFAULT_MULTIPART_MAX_REQUEST_SIZE, limit);
     }
 
     /**

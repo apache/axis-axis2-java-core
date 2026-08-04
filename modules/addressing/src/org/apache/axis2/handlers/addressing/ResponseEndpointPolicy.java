@@ -59,11 +59,14 @@ import java.util.Set;
  * the strictest posture and the right one for a deployment that does not use
  * decoupled or dual-channel responses.</dd>
  *
- * <dt>{@code blockPrivateNetworkResponseEndpoints} (default {@code true})</dt>
- * <dd>Rejects response endpoints that resolve to loopback, link-local (which
- * covers the cloud instance-metadata addresses), site-local/RFC-1918, or
- * wildcard addresses — the destinations that turn this into a probe of the
- * server's own network rather than a genuine reply.</dd>
+ * <dt>{@code blockPrivateNetworkResponseEndpoints} (default {@code false})</dt>
+ * <dd>Additionally rejects response endpoints that resolve to loopback,
+ * site-local/RFC-1918, IPv6 unique-local or carrier-grade-NAT addresses. This is
+ * off by default because a callback endpoint inside the same private network is
+ * how most real decoupled deployments are wired, and refusing it would break
+ * them; turn it on wherever the caller is not already inside the trusted
+ * network. Link-local, wildcard and multicast destinations are refused
+ * regardless — see {@link #resolvesToRestrictedAddress}.</dd>
  *
  * <dt>{@code allowedResponseEndpointHosts} (no default)</dt>
  * <dd>A comma-separated host allow-list. When set, a response endpoint host must
@@ -167,11 +170,8 @@ final class ResponseEndpointPolicy {
             return false;
         }
 
-        if (booleanParameter(messageContext, BLOCK_PRIVATE_NETWORKS, true)) {
-            return !resolvesToRestrictedAddress(host);
-        }
-
-        return true;
+        return !resolvesToRestrictedAddress(host,
+                booleanParameter(messageContext, BLOCK_PRIVATE_NETWORKS, false));
     }
 
     /**
@@ -186,7 +186,7 @@ final class ResponseEndpointPolicy {
      * the check still removes the direct-IP and static-name cases that make this
      * reachable in practice.
      */
-    private static boolean resolvesToRestrictedAddress(String host) {
+    private static boolean resolvesToRestrictedAddress(String host, boolean blockPrivateNetworks) {
         InetAddress[] addresses;
         try {
             addresses = InetAddress.getAllByName(host);
@@ -198,15 +198,31 @@ final class ResponseEndpointPolicy {
         }
         for (int i = 0; i < addresses.length; i++) {
             InetAddress address = addresses[i];
-            if (address.isLoopbackAddress()
-                    || address.isLinkLocalAddress()
-                    || address.isSiteLocalAddress()
+
+            // Never a legitimate destination for a reply, so these are refused
+            // whatever the configuration says. Link-local covers the cloud
+            // instance-metadata addresses, which is what gives this class of
+            // SSRF most of its impact.
+            if (address.isLinkLocalAddress()
                     || address.isAnyLocalAddress()
-                    || address.isMulticastAddress()
-                    || isUniqueLocalIPv6(address)
-                    || isSharedAddressSpace(address)) {
+                    || address.isMulticastAddress()) {
                 log.warn("Rejecting WS-Addressing response endpoint resolving to a "
-                        + "loopback, link-local, or private address");
+                        + "link-local, wildcard, or multicast address");
+                return true;
+            }
+
+            // Loopback and private ranges, by contrast, are where a great many
+            // real decoupled deployments put their callback endpoint: both ends
+            // of an intranet dual-channel exchange are usually on RFC 1918. So
+            // this is opt-in, and worth enabling anywhere the caller is not
+            // already inside the trusted network.
+            if (blockPrivateNetworks
+                    && (address.isLoopbackAddress()
+                        || address.isSiteLocalAddress()
+                        || isUniqueLocalIPv6(address)
+                        || isSharedAddressSpace(address))) {
+                log.warn("Rejecting WS-Addressing response endpoint resolving to a "
+                        + "loopback or private address (" + BLOCK_PRIVATE_NETWORKS + " is true)");
                 return true;
             }
         }

@@ -64,9 +64,13 @@
     engaged to bind that endpoint reference to a trusted issuer, these bound
     where the server can be induced to connect.
 
-    blockPrivateNetworkResponseEndpoints (default true) rejects response
-    endpoints resolving to loopback, link-local (including cloud
-    instance-metadata addresses), or private ranges.
+    Link-local (including the cloud instance-metadata addresses), wildcard and
+    multicast destinations are always refused - none is ever a legitimate reply
+    target. blockPrivateNetworkResponseEndpoints (default false) additionally
+    refuses loopback and private ranges; it is off by default because a callback
+    endpoint inside the same private network is how most decoupled deployments
+    are wired. Turn it on wherever the caller is not already inside the trusted
+    network.
 
     Set allowNonAnonymousResponseEndpoints to false to refuse decoupled
     responses entirely - the right setting unless this deployment actually uses
@@ -81,7 +85,7 @@
     are refused. Add to this list if a custom transport is in use.
     -->
     <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
-    <parameter name="blockPrivateNetworkResponseEndpoints">true</parameter>
+    <parameter name="blockPrivateNetworkResponseEndpoints">false</parameter>
     <!--<parameter name="allowedResponseEndpointHosts">replies.example.com</parameter>-->
     <!--<parameter name="allowedResponseEndpointSchemes">http,https</parameter>-->
 
