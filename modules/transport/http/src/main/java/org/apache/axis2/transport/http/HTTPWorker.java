@@ -99,6 +99,12 @@ public class HTTPWorker implements Worker {
                             Iterator i = services.values().iterator();
                             while (i.hasNext()) {
                                 AxisService service = (AxisService) i.next();
+                                // Same exposure gate the ?wsdl/?wsdl2/?xsd routes
+                                // below apply: this reaches the same packaged
+                                // metadata, just addressed by file name.
+                                if (!canExposeServiceMetadata(service)) {
+                                    continue;
+                                }
                                 InputStream stream = HTTPTransportUtils.getMetaInfResourceAsStream(service, file);
                                 if (stream != null) {
                                     OutputStream out = response.getOutputStream();
@@ -377,6 +383,10 @@ public class HTTPWorker implements Worker {
         AxisService service = (AxisService) services.get(serviceName);
 
         if (service != null) {
+            if (!canExposeServiceMetadata(service)) {
+                response.setStatus(HttpStatus.SC_FORBIDDEN);
+                return true;
+            }
             response.setStatus(HttpStatus.SC_OK);
             response.setContentType("text/xml");
             service.printUserWSDL(response.getOutputStream(), wsdlName, ip);

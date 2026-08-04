@@ -258,6 +258,63 @@ public class SwaggerUIHandlerTest extends TestCase {
     }
 
     /**
+     * A Host header carrying a JavaScript breakout must not reach the inline
+     * script as executable syntax.
+     *
+     * <p>The payload closes the single-quoted string the specification URL sits
+     * in, concatenates a call, and reopens the string. It survives
+     * {@code URI.create} unchanged — every character in it is legal in an
+     * authority — so rejecting the host and encoding the output are what stop
+     * it, not URI parsing.
+     */
+    public void testSwaggerUIRejectsScriptBreakoutInHostHeader() throws Exception {
+        mockRequest.setServerName("'-alert(document.domain)-'");
+        mockRequest.setContextPath("/axis2");
+
+        handler.handleSwaggerUIRequest(mockRequest, mockResponse);
+        String html = mockResponse.getWriterContent();
+
+        assertFalse("Host must not reach the page as executable script",
+                html.contains("alert(document.domain)"));
+        assertFalse("The single-quote breakout must not survive",
+                html.contains("url: 'http://'-"));
+        assertTrue("The page should still render with a relative spec URL",
+                html.contains("url: '/axis2/openapi.json'"));
+    }
+
+    /**
+     * A well-formed Host is still used to build an absolute URL, so the
+     * rejection above is not simply breaking the normal path.
+     */
+    public void testSwaggerUIKeepsWellFormedHost() throws Exception {
+        mockRequest.setServerName("api.example.com");
+        mockRequest.setContextPath("/axis2");
+
+        handler.handleSwaggerUIRequest(mockRequest, mockResponse);
+        String html = mockResponse.getWriterContent();
+
+        assertTrue("A valid host should still produce an absolute URL",
+                html.contains("url: 'http://api.example.com:8080/axis2/openapi.json'"));
+    }
+
+    /**
+     * The served page should carry a Content-Security-Policy whose script-src is
+     * restricted to the nonced inline block and the pinned distribution.
+     */
+    public void testSwaggerUISetsContentSecurityPolicy() throws Exception {
+        handler.handleSwaggerUIRequest(mockRequest, mockResponse);
+
+        String csp = mockResponse.getHeader("Content-Security-Policy");
+        assertNotNull("A CSP should be set on the Swagger UI page", csp);
+        assertTrue("The CSP should nonce the inline script", csp.contains("script-src 'nonce-"));
+        assertTrue("The CSP should not permit arbitrary inline script",
+                !csp.contains("script-src 'unsafe-inline'"));
+
+        String html = mockResponse.getWriterContent();
+        assertTrue("The inline script should carry the nonce", html.contains("<script nonce=\""));
+    }
+
+    /**
      * Mock HttpServletRequest for testing.
      */
     private static class MockHttpServletRequest implements HttpServletRequest {

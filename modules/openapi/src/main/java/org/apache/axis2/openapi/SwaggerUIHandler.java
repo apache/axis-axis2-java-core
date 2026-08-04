@@ -30,7 +30,10 @@ import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -63,6 +66,12 @@ public class SwaggerUIHandler {
     // Default resource paths
     private static final String SWAGGER_UI_ROOT = "/swagger-ui/";
     private static final String API_DOCS_PATH = "/api-docs/";
+
+    /** Origin the Swagger UI distribution is loaded from; needed by the CSP. */
+    private static final String SWAGGER_UI_CDN_ORIGIN = "https://unpkg.com";
+
+    /** Source of the per-response nonce for the inline initialisation script. */
+    private static final SecureRandom NONCE_SOURCE = new SecureRandom();
 
     /**
      * Constructor with default configuration.
@@ -109,11 +118,14 @@ public class SwaggerUIHandler {
         // Add security headers
         addSecurityHeaders(response);
 
+        String scriptNonce = newScriptNonce();
+        addContentSecurityPolicy(response, scriptNonce);
+
         // Build OpenAPI specification URL from configuration
         URI openApiUrl = buildOpenApiUrl(request);
 
         // Generate customized Swagger UI HTML
-        String swaggerHtml = generateSwaggerUIHtml(openApiUrl, request);
+        String swaggerHtml = generateSwaggerUIHtml(openApiUrl, request, scriptNonce);
 
         PrintWriter writer = response.getWriter();
         writer.write(swaggerHtml);
@@ -251,19 +263,31 @@ public class SwaggerUIHandler {
      * Build the base URL from request information.
      */
     private String buildBaseUrl(HttpServletRequest request) {
+        String contextPath = request.getContextPath();
+        if (contextPath == null) {
+            contextPath = "";
+        }
+
+        String serverName = request.getServerName();
+        if (!RequestUrlPolicy.isSafeHost(serverName)) {
+            // The Host is client-supplied. Rather than echo a malformed one back
+            // into the served page, degrade to an origin-relative URL, which the
+            // browser resolves against the page it already loaded.
+            log.warn("Rejecting malformed Host header for Swagger UI base URL; "
+                    + "serving an origin-relative specification URL instead");
+            return contextPath;
+        }
+
         StringBuilder url = new StringBuilder();
         url.append(request.getScheme()).append("://");
-        url.append(request.getServerName());
+        url.append(serverName);
 
         if ((request.getScheme().equals("http") && request.getServerPort() != 80) ||
             (request.getScheme().equals("https") && request.getServerPort() != 443)) {
             url.append(":").append(request.getServerPort());
         }
 
-        String contextPath = request.getContextPath();
-        if (contextPath != null && !contextPath.isEmpty()) {
-            url.append(contextPath);
-        }
+        url.append(contextPath);
 
         return url.toString();
     }
@@ -271,7 +295,7 @@ public class SwaggerUIHandler {
     /**
      * Generate HTML for Swagger UI page with configuration-driven customization.
      */
-    private String generateSwaggerUIHtml(URI openApiUrl, HttpServletRequest request) {
+    private String generateSwaggerUIHtml(URI openApiUrl, HttpServletRequest request, String scriptNonce) {
         String swaggerUiVersion = configuration.getSwaggerUiVersion() != null ?
                 configuration.getSwaggerUiVersion() : DEFAULT_SWAGGER_UI_VERSION;
 
@@ -311,7 +335,7 @@ public class SwaggerUIHandler {
             .append(swaggerUiVersion).append("/swagger-ui-standalone-preset.js\"></script>\n");
 
         // Add Swagger UI initialization script
-        html.append(generateSwaggerUIScript(openApiUrl));
+        html.append(generateSwaggerUIScript(openApiUrl, scriptNonce));
 
         // Add custom JavaScript if configured
         if (swaggerUiConfig.getCustomJs() != null) {
@@ -382,15 +406,17 @@ public class SwaggerUIHandler {
     /**
      * Generate Swagger UI initialization script with configuration.
      */
-    private String generateSwaggerUIScript(URI openApiUrl) {
+    private String generateSwaggerUIScript(URI openApiUrl, String scriptNonce) {
         String configJs = swaggerUiConfig.toJavaScriptConfig();
 
         StringBuilder script = new StringBuilder();
-        script.append("    <script>\n")
+        script.append("    <script nonce=\"").append(scriptNonce).append("\">\n")
               .append("        window.onload = function() {\n")
               .append("            const ui = SwaggerUIBundle(Object.assign(")
               .append(configJs).append(", {\n")
-              .append("                url: '").append(openApiUrl.toString()).append("',\n")
+              .append("                url: '")
+              .append(RequestUrlPolicy.escapeJavaScriptString(openApiUrl.toString()))
+              .append("',\n")
               .append("                dom_id: '#swagger-ui',\n")
               .append("                presets: [\n")
               .append("                    SwaggerUIBundle.presets.apis,\n")
@@ -452,6 +478,76 @@ public class SwaggerUIHandler {
         response.setHeader("X-Content-Type-Options", "nosniff");
         response.setHeader("X-Frame-Options", "SAMEORIGIN");
         response.setHeader("X-XSS-Protection", "1; mode=block");
+    }
+
+    /**
+     * Generate a single-use nonce for the page's inline initialisation script.
+     */
+    private String newScriptNonce() {
+        byte[] nonce = new byte[16];
+        NONCE_SOURCE.nextBytes(nonce);
+        return Base64.getEncoder().encodeToString(nonce);
+    }
+
+    /**
+     * Apply a Content-Security-Policy to the Swagger UI page.
+     *
+     * <p>Only the nonced initialisation script and the pinned Swagger UI
+     * distribution may execute, so script injected anywhere into this page does
+     * not run even if an encoding defect is reintroduced. Operator-configured
+     * custom CSS and JavaScript origins are added to the policy so that
+     * customised deployments keep working.
+     */
+    private void addContentSecurityPolicy(HttpServletResponse response, String scriptNonce) {
+        StringBuilder scriptSrc = new StringBuilder("'nonce-").append(scriptNonce)
+                .append("' ").append(SWAGGER_UI_CDN_ORIGIN);
+        StringBuilder styleSrc = new StringBuilder("'self' 'unsafe-inline' ")
+                .append(SWAGGER_UI_CDN_ORIGIN);
+
+        String customJsOrigin = originOf(swaggerUiConfig.getCustomJs());
+        if (customJsOrigin != null) {
+            scriptSrc.append(' ').append(customJsOrigin);
+        }
+        String customCssOrigin = originOf(swaggerUiConfig.getCustomCss());
+        if (customCssOrigin != null) {
+            styleSrc.append(' ').append(customCssOrigin);
+        }
+
+        response.setHeader("Content-Security-Policy",
+                "default-src 'self'; "
+                        + "script-src " + scriptSrc + "; "
+                        + "style-src " + styleSrc + "; "
+                        + "img-src 'self' data:; "
+                        + "connect-src 'self'; "
+                        + "base-uri 'none'; "
+                        + "frame-ancestors 'self'; "
+                        + "object-src 'none'");
+    }
+
+    /**
+     * Extract the {@code scheme://host[:port]} origin of an absolute URL, or
+     * null when the value is absent or not an absolute URL (a same-origin path,
+     * which {@code 'self'} already covers).
+     */
+    private String originOf(String url) {
+        if (url == null || url.isEmpty()) {
+            return null;
+        }
+        try {
+            URI uri = new URI(url);
+            if (uri.getScheme() == null || uri.getHost() == null) {
+                return null;
+            }
+            StringBuilder origin = new StringBuilder(uri.getScheme()).append("://").append(uri.getHost());
+            if (uri.getPort() != -1) {
+                origin.append(':').append(uri.getPort());
+            }
+            return origin.toString();
+        } catch (URISyntaxException e) {
+            log.warn("Ignoring unparseable custom resource URL when building the "
+                    + "Swagger UI Content-Security-Policy: " + e.getMessage());
+            return null;
+        }
     }
 
     /**

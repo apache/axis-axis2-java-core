@@ -109,10 +109,17 @@ public class XFormURLEncodedBuilder implements Builder {
             query = requestURL.substring(index + 1);
         }
 
+        // The body is read straight off the transport stream, so the container's
+        // own post limit never sees it. Bound it here or the client picks the size
+        // of the map we build below.
+        long maxRequestSize = RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.FORM_URLENCODED_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_FORM_URLENCODED_MAX_REQUEST_SIZE);
+
         extractParametersFromRequest(parameterMap, query, queryParameterSeparator,
                                      (String) messageContext.getProperty(
                                              Constants.Configuration.CHARACTER_SET_ENCODING),
-                                     inputStream);
+                                     BoundedInputStream.wrap(inputStream, maxRequestSize));
 
         messageContext.setProperty(Constants.REQUEST_PARAMETER_MAP, parameterMap);
 

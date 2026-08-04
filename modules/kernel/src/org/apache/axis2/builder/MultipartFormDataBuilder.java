@@ -67,17 +67,13 @@ public class MultipartFormDataBuilder implements Builder {
             throw new AxisFault("Cannot create DocumentElement without HttpServletRequest");
         }
 
-        // TODO: Do check ContentLength for the max size,
-        //       but it can't be configured anywhere.
-        //       I think that it cant be configured at web.xml or axis2.xml.
-
         String charSetEncoding = (String)messageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
         if (charSetEncoding == null) {
             charSetEncoding = request.getCharacterEncoding();
         }
 
         try {
-            parameterMap = getParameterMap(request, charSetEncoding);
+            parameterMap = getParameterMap(request, charSetEncoding, messageContext);
             return BuilderUtil.buildsoapMessage(messageContext, parameterMap,
                                                 OMAbstractFactory.getSOAP12Factory());
 
@@ -88,12 +84,13 @@ public class MultipartFormDataBuilder implements Builder {
     }
 
     private MultipleEntryHashMap getParameterMap(HttpServletRequest request,
-                                                 String charSetEncoding)
+                                                 String charSetEncoding,
+                                                 MessageContext messageContext)
             throws FileUploadException {
 
         MultipleEntryHashMap parameterMap = new MultipleEntryHashMap();
 
-        List items = parseRequest(new JakartaServletRequestContext(request));
+        List items = parseRequest(new JakartaServletRequestContext(request), messageContext);
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
             DiskFileItem diskFileItem = (DiskFileItem)iter.next();
@@ -116,16 +113,26 @@ public class MultipartFormDataBuilder implements Builder {
         return parameterMap;
     }
 
-    private static List parseRequest(JakartaServletRequestContext requestContext)
+    private static List parseRequest(JakartaServletRequestContext requestContext,
+                                     MessageContext messageContext)
             throws FileUploadException {
         // Create a factory for disk-based file items
 	DiskFileItemFactory fileItemFactory = DiskFileItemFactory.builder()
                 .setCharset(StandardCharsets.UTF_8)
                 .get();
         JakartaServletFileUpload upload = new JakartaServletFileUpload<>(fileItemFactory);
-        // There must be a limit. 
+        // There must be a limit.
         // This is for contentType="multipart/form-data"
         upload.setMaxFileCount(1L);
+        // Bound the body as well as the part count. commons-fileupload2 reads the
+        // raw transport stream, so the container's own post limit never applies
+        // and an unbounded parse lets the client choose the allocation.
+        upload.setMaxSize(RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.MULTIPART_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_MULTIPART_MAX_REQUEST_SIZE));
+        upload.setMaxFileSize(RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.MULTIPART_MAX_FILE_SIZE,
+                RequestSizeLimits.DEFAULT_MULTIPART_MAX_FILE_SIZE));
         // Parse the request
         return upload.parseRequest(requestContext);
     }
