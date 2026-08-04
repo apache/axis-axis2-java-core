@@ -74,10 +74,16 @@
 
     allowedResponseEndpointHosts, when set to a comma-separated host list,
     restricts response endpoints to exactly those hosts.
+
+    allowedResponseEndpointSchemes defaults to http,https,jms,mailto,tcp - a
+    decoupled reply over JMS, mail or TCP is a legitimate configuration, so the
+    list is not restricted to HTTP. Schemes outside it, such as file or gopher,
+    are refused. Add to this list if a custom transport is in use.
     -->
     <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
     <parameter name="blockPrivateNetworkResponseEndpoints">true</parameter>
     <!--<parameter name="allowedResponseEndpointHosts">replies.example.com</parameter>-->
+    <!--<parameter name="allowedResponseEndpointSchemes">http,https</parameter>-->
 
 
     <!--Uncomment if you want to plugin your own attachments lifecycle implementation -->

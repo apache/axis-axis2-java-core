@@ -77,9 +77,23 @@ final class ResponseEndpointPolicy {
     static final String ALLOW_NON_ANONYMOUS = "allowNonAnonymousResponseEndpoints";
     static final String BLOCK_PRIVATE_NETWORKS = "blockPrivateNetworkResponseEndpoints";
     static final String ALLOWED_HOSTS = "allowedResponseEndpointHosts";
+    static final String ALLOWED_SCHEMES_PARAMETER = "allowedResponseEndpointSchemes";
 
-    /** Only transports that carry a genuine reply are worth honouring. */
-    private static final Set<String> ALLOWED_SCHEMES =
+    /**
+     * Schemes Axis2 ships a sender for that can carry a decoupled reply.
+     *
+     * <p>This is deliberately wider than http/https: {@code setupCorrectTransportOut}
+     * resolves the response transport from the endpoint reference's scheme
+     * against whatever is registered, so a JMS, mail or TCP reply address is a
+     * legitimate configuration and must not be refused here. What the list keeps
+     * out are the schemes that only ever serve as an SSRF pivot — file, gopher,
+     * jar, ftp and the like.
+     */
+    private static final Set<String> DEFAULT_ALLOWED_SCHEMES = new HashSet<String>(
+            Arrays.asList("http", "https", "jms", "mailto", "tcp"));
+
+    /** Schemes for which a missing host means the address is unusable. */
+    private static final Set<String> HOST_BEARING_SCHEMES =
             new HashSet<String>(Arrays.asList("http", "https"));
 
     private ResponseEndpointPolicy() {
@@ -119,15 +133,26 @@ final class ResponseEndpointPolicy {
         }
 
         String scheme = uri.getScheme();
-        if (scheme == null || !ALLOWED_SCHEMES.contains(scheme.toLowerCase(Locale.ENGLISH))) {
+        if (scheme == null) {
+            log.warn("Rejecting WS-Addressing response endpoint with no scheme");
+            return false;
+        }
+        scheme = scheme.toLowerCase(Locale.ENGLISH);
+        if (!allowedSchemes(messageContext).contains(scheme)) {
             log.warn("Rejecting WS-Addressing response endpoint with unsupported scheme: " + scheme);
             return false;
         }
 
         String host = uri.getHost();
         if (host == null || host.isEmpty()) {
-            log.warn("Rejecting WS-Addressing response endpoint with no host component");
-            return false;
+            if (HOST_BEARING_SCHEMES.contains(scheme)) {
+                log.warn("Rejecting WS-Addressing response endpoint with no host component");
+                return false;
+            }
+            // mailto: and JNDI-style jms: addresses name a destination rather
+            // than a network host, so there is no address to range-check. The
+            // transport behind them has to be enabled by an administrator.
+            return true;
         }
 
         String allowedHosts = stringParameter(messageContext, ALLOWED_HOSTS);
@@ -200,6 +225,26 @@ final class ResponseEndpointPolicy {
         return bytes.length == 4
                 && (bytes[0] & 0xff) == 100
                 && (bytes[1] & 0xc0) == 0x40;
+    }
+
+    /**
+     * The permitted scheme set, overridable so a deployment with a custom
+     * transport can name its scheme without having to disable the policy.
+     */
+    private static Set<String> allowedSchemes(MessageContext messageContext) {
+        String configured = stringParameter(messageContext, ALLOWED_SCHEMES_PARAMETER);
+        if (configured == null || configured.trim().isEmpty()) {
+            return DEFAULT_ALLOWED_SCHEMES;
+        }
+        Set<String> schemes = new HashSet<String>();
+        String[] parts = configured.split(",");
+        for (int i = 0; i < parts.length; i++) {
+            String scheme = parts[i].trim().toLowerCase(Locale.ENGLISH);
+            if (!scheme.isEmpty()) {
+                schemes.add(scheme);
+            }
+        }
+        return schemes;
     }
 
     private static boolean booleanParameter(MessageContext messageContext, String name,

@@ -81,16 +81,52 @@ public class ResponseEndpointPolicyTest extends TestCase {
     }
 
     /**
-     * Only transports that can carry a genuine reply are honoured, so the
-     * scheme-based SSRF pivots are refused before any host check.
+     * The schemes that only ever serve as an SSRF pivot are refused before any
+     * host check.
      */
-    public void testNonHttpSchemesAreRejected() {
+    public void testPivotSchemesAreRejected() {
         assertFalse(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("file:///etc/passwd"), messageContext));
         assertFalse(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("gopher://example.com/1"), messageContext));
         assertFalse(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("jar:http://example.com/a.jar!/"), messageContext));
+        assertFalse(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("ftp://example.com/drop"), messageContext));
+    }
+
+    /**
+     * A decoupled reply over JMS, mail or TCP is a legitimate Axis2
+     * configuration — the response transport is resolved from the endpoint
+     * reference's scheme against whatever is registered — so the policy must not
+     * restrict replies to HTTP.
+     */
+    public void testNonHttpTransportSchemesAreAllowed() {
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("jms:/ReplyQueue?transport.jms.ConnectionFactory=qcf"),
+                messageContext));
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("mailto:replies@example.com"), messageContext));
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("tcp://192.0.2.25:6060/svc"), messageContext));
+    }
+
+    /**
+     * The range check is about the destination address, not the scheme, so a
+     * non-HTTP address that does name a host is still screened.
+     */
+    public void testNonHttpSchemeStillGetsTheRangeCheck() {
+        assertFalse(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("tcp://127.0.0.1:6060/svc"), messageContext));
+    }
+
+    public void testSchemeListIsConfigurable() throws Exception {
+        setParameter(ResponseEndpointPolicy.ALLOWED_SCHEMES_PARAMETER, "http,https");
+        assertFalse("A scheme outside the configured list should be refused",
+                ResponseEndpointPolicy.isAllowed(
+                        new EndpointReference("mailto:replies@example.com"), messageContext));
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://192.0.2.25/replies"), messageContext));
     }
 
     /**
