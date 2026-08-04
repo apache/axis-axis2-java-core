@@ -37,9 +37,11 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -95,6 +97,12 @@ final class ResponseEndpointPolicy {
     static final long DEFAULT_RESOLVE_TIMEOUT_MILLIS = 2000L;
 
     private static ExecutorService resolver;
+
+    /** Caps concurrent name lookups so a burst cannot spawn a thread per request. */
+    private static final int MAX_RESOLVER_THREADS = 4;
+
+    /** Lookups beyond this wait; beyond the wait they are refused. */
+    private static final int RESOLVER_QUEUE_DEPTH = 64;
 
     /**
      * Schemes Axis2 ships a sender for that can carry a decoupled reply.
@@ -284,11 +292,17 @@ final class ResponseEndpointPolicy {
      * @return the resolved addresses, or null if the name did not resolve in time
      */
     private static InetAddress[] resolveWithTimeout(final String host, long timeoutMillis) {
-        Future<InetAddress[]> pending = resolver().submit(new Callable<InetAddress[]>() {
-            public InetAddress[] call() throws UnknownHostException {
-                return InetAddress.getAllByName(host);
-            }
-        });
+        Future<InetAddress[]> pending;
+        try {
+            pending = resolver().submit(new Callable<InetAddress[]>() {
+                public InetAddress[] call() throws UnknownHostException {
+                    return InetAddress.getAllByName(host);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            log.warn("Rejecting WS-Addressing response endpoint: too many name lookups in flight");
+            return null;
+        }
         try {
             return pending.get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
@@ -307,21 +321,47 @@ final class ResponseEndpointPolicy {
     }
 
     /**
-     * Lookup threads are daemons and the pool is unbounded-but-caching, so idle
-     * threads retire on their own and none of this outlives the JVM or holds up
-     * a redeployment.
+     * The pool that runs name lookups, created on first use.
+     *
+     * <p>Deliberately bounded. An unbounded pool would have swapped one denial
+     * of service for another: a caller naming many distinct slow-resolving hosts
+     * could spawn a thread per request. Excess lookups queue, and once the queue
+     * is full they are refused outright — which fails closed, since a refused
+     * lookup rejects the endpoint.
+     *
+     * <p>Threads are daemons and retire when idle, and {@link #shutdown()} stops
+     * the pool so it cannot pin a web application's class loader across a
+     * redeployment.
      */
     private static synchronized ExecutorService resolver() {
         if (resolver == null) {
-            resolver = Executors.newCachedThreadPool(new ThreadFactory() {
-                public Thread newThread(Runnable r) {
-                    Thread t = new Thread(r, "axis2-wsa-endpoint-resolver");
-                    t.setDaemon(true);
-                    return t;
-                }
-            });
+            ThreadPoolExecutor pool = new ThreadPoolExecutor(
+                    0, MAX_RESOLVER_THREADS,
+                    60L, TimeUnit.SECONDS,
+                    new LinkedBlockingQueue<Runnable>(RESOLVER_QUEUE_DEPTH),
+                    new ThreadFactory() {
+                        public Thread newThread(Runnable r) {
+                            Thread t = new Thread(r, "axis2-wsa-endpoint-resolver");
+                            t.setDaemon(true);
+                            return t;
+                        }
+                    },
+                    new ThreadPoolExecutor.AbortPolicy());
+            pool.allowCoreThreadTimeOut(true);
+            resolver = pool;
         }
         return resolver;
+    }
+
+    /**
+     * Stop the resolver pool. Called from the addressing module's shutdown so
+     * the threads do not outlive the configuration that created them.
+     */
+    static synchronized void shutdown() {
+        if (resolver != null) {
+            resolver.shutdownNow();
+            resolver = null;
+        }
     }
 
     /** IPv6 unique local addresses, fc00::/7, which isSiteLocalAddress misses. */
