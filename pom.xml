@@ -457,7 +457,7 @@
     </distributionManagement>
 
     <properties>
-        <neethi.version>3.2.2</neethi.version>
+        <neethi.version>3.2.3</neethi.version>
         <woden.version>1.0M10</woden.version>
         <axiom.version>2.0.0</axiom.version>
         <xmlschema.version>2.3.2</xmlschema.version>
@@ -471,7 +471,7 @@
         <google.gson.version>2.14.0</google.gson.version>
         <groovy.version>5.0.7</groovy.version>
         <httpcore.version>5.4.3</httpcore.version>
-        <httpclient.version>5.6.2</httpclient.version>
+        <httpclient.version>5.6.3</httpclient.version>
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>12.1.11</jetty.version>
         <!-- jibx.version removed: AXIS2-6105 -->
@@ -492,7 +492,7 @@
         <jaxws.api.version>4.0.3</jaxws.api.version>
         <maven-plugin-tools.version>3.15.2</maven-plugin-tools.version>
         <maven-archetype.version>3.4.1</maven-archetype.version>
-        <activemq.version>6.2.7</activemq.version>
+        <activemq.version>6.3.0</activemq.version>
         <surefire.version>3.5.6</surefire.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
@@ -1054,7 +1054,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.5.1</version>
                     <!-- AXIS2-6040: Automatic-Module-Name defined per-module (not global).
                          A global ${project.artifactId} approach fails because hyphens in
                          artifactIds (e.g., axis2-resource-bundle) are invalid in Java
@@ -1097,7 +1097,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>6.0.2</version>
+                    <version>6.1.0</version>
                     <configuration>
                         <instructions>
                             <_bundleannotations />
