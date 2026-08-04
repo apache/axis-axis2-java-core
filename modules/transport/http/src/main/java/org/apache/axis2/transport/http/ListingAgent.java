@@ -111,6 +111,14 @@ public class ListingAgent extends AbstractAgent {
             Iterator<AxisService> i = services.values().iterator();
             while (i.hasNext()) {
                 AxisService service = (AxisService) i.next();
+                // This route reaches a service's packaged META-INF resource by
+                // file name, so it has to honour the same exposure gate as the
+                // ?wsdl/?wsdl2/?xsd routes below. Skipping rather than returning
+                // 403 keeps a hidden service from being distinguishable from an
+                // absent one, and lets a later service still serve the name.
+                if (!canExposeServiceMetadata(service)) {
+                    continue;
+                }
                 InputStream stream = HTTPTransportUtils.getMetaInfResourceAsStream(service, schema);
                 if (stream != null) {
                     OutputStream out = res.getOutputStream();

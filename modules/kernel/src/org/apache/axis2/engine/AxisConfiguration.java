@@ -41,6 +41,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.transaction.TransactionConfiguration;
 import org.apache.axis2.builder.Builder;
+import org.apache.axis2.builder.MultipartTempFileTracker;
 import org.apache.axis2.builder.unknowncontent.UnknownContentBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
@@ -1338,6 +1339,9 @@ public class AxisConfiguration extends AxisDescription {
         if (configurator != null) {
             configurator.cleanup();
         }
+        // Stop the multipart temp-file reaper so its thread does not outlive a
+        // redeployment and pin this web application's class loader.
+        MultipartTempFileTracker.shutdown();
         this.policySupportedModules.clear();
         this.moduleConfigmap.clear();
         this.allEndpoints.clear();

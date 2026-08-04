@@ -45,6 +45,50 @@
     -->
     <parameter name="exposeServiceMetadata">true</parameter>
 
+    <!--
+    Ceilings on request bodies read directly off the transport stream by the
+    multipart/form-data and x-www-form-urlencoded message builders. Those
+    builders bypass the servlet container's own post-size limit, so without
+    these an anonymous caller chooses the allocation. Sizes are in bytes; -1
+    restores the unbounded behaviour of releases before 2.0.2. These may also be
+    set per service in services.xml.
+    -->
+    <parameter name="multipartMaxRequestSize">104857600</parameter>
+    <parameter name="multipartMaxFileSize">104857600</parameter>
+    <parameter name="formUrlEncodedMaxRequestSize">2097152</parameter>
+
+    <!--
+    Policy for WS-Addressing wsa:ReplyTo / wsa:FaultTo endpoints on inbound
+    server-side messages. A non-anonymous response endpoint makes the server
+    open a connection to an address the caller chose, so unless WS-Security is
+    engaged to bind that endpoint reference to a trusted issuer, these bound
+    where the server can be induced to connect.
+
+    Link-local (including the cloud instance-metadata addresses), wildcard and
+    multicast destinations are always refused - none is ever a legitimate reply
+    target. blockPrivateNetworkResponseEndpoints (default false) additionally
+    refuses loopback and private ranges; it is off by default because a callback
+    endpoint inside the same private network is how most decoupled deployments
+    are wired. Turn it on wherever the caller is not already inside the trusted
+    network.
+
+    Set allowNonAnonymousResponseEndpoints to false to refuse decoupled
+    responses entirely - the right setting unless this deployment actually uses
+    dual-channel or decoupled WS-Addressing responses.
+
+    allowedResponseEndpointHosts, when set to a comma-separated host list,
+    restricts response endpoints to exactly those hosts.
+
+    allowedResponseEndpointSchemes defaults to http,https,jms,mailto,tcp - a
+    decoupled reply over JMS, mail or TCP is a legitimate configuration, so the
+    list is not restricted to HTTP. Schemes outside it, such as file or gopher,
+    are refused. Add to this list if a custom transport is in use.
+    -->
+    <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
+    <parameter name="blockPrivateNetworkResponseEndpoints">false</parameter>
+    <!--<parameter name="allowedResponseEndpointHosts">replies.example.com</parameter>-->
+    <!--<parameter name="allowedResponseEndpointSchemes">http,https</parameter>-->
+
     <!--Uncomment if you want to plugin your own attachments lifecycle implementation -->
     <!--<attachmentsLifecycleManager class="org.apache.axiom.attachments.lifecycle.impl.LifecycleManagerImpl"/>-->
 

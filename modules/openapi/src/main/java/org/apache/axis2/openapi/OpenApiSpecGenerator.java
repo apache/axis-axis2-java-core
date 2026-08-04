@@ -229,12 +229,42 @@ public class OpenApiSpecGenerator {
     private List<Server> createServerList(HttpServletRequest request) {
         List<Server> servers = new ArrayList<>();
 
+        // An explicitly configured base URL always wins: clients driven by this
+        // specification (Swagger UI "Try it out", MCP tools) send subsequent
+        // requests to servers[].url, so an operator behind a proxy needs to be
+        // able to pin it rather than have it follow the inbound Host.
+        String configuredBaseUrl = configuration.getServerBaseUrl();
+        if (configuredBaseUrl != null && !configuredBaseUrl.isEmpty()) {
+            Server server = new Server();
+            server.setUrl(configuredBaseUrl);
+            server.setDescription("Configured server");
+            servers.add(server);
+            return servers;
+        }
+
         if (request != null) {
             // Build server URL from request
             String scheme = request.getScheme();
             String serverName = request.getServerName();
             int serverPort = request.getServerPort();
             String contextPath = request.getContextPath();
+            if (contextPath == null) {
+                contextPath = "";
+            }
+
+            if (!RequestUrlPolicy.isSafeHost(serverName)) {
+                // The Host is client-supplied. Publishing a malformed one would
+                // point every client that reads this specification at it, so fall
+                // back to a relative server URL, which OpenAPI 3 resolves against
+                // the location the document was retrieved from.
+                log.warn("Rejecting malformed Host header for the OpenAPI server URL; "
+                        + "publishing a relative server URL instead");
+                Server server = new Server();
+                server.setUrl(contextPath.isEmpty() ? "/" : contextPath);
+                server.setDescription("Current server");
+                servers.add(server);
+                return servers;
+            }
 
             StringBuilder serverUrl = new StringBuilder();
             serverUrl.append(scheme).append("://").append(serverName);
@@ -245,9 +275,7 @@ public class OpenApiSpecGenerator {
                 serverUrl.append(":").append(serverPort);
             }
 
-            if (contextPath != null && !contextPath.isEmpty()) {
-                serverUrl.append(contextPath);
-            }
+            serverUrl.append(contextPath);
 
             Server server = new Server();
             server.setUrl(serverUrl.toString());
@@ -464,6 +492,23 @@ public class OpenApiSpecGenerator {
     }
 
     /**
+     * Whether a service's metadata may be published to an anonymous caller.
+     *
+     * <p>Reads the same {@code exposeServiceMetadata} parameter the HTTP
+     * transport's {@code ?wsdl}, {@code ?wsdl2} and {@code ?xsd} routes consult,
+     * resolved through the usual service, service-group, {@code axis2.xml} chain.
+     */
+    private boolean canExposeServiceMetadata(AxisService service) {
+        // Fully qualified: io.swagger.v3.oas.models.parameters.Parameter is the
+        // Parameter this class otherwise deals in.
+        org.apache.axis2.description.Parameter exposeServiceMetadata =
+                service.getParameter("exposeServiceMetadata");
+        return exposeServiceMetadata == null
+                || !org.apache.axis2.util.JavaUtils.isFalseExplicitly(
+                        exposeServiceMetadata.getValue());
+    }
+
+    /**
      * Check if a service should be included based on configuration filters.
      * Exclusion is evaluated before inclusion: a service listed in
      * {@code ignoredServices} is always skipped regardless of other settings.
@@ -474,6 +519,15 @@ public class OpenApiSpecGenerator {
         // Explicit exclusion by name takes priority over all other filters
         if (configuration.getIgnoredServices().contains(serviceName)) {
             log.debug("Skipping service explicitly excluded by ignoredServices: " + serviceName);
+            return false;
+        }
+
+        // An administrator who set exposeServiceMetadata=false has already said
+        // this service's shape is not for anonymous callers. The generated spec
+        // publishes strictly more than ?wsdl does — operation names, paths, and
+        // reflected request/response schemas — so it has to honour the same gate.
+        if (!canExposeServiceMetadata(service)) {
+            log.debug("Skipping service with exposeServiceMetadata=false: " + serviceName);
             return false;
         }
 
@@ -1451,6 +1505,7 @@ public class OpenApiSpecGenerator {
             for (AxisService service : services.values()) {
                 String svcName = service.getName();
                 if (isSystemService(service)) continue;
+                if (!shouldIncludeService(service)) continue;
 
                 // URI: logical identifier for the resource in the MCP protocol.
                 // Uses the "axis2://" scheme so clients can distinguish these

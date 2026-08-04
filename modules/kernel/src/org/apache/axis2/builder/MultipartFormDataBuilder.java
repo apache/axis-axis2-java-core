@@ -46,8 +46,12 @@ import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
 import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletRequestContext;
 import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletDiskFileUpload;
 import org.apache.commons.io.Charsets;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class MultipartFormDataBuilder implements Builder {
+
+    private static final Log log = LogFactory.getLog(MultipartFormDataBuilder.class);
 
     /**
      * @return Returns the document element.
@@ -67,17 +71,13 @@ public class MultipartFormDataBuilder implements Builder {
             throw new AxisFault("Cannot create DocumentElement without HttpServletRequest");
         }
 
-        // TODO: Do check ContentLength for the max size,
-        //       but it can't be configured anywhere.
-        //       I think that it cant be configured at web.xml or axis2.xml.
-
         String charSetEncoding = (String)messageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
         if (charSetEncoding == null) {
             charSetEncoding = request.getCharacterEncoding();
         }
 
         try {
-            parameterMap = getParameterMap(request, charSetEncoding);
+            parameterMap = getParameterMap(request, charSetEncoding, messageContext);
             return BuilderUtil.buildsoapMessage(messageContext, parameterMap,
                                                 OMAbstractFactory.getSOAP12Factory());
 
@@ -88,12 +88,13 @@ public class MultipartFormDataBuilder implements Builder {
     }
 
     private MultipleEntryHashMap getParameterMap(HttpServletRequest request,
-                                                 String charSetEncoding)
+                                                 String charSetEncoding,
+                                                 MessageContext messageContext)
             throws FileUploadException {
 
         MultipleEntryHashMap parameterMap = new MultipleEntryHashMap();
 
-        List items = parseRequest(new JakartaServletRequestContext(request));
+        List items = parseRequest(new JakartaServletRequestContext(request), messageContext);
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
             DiskFileItem diskFileItem = (DiskFileItem)iter.next();
@@ -103,8 +104,18 @@ public class MultipartFormDataBuilder implements Builder {
             Object value;
             try {
                 if (isFormField) {
-                    value = getTextParameter(diskFileItem, charSetEncoding);
+                    try {
+                        value = getTextParameter(diskFileItem, charSetEncoding);
+                    } finally {
+                        // The text has been copied into the map, so nothing reads
+                        // this item again. Release any temp file now instead of
+                        // leaving it for the reaper.
+                        deleteQuietly(diskFileItem);
+                    }
                 } else {
+                    // A file part stays readable through the DataHandler the
+                    // service is about to be given, so its temp file can only be
+                    // released once that item is unreachable.
                     value = getFileParameter(diskFileItem);
                 }
             } catch (Exception ex) {
@@ -116,16 +127,46 @@ public class MultipartFormDataBuilder implements Builder {
         return parameterMap;
     }
 
-    private static List parseRequest(JakartaServletRequestContext requestContext)
+    /**
+     * Release an item's backing temp file, if it has one. A failure here must
+     * not fail the request: the file is still registered with the reaper, which
+     * will retry once the item becomes unreachable.
+     */
+    private static void deleteQuietly(DiskFileItem diskFileItem) {
+        if (diskFileItem.isInMemory()) {
+            return;
+        }
+        try {
+            diskFileItem.delete();
+        } catch (Exception e) {
+            log.warn("Could not delete the temporary file for multipart field '"
+                    + diskFileItem.getFieldName() + "'; leaving it to the reaper", e);
+        }
+    }
+
+    private static List parseRequest(JakartaServletRequestContext requestContext,
+                                     MessageContext messageContext)
             throws FileUploadException {
-        // Create a factory for disk-based file items
+        // Create a factory for disk-based file items. Parts above the factory's
+        // threshold spill to a temp file; register them so the file goes away
+        // once the item that owns it is unreachable.
 	DiskFileItemFactory fileItemFactory = DiskFileItemFactory.builder()
                 .setCharset(StandardCharsets.UTF_8)
+                .setFileCleaningTracker(MultipartTempFileTracker.getTracker())
                 .get();
         JakartaServletFileUpload upload = new JakartaServletFileUpload<>(fileItemFactory);
-        // There must be a limit. 
+        // There must be a limit.
         // This is for contentType="multipart/form-data"
         upload.setMaxFileCount(1L);
+        // Bound the body as well as the part count. commons-fileupload2 reads the
+        // raw transport stream, so the container's own post limit never applies
+        // and an unbounded parse lets the client choose the allocation.
+        upload.setMaxSize(RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.MULTIPART_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_MULTIPART_MAX_REQUEST_SIZE));
+        upload.setMaxFileSize(RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.MULTIPART_MAX_FILE_SIZE,
+                RequestSizeLimits.DEFAULT_MULTIPART_MAX_FILE_SIZE));
         // Parse the request
         return upload.parseRequest(requestContext);
     }

@@ -127,6 +127,15 @@ public class OpenApiConfiguration {
     /** Security scheme definitions */
     private Map<String, SecurityScheme> securityDefinitions = new HashMap<>();
 
+    /**
+     * Explicit base URL to publish as the specification's {@code servers[].url}.
+     * When unset the URL is derived from the request, which means it follows the
+     * client-supplied Host; deployments behind a proxy that forwards an
+     * untrusted Host should set this so the served specification always points
+     * clients at the real origin.
+     */
+    private String serverBaseUrl;
+
     // ========== Swagger UI Configuration ==========
 
     /** Whether to support Swagger UI */
@@ -239,6 +248,7 @@ public class OpenApiConfiguration {
         description = getProperty(props, "openapi.description", description);
         version = getProperty(props, "openapi.version", version);
         termsOfServiceUrl = getProperty(props, "openapi.termsOfServiceUrl", termsOfServiceUrl);
+        serverBaseUrl = getProperty(props, "openapi.serverBaseUrl", serverBaseUrl);
 
         // Contact
         contactName = getProperty(props, "openapi.contact.name", contactName);
@@ -360,6 +370,9 @@ public class OpenApiConfiguration {
 
     public String getTermsOfServiceUrl() { return termsOfServiceUrl; }
     public void setTermsOfServiceUrl(String termsOfServiceUrl) { this.termsOfServiceUrl = termsOfServiceUrl; }
+
+    public String getServerBaseUrl() { return serverBaseUrl; }
+    public void setServerBaseUrl(String serverBaseUrl) { this.serverBaseUrl = serverBaseUrl; }
 
     public String getContactName() { return contactName; }
     public void setContactName(String contactName) { this.contactName = contactName; }

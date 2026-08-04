@@ -414,6 +414,7 @@ public class AddressingInHandler extends AbstractTemplatedHandler implements Add
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractFaultToEPRInformation: Extracted FaultTo EPR: " + epr);
         }
+        rejectDisallowedResponseEndpoint(epr, messageContext, soapHeaderBlock);
         soapHeaderBlock.setProcessed();
     }
 
@@ -430,7 +431,29 @@ public class AddressingInHandler extends AbstractTemplatedHandler implements Add
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractReplyToEPRInformation: Extracted ReplyTo EPR: " + epr);
         }
+        rejectDisallowedResponseEndpoint(epr, messageContext, soapHeaderBlock);
         soapHeaderBlock.setProcessed();
+    }
+
+    /**
+     * Fault out when an inbound response endpoint names a destination the server
+     * is not willing to send to.
+     *
+     * <p>Only inbound server-side messages are screened. On the client side these
+     * same headers arrive on a response the client itself solicited, and the
+     * addresses in them are not attacker-chosen in the same way.
+     */
+    private void rejectDisallowedResponseEndpoint(EndpointReference epr,
+                                                  MessageContext messageContext,
+                                                  SOAPHeaderBlock soapHeaderBlock)
+            throws AxisFault {
+        if (!messageContext.isServerSide()) {
+            return;
+        }
+        if (!ResponseEndpointPolicy.isAllowed(epr, messageContext)) {
+            AddressingFaultsHelper
+                    .triggerInvalidEPRFault(messageContext, soapHeaderBlock.getLocalName());
+        }
     }
 
     private void extractFromEPRInformation(SOAPHeaderBlock soapHeaderBlock,
