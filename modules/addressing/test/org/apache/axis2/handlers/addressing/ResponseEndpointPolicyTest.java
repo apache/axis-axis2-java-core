@@ -204,6 +204,29 @@ public class ResponseEndpointPolicyTest extends TestCase {
                 new EndpointReference("http://127.0.0.1:8080/sink"), messageContext));
     }
 
+    /**
+     * A name that cannot resolve is refused rather than passed through, and the
+     * lookup is bounded so a slow resolver cannot hold the request thread. The
+     * .invalid TLD is reserved by RFC 2606 precisely so it never resolves.
+     */
+    public void testUnresolvableHostIsRejected() {
+        assertFalse(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://no-such-host.invalid/replies"), messageContext));
+    }
+
+    /**
+     * A literal address needs no name lookup at all, so the check costs nothing
+     * on the request path for the direct-IP cases.
+     */
+    public void testLiteralAddressNeedsNoResolution() throws Exception {
+        setParameter(ResponseEndpointPolicy.RESOLVE_TIMEOUT, "1");
+        // Would time out if this went to the resolver; it must not.
+        assertFalse(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://169.254.169.254/latest/meta-data/"), messageContext));
+        assertTrue(ResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://192.0.2.25/replies"), messageContext));
+    }
+
     public void testMalformedAddressIsRejected() {
         assertFalse(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("http://[not a uri"), messageContext));

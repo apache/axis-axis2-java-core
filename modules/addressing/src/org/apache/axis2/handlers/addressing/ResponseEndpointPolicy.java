@@ -34,6 +34,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Decides whether a {@code wsa:ReplyTo} or {@code wsa:FaultTo} endpoint
@@ -81,6 +89,12 @@ final class ResponseEndpointPolicy {
     static final String BLOCK_PRIVATE_NETWORKS = "blockPrivateNetworkResponseEndpoints";
     static final String ALLOWED_HOSTS = "allowedResponseEndpointHosts";
     static final String ALLOWED_SCHEMES_PARAMETER = "allowedResponseEndpointSchemes";
+    static final String RESOLVE_TIMEOUT = "responseEndpointResolveTimeoutMillis";
+
+    /** Long enough for a healthy resolver, short enough not to pin a thread. */
+    static final long DEFAULT_RESOLVE_TIMEOUT_MILLIS = 2000L;
+
+    private static ExecutorService resolver;
 
     /**
      * Schemes Axis2 ships a sender for that can carry a decoupled reply.
@@ -171,7 +185,8 @@ final class ResponseEndpointPolicy {
         }
 
         return !resolvesToRestrictedAddress(host,
-                booleanParameter(messageContext, BLOCK_PRIVATE_NETWORKS, false));
+                booleanParameter(messageContext, BLOCK_PRIVATE_NETWORKS, false),
+                longParameter(messageContext, RESOLVE_TIMEOUT, DEFAULT_RESOLVE_TIMEOUT_MILLIS));
     }
 
     /**
@@ -186,15 +201,25 @@ final class ResponseEndpointPolicy {
      * the check still removes the direct-IP and static-name cases that make this
      * reachable in practice.
      */
-    private static boolean resolvesToRestrictedAddress(String host, boolean blockPrivateNetworks) {
+    private static boolean resolvesToRestrictedAddress(String host, boolean blockPrivateNetworks,
+                                                       long resolveTimeoutMillis) {
         InetAddress[] addresses;
-        try {
-            addresses = InetAddress.getAllByName(host);
-        } catch (UnknownHostException e) {
-            // Unresolvable here means the send would fail anyway, so refuse
-            // rather than pass an unknown destination through.
-            log.warn("Rejecting WS-Addressing response endpoint with unresolvable host");
-            return true;
+        if (isIpLiteral(host)) {
+            // No name to look up, so the common cases — a direct IP, including
+            // the instance-metadata address — cost nothing.
+            try {
+                addresses = new InetAddress[] { InetAddress.getByName(host) };
+            } catch (UnknownHostException e) {
+                log.warn("Rejecting WS-Addressing response endpoint with unparseable address");
+                return true;
+            }
+        } else {
+            addresses = resolveWithTimeout(host, resolveTimeoutMillis);
+            if (addresses == null) {
+                // Unresolved here means the send would fail or hang anyway, so
+                // refuse rather than pass an unknown destination through.
+                return true;
+            }
         }
         for (int i = 0; i < addresses.length; i++) {
             InetAddress address = addresses[i];
@@ -229,6 +254,76 @@ final class ResponseEndpointPolicy {
         return false;
     }
 
+    /**
+     * Whether the host is already a literal address, so no name lookup is needed.
+     * Deliberately syntactic — anything with only hex digits, dots, colons and
+     * brackets cannot be a registered name.
+     */
+    private static boolean isIpLiteral(String host) {
+        for (int i = 0; i < host.length(); i++) {
+            char c = host.charAt(i);
+            boolean literalChar = (c >= '0' && c <= '9')
+                    || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')
+                    || c == '.' || c == ':' || c == '[' || c == ']' || c == '%';
+            if (!literalChar) {
+                return false;
+            }
+        }
+        return host.indexOf(':') >= 0 || host.indexOf('.') >= 0;
+    }
+
+    /**
+     * Resolve a host name without letting a slow or unresponsive DNS server hold
+     * the request thread.
+     *
+     * <p>The lookup runs on a separate thread so the caller can give up on it.
+     * {@code InetAddress} exposes no timeout of its own, and this runs on the
+     * request path, so without a bound a caller could pin threads simply by
+     * naming hosts that resolve slowly.
+     *
+     * @return the resolved addresses, or null if the name did not resolve in time
+     */
+    private static InetAddress[] resolveWithTimeout(final String host, long timeoutMillis) {
+        Future<InetAddress[]> pending = resolver().submit(new Callable<InetAddress[]>() {
+            public InetAddress[] call() throws UnknownHostException {
+                return InetAddress.getAllByName(host);
+            }
+        });
+        try {
+            return pending.get(timeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            pending.cancel(true);
+            log.warn("Rejecting WS-Addressing response endpoint: host did not resolve within "
+                    + timeoutMillis + "ms");
+            return null;
+        } catch (ExecutionException e) {
+            log.warn("Rejecting WS-Addressing response endpoint with unresolvable host");
+            return null;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            pending.cancel(true);
+            return null;
+        }
+    }
+
+    /**
+     * Lookup threads are daemons and the pool is unbounded-but-caching, so idle
+     * threads retire on their own and none of this outlives the JVM or holds up
+     * a redeployment.
+     */
+    private static synchronized ExecutorService resolver() {
+        if (resolver == null) {
+            resolver = Executors.newCachedThreadPool(new ThreadFactory() {
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r, "axis2-wsa-endpoint-resolver");
+                    t.setDaemon(true);
+                    return t;
+                }
+            });
+        }
+        return resolver;
+    }
+
     /** IPv6 unique local addresses, fc00::/7, which isSiteLocalAddress misses. */
     private static boolean isUniqueLocalIPv6(InetAddress address) {
         byte[] bytes = address.getAddress();
@@ -261,6 +356,22 @@ final class ResponseEndpointPolicy {
             }
         }
         return schemes;
+    }
+
+    private static long longParameter(MessageContext messageContext, String name,
+                                      long defaultValue) {
+        String value = stringParameter(messageContext, name);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            long parsed = Long.parseLong(value.trim());
+            return parsed > 0 ? parsed : defaultValue;
+        } catch (NumberFormatException e) {
+            log.warn("Ignoring non-numeric value '" + value + "' for parameter '" + name
+                    + "'; using the default of " + defaultValue + "ms");
+            return defaultValue;
+        }
     }
 
     private static boolean booleanParameter(MessageContext messageContext, String name,

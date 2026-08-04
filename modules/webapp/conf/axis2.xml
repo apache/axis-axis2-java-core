@@ -79,6 +79,10 @@
     allowedResponseEndpointHosts, when set to a comma-separated host list,
     restricts response endpoints to exactly those hosts.
 
+    responseEndpointResolveTimeoutMillis (default 2000) bounds the name lookup
+    used by the checks above, so a slow resolver cannot hold a request thread.
+    Literal addresses are never looked up.
+
     allowedResponseEndpointSchemes defaults to http,https,jms,mailto,tcp - a
     decoupled reply over JMS, mail or TCP is a legitimate configuration, so the
     list is not restricted to HTTP. Schemes outside it, such as file or gopher,
