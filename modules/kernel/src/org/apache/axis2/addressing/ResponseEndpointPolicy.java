@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package org.apache.axis2.handlers.addressing;
+package org.apache.axis2.addressing;
 
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.JavaUtils;
@@ -85,15 +84,15 @@ import java.util.concurrent.TimeoutException;
  * appear in it, which supersedes the network-range check.</dd>
  * </dl>
  */
-final class ResponseEndpointPolicy {
+public final class ResponseEndpointPolicy {
 
     private static final Log log = LogFactory.getLog(ResponseEndpointPolicy.class);
 
-    static final String ALLOW_NON_ANONYMOUS = "allowNonAnonymousResponseEndpoints";
-    static final String BLOCK_PRIVATE_NETWORKS = "blockPrivateNetworkResponseEndpoints";
-    static final String ALLOWED_HOSTS = "allowedResponseEndpointHosts";
-    static final String ALLOWED_SCHEMES_PARAMETER = "allowedResponseEndpointSchemes";
-    static final String RESOLVE_TIMEOUT = "responseEndpointResolveTimeoutMillis";
+    public static final String ALLOW_NON_ANONYMOUS = "allowNonAnonymousResponseEndpoints";
+    public static final String BLOCK_PRIVATE_NETWORKS = "blockPrivateNetworkResponseEndpoints";
+    public static final String ALLOWED_HOSTS = "allowedResponseEndpointHosts";
+    public static final String ALLOWED_SCHEMES_PARAMETER = "allowedResponseEndpointSchemes";
+    public static final String RESOLVE_TIMEOUT = "responseEndpointResolveTimeoutMillis";
 
     /** Long enough for a healthy resolver, short enough not to pin a thread. */
     static final long DEFAULT_RESOLVE_TIMEOUT_MILLIS = 2000L;
@@ -136,7 +135,7 @@ final class ResponseEndpointPolicy {
      * @param messageContext the inbound message, for parameter resolution
      * @return true if the endpoint may be used as a send destination
      */
-    static boolean isAllowed(EndpointReference epr, MessageContext messageContext) {
+    public static boolean isAllowed(EndpointReference epr, MessageContext messageContext) {
         if (epr == null || epr.hasAnonymousAddress() || epr.hasNoneAddress()) {
             return true;
         }
@@ -359,7 +358,7 @@ final class ResponseEndpointPolicy {
      * Stop the resolver pool. Called from the addressing module's shutdown so
      * the threads do not outlive the configuration that created them.
      */
-    static synchronized void shutdown() {
+    public static synchronized void shutdown() {
         if (resolver != null) {
             resolver.shutdownNow();
             resolver = null;

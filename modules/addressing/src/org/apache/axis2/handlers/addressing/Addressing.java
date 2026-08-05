@@ -54,7 +54,6 @@ public class Addressing implements Module {
     }
 
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
-        ResponseEndpointPolicy.shutdown();
     }
 
 }

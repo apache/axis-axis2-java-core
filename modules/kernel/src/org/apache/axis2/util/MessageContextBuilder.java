@@ -43,6 +43,7 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.ResponseEndpointPolicy;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -380,6 +381,20 @@ public class MessageContextBuilder {
             EndpointReference responseEPR = context.getTo();
             if (context.isServerSide() && responseEPR != null) {
                 if (!responseEPR.hasAnonymousAddress() && !responseEPR.hasNoneAddress()) {
+                    // Last gate before a server-side response acquires a transport
+                    // for a caller-nominated destination. AddressingInHandler
+                    // already screens the inbound header, which is the only route
+                    // a remote client has; this catches everything else that turns
+                    // an endpoint reference into an outbound target — a custom
+                    // handler, service code, or a future dispatch path — so the
+                    // check cannot be walked around by reaching the sender another
+                    // way. Apache CXF places its equivalent check at the same
+                    // depth, in DecoupledDestination.getBackChannel.
+                    if (!ResponseEndpointPolicy.isAllowed(responseEPR, context)) {
+                        throw new AxisFault("Refusing to send a response to the "
+                                + "endpoint reference named by this message; see the "
+                                + ResponseEndpointPolicy.ALLOW_NON_ANONYMOUS + " parameter");
+                    }
                     URI uri = new URI(responseEPR.getAddress());
                     String scheme = uri.getScheme();
                     if ((transportOut == null) || !transportOut.getName().equals(scheme)) {

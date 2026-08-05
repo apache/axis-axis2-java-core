@@ -1342,6 +1342,8 @@ public class AxisConfiguration extends AxisDescription {
         // Stop the multipart temp-file reaper so its thread does not outlive a
         // redeployment and pin this web application's class loader.
         MultipartTempFileTracker.shutdown();
+        // Same reason: the WS-Addressing endpoint resolver runs a thread pool.
+        org.apache.axis2.addressing.ResponseEndpointPolicy.shutdown();
         this.policySupportedModules.clear();
         this.moduleConfigmap.clear();
         this.allEndpoints.clear();

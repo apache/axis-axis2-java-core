@@ -17,11 +17,9 @@
  * under the License.
  */
 
-package org.apache.axis2.handlers.addressing;
+package org.apache.axis2.addressing;
 
 import junit.framework.TestCase;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;

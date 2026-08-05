@@ -29,6 +29,7 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.addressing.ResponseEndpointPolicy;
 import org.apache.axis2.description.Parameter;
 
 /**
