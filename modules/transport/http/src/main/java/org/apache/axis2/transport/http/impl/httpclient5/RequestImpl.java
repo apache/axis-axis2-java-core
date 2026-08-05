@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.axiom.mime.Header;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.http.AxisRequestEntity;
@@ -234,6 +235,20 @@ final class RequestImpl implements Request {
         String cookiePolicy = (String) msgContext.getProperty(HTTPConstants.COOKIE_POLICY);
         if (cookiePolicy != null) {
             requestConfig.setCookieSpec(cookiePolicy);
+        }
+
+        // A server-side send to a non-anonymous destination is a WS-Addressing
+        // decoupled response, and the destination came from the caller. The scheme
+        // and address checks in AddressingResponseEndpointPolicy ran against that
+        // destination only, so following a redirect would step straight past them:
+        // a 307 from the caller's own endpoint to http://169.254.169.254/ would be
+        // honoured even though neither the scheme nor the address would have
+        // passed. The reply is fire-and-forget, so nothing legitimate needs the
+        // redirect.
+        EndpointReference to = msgContext.getTo();
+        if (msgContext.isServerSide() && to != null
+                && !to.hasAnonymousAddress() && !to.hasNoneAddress()) {
+            requestConfig.setRedirectsEnabled(false);
         }
 
         clientContext.setRequestConfig(requestConfig.build());
