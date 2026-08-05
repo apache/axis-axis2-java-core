@@ -108,10 +108,13 @@ public class Http2OpenApiIntegrationTest extends TestCase {
         assertNotNull("Should have servers configured", servers);
         assertFalse("Should have at least one server", servers.isEmpty());
 
-        // Verify HTTPS protocol (required for HTTP/2)
-        boolean hasHttpsServer = servers.stream()
-                .anyMatch(server -> server.getUrl().startsWith("https://"));
-        assertTrue("Should have HTTPS server for HTTP/2 compatibility", hasHttpsServer);
+        // Verify the scheme is inherited rather than pinned (HTTP/2 needs HTTPS)
+        // The server URL is relative, so a client resolves it against the
+        // origin it fetched the document from. Over HTTPS that yields HTTPS
+        // requests without the spec having to name a scheme at all.
+        boolean allRelative = servers.stream()
+                .allMatch(server -> server.getUrl().startsWith("/"));
+        assertTrue("Server URL should be scheme-relative for HTTP/2 compatibility", allRelative);
 
         // Verify services are properly documented
         assertTrue("Should have documented endpoints", openApi.getPaths().size() > 0);
@@ -357,9 +360,12 @@ public class Http2OpenApiIntegrationTest extends TestCase {
 
         // Validate HTTPS configuration
         List<Server> servers = secureApi.getServers();
-        boolean hasSecureServer = servers.stream()
-                .anyMatch(server -> server.getUrl().startsWith("https://"));
-        assertTrue("Should require HTTPS for HTTP/2", hasSecureServer);
+        // The server URL is relative, so a client resolves it against the
+        // origin it fetched the document from. Over HTTPS that yields HTTPS
+        // requests without the spec having to name a scheme at all.
+        boolean allRelative = servers.stream()
+                .allMatch(server -> server.getUrl().startsWith("/"));
+        assertTrue("Server URL should be scheme-relative for HTTP/2", allRelative);
 
         // Validate security schemes
         if (secureApi.getComponents() != null && secureApi.getComponents().getSecuritySchemes() != null) {

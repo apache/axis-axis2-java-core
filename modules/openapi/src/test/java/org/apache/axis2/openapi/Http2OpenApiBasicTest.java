@@ -96,14 +96,15 @@ public class Http2OpenApiBasicTest extends TestCase {
         assertNotNull("Should have servers", servers);
         assertFalse("Should have at least one server", servers.isEmpty());
 
-        boolean hasHttpsServer = servers.stream()
-                .anyMatch(server -> server.getUrl().startsWith("https://"));
-        assertTrue("Should have HTTPS server for HTTP/2 compatibility", hasHttpsServer);
+        // The server URL is relative, so a client resolves it against the
+        // origin it fetched the document from. Over HTTPS that yields HTTPS
+        // requests without the spec having to name a scheme at all.
+        boolean allRelative = servers.stream()
+                .allMatch(server -> server.getUrl().startsWith("/"));
+        assertTrue("Server URL should be scheme-relative for HTTP/2 compatibility", allRelative);
 
         System.out.println("✅ HTTPS OpenAPI spec generation: PASSED");
         System.out.println("   - Generated spec with " + openApi.getPaths().size() + " paths");
-        System.out.println("   - HTTPS servers configured: " +
-                          servers.stream().filter(s -> s.getUrl().startsWith("https://")).count());
     }
 
     /**
@@ -242,9 +243,12 @@ public class Http2OpenApiBasicTest extends TestCase {
         // Verify HTTPS servers are configured for HTTP/2 compatibility
         List<Server> servers = openApi.getServers();
         assertNotNull("Should have servers", servers);
-        boolean hasHttpsServer = servers.stream()
-                .anyMatch(server -> server.getUrl().startsWith("https://"));
-        assertTrue("Should have HTTPS server for HTTP/2 compatibility", hasHttpsServer);
+        // The server URL is relative, so a client resolves it against the
+        // origin it fetched the document from. Over HTTPS that yields HTTPS
+        // requests without the spec having to name a scheme at all.
+        boolean allRelative = servers.stream()
+                .allMatch(server -> server.getUrl().startsWith("/"));
+        assertTrue("Server URL should be scheme-relative for HTTP/2 compatibility", allRelative);
 
         System.out.println("✅ HTTP/2 compatibility validation: PASSED");
         System.out.println("   - HTTPS requirement satisfied");

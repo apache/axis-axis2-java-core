@@ -103,8 +103,8 @@ public class OpenApiSpecGeneratorTest extends TestCase {
     }
 
     /**
-     * Test server list generation from HTTP request.
-     * Verifies correct server URL construction.
+     * The published server URL is relative to where the document was fetched
+     * from, so it does not follow the client-supplied Host.
      */
     public void testServerListGeneration() throws Exception {
         // Arrange
@@ -122,14 +122,11 @@ public class OpenApiSpecGeneratorTest extends TestCase {
         assertFalse("At least one server should be configured", servers.isEmpty());
 
         Server server = servers.get(0);
-        assertEquals("https://api.example.com:8443/axis2", server.getUrl());
+        assertEquals("/axis2", server.getUrl());
         assertEquals("Current server", server.getDescription());
     }
 
-    /**
-     * Test server list generation with default HTTP port.
-     * Should not include port 80 in URL.
-     */
+    /** A deployment at the root context publishes "/". */
     public void testServerListGenerationDefaultHttpPort() throws Exception {
         // Arrange
         mockRequest.setScheme("http");
@@ -142,13 +139,10 @@ public class OpenApiSpecGeneratorTest extends TestCase {
 
         // Assert
         Server server = openApi.getServers().get(0);
-        assertEquals("http://localhost", server.getUrl());
+        assertEquals("/", server.getUrl());
     }
 
-    /**
-     * Test server list generation with default HTTPS port.
-     * Should not include port 443 in URL.
-     */
+    /** The scheme and port no longer take part in the published URL. */
     public void testServerListGenerationDefaultHttpsPort() throws Exception {
         // Arrange
         mockRequest.setScheme("https");
@@ -161,13 +155,10 @@ public class OpenApiSpecGeneratorTest extends TestCase {
 
         // Assert
         Server server = openApi.getServers().get(0);
-        assertEquals("https://secure.example.com/api", server.getUrl());
+        assertEquals("/api", server.getUrl());
     }
 
-    /**
-     * Test OpenAPI generation with null request.
-     * Should use default server configuration.
-     */
+    /** With no request there is no context path either, so the root is used. */
     public void testOpenApiGenerationWithNullRequest() throws Exception {
         // Act
         OpenAPI openApi = generator.generateOpenApiSpec(null);
@@ -179,8 +170,25 @@ public class OpenApiSpecGeneratorTest extends TestCase {
         assertFalse("Should have at least one server", servers.isEmpty());
 
         Server server = servers.get(0);
-        assertEquals("http://localhost:8080", server.getUrl());
-        assertEquals("Default server", server.getDescription());
+        assertEquals("/", server.getUrl());
+        assertEquals("Current server", server.getDescription());
+    }
+
+    /**
+     * An operator who needs an absolute URL published - behind a proxy, say -
+     * pins it explicitly rather than having it inferred from the request.
+     */
+    public void testConfiguredServerBaseUrlIsPublished() throws Exception {
+        OpenApiConfiguration configuration = new OpenApiConfiguration();
+        configuration.setServerBaseUrl("https://api.example.com/axis2");
+        OpenApiSpecGenerator pinned =
+                new OpenApiSpecGenerator(configurationContext, configuration);
+
+        mockRequest.setServerName("attacker.evil.example");
+        Server server = pinned.generateOpenApiSpec(mockRequest).getServers().get(0);
+
+        assertEquals("https://api.example.com/axis2", server.getUrl());
+        assertEquals("Configured server", server.getDescription());
     }
 
     /**

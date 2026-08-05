@@ -242,52 +242,24 @@ public class OpenApiSpecGenerator {
             return servers;
         }
 
-        if (request != null) {
-            // Build server URL from request
-            String scheme = request.getScheme();
-            String serverName = request.getServerName();
-            int serverPort = request.getServerPort();
-            String contextPath = request.getContextPath();
-            if (contextPath == null) {
-                contextPath = "";
-            }
-
-            if (!RequestUrlPolicy.isSafeHost(serverName)) {
-                // The Host is client-supplied. Publishing a malformed one would
-                // point every client that reads this specification at it, so fall
-                // back to a relative server URL, which OpenAPI 3 resolves against
-                // the location the document was retrieved from.
-                log.warn("Rejecting malformed Host header for the OpenAPI server URL; "
-                        + "publishing a relative server URL instead");
-                Server server = new Server();
-                server.setUrl(contextPath.isEmpty() ? "/" : contextPath);
-                server.setDescription("Current server");
-                servers.add(server);
-                return servers;
-            }
-
-            StringBuilder serverUrl = new StringBuilder();
-            serverUrl.append(scheme).append("://").append(serverName);
-
-            // Add port if not default
-            if ((scheme.equals("http") && serverPort != 80) ||
-                (scheme.equals("https") && serverPort != 443)) {
-                serverUrl.append(":").append(serverPort);
-            }
-
-            serverUrl.append(contextPath);
-
-            Server server = new Server();
-            server.setUrl(serverUrl.toString());
-            server.setDescription("Current server");
-            servers.add(server);
-        } else {
-            // Default server
-            Server server = new Server();
-            server.setUrl("http://localhost:8080");
-            server.setDescription("Default server");
-            servers.add(server);
+        // Otherwise publish a relative server URL. OpenAPI 3 resolves it against
+        // the location the document was retrieved from, which is already the
+        // right origin for any client that just fetched this specification.
+        //
+        // Deriving it from the request Host instead would mean the URL every
+        // consumer sends its next request to — carrying whatever credentials it
+        // holds — is chosen by whoever set that header. A relative URL cannot be
+        // pointed anywhere, and it is also simply more accurate behind a proxy,
+        // where the Host the container sees is often not the public origin.
+        String contextPath = request == null ? null : request.getContextPath();
+        if (contextPath == null || contextPath.isEmpty()) {
+            contextPath = "/";
         }
+
+        Server server = new Server();
+        server.setUrl(contextPath);
+        server.setDescription("Current server");
+        servers.add(server);
 
         return servers;
     }
