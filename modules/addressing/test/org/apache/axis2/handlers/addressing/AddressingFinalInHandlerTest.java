@@ -217,6 +217,12 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         MessageContext mc = new MessageContext();
         mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
         mc.setServerSide(true);
+        // This fixture carries a non-anonymous wsa:ReplyTo and the test is about
+        // SOAPAction matching, so opt in to decoupled responses rather than have
+        // the egress policy fault the message first.
+        mc.getConfigurationContext().getAxisConfiguration().addParameter(
+                new org.apache.axis2.description.Parameter(
+                        "allowNonAnonymousResponseEndpoints", "true"));
         try {
             mc.setSoapAction("http://ws.apache.org/tests/action");
             basicExtractAddressingInformationFromHeaders(testfile, mc);

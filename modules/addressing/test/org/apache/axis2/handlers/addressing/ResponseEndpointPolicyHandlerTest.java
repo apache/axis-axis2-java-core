@@ -51,6 +51,32 @@ public class ResponseEndpointPolicyHandlerTest extends TestCase {
         super.setUp();
         handler = new AddressingInHandler();
         configurationContext = ConfigurationContextFactory.createEmptyConfigurationContext();
+        // Decoupled responses are off by default; opt in so these tests reach the
+        // address checks. testDecoupledReplyToRefusedByDefault covers the default.
+        configurationContext.getAxisConfiguration().addParameter(
+                new Parameter(ResponseEndpointPolicy.ALLOW_NON_ANONYMOUS, "true"));
+    }
+
+    /**
+     * Out of the box a non-anonymous ReplyTo is refused outright, whatever it
+     * points at, so an inbound header cannot name an outbound destination.
+     */
+    public void testDecoupledReplyToRefusedByDefault() throws Exception {
+        configurationContext = ConfigurationContextFactory.createEmptyConfigurationContext();
+        try {
+            invokeWith("ReplyTo", "http://192.0.2.25/replies");
+            fail("A non-anonymous ReplyTo should fault under the shipped default");
+        } catch (AxisFault expected) {
+            // expected
+        }
+    }
+
+    /** Anonymous replies are unaffected, or ordinary in-out messaging breaks. */
+    public void testAnonymousReplyToStillWorksByDefault() throws Exception {
+        configurationContext = ConfigurationContextFactory.createEmptyConfigurationContext();
+        MessageContext mc = invokeWith("ReplyTo",
+                org.apache.axis2.addressing.AddressingConstants.Final.WSA_ANONYMOUS_URL);
+        assertTrue(mc.getReplyTo().hasAnonymousAddress());
     }
 
     /**

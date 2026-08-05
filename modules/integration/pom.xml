@@ -254,6 +254,20 @@
                                 <modules>
                                     <module>addressing</module>
                                 </modules>
+                                <!--
+                                  Decoupled WS-Addressing responses are off by default
+                                  (allowNonAnonymousResponseEndpoints in axis2.xml). The
+                                  async, two-channel and third-party-callback tests here
+                                  exercise exactly that feature, so they opt in - which
+                                  also demonstrates the migration a deployment using
+                                  those clients has to make.
+                                -->
+                                <parameters>
+                                    <parameter>
+                                        <name>allowNonAnonymousResponseEndpoints</name>
+                                        <value>true</value>
+                                    </parameter>
+                                </parameters>
                                 <handlers>
                                     <handler>
                                         <flow>InFlow</flow>
@@ -278,6 +292,20 @@
                                 <modules>
                                     <module>addressing</module>
                                 </modules>
+                                <!--
+                                  Decoupled WS-Addressing responses are off by default
+                                  (allowNonAnonymousResponseEndpoints in axis2.xml). The
+                                  async, two-channel and third-party-callback tests here
+                                  exercise exactly that feature, so they opt in - which
+                                  also demonstrates the migration a deployment using
+                                  those clients has to make.
+                                -->
+                                <parameters>
+                                    <parameter>
+                                        <name>allowNonAnonymousResponseEndpoints</name>
+                                        <value>true</value>
+                                    </parameter>
+                                </parameters>
                             </generatedAxis2xml>
                             <modules>addressing</modules>
                         </configuration>
@@ -329,6 +357,20 @@
                                 <modules>
                                     <module>addressing</module>
                                 </modules>
+                                <!--
+                                  Decoupled WS-Addressing responses are off by default
+                                  (see allowNonAnonymousResponseEndpoints in axis2.xml).
+                                  The async, two-channel and third-party-callback tests
+                                  in this module exercise exactly that feature, so they
+                                  opt in here - which also demonstrates the migration a
+                                  deployment using those clients has to make.
+                                -->
+                                <parameters>
+                                    <parameter>
+                                        <name>allowNonAnonymousResponseEndpoints</name>
+                                        <value>true</value>
+                                    </parameter>
+                                </parameters>
                             </generatedAxis2xml>
                             <modules>addressing</modules>
                         </configuration>

@@ -63,11 +63,13 @@ import java.util.concurrent.TimeoutException;
  * (service, service group, then {@code axis2.xml}):
  *
  * <dl>
- * <dt>{@code allowNonAnonymousResponseEndpoints} (default {@code true})</dt>
- * <dd>Set to {@code false} to refuse every non-anonymous response endpoint, so
- * replies and faults only ever travel back down the inbound connection. This is
- * the strictest posture and the right one for a deployment that does not use
- * decoupled or dual-channel responses.</dd>
+ * <dt>{@code allowNonAnonymousResponseEndpoints} (default {@code false})</dt>
+ * <dd>Off by default, so replies and faults only ever travel back down the
+ * inbound connection and an inbound header cannot name an outbound destination
+ * at all. Apache CXF made the same call for the same reason in its
+ * {@code org.apache.cxf.ws.addressing.decoupled.enabled} property. Set it to
+ * {@code true} for a deployment that genuinely uses decoupled responses — the
+ * separate-listener ("Dual") clients, or a third-party callback endpoint.</dd>
  *
  * <dt>{@code blockPrivateNetworkResponseEndpoints} (default {@code false})</dt>
  * <dd>Additionally rejects response endpoints that resolve to loopback,
@@ -143,7 +145,7 @@ final class ResponseEndpointPolicy {
             return true;
         }
 
-        if (!booleanParameter(messageContext, ALLOW_NON_ANONYMOUS, true)) {
+        if (!booleanParameter(messageContext, ALLOW_NON_ANONYMOUS, false)) {
             log.warn("Rejecting non-anonymous WS-Addressing response endpoint: "
                     + ALLOW_NON_ANONYMOUS + " is false");
             return false;

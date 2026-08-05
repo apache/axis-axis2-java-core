@@ -42,6 +42,18 @@ public class ResponseEndpointPolicyTest extends TestCase {
         ConfigurationContext configurationContext = new ConfigurationContext(axisConfiguration);
         messageContext = configurationContext.createMessageContext();
         messageContext.setServerSide(true);
+        // Decoupled responses are off by default. Most tests here cover what the
+        // policy does to an endpoint it is actually willing to consider, so they
+        // opt in; testDecoupledResponsesAreOffByDefault covers the default.
+        setParameter(ResponseEndpointPolicy.ALLOW_NON_ANONYMOUS, "true");
+    }
+
+    /** A context without the opt-in, for testing the shipped default. */
+    private MessageContext defaultConfigured() throws Exception {
+        AxisConfiguration config = new AxisConfiguration();
+        MessageContext mc = new ConfigurationContext(config).createMessageContext();
+        mc.setServerSide(true);
+        return mc;
     }
 
     private void setParameter(String name, String value) throws Exception {
@@ -75,7 +87,7 @@ public class ResponseEndpointPolicyTest extends TestCase {
      * ThirdPartyResponseRawXMLTest replies to 127.0.0.1 — so the default policy
      * must not refuse them.
      */
-    public void testLoopbackAndPrivateAddressesAreAllowedByDefault() {
+    public void testLoopbackAndPrivateAddressesAllowedWhenDecoupledEnabled() {
         assertTrue(ResponseEndpointPolicy.isAllowed(
                 new EndpointReference("http://127.0.0.1:8080/sink"), messageContext));
         assertTrue(ResponseEndpointPolicy.isAllowed(
@@ -161,23 +173,29 @@ public class ResponseEndpointPolicyTest extends TestCase {
      * A routable public address is still permitted by default, so decoupled
      * responses to a genuine external endpoint keep working.
      */
-    public void testPublicAddressIsAllowedByDefault() {
+    public void testPublicAddressAllowedWhenDecoupledEnabled() {
         EndpointReference publicEpr = new EndpointReference("http://192.0.2.25/replies");
         assertTrue(ResponseEndpointPolicy.isAllowed(publicEpr, messageContext));
     }
 
     /**
-     * The strict posture — the equivalent of what CXF made its default — refuses
-     * every non-anonymous response endpoint.
+     * The shipped default refuses every non-anonymous response endpoint, so no
+     * inbound header can name an outbound destination at all — the same call
+     * Apache CXF made in org.apache.cxf.ws.addressing.decoupled.enabled.
      */
-    public void testNonAnonymousCanBeDisabledEntirely() throws Exception {
-        setParameter(ResponseEndpointPolicy.ALLOW_NON_ANONYMOUS, "false");
-        assertFalse(ResponseEndpointPolicy.isAllowed(
-                new EndpointReference("http://192.0.2.25/replies"), messageContext));
-        // The anonymous case must still work, or in-out messaging breaks.
+    public void testDecoupledResponsesAreOffByDefault() throws Exception {
+        MessageContext defaults = defaultConfigured();
+        assertFalse("A public reply endpoint must be refused by default",
+                ResponseEndpointPolicy.isAllowed(
+                        new EndpointReference("http://192.0.2.25/replies"), defaults));
+        assertFalse("A private reply endpoint must be refused by default",
+                ResponseEndpointPolicy.isAllowed(
+                        new EndpointReference("http://10.1.2.3/internal"), defaults));
+
+        // Anonymous must still work by default, or ordinary in-out messaging breaks.
         assertTrue(ResponseEndpointPolicy.isAllowed(
-                new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL),
-                messageContext));
+                new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL), defaults));
+        assertTrue(ResponseEndpointPolicy.isAllowed(null, defaults));
     }
 
     /**

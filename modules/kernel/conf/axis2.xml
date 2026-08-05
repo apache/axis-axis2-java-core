@@ -72,9 +72,18 @@
     are wired. Turn it on wherever the caller is not already inside the trusted
     network.
 
-    Set allowNonAnonymousResponseEndpoints to false to refuse decoupled
-    responses entirely - the right setting unless this deployment actually uses
-    dual-channel or decoupled WS-Addressing responses.
+    allowNonAnonymousResponseEndpoints is FALSE by default as of 2.0.2: a
+    reply or fault only ever travels back down the inbound connection, so an
+    inbound header cannot name an outbound destination at all. Apache CXF made
+    the same call for the same reason in its
+    org.apache.cxf.ws.addressing.decoupled.enabled property.
+
+    Set it to true only if this deployment genuinely uses decoupled responses -
+    the separate-listener "Dual" clients (Options.setUseSeparateListener(true),
+    see samples/userguide EchoBlockingDualClient) or a third-party callback
+    endpoint. Those deployments should also set httpFrontendHostUrl so the
+    generated reply address is the real external URL rather than the client
+    machine's local IP.
 
     allowedResponseEndpointHosts, when set to a comma-separated host list,
     restricts response endpoints to exactly those hosts.
@@ -88,7 +97,7 @@
     list is not restricted to HTTP. Schemes outside it, such as file or gopher,
     are refused. Add to this list if a custom transport is in use.
     -->
-    <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
+    <parameter name="allowNonAnonymousResponseEndpoints">false</parameter>
     <parameter name="blockPrivateNetworkResponseEndpoints">false</parameter>
     <!--<parameter name="allowedResponseEndpointHosts">replies.example.com</parameter>-->
     <!--<parameter name="allowedResponseEndpointSchemes">http,https</parameter>-->
