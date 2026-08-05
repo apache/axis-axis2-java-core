@@ -82,11 +82,16 @@ import java.util.concurrent.TimeoutException;
  * <dt>{@code allowedResponseEndpointHosts} (no default)</dt>
  * <dd>A comma-separated host allow-list. When set, a response endpoint host must
  * appear in it, which supersedes the network-range check.</dd>
+ *
+ * <dt>{@code allowedResponseEndpointSchemes} (default {@code https})</dt>
+ * <dd>A comma-separated scheme allow-list, applied once decoupled responses are
+ * enabled at all. See {@link #DEFAULT_ALLOWED_SCHEMES} for why the default is
+ * HTTPS alone.</dd>
  * </dl>
  */
-public final class ResponseEndpointPolicy {
+public final class AddressingResponseEndpointPolicy {
 
-    private static final Log log = LogFactory.getLog(ResponseEndpointPolicy.class);
+    private static final Log log = LogFactory.getLog(AddressingResponseEndpointPolicy.class);
 
     public static final String ALLOW_NON_ANONYMOUS = "allowNonAnonymousResponseEndpoints";
     public static final String BLOCK_PRIVATE_NETWORKS = "blockPrivateNetworkResponseEndpoints";
@@ -106,23 +111,30 @@ public final class ResponseEndpointPolicy {
     private static final int RESOLVER_QUEUE_DEPTH = 64;
 
     /**
-     * Schemes Axis2 ships a sender for that can carry a decoupled reply.
+     * Schemes a decoupled reply may use, unless {@link #ALLOWED_SCHEMES_PARAMETER}
+     * widens it. Just {@code https}.
      *
-     * <p>This is deliberately wider than http/https: {@code setupCorrectTransportOut}
-     * resolves the response transport from the endpoint reference's scheme
-     * against whatever is registered, so a JMS, mail or TCP reply address is a
-     * legitimate configuration and must not be refused here. What the list keeps
-     * out are the schemes that only ever serve as an SSRF pivot — file, gopher,
-     * jar, ftp and the like.
+     * <p>Plain {@code http} is excluded deliberately, and it is the exclusion that
+     * carries the most weight: the cloud instance-metadata services this class of
+     * SSRF is usually aimed at — AWS and Azure on 169.254.169.254, GCP on
+     * metadata.google.internal — are reachable over HTTP only and offer no HTTPS
+     * listener. Refusing plain HTTP therefore takes that target away by scheme
+     * alone, without depending on the address checks below.
+     *
+     * <p>{@code jms}, {@code mailto} and {@code tcp} have senders in the tree but
+     * are vanishingly rare as reply destinations, so they are opt-in rather than
+     * default-on. A deployment that needs any of these, or that genuinely replies
+     * over plain HTTP inside a trusted network, names them in
+     * {@link #ALLOWED_SCHEMES_PARAMETER}.
      */
-    private static final Set<String> DEFAULT_ALLOWED_SCHEMES = new HashSet<String>(
-            Arrays.asList("http", "https", "jms", "mailto", "tcp"));
+    private static final Set<String> DEFAULT_ALLOWED_SCHEMES =
+            new HashSet<String>(Arrays.asList("https"));
 
     /** Schemes for which a missing host means the address is unusable. */
     private static final Set<String> HOST_BEARING_SCHEMES =
             new HashSet<String>(Arrays.asList("http", "https"));
 
-    private ResponseEndpointPolicy() {
+    private AddressingResponseEndpointPolicy() {
     }
 
     /**

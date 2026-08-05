@@ -43,7 +43,7 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.ResponseEndpointPolicy;
+import org.apache.axis2.addressing.AddressingResponseEndpointPolicy;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -390,10 +390,10 @@ public class MessageContextBuilder {
                     // check cannot be walked around by reaching the sender another
                     // way. Apache CXF places its equivalent check at the same
                     // depth, in DecoupledDestination.getBackChannel.
-                    if (!ResponseEndpointPolicy.isAllowed(responseEPR, context)) {
+                    if (!AddressingResponseEndpointPolicy.isAllowed(responseEPR, context)) {
                         throw new AxisFault("Refusing to send a response to the "
                                 + "endpoint reference named by this message; see the "
-                                + ResponseEndpointPolicy.ALLOW_NON_ANONYMOUS + " parameter");
+                                + AddressingResponseEndpointPolicy.ALLOW_NON_ANONYMOUS + " parameter");
                     }
                     URI uri = new URI(responseEPR.getAddress());
                     String scheme = uri.getScheme();

@@ -1343,7 +1343,7 @@ public class AxisConfiguration extends AxisDescription {
         // redeployment and pin this web application's class loader.
         MultipartTempFileTracker.shutdown();
         // Same reason: the WS-Addressing endpoint resolver runs a thread pool.
-        org.apache.axis2.addressing.ResponseEndpointPolicy.shutdown();
+        org.apache.axis2.addressing.AddressingResponseEndpointPolicy.shutdown();
         this.policySupportedModules.clear();
         this.moduleConfigmap.clear();
         this.allEndpoints.clear();

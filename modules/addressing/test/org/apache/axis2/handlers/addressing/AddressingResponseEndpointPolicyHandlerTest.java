@@ -29,7 +29,7 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.addressing.ResponseEndpointPolicy;
+import org.apache.axis2.addressing.AddressingResponseEndpointPolicy;
 import org.apache.axis2.description.Parameter;
 
 /**
@@ -43,7 +43,7 @@ import org.apache.axis2.description.Parameter;
  * from outside is a {@code wsa:ReplyTo} header on an inbound message, which is
  * what these tests send.
  */
-public class ResponseEndpointPolicyHandlerTest extends TestCase {
+public class AddressingResponseEndpointPolicyHandlerTest extends TestCase {
 
     private AddressingInHandler handler;
     private ConfigurationContext configurationContext;
@@ -55,7 +55,10 @@ public class ResponseEndpointPolicyHandlerTest extends TestCase {
         // Decoupled responses are off by default; opt in so these tests reach the
         // address checks. testDecoupledReplyToRefusedByDefault covers the default.
         configurationContext.getAxisConfiguration().addParameter(
-                new Parameter(ResponseEndpointPolicy.ALLOW_NON_ANONYMOUS, "true"));
+                new Parameter(AddressingResponseEndpointPolicy.ALLOW_NON_ANONYMOUS, "true"));
+        // Only https ships as permitted; these cases use http addresses.
+        configurationContext.getAxisConfiguration().addParameter(
+                new Parameter(AddressingResponseEndpointPolicy.ALLOWED_SCHEMES_PARAMETER, "http,https"));
     }
 
     /**
@@ -114,7 +117,7 @@ public class ResponseEndpointPolicyHandlerTest extends TestCase {
      */
     public void testPrivateReplyToRejectedUnderStrictPolicy() throws Exception {
         configurationContext.getAxisConfiguration().addParameter(
-                new Parameter(ResponseEndpointPolicy.BLOCK_PRIVATE_NETWORKS, "true"));
+                new Parameter(AddressingResponseEndpointPolicy.BLOCK_PRIVATE_NETWORKS, "true"));
         try {
             invokeWith("ReplyTo", "http://10.1.2.3/internal");
             fail("A private ReplyTo should have faulted under the strict policy");

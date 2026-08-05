@@ -92,15 +92,19 @@
     used by the checks above, so a slow resolver cannot hold a request thread.
     Literal addresses are never looked up.
 
-    allowedResponseEndpointSchemes defaults to http,https,jms,mailto,tcp - a
-    decoupled reply over JMS, mail or TCP is a legitimate configuration, so the
-    list is not restricted to HTTP. Schemes outside it, such as file or gopher,
-    are refused. Add to this list if a custom transport is in use.
+    allowedResponseEndpointSchemes defaults to https ALONE. Plain http is
+    excluded on purpose: the cloud instance-metadata services this class of SSRF
+    targets (169.254.169.254 on AWS and Azure, metadata.google.internal on GCP)
+    are HTTP-only, so refusing the scheme removes that target outright. jms,
+    mailto and tcp have senders in the tree but are vanishingly rare as reply
+    destinations, so they are opt-in too. Name whatever a deployment genuinely
+    replies over, e.g. http,https for plain-HTTP callbacks inside a trusted
+    network.
     -->
     <parameter name="allowNonAnonymousResponseEndpoints">false</parameter>
     <parameter name="blockPrivateNetworkResponseEndpoints">false</parameter>
     <!--<parameter name="allowedResponseEndpointHosts">replies.example.com</parameter>-->
-    <!--<parameter name="allowedResponseEndpointSchemes">http,https</parameter>-->
+    <!--<parameter name="allowedResponseEndpointSchemes">https</parameter>-->
 
     <!--Uncomment if you want to plugin your own attachments lifecycle implementation -->
     <!--<attachmentsLifecycleManager class="org.apache.axiom.attachments.lifecycle.impl.LifecycleManagerImpl"/>-->

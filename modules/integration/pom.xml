@@ -267,6 +267,12 @@
                                         <name>allowNonAnonymousResponseEndpoints</name>
                                         <value>true</value>
                                     </parameter>
+                                    <!-- Only https is permitted by default; these
+                                         callbacks are plain http on loopback. -->
+                                    <parameter>
+                                        <name>allowedResponseEndpointSchemes</name>
+                                        <value>http,https</value>
+                                    </parameter>
                                 </parameters>
                                 <handlers>
                                     <handler>
@@ -304,6 +310,12 @@
                                     <parameter>
                                         <name>allowNonAnonymousResponseEndpoints</name>
                                         <value>true</value>
+                                    </parameter>
+                                    <!-- Only https is permitted by default; these
+                                         callbacks are plain http on loopback. -->
+                                    <parameter>
+                                        <name>allowedResponseEndpointSchemes</name>
+                                        <value>http,https</value>
                                     </parameter>
                                 </parameters>
                             </generatedAxis2xml>
@@ -369,6 +381,12 @@
                                     <parameter>
                                         <name>allowNonAnonymousResponseEndpoints</name>
                                         <value>true</value>
+                                    </parameter>
+                                    <!-- Only https is permitted by default; these
+                                         callbacks are plain http on loopback. -->
+                                    <parameter>
+                                        <name>allowedResponseEndpointSchemes</name>
+                                        <value>http,https</value>
                                     </parameter>
                                 </parameters>
                             </generatedAxis2xml>

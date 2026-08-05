@@ -223,6 +223,9 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         mc.getConfigurationContext().getAxisConfiguration().addParameter(
                 new org.apache.axis2.description.Parameter(
                         "allowNonAnonymousResponseEndpoints", "true"));
+        mc.getConfigurationContext().getAxisConfiguration().addParameter(
+                new org.apache.axis2.description.Parameter(
+                        "allowedResponseEndpointSchemes", "http,https"));
         try {
             mc.setSoapAction("http://ws.apache.org/tests/action");
             basicExtractAddressingInformationFromHeaders(testfile, mc);

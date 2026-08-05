@@ -32,7 +32,7 @@ import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.ResponseEndpointPolicy;
+import org.apache.axis2.addressing.AddressingResponseEndpointPolicy;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -451,7 +451,7 @@ public class AddressingInHandler extends AbstractTemplatedHandler implements Add
         if (!messageContext.isServerSide()) {
             return;
         }
-        if (!ResponseEndpointPolicy.isAllowed(epr, messageContext)) {
+        if (!AddressingResponseEndpointPolicy.isAllowed(epr, messageContext)) {
             AddressingFaultsHelper
                     .triggerInvalidEPRFault(messageContext, soapHeaderBlock.getLocalName());
         }

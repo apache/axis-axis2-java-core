@@ -21,6 +21,7 @@
     <!-- The separate-listener MTOM tests use a decoupled wsa:ReplyTo, which is
          off by default; opt in so they exercise that path. -->
     <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
+    <parameter name="allowedResponseEndpointSchemes">http,https</parameter>
 
     <!-- ================================================= -->
     <!-- Parameters -->
