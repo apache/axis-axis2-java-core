@@ -18,6 +18,15 @@
   -->
  
 <axisconfig name="AxisJava2.0">
+    <!-- EchoBlockingDualClient and EchoNonBlockingDualClient reply over a
+         separate listener, which means a non-anonymous wsa:ReplyTo. Decoupled
+         responses are declined by default from 2.0.2, so the samples enable
+         them here. A real deployment doing this should also set
+         httpFrontendHostUrl, so the generated reply address is its external
+         URL rather than the local one. -->
+    <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
+    <parameter name="allowedResponseEndpointSchemes">http,https</parameter>
+
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->

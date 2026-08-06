@@ -134,6 +134,23 @@
                             <outputDirectory>${project.build.directory}/generated-resources/org/apache/axis2/transport/repo</outputDirectory>
                             <generateFileLists>true</generateFileLists>
                             <generatedAxis2xml>
+                                <!-- Transport tests here use a separate listener,
+                                     which replies to a non-anonymous endpoint over
+                                     the transport under test. Decoupled responses
+                                     are declined by default and the permitted
+                                     scheme list is https alone, so both are opted
+                                     into - the same pair of settings a deployment
+                                     using a separate listener has to make. -->
+                                <parameters>
+                                    <parameter>
+                                        <name>allowNonAnonymousResponseEndpoints</name>
+                                        <value>true</value>
+                                    </parameter>
+                                    <parameter>
+                                        <name>allowedResponseEndpointSchemes</name>
+                                        <value>http,https,tcp,udp,jms,mailto</value>
+                                    </parameter>
+                                </parameters>
                                 <messageFormatters>
                                     <messageFormatter>
                                         <contentType>text/plain</contentType>

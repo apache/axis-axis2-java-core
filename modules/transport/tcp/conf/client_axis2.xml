@@ -18,6 +18,14 @@
   -->
 
 <axisconfig name="AxisJava2.0">
+    <!-- The TCP transport's separate-listener tests reply to a non-anonymous
+         tcp:// endpoint. Decoupled responses are declined by default and the
+         permitted scheme list is https alone, so both are opted into here -
+         the same two settings a TCP deployment using a separate listener has
+         to make. -->
+    <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
+    <parameter name="allowedResponseEndpointSchemes">tcp,http,https</parameter>
+
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
