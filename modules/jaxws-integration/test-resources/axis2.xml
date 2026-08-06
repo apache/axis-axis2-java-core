@@ -18,6 +18,12 @@
   -->
 
 <axisconfig name="AxisJava2.0">
+    <!-- The async-with-addressing tests reply to a non-anonymous wsa:ReplyTo.
+         Decoupled responses are declined by default and the permitted scheme
+         list is https alone, so both are opted into here. -->
+    <parameter name="allowNonAnonymousResponseEndpoints">true</parameter>
+    <parameter name="allowedResponseEndpointSchemes">http,https</parameter>
+
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
