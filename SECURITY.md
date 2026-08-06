@@ -121,9 +121,10 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 | `/services/{ServiceName}?wsdl` | WSDL metadata retrieval | Anonymous (if `exposeServiceMetadata=true`) |
 | `/services/{ServiceName}?xsd` | XML Schema retrieval | Anonymous (if `exposeServiceMetadata=true`) |
 | `/services/` | Service listing | Anonymous (if `exposeServiceMetadata=true`) |
-| `/openapi.json` | OpenAPI 3.0 schema (if OpenAPI module engaged) | Anonymous |
-| `/swagger-ui` | Swagger UI (if OpenAPI module engaged) | Anonymous |
-| `/openapi-mcp.json` | MCP tool catalog (if OpenAPI module engaged) | Anonymous |
+| `/services/{ServiceName}/{name}.xsd` or `.wsdl` | Packaged metadata by file name | Anonymous (if `exposeServiceMetadata=true`) |
+| `/openapi.json` | OpenAPI 3.0 schema (if OpenAPI module engaged) | Anonymous; per-service `exposeServiceMetadata` respected |
+| `/swagger-ui` | Swagger UI (if OpenAPI module engaged) | Anonymous; per-service `exposeServiceMetadata` respected |
+| `/openapi-mcp.json` | MCP tool catalog (if OpenAPI module engaged) | Anonymous; per-service `exposeServiceMetadata` respected |
 
 ### Attack Surface by Component
 
@@ -133,11 +134,14 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 | **WSDL/XSD import resolution** (wsdl4j, xmlschema-core) | XXE in imported documents; SSRF via `file://`/`gopher://` schemes | `SecureWSDLLocator` pre-validates with hardened SAX parser; protocol whitelist (HTTP/HTTPS only); size limit (10MB default); connect/read timeouts; relative-path SSRF bypass blocked |
 | **JSON parser** (Gson) | Deep nesting stack exhaustion, large payload DoS | Fuzz-tested (1.7M+ iterations); Gson nesting limits |
 | **JSON-RPC dispatch** | Method name injection; unexpected operation invocation | Method names validated against deployed operations; unknown methods return fault |
-| **Multipart/file upload** (commons-fileupload2) | Unbounded file count DoS (CVE-2023-24998 pattern) | Migrated from commons-fileupload 1.x to commons-fileupload2 which enforces file count limits |
+| **Multipart/file upload** (commons-fileupload2) | Unbounded file count DoS (CVE-2023-24998 pattern); unbounded body size; temp-file accumulation | commons-fileupload2 enforces the file count limit; `multipartMaxRequestSize` / `multipartMaxFileSize` bound the body; temp files are deleted immediately for form fields and tracked to collection for file parts |
+| **Form-urlencoded builder** | Unbounded body read into an in-memory map | `formUrlEncodedMaxRequestSize` bounds the read; the stream fails rather than truncating |
 | **Service dispatchers** | Routing to unintended service; header spoofing | Dispatchers validate service existence; unknown services return fault |
 | **Hot-deployment** (DeploymentEngine) | Malicious AAR/MAR deploys arbitrary code | Trust boundary is filesystem access; no signature verification (admin operation) |
 | **Context externalization** (SafeObjectInputStream) | Java deserialization gadget chains | Whitelist-based `SafeObjectInputStream`; restricted to known Axis2 context classes |
-| **Metadata endpoints** (`?wsdl`, `?xsd`, `/services/`) | Service enumeration, schema disclosure | Controllable via `exposeServiceMetadata` parameter |
+| **Metadata endpoints** (`?wsdl`, `?xsd`, `/services/`, `.xsd`/`.wsdl` by name, OpenAPI/MCP) | Service enumeration, schema disclosure | `exposeServiceMetadata` enforced uniformly across the servlet and standalone HTTP paths and the OpenAPI/MCP generators |
+| **WS-Addressing response endpoints** (`wsa:ReplyTo`, `wsa:FaultTo`) | SSRF: an inbound header names the destination of a server-initiated send | Non-anonymous response endpoints refused by default (`allowNonAnonymousResponseEndpoints`); when enabled, scheme restricted to HTTPS, destination screened at both the header-parsing and transport-selection layers, and redirects not followed |
+| **OpenAPI / Swagger UI surface** | Reflected XSS from request-controlled values; Host reflected into published URLs | Host validated, values encoded for their output context, CSP with a per-response script nonce; the published `servers[].url` is relative unless `openapi.serverBaseUrl` pins it |
 | **MTOM/attachment handling** | Large attachment DoS, temp file exhaustion | Streaming processing; `TempFileManager` cleanup |
 | **`?fields=` query parameter** (field selection, if enabled) | Reflection-based field filtering on response objects | Field names validated against declared response type; no dynamic class loading |
 
@@ -239,6 +243,67 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    and URL parsers. 45M+ iterations with zero crashes or security
    findings. See `src/site/xdoc/docs/OSS-FUZZ.md`. Axis2/C has an
    active OSS-Fuzz integration.
+
+9. **WS-Addressing response endpoints (2.0.2):** A non-anonymous
+   `wsa:ReplyTo` or `wsa:FaultTo` makes the server open a connection to an
+   address the caller chose. Unless WS-Security is engaged to bind that
+   endpoint reference to a trusted issuer, the WS-Addressing specification
+   leaves it to the receiver to decide whether to honour it, so Axis2 now
+   declines by default. `allowNonAnonymousResponseEndpoints` is `false`;
+   replies and faults travel back down the inbound connection only. Apache
+   CXF made the same choice in
+   `org.apache.cxf.ws.addressing.decoupled.enabled`.
+
+   Deployments that genuinely use decoupled responses — the separate-listener
+   "Dual" clients, or a third-party callback endpoint — set it to `true`, and
+   should also set `httpFrontendHostUrl` so the generated reply address is the
+   real external URL rather than the local one. With the feature enabled:
+
+   - `allowedResponseEndpointSchemes` permits HTTPS only. Widen it to name a
+     transport actually used for replies.
+   - The destination is screened both where the inbound header is parsed and
+     where a server-side response acquires its transport, so the check cannot
+     be reached around by setting the endpoint reference another way.
+   - Link-local, wildcard and multicast destinations are always refused.
+     `blockPrivateNetworkResponseEndpoints` additionally refuses loopback and
+     private ranges; it is off by default because a callback inside the same
+     private network is how most decoupled deployments are wired.
+   - Redirects are not followed, so a reply endpoint cannot hand the sender a
+     destination the policy already refused.
+   - Name resolution is bounded (`responseEndpointResolveTimeoutMillis`) and
+     runs on a capped pool, so a slow resolver cannot tie up request threads.
+
+   Known limitation: the destination is resolved once to check it and again to
+   connect, so a hostile DNS server could answer differently the second time.
+   Closing that requires connecting to a pinned address, which the transport
+   does not currently support. Operators in cloud environments should pair
+   these settings with network egress controls.
+
+10. **Request body ceilings (2.0.2):** The `multipart/form-data` and
+    `application/x-www-form-urlencoded` builders read the transport stream
+    directly, so a servlet container's post-size limit never sees the body.
+    `multipartMaxRequestSize` and `multipartMaxFileSize` (100 MB) and
+    `formUrlEncodedMaxRequestSize` (2 MB) bound them; `-1` restores the
+    previous unbounded behaviour, and either may be set per service.
+    Multipart temp files are now deleted rather than accumulating: form-field
+    parts as soon as their text is read, file parts once the item backing the
+    `DataHandler` is unreachable.
+
+11. **OpenAPI and Swagger UI output (2.0.2):** Request-controlled values are
+    validated and encoded for the context they are written into, the served
+    page carries a Content-Security-Policy with a per-response script nonce,
+    and the published `servers[].url` is relative — resolved by the client
+    against wherever it fetched the document — rather than derived from the
+    request Host. `openapi.serverBaseUrl` pins an absolute URL where a
+    deployment needs one.
+
+12. **Uniform metadata exposure (2.0.2):** `exposeServiceMetadata` is now
+    honoured by every anonymous metadata route: the `?wsdl`, `?wsdl2` and
+    `?xsd` queries as before, plus the `.xsd`/`.wsdl` file routes on both the
+    servlet and standalone HTTP paths, the named-WSDL route, and the
+    OpenAPI/Swagger/MCP generators. A service with exposure disabled is
+    skipped rather than refused, so it stays indistinguishable from one that
+    is not deployed.
 
 ## Reporting Security Issues
 
