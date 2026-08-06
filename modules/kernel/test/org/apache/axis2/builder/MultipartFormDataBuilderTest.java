@@ -65,9 +65,9 @@ public class MultipartFormDataBuilderTest extends TestCase {
      *
      * <p>Worth stating why this test exists separately from
      * {@link RequestSizeLimitsTest}: that one covers parameter resolution, and
-     * the reporter's own proof-of-concept checks the limit by reconstructing its
-     * own upload object rather than going through {@code processDocument}, so
-     * neither actually demonstrates that an oversized body is refused.
+     * it is easy to check the limit by reconstructing an upload object rather
+     * than going through {@code processDocument}, which demonstrates nothing
+     * about whether an oversized body is actually refused.
      */
     public void testOversizedRequestIsRejected() throws Exception {
         MessageContext messageContext = newMessageContext(buildBody("bigFile", "big.bin"));

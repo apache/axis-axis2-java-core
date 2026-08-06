@@ -36,10 +36,10 @@ import org.apache.axis2.description.Parameter;
  * End-to-end coverage of the response-endpoint policy through the handler that
  * actually parses inbound WS-Addressing headers.
  *
- * <p>This exists because neither the unit tests for the policy itself nor the
- * reporter's proof-of-concept exercise the path an attacker actually has. The
- * PoC builds a MessageContext and calls {@code setReplyTo} in Java before
- * driving the transport sender, which no remote caller can do; the only way in
+ * <p>This exists because the unit tests for the policy call the check directly,
+ * which does not exercise the path an attacker actually has. Building a
+ * MessageContext and calling {@code setReplyTo} in Java before driving the
+ * transport sender is not something a remote caller can do; the only way in
  * from outside is a {@code wsa:ReplyTo} header on an inbound message, which is
  * what these tests send.
  */
