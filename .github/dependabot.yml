@@ -17,7 +17,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     ignore:
       # IO-734
       - dependency-name: "commons-io:commons-io"
@@ -35,7 +35,16 @@ updates:
         versions:
         - ">= 1.8"
     open-pull-requests-limit: 15
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        exclude-patterns:
+          # we aren't compatible with latest here, excluded here so that it doesn't block the other updates
+          - "org.glassfish.jaxb:*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      production-actions:
+        dependency-type: "production"
