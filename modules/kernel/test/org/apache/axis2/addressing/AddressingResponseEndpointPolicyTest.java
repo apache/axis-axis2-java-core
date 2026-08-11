@@ -148,6 +148,81 @@ public class AddressingResponseEndpointPolicyTest extends TestCase {
     }
 
     /**
+     * IPv6 destinations are classified, not waved through.
+     *
+     * <p>Nothing here needed a code change — {@code URI.getHost} keeps the
+     * brackets, {@code InetAddress.getByName} accepts that form, and the
+     * {@code isLinkLocalAddress}/{@code isAnyLocalAddress}/
+     * {@code isMulticastAddress} family is address-family agnostic. The suite
+     * had no IPv6 case at all, though, so the behaviour was correct and
+     * unverified, and a regression here would be silent. The equivalent checks
+     * in Axis2/C had to be written by hand and were wrong until they were.
+     */
+    public void testIPv6DestinationsAreClassified() {
+        // Refused whatever the configuration says.
+        assertFalse("link-local", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[fe80::1]/sink"), messageContext));
+        assertFalse("link-local with a port", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[fe80::1]:8080/sink"), messageContext));
+        assertFalse("unspecified", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[::]/sink"), messageContext));
+        assertFalse("multicast", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[ff02::1]/sink"), messageContext));
+
+        // A global address is a legitimate destination; without this the rest
+        // would pass just as well if IPv6 were refused wholesale.
+        assertTrue("a global address must still be allowed",
+                AddressingResponseEndpointPolicy.isAllowed(
+                        new EndpointReference("http://[2001:db8::1]/sink"), messageContext));
+    }
+
+    /**
+     * The IPv4-mapped form reaches the same metadata service the dotted quad
+     * does, so it has to be refused the same way. The JDK resolves
+     * {@code ::ffff:169.254.169.254} to an {@code Inet4Address}, which is what
+     * makes this work without a special case — worth pinning, because it is a
+     * property of the JDK rather than of this code.
+     */
+    public void testIPv4MappedMetadataAddressIsBlocked() {
+        assertFalse(AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[::ffff:169.254.169.254]/latest/meta-data/"),
+                messageContext));
+        assertFalse(AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[::ffff:0.0.0.0]/sink"), messageContext));
+    }
+
+    /**
+     * Loopback and unique-local follow the private-network switch, as their
+     * IPv4 counterparts do.
+     *
+     * <p>{@code fc00::/7} is the one part of this that is not the JDK's doing:
+     * {@code isSiteLocalAddress} answers for the deprecated {@code fec0::/10}
+     * and returns false for a unique-local address, so {@code isUniqueLocalIPv6}
+     * covers it. That is exactly the kind of gap this test exists to hold shut.
+     */
+    public void testIPv6LoopbackAndUniqueLocalFollowThePrivateSwitch() throws Exception {
+        assertTrue("loopback is allowed until the switch is set",
+                AddressingResponseEndpointPolicy.isAllowed(
+                        new EndpointReference("http://[::1]/sink"), messageContext));
+        assertTrue("unique-local is allowed until the switch is set",
+                AddressingResponseEndpointPolicy.isAllowed(
+                        new EndpointReference("http://[fd00::1]/sink"), messageContext));
+
+        setParameter(AddressingResponseEndpointPolicy.BLOCK_PRIVATE_NETWORKS, "true");
+
+        assertFalse("::1", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[::1]/sink"), messageContext));
+        assertFalse("fd00::/8 unique-local", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[fd00::1]/sink"), messageContext));
+        assertFalse("fc00::/7 unique-local", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[fc00::1]/sink"), messageContext));
+        assertFalse("fec0::/10 site-local", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[fec0::1]/sink"), messageContext));
+        assertFalse("v4-mapped loopback", AddressingResponseEndpointPolicy.isAllowed(
+                new EndpointReference("http://[::ffff:127.0.0.1]/sink"), messageContext));
+    }
+
+    /**
      * The schemes that only ever serve as an SSRF pivot are refused before any
      * host check.
      */

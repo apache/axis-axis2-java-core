@@ -268,6 +268,12 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
      `blockPrivateNetworkResponseEndpoints` additionally refuses loopback and
      private ranges; it is off by default because a callback inside the same
      private network is how most decoupled deployments are wired.
+   - The address checks are address-family agnostic: a bracketed IPv6 literal
+     is classified, not treated as an unrecognised host, and the IPv4-mapped
+     form (`[::ffff:169.254.169.254]`) is refused as the address it reaches
+     rather than as a separate spelling. IPv6 unique-local (`fc00::/7`) is
+     covered explicitly, since `InetAddress.isSiteLocalAddress` answers only
+     for the deprecated `fec0::/10`.
    - Redirects are not followed, so a reply endpoint cannot hand the sender a
      destination the policy already refused.
    - Name resolution is bounded (`responseEndpointResolveTimeoutMillis`) and
@@ -288,6 +294,15 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
     Multipart temp files are now deleted rather than accumulating: form-field
     parts as soon as their text is read, file parts once the item backing the
     `DataHandler` is unreachable.
+
+    Both ceilings are enforced against bytes actually read, not against a
+    declared `Content-Length`, so a chunked request body is bounded on the same
+    terms as a declared one. This is worth stating because the reverse is the
+    easy mistake: a limit that screens the header before the read is no limit
+    at all for `Transfer-Encoding: chunked`, which declares no length. The
+    form-urlencoded builder wraps the stream in `BoundedInputStream`; the
+    multipart path relies on commons-fileupload2, which pairs its
+    `Content-Length` fast path with a streaming guard.
 
 11. **OpenAPI and Swagger UI output (2.0.2):** Request-controlled values are
     validated and encoded for the context they are written into, the served
