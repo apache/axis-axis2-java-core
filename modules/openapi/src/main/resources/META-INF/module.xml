@@ -52,7 +52,7 @@
     <!-- UI Configuration -->
     <parameter name="enableSwaggerUI">true</parameter>
     <parameter name="swaggerUIPath">/swagger-ui</parameter>
-    <parameter name="swaggerUIVersion">4.15.5</parameter>
+    <parameter name="swaggerUIVersion">5.32.13</parameter>
 
     <!-- API Specification Endpoints -->
     <parameter name="openApiJsonPath">/openapi.json</parameter>

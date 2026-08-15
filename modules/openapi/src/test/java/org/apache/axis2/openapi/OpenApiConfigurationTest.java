@@ -91,7 +91,7 @@ public class OpenApiConfigurationTest {
     @Test
     public void testDefaultSwaggerUiConfig() {
         assertNotNull(config.getSwaggerUiConfig());
-        assertEquals("4.15.5", config.getSwaggerUiVersion());
+        assertEquals("5.32.13", config.getSwaggerUiVersion());
         assertEquals("org.webjars:swagger-ui", config.getSwaggerUiMavenGroupAndArtifact());
     }
 

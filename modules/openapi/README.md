@@ -52,7 +52,7 @@ Configuration is loaded in this order (later sources win):
 | `openapi.prettyPrint` | `true` | Indent JSON/YAML output |
 | `openapi.readAllResources` | `true` | Include all services unless filtered |
 | `openapi.swaggerUi.enabled` | `true` | Serve Swagger UI |
-| `openapi.swaggerUi.version` | `4.15.5` | CDN version of Swagger UI bundle |
+| `openapi.swaggerUi.version` | `5.32.13` | CDN version of Swagger UI bundle |
 | `openapi.resourcePackages` | — | Comma-separated Java packages; only services whose `ServiceClass` is in these packages are included (requires `readAllResources=false`) |
 
 ---
@@ -149,7 +149,7 @@ openapi.ignoredOperations=AdminService/resetDatabase, debugEcho
 # UI
 openapi.prettyPrint=true
 openapi.swaggerUi.enabled=true
-openapi.swaggerUi.version=4.15.5
+openapi.swaggerUi.version=5.32.13
 ```
 
 ---

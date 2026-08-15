@@ -351,7 +351,7 @@ public class OpenApiModule implements Module {
             if (!configuration.getSwaggerUiVersion().matches("\\d+\\.\\d+\\.\\d+")) {
                 log.warn("Invalid Swagger UI version format: " + configuration.getSwaggerUiVersion() +
                         ". Using default version.");
-                configuration.setSwaggerUiVersion("4.15.5");
+                configuration.setSwaggerUiVersion("5.32.13");
             }
         }
 

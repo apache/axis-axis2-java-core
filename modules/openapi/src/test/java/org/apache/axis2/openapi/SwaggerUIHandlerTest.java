@@ -100,7 +100,7 @@ public class SwaggerUIHandlerTest extends TestCase {
                 html.contains("https://api.example.com:8443/axis2/openapi.json"));
 
         // Verify Swagger UI version
-        assertTrue("Should use correct Swagger UI version", html.contains("4.15.5"));
+        assertTrue("Should use correct Swagger UI version", html.contains("5.32.13"));
     }
 
     /**

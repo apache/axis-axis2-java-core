@@ -142,7 +142,7 @@ public class OpenApiConfiguration {
     private boolean supportSwaggerUi = true;
 
     /** Swagger UI version to use */
-    private String swaggerUiVersion = "4.15.5";
+    private String swaggerUiVersion = "5.32.13";
 
     /** Maven group and artifact for Swagger UI */
     private String swaggerUiMavenGroupAndArtifact = "org.webjars:swagger-ui";

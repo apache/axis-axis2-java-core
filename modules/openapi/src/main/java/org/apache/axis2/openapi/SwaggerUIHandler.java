@@ -61,7 +61,7 @@ public class SwaggerUIHandler {
     private final SwaggerUiConfig swaggerUiConfig;
 
     // Default Swagger UI version (can be overridden by configuration)
-    private static final String DEFAULT_SWAGGER_UI_VERSION = "4.15.5";
+    private static final String DEFAULT_SWAGGER_UI_VERSION = "5.32.13";
 
     // Default resource paths
     private static final String SWAGGER_UI_ROOT = "/swagger-ui/";
