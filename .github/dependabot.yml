@@ -16,6 +16,8 @@ version: 2
 updates:
   - package-ecosystem: "maven"
     directory: "/"
+    exclude-paths:
+      - "modules/samples/**"
     schedule:
       interval: "weekly"
     ignore:
@@ -41,6 +43,8 @@ updates:
         exclude-patterns:
           # we aren't compatible with latest here, excluded here so that it doesn't block the other updates
           - "org.glassfish.jaxb:*"
+      development-dependencies:
+        dependency-type: "development"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
