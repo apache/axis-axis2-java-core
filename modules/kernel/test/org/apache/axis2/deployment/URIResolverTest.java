@@ -78,4 +78,45 @@ public class URIResolverTest extends TestCase {
         assertNull("WAR resolver must block relative path resolving to remote URL",
                 inputSource.getSystemId());
     }
+
+    /**
+     * Pin the scheme predicate the SSRF guards above are built on.
+     *
+     * The guards only inspect and block schemes once isAbsolute() says the
+     * location is absolute, so widening that predicate silently reroutes
+     * locations to the parent resolver. XmlSchema 2.3.3 made
+     * DefaultURIResolver.isAbsolute private and replaced it with a
+     * URI.isAbsolute() test, under which file: and jar: locations become
+     * absolute; these resolvers therefore declare the original predicate
+     * themselves. Anything that widens it must revisit the guards first.
+     */
+    public void testOnlyHttpHttpsAndUrnAreAbsolute() {
+        ExposedWarResolver resolver = new ExposedWarResolver();
+
+        assertTrue("http must be absolute",
+                resolver.absolute("http://www.test.org/test.xsd"));
+        assertTrue("https must be absolute",
+                resolver.absolute("https://www.test.org/test.xsd"));
+        assertTrue("urn must be absolute",
+                resolver.absolute("urn:test:schema"));
+
+        assertFalse("file: must stay relative, so it is read as a resource"
+                + " rather than handed to the parent resolver",
+                resolver.absolute("file:/tmp/test.xsd"));
+        assertFalse("jar: must stay relative",
+                resolver.absolute("jar:file:/tmp/app.jar!/test.xsd"));
+        assertFalse("a plain relative path must stay relative",
+                resolver.absolute("test.xsd"));
+    }
+
+    /** Exposes the protected predicate to this package. */
+    private static class ExposedWarResolver extends WarFileBasedURIResolver {
+        ExposedWarResolver() {
+            super(null);
+        }
+
+        boolean absolute(String uri) {
+            return isAbsolute(uri);
+        }
+    }
 }
