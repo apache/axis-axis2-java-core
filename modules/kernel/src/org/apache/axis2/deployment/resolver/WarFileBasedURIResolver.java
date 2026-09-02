@@ -73,5 +73,24 @@ public class WarFileBasedURIResolver extends DefaultURIResolver {
             return new InputSource(classLoader.getResourceAsStream(resolved));
         }
     }
-}
 
+    /**
+     * Override logic in DefaultURIResolver class, which made this method
+     * private in XmlSchema 2.3.3 so that it is no longer inherited.
+     *
+     * These are deliberately the 2.3.2 semantics rather than the
+     * URI.isAbsolute() test that replaced them upstream: the remote-scheme
+     * guard above relies on file: locations falling through to the relative
+     * branch, and widening this predicate would send them to the parent
+     * resolver instead. Keep it protected -- 2.3.2 still declares it
+     * protected, and narrowing an inherited member will not compile.
+     *
+     * @param uri
+     * @return boolean
+     */
+    protected boolean isAbsolute(String uri) {
+        return uri.startsWith("http://")
+                || uri.startsWith("https://")
+                || uri.startsWith("urn:");
+    }
+}
