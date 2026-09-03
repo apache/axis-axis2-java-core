@@ -136,7 +136,7 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 | **JSON-RPC dispatch** | Method name injection; unexpected operation invocation | Method names validated against deployed operations; unknown methods return fault |
 | **Multipart/file upload** (commons-fileupload2) | Unbounded file count DoS (CVE-2023-24998 pattern); unbounded body size; temp-file accumulation | commons-fileupload2 enforces the file count limit; `multipartMaxRequestSize` / `multipartMaxFileSize` bound the body; temp files are deleted immediately for form fields and tracked to collection for file parts |
 | **Form-urlencoded builder** | Unbounded body read into an in-memory map | `formUrlEncodedMaxRequestSize` bounds the read; the stream fails rather than truncating |
-| **Service dispatchers** | Routing to unintended service; header spoofing | Dispatchers validate service existence; unknown services return fault |
+| **Service dispatchers** | Routing to unintended service; header spoofing; a service chosen from message content after the Security phase has already run | Dispatchers validate service existence and unknown services return fault; selecting the service from the SOAP body namespace is off unless `allowContentBasedServiceDispatch` is set, so binding happens before the Security phase runs |
 | **Hot-deployment** (DeploymentEngine) | Malicious AAR/MAR deploys arbitrary code | Trust boundary is filesystem access; no signature verification (admin operation) |
 | **Context externalization** (SafeObjectInputStream) | Java deserialization gadget chains | Whitelist-based `SafeObjectInputStream`; restricted to known Axis2 context classes |
 | **Metadata endpoints** (`?wsdl`, `?xsd`, `/services/`, `.xsd`/`.wsdl` by name, OpenAPI/MCP) | Service enumeration, schema disclosure | `exposeServiceMetadata` enforced uniformly across the servlet and standalone HTTP paths and the OpenAPI/MCP generators |
@@ -319,6 +319,17 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
     OpenAPI/Swagger/MCP generators. A service with exposure disabled is
     skipped rather than refused, so it stays indistinguishable from one that
     is not deployed.
+
+13. **Content-based service dispatch (2.0.2):** The inflow phase order is
+    Transport, Addressing, Security, PreDispatch, Dispatch, and `DispatchPhase`
+    installs only the phases that follow it, so a service bound during Dispatch
+    is bound after the Security phase has run against no service and Security is
+    never revisited. Selecting a service from the namespace of the SOAP body's
+    first element therefore let a caller whose request URI named no service reach
+    a service whose engaged security modules had not run for it.
+    `allowContentBasedServiceDispatch` defaults to `false`. Dispatch by request
+    URI, SOAPAction and WS-Addressing binds the service before the Security phase
+    and is unaffected.
 
 ## Reporting Security Issues
 
