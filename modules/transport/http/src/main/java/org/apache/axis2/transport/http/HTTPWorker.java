@@ -123,15 +123,12 @@ public class HTTPWorker implements Worker {
                 String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 6);
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
-                if (service != null) {
-                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
-                    if (canExposeServiceMetadata) {
-                        response.setStatus(HttpStatus.SC_OK);
-                        response.setContentType("text/xml");
-                        service.printWSDL2(response.getOutputStream(), getHost(request));
-                    } else {
-                        response.setStatus(HttpStatus.SC_FORBIDDEN);
-                    }
+                // A hidden service falls through exactly as an unknown one does,
+                // rather than being refused, so the answer does not confirm it exists.
+                if (service != null && canExposeServiceMetadata(service)) {
+                    response.setStatus(HttpStatus.SC_OK);
+                    response.setContentType("text/xml");
+                    service.printWSDL2(response.getOutputStream(), getHost(request));
                     return;
                 }
             }
@@ -145,15 +142,12 @@ public class HTTPWorker implements Worker {
                 
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
-                if (service != null) {
-                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
-                    if (canExposeServiceMetadata) {
-                        response.setStatus(HttpStatus.SC_OK);
-                        response.setContentType("text/xml");
-                        service.printWSDL(response.getOutputStream(), getHost(request));
-                    } else {
-                        response.setStatus(HttpStatus.SC_FORBIDDEN);
-                    }
+                // A hidden service falls through exactly as an unknown one does,
+                // rather than being refused, so the answer does not confirm it exists.
+                if (service != null && canExposeServiceMetadata(service)) {
+                    response.setStatus(HttpStatus.SC_OK);
+                    response.setContentType("text/xml");
+                    service.printWSDL(response.getOutputStream(), getHost(request));
                     return;
                 }
             }
@@ -161,15 +155,12 @@ public class HTTPWorker implements Worker {
                 String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 4);
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
-                if (service != null) {
-                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
-                    if (canExposeServiceMetadata) {
-                        response.setStatus(HttpStatus.SC_OK);
-                        response.setContentType("text/xml");
-                        service.printSchema(response.getOutputStream());
-                    } else {
-                        response.setStatus(HttpStatus.SC_FORBIDDEN);
-                    }
+                // A hidden service falls through exactly as an unknown one does,
+                // rather than being refused, so the answer does not confirm it exists.
+                if (service != null && canExposeServiceMetadata(service)) {
+                    response.setStatus(HttpStatus.SC_OK);
+                    response.setContentType("text/xml");
+                    service.printSchema(response.getOutputStream());
                     return;
                 }
             }
@@ -183,12 +174,8 @@ public class HTTPWorker implements Worker {
 
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
-                if (service != null) {
-                    boolean canExposeServiceMetadata = canExposeServiceMetadata(service);
-                    if (!canExposeServiceMetadata) {
-                        response.setStatus(HttpStatus.SC_FORBIDDEN);
-                        return;
-                    }
+                // As above: hidden falls through, it is not refused.
+                if (service != null && canExposeServiceMetadata(service)) {
                     //run the population logic just to be sure
                     service.populateSchemaMappings();
                     //write out the correct schema
@@ -377,11 +364,8 @@ public class HTTPWorker implements Worker {
         HashMap services = configurationContext.getAxisConfiguration().getServices();
         AxisService service = (AxisService) services.get(serviceName);
 
-        if (service != null) {
-            if (!canExposeServiceMetadata(service)) {
-                response.setStatus(HttpStatus.SC_FORBIDDEN);
-                return true;
-            }
+        // Hidden is answered with the same 404 and the same body as absent, below.
+        if (service != null && canExposeServiceMetadata(service)) {
             response.setStatus(HttpStatus.SC_OK);
             response.setContentType("text/xml");
             service.printUserWSDL(response.getOutputStream(), wsdlName, ip);

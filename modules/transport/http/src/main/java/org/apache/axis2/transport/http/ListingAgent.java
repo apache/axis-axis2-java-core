@@ -171,7 +171,11 @@ public class ListingAgent extends AbstractAgent {
 
         if ((services != null) && !services.isEmpty()) {
             AxisService axisService = services.get(serviceName);
-            if (axisService != null) {              
+            // A hidden service is answered by the fall-through below, which is the
+            // same 404 with the same body an undeployed service gets. Answering 403
+            // here instead would confirm the service exists, which is the one thing
+            // hiding it was meant to withhold.
+            if (axisService != null && canExposeServiceMetadata(axisService)) {
                 if (wsdl2 >= 0) {
                     handleWSDL2Request(req, res, url, axisService);
                     return;
@@ -194,10 +198,6 @@ public class ListingAgent extends AbstractAgent {
                                      HttpServletResponse res,
                                      String serviceName,
                                      AxisService axisService) throws IOException, ServletException {
-        if (!canExposeServiceMetadata(axisService)){
-            res.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
         ExternalPolicySerializer serializer = new ExternalPolicySerializer();
         serializer.setAssertionsToFilter(configContext
                 .getAxisConfiguration().getLocalPolicyAssertions());
@@ -272,10 +272,6 @@ public class ListingAgent extends AbstractAgent {
 
     private void handleXSDRequest(HttpServletRequest req, HttpServletResponse res,
                                   AxisService axisService) throws IOException {
-        if (!canExposeServiceMetadata(axisService)){
-            res.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
         res.setContentType("text/xml");
         int ret = axisService.printXSD(res.getOutputStream(), getParamtereIgnoreCase(req ,"xsd"));
         if (ret == 0) {
@@ -292,10 +288,6 @@ public class ListingAgent extends AbstractAgent {
                                    HttpServletResponse res,
                                    String url,
                                    AxisService axisService) throws IOException {
-        if (!canExposeServiceMetadata(axisService)){
-            res.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
         OutputStream out = res.getOutputStream();
         res.setContentType("text/xml");
         String ip = extractHost(url);
@@ -312,10 +304,6 @@ public class ListingAgent extends AbstractAgent {
                                     HttpServletResponse res,
                                     String url,
                                     AxisService axisService) throws IOException {
-        if (!canExposeServiceMetadata(axisService)){
-            res.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
         res.setContentType("text/xml");
         String ip = extractHost(url);
         String wsdlName = getParamtereIgnoreCase(req , "wsdl2");

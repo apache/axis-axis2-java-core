@@ -332,11 +332,11 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
     WSDL documents are servable, enforced inside the shared stream helper so
     every caller inherits it rather than repeating it.
 
-    Known gap: the `?wsdl`/`?wsdl2`/`?xsd`/`?policy` query routes still answer
-    403 for a hidden service where an undeployed one gets 404, which is an
-    existence oracle. The file routes already answer alike. Tracked for a
-    follow-up; RFC 9110 section 15.5.4 sanctions answering 404 to conceal a
-    forbidden resource's existence.
+    A hidden service is answered exactly as an undeployed one, on every route,
+    body included: the query routes no longer send 403 where an absent service
+    gets 404, which was an existence oracle. There is no `403` left in either
+    HTTP path's metadata handling. RFC 9110 section 15.5.4 sanctions answering
+    404 to conceal a forbidden resource's existence, which is what this does.
 
 13. **Content-based service dispatch (2.0.2):** The inflow phase order is
     Transport, Addressing, Security, PreDispatch, Dispatch, and `DispatchPhase`
