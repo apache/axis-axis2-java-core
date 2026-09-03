@@ -81,24 +81,6 @@
                 <artifactId>alta-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>war-location</id>
-                        <goals>
-                            <goal>generate-properties</goal>
-                        </goals>
-                        <configuration>
-                            <name>webapp</name>
-                            <value>%file%</value>
-                            <artifactSet>
-                                <dependencySet>
-                                    <scope>test</scope>
-                                    <includes>
-                                        <include>*:axis2-webapp:war:*</include>
-                                    </includes>
-                                </dependencySet>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>aar-location</id>
                         <goals>
                             <goal>generate-test-resources</goal>
@@ -119,6 +101,65 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-webapp</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>axis2-webapp</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <outputDirectory>${project.build.directory}/axis2-webapp</outputDirectory>
+                                    <!-- Unpack every run. Without this the plugin's marker file
+                                         skips the unpack on a rebuild, leaving the credentials
+                                         injected below already in place, and the guarded replace
+                                         then fails because it finds nothing to replace. -->
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>set-admin-credentials</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- The shipped axis2-webapp WAR deliberately carries no admin
+                                     credentials, which leaves the console disabled (see
+                                     modules/webapp/conf/axis2.xml). AxisAdminServletITCase needs a
+                                     console it can log into, so inject credentials into the
+                                     unpacked copy only. failOnNoReplacements keeps this honest: if
+                                     the shipped parameters ever change shape, this fails loudly
+                                     instead of silently testing a console nobody can log into. -->
+                                <replace file="${project.build.directory}/axis2-webapp/WEB-INF/conf/axis2.xml"
+                                         token="&lt;parameter name=&quot;userName&quot;&gt;&lt;/parameter&gt;"
+                                         value="&lt;parameter name=&quot;userName&quot;&gt;admin&lt;/parameter&gt;"
+                                         failOnNoReplacements="true"/>
+                                <replace file="${project.build.directory}/axis2-webapp/WEB-INF/conf/axis2.xml"
+                                         token="&lt;parameter name=&quot;password&quot;&gt;&lt;/parameter&gt;"
+                                         value="&lt;parameter name=&quot;password&quot;&gt;axis2&lt;/parameter&gt;"
+                                         failOnNoReplacements="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.github.veithen.daemon</groupId>
                 <artifactId>daemon-maven-plugin</artifactId>
                 <executions>
@@ -133,7 +174,7 @@
                             </daemonArtifact>
                             <daemonConfiguration>
                                 <resourceBases>
-                                    <resourceBase>${webapp}</resourceBase>
+                                    <resourceBase>${project.build.directory}/axis2-webapp</resourceBase>
                                 </resourceBases>
                                 <contextPath>/axis2</contextPath>
                             </daemonConfiguration>

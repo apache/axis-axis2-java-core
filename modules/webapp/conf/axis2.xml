@@ -129,9 +129,16 @@
     <!--is set, then Axis2 tries to get the first exception and set its message as the faultreason/Reason.-->
     <parameter name="DrillDownToRootCauseForFaultReason">false</parameter>
 
-    <!-- AXIS2-6069, leave this in for unit tests but don't distribute it -->
-    <parameter name="userName">admin</parameter>
-    <parameter name="password">axis2</parameter>
+    <!-- AXIS2-6069. Empty on purpose: this file ships inside the axis2-webapp
+         WAR, so any value here is a published default credential for the
+         /axis2-admin console, which can upload services and therefore execute
+         code. AdminActions.login rejects empty submitted credentials before
+         comparing, so leaving these blank disables the console until an
+         operator sets both. The admin-console integration tests inject their
+         own values into the unpacked WAR (see systests/webapp-tests/pom.xml);
+         do not restore literals here to make a test pass. -->
+    <parameter name="userName"></parameter>
+    <parameter name="password"></parameter>
 
     <!--To override repository/services you need to uncomment following parameter and value SHOULD be absolute file path.-->
     <!--ServicesDirectory only works on the following cases-->

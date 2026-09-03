@@ -39,9 +39,13 @@
     <!--is set then, Axis2 tries to get the first exception and set its message as the faultreason/Reason.-->
     <parameter name="DrillDownToRootCauseForFaultReason">false</parameter>
 
-    <!--This is the user name and password of admin console-->
-    <parameter name="userName">admin</parameter>
-    <parameter name="password">axis2</parameter>
+    <!--The user name and password of the admin console. Empty on purpose:
+        this file ships inside axis2-kernel.jar and is the classpath fallback
+        every configurator uses when no axis2.xml is found, so any value here is
+        a published default credential. Leaving these blank disables the console
+        until an operator sets both.-->
+    <parameter name="userName"></parameter>
+    <parameter name="password"></parameter>
 
     <!--To override repository/services you need to uncomment following parameter and value SHOULD be absolute file path.-->
     <!--ServicesDirectory only works on the following cases-->
