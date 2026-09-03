@@ -36,6 +36,16 @@ public class SOAPMessageBodyBasedServiceDispatcher extends AbstractServiceDispat
     private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedServiceDispatcher.class);
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
+        if (!ContentBasedDispatchPolicy.isAllowed(messageContext)) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString()
+                        + " Not dispatching on the SOAP body: "
+                        + ContentBasedDispatchPolicy.ALLOW_CONTENT_BASED_DISPATCH
+                        + " is false");
+            }
+            return null;
+        }
+
         String serviceName = null;
         String localPart = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
 

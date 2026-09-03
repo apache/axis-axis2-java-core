@@ -44,6 +44,15 @@
         every configurator uses when no axis2.xml is found, so any value here is
         a published default credential. Leaving these blank disables the console
         until an operator sets both.-->
+    <!--Whether a service may be selected from the namespace of the SOAP body's
+        first element. FALSE by default: the Dispatch phase runs after the Security
+        phase, so a service bound from message content is bound after the handlers
+        that would have authenticated the request for it have already run against no
+        service. Dispatch by request URI, SOAPAction and WS-Addressing is unaffected.
+        Turn this on only if services are genuinely addressed by body namespace, and
+        not together with per-service security modules.-->
+    <parameter name="allowContentBasedServiceDispatch">false</parameter>
+
     <parameter name="userName"></parameter>
     <parameter name="password"></parameter>
 

@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.dispatchers.RequestURIBasedDispatcher;
 import org.apache.axis2.dispatchers.RequestURIBasedOperationDispatcher;
+import org.apache.axis2.dispatchers.ContentBasedDispatchPolicy;
 import org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher;
 import org.apache.axis2.integration.LocalTestCase;
 import org.apache.axis2.integration.TestingUtils;
@@ -61,6 +62,9 @@ public class ServiceDispatchingTest extends LocalTestCase {
     	DispatchPhase dp = new DispatchPhase();
     	dp.addHandler(new SOAPMessageBodyBasedDispatcher());
     	serverConfig.getInFlowPhases().set(1, dp);
+    	// Selecting the service from the body is opt-in; see ContentBasedDispatchPolicy.
+    	serverConfig.addParameter(
+    			ContentBasedDispatchPolicy.ALLOW_CONTENT_BASED_DISPATCH, "true");
     	
     	ServiceClient sender = getClient(Echo.SERVICE_NAME, Echo.ECHO_OM_ELEMENT_OP_NAME);
     	OMElement payload = TestingUtils.createDummyOMElement(sender.getOptions().getTo().getAddress());

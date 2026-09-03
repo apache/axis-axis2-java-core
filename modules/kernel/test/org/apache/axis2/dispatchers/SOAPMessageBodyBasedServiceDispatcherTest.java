@@ -32,6 +32,21 @@ import org.apache.axis2.engine.AxisConfiguration;
 
 public class SOAPMessageBodyBasedServiceDispatcherTest extends TestCase {
 
+    /**
+     * Body-namespace dispatch is off unless asked for: the Dispatch phase runs after
+     * the Security phase, so a service chosen from message content is chosen after
+     * the handlers that would have authenticated the request for it have run against
+     * no service. See {@link org.apache.axis2.dispatchers.ContentBasedDispatchPolicy}.
+     */
+    public void testFindServiceDeniedByDefault() throws AxisFault {
+        MessageContext messageContext = messageContextNaming("Service2");
+
+        new SOAPMessageBodyBasedServiceDispatcher().invoke(messageContext);
+
+        assertNull("a service must not be selected from the body by default",
+                messageContext.getAxisService());
+    }
+
     public void testFindService() throws AxisFault {
         MessageContext messageContext;
         AxisService as1 = new AxisService("Service1");
@@ -49,11 +64,27 @@ public class SOAPMessageBodyBasedServiceDispatcherTest extends TestCase {
                                                                          "pfx"));
         messageContext.setEnvelope(se);
 
+        ac.addParameter(ContentBasedDispatchPolicy.ALLOW_CONTENT_BASED_DISPATCH, "true");
 
         SOAPMessageBodyBasedServiceDispatcher ruisd = new SOAPMessageBodyBasedServiceDispatcher();
         ruisd.invoke(messageContext);
 
         assertEquals(as2, messageContext.getAxisService());
+    }
+
+    /** A message whose body first element namespace addresses the named service. */
+    private MessageContext messageContextNaming(String serviceName) throws AxisFault {
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        AxisConfiguration ac = cc.getAxisConfiguration();
+        ac.addService(new AxisService(serviceName));
+        MessageContext messageContext = cc.createMessageContext();
+
+        SOAPEnvelope se = OMAbstractFactory.getSOAP11Factory().createSOAPEnvelope();
+        SOAPBody sb = OMAbstractFactory.getSOAP11Factory().createSOAPBody(se);
+        sb.addChild(OMAbstractFactory.getSOAP11Factory().createOMElement("operation2",
+                "http://127.0.0.1:8080/axis2/services/" + serviceName, "pfx"));
+        messageContext.setEnvelope(se);
+        return messageContext;
     }
 
 }

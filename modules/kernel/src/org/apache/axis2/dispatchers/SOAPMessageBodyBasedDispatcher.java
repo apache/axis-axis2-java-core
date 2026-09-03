@@ -80,6 +80,16 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
+        if (!ContentBasedDispatchPolicy.isAllowed(messageContext)) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString()
+                        + " Not dispatching on the SOAP body: "
+                        + ContentBasedDispatchPolicy.ALLOW_CONTENT_BASED_DISPATCH
+                        + " is false");
+            }
+            return null;
+        }
+
         String serviceName;
 
         String localPart = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
