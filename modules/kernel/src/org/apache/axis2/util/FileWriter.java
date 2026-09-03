@@ -63,6 +63,23 @@ public class FileWriter {
 
         returnFile = new File(root, fileName);
 
+        // Codegen derives file names from the document it was handed -- a
+        // wsdl:service name reaches here verbatim, and a QName localPart is not
+        // required to be an NCName, so separators and ".." survive. Every caller is
+        // writing generated output beneath rootLocation, so a resolved path outside
+        // it means the name steered the write, not the caller: refuse rather than
+        // overwrite, say, a project's real contract file with the attacker's.
+        if (rootLocation != null) {
+            String canonicalRoot = rootLocation.getCanonicalPath();
+            String canonicalTarget = returnFile.getCanonicalPath();
+            if (!canonicalTarget.equals(canonicalRoot)
+                    && !canonicalTarget.startsWith(canonicalRoot + File.separator)) {
+                throw new IOException("Refusing to write generated output outside "
+                        + canonicalRoot + ": the name '" + fileName
+                        + "' resolves to " + canonicalTarget);
+            }
+        }
+
         if (!returnFile.exists()) {
             // returnFile.createNewFile();
         }
