@@ -19,6 +19,12 @@
 
 <project name="sample_service" default="generate_service" basedir=".">
 
+        <!-- Compile for a fixed release rather than whatever JDK runs the build,
+             so the class files load on every JDK the project supports and stale
+             output cannot outlive a JDK change. A value inherited from the Maven
+             build wins over this default. -->
+        <property name="maven.compiler.release" value="17"/>
+
     <target name="init">
         <property name="sample_home" value="${basedir}"/>
         <property name="classes_dir" value="${sample_home}/classes"/>
@@ -51,7 +57,7 @@
         <mkdir dir="${deploy_dir}/META-INF"/>
 
         <!-- compiling the classes -->
-        <javac  destdir="${deploy_dir}" srcdir="${src_dir}" debug="on" includeantruntime="false">
+        <javac  destdir="${deploy_dir}" srcdir="${src_dir}" debug="on" includeantruntime="false" release="${maven.compiler.release}">
             <exclude name="**/client/*"/>
             <classpath>
                 <fileset dir="${lib_dir}" includes="*.jar"/>
@@ -77,7 +83,7 @@
         <mkdir dir="${dist_dir}"/>
 
         <!-- compiling the classes -->
-        <javac  destdir="${classes_dir}" srcdir="${src_dir}" debug="on" includeantruntime="false">
+        <javac  destdir="${classes_dir}" srcdir="${src_dir}" debug="on" includeantruntime="false" release="${maven.compiler.release}">
             <classpath>
                 <fileset dir="${lib_dir}" includes="*.jar"/>
             </classpath>

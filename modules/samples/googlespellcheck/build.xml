@@ -18,6 +18,12 @@
   -->
 
 <project name="googlespellcheck" basedir="." default="run.client">
+
+	<!-- Compile for a fixed release rather than whatever JDK runs the build,
+	     so the class files load on every JDK the project supports and stale
+	     output cannot outlive a JDK change. A value inherited from the Maven
+	     build wins over this default. -->
+	<property name="maven.compiler.release" value="17"/>
 	
 	<property name="wsdl" value="http://tools.wso2.net:12001/axis2/services/SimplifiedSpellCheck?wsdl" />
 	
@@ -90,7 +96,7 @@
 	
 	<target name="client.compile">
 		
-		<javac srcdir="src" destdir="${dest.dir.classes}" includeantruntime="false">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includeantruntime="false" release="${maven.compiler.release}">
 			<classpath refid="build.class.path" />
 		</javac>
 	

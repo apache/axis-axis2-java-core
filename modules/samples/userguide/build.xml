@@ -18,6 +18,12 @@
   -->
 
 <project name="userguide" default="generate.service">
+
+    <!-- Compile for a fixed release rather than whatever JDK runs the build,
+         so the class files load on every JDK the project supports and stale
+         output cannot outlive a JDK change. A value inherited from the Maven
+         build wins over this default. -->
+    <property name="maven.compiler.release" value="17"/>
     <property name="mainDir" value="../.."/>
     <property name="classes.dir" value="build/classes"/>
     <path id="axis.classpath">
@@ -35,7 +41,7 @@
     
     <target name="compile">
     		<mkdir dir="${classes.dir}" />
-		<javac srcdir="src" destdir="${classes.dir}" includeantruntime="false">
+		<javac srcdir="src" destdir="${classes.dir}" includeantruntime="false" release="${maven.compiler.release}">
                         <exclude name="**/springboot/**/*.java" />
 			<classpath refid="axis.classpath" />
 		</javac>

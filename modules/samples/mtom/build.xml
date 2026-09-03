@@ -19,6 +19,12 @@
 
 <project name="mtom" basedir="." default="generate.service">
 
+	<!-- Compile for a fixed release rather than whatever JDK runs the build,
+	     so the class files load on every JDK the project supports and stale
+	     output cannot outlive a JDK change. A value inherited from the Maven
+	     build wins over this default. -->
+	<property name="maven.compiler.release" value="17"/>
+
 	<property environment="env" />
 	<property name="build.dir" value="${basedir}/build" />
 	<property name="client.dir" value="${build.dir}/client" />
@@ -86,7 +92,7 @@
 
 		<mkdir dir="${client.classes.dir}" />
 		<!-- Compile client -->
-		<javac srcdir="${client.dir}/src" destdir="${client.classes.dir}" fork="true" includeantruntime="false">
+		<javac srcdir="${client.dir}/src" destdir="${client.classes.dir}" fork="true" includeantruntime="false" release="${maven.compiler.release}">
 			<classpath refid="class.path" />
 		</javac>
     </target>	
@@ -109,7 +115,7 @@
 	</target>
 	<target  name="jar.server">
 		<mkdir dir="${service.dir}/classes" />
-		<javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true" destdir="${service.dir}/classes" srcdir="${service.dir}/src"  includeantruntime="false">
+		<javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true" destdir="${service.dir}/classes" srcdir="${service.dir}/src"  includeantruntime="false" release="${maven.compiler.release}">
 		<classpath refid="class.path"/>
 		</javac>
 

@@ -19,6 +19,12 @@
 
 <project name="pojoguide" basedir="." default="generate.service">
 
+	<!-- Compile for a fixed release rather than whatever JDK runs the build,
+	     so the class files load on every JDK the project supports and stale
+	     output cannot outlive a JDK change. A value inherited from the Maven
+	     build wins over this default. -->
+	<property name="maven.compiler.release" value="17"/>
+
 	<property name="service.name" value="WeatherService" />
 	<property name="dest.dir" value="build" />
 	<property name="dest.dir.classes" value="${dest.dir}/${service.name}" />
@@ -57,7 +63,7 @@
 
 		<copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 
-		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/pojo/service/**,sample/pojo/data/**" includeantruntime="false">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/pojo/service/**,sample/pojo/data/**" includeantruntime="false" release="${maven.compiler.release}">
 			<classpath refid="build.class.path" />
 		</javac>
 		
@@ -78,7 +84,7 @@
 	</target>
 
 	<target name="rpc.client.compile">
-		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/pojo/rpcclient/**,sample/pojo/data/**" includeantruntime="false">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/pojo/rpcclient/**,sample/pojo/data/**" includeantruntime="false" release="${maven.compiler.release}">
 			<classpath refid="build.class.path" />
 		</javac>
 	</target>

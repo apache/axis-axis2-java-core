@@ -19,6 +19,12 @@
 
 <project name="faulthandling" basedir="." default="generate.service">
 
+    <!-- Compile for a fixed release rather than whatever JDK runs the build,
+         so the class files load on every JDK the project supports and stale
+         output cannot outlive a JDK change. A value inherited from the Maven
+         build wins over this default. -->
+    <property name="maven.compiler.release" value="17"/>
+
     <property name="wsdl.uri" value="bank.wsdl"/>
     <property name="service.target" value="build/service"/>
     <property name="client.target" value="build/client"/>
@@ -81,7 +87,7 @@
 
         <!--First let's compile the classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
-               destdir="${service.target}/classes" srcdir="${service.target}/src" includeantruntime="false">
+               destdir="${service.target}/classes" srcdir="${service.target}/src" includeantruntime="false" release="${maven.compiler.release}">
             <classpath>
                 <fileset dir="../../../lib">
                     <include name="*.jar"/>
@@ -125,7 +131,7 @@
 
         <!--now compile the stub classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
-               destdir="${client.target}/classes" includeantruntime="false">
+               destdir="${client.target}/classes" includeantruntime="false" release="${maven.compiler.release}">
             <src path="${client.target}/src"/>
             <classpath>
                 <fileset dir="../../../lib">

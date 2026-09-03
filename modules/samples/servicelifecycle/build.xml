@@ -19,6 +19,12 @@
 
 <project name="servicelifecycle" basedir="." default="build">
 
+    <!-- Compile for a fixed release rather than whatever JDK runs the build,
+         so the class files load on every JDK the project supports and stale
+         output cannot outlive a JDK change. A value inherited from the Maven
+         build wins over this default. -->
+    <property name="maven.compiler.release" value="17"/>
+
     <property environment="env"/>
     <property name="service-name" value="Library.aar"/>
     <property name="dest.dir" value="target"/>
@@ -63,7 +69,7 @@
               tofile="${dest.dir.classes}/META-INF/services.xml"
               overwrite="true"/>
 
-        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**" includeantruntime="false">
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**" includeantruntime="false" release="${maven.compiler.release}">
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -83,7 +89,7 @@
               tofile="${dest.dir.classes}/META-INF/services.xml"
               overwrite="true"/>
 
-        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**" includeantruntime="false">
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**" includeantruntime="false" release="${maven.compiler.release}">
             <classpath refid="build.class.path"/>
         </javac>
 
@@ -97,7 +103,7 @@
     <target name="run.client" depends="prepare">
         <mkdir dir="${dest.dir}"/>
         <mkdir dir="${dest.dir.classes}"/>
-        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="client/**" includeantruntime="false">
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="client/**" includeantruntime="false" release="${maven.compiler.release}">
             <classpath>
                 <fileset dir="../../lib">
                     <include name="*.jar"/>

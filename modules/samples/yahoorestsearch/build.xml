@@ -18,6 +18,12 @@
   -->
 
 <project name="YahooRestSearchSample" default="run.client">
+
+	<!-- Compile for a fixed release rather than whatever JDK runs the build,
+	     so the class files load on every JDK the project supports and stale
+	     output cannot outlive a JDK change. A value inherited from the Maven
+	     build wins over this default. -->
+	<property name="maven.compiler.release" value="17"/>
 	<property environment="env" />
 	<property name="axis2.home" value="../../" />
 	<property name="axis2.repo" value="${axis2.home}/repository" />
@@ -33,7 +39,7 @@
 	<target name="compile">
 		<mkdir dir="${client.classes.dir}" />
 		<!-- Compile client -->
-		<javac srcdir="src" destdir="${client.classes.dir}" includeantruntime="false">
+		<javac srcdir="src" destdir="${client.classes.dir}" includeantruntime="false" release="${maven.compiler.release}">
 			<classpath refid="axis.classpath" />
 		</javac>
 		<jar destfile="${build.dir}/yahooRESTSearch.jar">

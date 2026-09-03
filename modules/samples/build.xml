@@ -29,6 +29,12 @@
                                                                      
      ====================================================================== -->
 <project name="samples" basedir="." default="compile">
+
+    <!-- Compile for a fixed release rather than whatever JDK runs the build,
+         so the class files load on every JDK the project supports and stale
+         output cannot outlive a JDK change. A value inherited from the Maven
+         build wins over this default. -->
+    <property name="maven.compiler.release" value="17"/>
     <property name="src.dir" value="src"/>
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="${build.dir}/lib"/>
@@ -86,7 +92,7 @@
     </target>
 
     <target name="compile" depends="clean,createDir">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" release="${maven.compiler.release}">
             <classpath refid="classpath.library"/>
         </javac>
         <jar destfile="${lib.dir}/${ant.project.name}-all.jar">
