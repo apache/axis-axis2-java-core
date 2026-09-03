@@ -325,4 +325,21 @@ public class AxisServiceTest extends XMLSchemaTest {
         }
         
     }
+
+    /**
+     * The gate every anonymous metadata channel consults -- the ?wsdl/?xsd/?policy
+     * routes, the service listing, the OpenAPI and MCP generators, WS-MEX and ping.
+     * Exposure is the default; only an explicit false withholds.
+     */
+    public void testMetadataIsExposedUnlessExplicitlyDisabled() throws Exception {
+        AxisService service = new AxisService("Hidden");
+        assertTrue("metadata is exposed when the parameter is absent",
+                service.isMetadataExposed());
+
+        service.addParameter(AxisService.EXPOSE_SERVICE_METADATA, "false");
+        assertFalse("an explicit false withholds metadata", service.isMetadataExposed());
+
+        service.addParameter(AxisService.EXPOSE_SERVICE_METADATA, "true");
+        assertTrue("an explicit true exposes metadata", service.isMetadataExposed());
+    }
 }

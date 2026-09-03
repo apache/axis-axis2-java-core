@@ -65,6 +65,15 @@ public class MexMessageReceiver extends AbstractInOutMessageReceiver {
 		serviceConfigMEXParm = theService.getParameter(MexConstants.MEX_CONFIG.MEX_PARM);
 		
 		check_MEX_disabled(serviceConfigMEXParm);
+
+		// WS-MEX GetMetadata returns the WSDL, schema and policy of the service --
+		// with no Dialect it returns all three -- so it is one of the anonymous
+		// metadata channels exposeServiceMetadata governs. Answered exactly as a
+		// MEX-disabled service is, so a hidden service is not distinguishable.
+		if (!theService.isMetadataExposed()) {
+			throw new MexDisabledException(
+					"'metadataexchange' parameter configured to disable MEX for the service.");
+		}
 		
 		try {
 			Metadata metadata = handleRequest(msgContext);

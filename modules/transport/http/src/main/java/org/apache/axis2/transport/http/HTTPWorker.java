@@ -366,12 +366,7 @@ public class HTTPWorker implements Worker {
      * @return true - if service metadata can be exposed, false - otherwise
      */
     private boolean canExposeServiceMetadata(AxisService service) throws IOException {
-        Parameter exposeServiceMetadata = service.getParameter("exposeServiceMetadata");
-        if (exposeServiceMetadata != null &&
-            JavaUtils.isFalseExplicitly(exposeServiceMetadata.getValue())) {
-            return false;
-        }
-        return true;
+        return service.isMetadataExposed();
     }
 
     private boolean processInternalWSDL(String uri, ConfigurationContext configurationContext, 

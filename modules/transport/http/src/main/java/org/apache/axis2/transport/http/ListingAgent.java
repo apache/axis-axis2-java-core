@@ -349,12 +349,7 @@ public class ListingAgent extends AbstractAgent {
      * @return true - if service metadata can be exposed, false - otherwise
      */
     private boolean canExposeServiceMetadata(AxisService service) {
-        Parameter exposeServiceMetadata = service.getParameter("exposeServiceMetadata");
-        if(exposeServiceMetadata != null &&
-           JavaUtils.isFalseExplicitly(exposeServiceMetadata.getValue())) {
-           return false;
-        }
-        return true;
+        return service.isMetadataExposed();
     }
 
     protected void processListServices(HttpServletRequest req,
@@ -371,7 +366,14 @@ public class ListingAgent extends AbstractAgent {
         try {
             java.util.Map<String, AxisService> services = configContext.getAxisConfiguration().getServices();
             if (services != null) {
-                sortedServices.putAll(services);
+                // A service hidden from the metadata routes must not be named here
+                // either: the listing gives its name, EPR and every operation, which
+                // is what those routes were hidden to withhold.
+                for (java.util.Map.Entry<String, AxisService> entry : services.entrySet()) {
+                    if (entry.getValue() == null || entry.getValue().isMetadataExposed()) {
+                        sortedServices.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
         } catch (java.util.ConcurrentModificationException e) {
             // Hot deployment race — use whatever we captured so far

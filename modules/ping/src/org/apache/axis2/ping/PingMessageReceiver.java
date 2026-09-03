@@ -37,6 +37,10 @@ import java.util.Iterator;
 public class PingMessageReceiver extends AbstractInOutMessageReceiver implements PingConstants {
     private static Log log = LogFactory.getLog(PingMessageReceiver.class);
 
+    /** Detail-free answer, so that no ping response reveals what exists. */
+    private static final String PING_NOT_AVAILABLE =
+            "Ping is not available for the requested target";
+
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
 
         try {
@@ -107,16 +111,28 @@ public class PingMessageReceiver extends AbstractInOutMessageReceiver implements
                 if (axisOperation != null) {
                     operationList.add(axisOperation);
                 } else {
-                    String msg = "Operation not found: " + operationName +
-                            " specified in the ping request for the service" +
-                            inMessage.getAxisService().getName();
-                    log.error(msg);
-                    throw new AxisFault(msg);
+                    // The fault detail used to name the operation and the service,
+                    // telling an anonymous caller which operation names exist. Log
+                    // it, and answer with the same wording used everywhere else.
+                    log.error("Operation not found: " + operationName
+                            + " specified in the ping request for the service "
+                            + inMessage.getAxisService().getName());
+                    throw new AxisFault(PING_NOT_AVAILABLE);
                 }
             }
             operationsIterator = operationList.iterator();
         } else {
             //No operation is mentioned in the request.. So this is a service level ping
+            // which answers with every operation name and its live status -- the
+            // enumeration exposeServiceMetadata withholds from the other anonymous
+            // channels. Answered exactly as an unknown operation is, so a hidden
+            // service stays indistinguishable from one that is not deployed.
+            if (!inMessage.getAxisService().isMetadataExposed()) {
+                log.error("Service level ping refused for "
+                        + inMessage.getAxisService().getName()
+                        + ": metadata exposure is disabled");
+                throw new AxisFault(PING_NOT_AVAILABLE);
+            }
             operationsIterator = inMessage.getAxisService().getOperations();
         }
         return operationsIterator;

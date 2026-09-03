@@ -2919,6 +2919,34 @@ public class AxisService extends AxisDescription {
         this.clientSide = clientSide;
     }
 
+    /**
+     * Name of the service parameter that withholds this service's metadata from
+     * anonymous callers.
+     */
+    public static final String EXPOSE_SERVICE_METADATA = "exposeServiceMetadata";
+
+    /**
+     * Whether this service's metadata may be handed to an anonymous caller.
+     * <p>
+     * Every anonymous channel that describes a service -- the {@code ?wsdl},
+     * {@code ?wsdl2}, {@code ?xsd} and {@code ?policy} routes, the {@code .wsdl} and
+     * {@code .xsd} file routes, the service listing, the OpenAPI and MCP generators,
+     * WS-MEX and the ping module -- has to consult this before answering, or the
+     * operator's decision to hide a service holds on some routes and not others.
+     * That is why it lives here rather than being re-implemented per transport: the
+     * modules cannot reach a transport's private copy.
+     * <p>
+     * A hidden service should be answered as though it were not deployed, rather
+     * than refused, so that the answer does not confirm it exists.
+     *
+     * @return true unless the {@code exposeServiceMetadata} parameter is explicitly false
+     */
+    public boolean isMetadataExposed() {
+        Parameter exposeServiceMetadata = getParameter(EXPOSE_SERVICE_METADATA);
+        return exposeServiceMetadata == null
+                || !JavaUtils.isFalseExplicitly(exposeServiceMetadata.getValue());
+    }
+
     public boolean isElementFormDefault() {
         return elementFormDefault;
     }

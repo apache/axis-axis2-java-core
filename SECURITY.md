@@ -315,10 +315,28 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
 12. **Uniform metadata exposure (2.0.2):** `exposeServiceMetadata` is now
     honoured by every anonymous metadata route: the `?wsdl`, `?wsdl2` and
     `?xsd` queries as before, plus the `.xsd`/`.wsdl` file routes on both the
-    servlet and standalone HTTP paths, the named-WSDL route, and the
-    OpenAPI/Swagger/MCP generators. A service with exposure disabled is
-    skipped rather than refused, so it stays indistinguishable from one that
-    is not deployed.
+    servlet and standalone HTTP paths, the named-WSDL route, the
+    OpenAPI/Swagger/MCP generators, the `/services/` listing on both render
+    paths, WS-MEX `GetMetadata`, and the ping module's service-level ping. A
+    service with exposure disabled is skipped rather than refused, so it stays
+    indistinguishable from one that is not deployed.
+
+    The gate is `AxisService.isMetadataExposed()`. It lives in the kernel
+    because modules answer anonymous metadata requests too and cannot reach a
+    transport's private copy of the check -- which is how the listing, WS-MEX
+    and ping came to be exempt from a control the query routes enforced.
+
+    Separately, the `?xsd=` route reaches a service's packaged META-INF with
+    the request's value, and that directory holds `services.xml`, whose
+    parameters name keystores and password-callback classes. Only schema and
+    WSDL documents are servable, enforced inside the shared stream helper so
+    every caller inherits it rather than repeating it.
+
+    Known gap: the `?wsdl`/`?wsdl2`/`?xsd`/`?policy` query routes still answer
+    403 for a hidden service where an undeployed one gets 404, which is an
+    existence oracle. The file routes already answer alike. Tracked for a
+    follow-up; RFC 9110 section 15.5.4 sanctions answering 404 to conceal a
+    forbidden resource's existence.
 
 13. **Content-based service dispatch (2.0.2):** The inflow phase order is
     Transport, Addressing, Security, PreDispatch, Dispatch, and `DispatchPhase`

@@ -114,7 +114,10 @@ public class HTTPTransportReceiver {
 
                 AxisService axisService = (AxisService) it.next();
 
-                if (!Utils.isHiddenService(axisService)) {
+                // isMetadataExposed is a separate control from isHiddenService:
+                // a service hidden from the metadata routes must not be named,
+                // EPR'd and have its operations listed here instead.
+                if (!Utils.isHiddenService(axisService) && axisService.isMetadataExposed()) {
                     Iterator iterator = axisService.getOperations();
 
                     temp += "<h3><a href=\"" + axisService.getName() + "?wsdl\">" +
