@@ -117,6 +117,31 @@ public class XMLUtils {
         saxParsers.clear();
     }
 
+    /**
+     * A DocumentBuilderFactory that refuses DTDs and external entities.
+     * <p>
+     * Use this wherever an externally authored document is parsed -- which includes
+     * the code-generation tooling, whose whole purpose is to consume contracts
+     * written by somebody else. Unlike {@link #getDOMFactory()} this reports a
+     * parser that cannot be hardened instead of returning null, so a caller cannot
+     * quietly fall back to an unhardened one.
+     *
+     * @return a namespace-aware factory with DOCTYPE and external entities disabled
+     * @throws ParserConfigurationException if the parser will not accept the restrictions
+     */
+    public static DocumentBuilderFactory newSecureDocumentBuilderFactory()
+            throws ParserConfigurationException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        return dbf;
+    }
+
     private static DocumentBuilderFactory getDOMFactory() {
         DocumentBuilderFactory dbf;
         try {

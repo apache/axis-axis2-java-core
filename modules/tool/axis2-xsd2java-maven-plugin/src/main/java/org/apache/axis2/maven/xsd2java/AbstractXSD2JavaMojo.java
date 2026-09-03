@@ -30,6 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.axis2.schema.RestrictedSchemaURIResolver;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.xml.sax.InputSource;
 
@@ -74,6 +75,14 @@ public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
     @Parameter
     private boolean ignoreUnexpected;
 
+    /**
+     * Whether xs:include and xs:import locations may be resolved from anywhere
+     * rather than only from the filesystem. Off by default: a schema written
+     * elsewhere should not be able to make the build fetch a URL of its choosing.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean allowAbsoluteSchemaLocations;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         File outputDirectory = getOutputDirectory();
         outputDirectory.mkdirs();
@@ -94,6 +103,11 @@ public abstract class AbstractXSD2JavaMojo extends AbstractMojo {
         try {
             for (File xsdFile : xsdFiles) {
                 XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
+                // The schema being compiled was written elsewhere, so its
+                // include/import locations are resolved from the filesystem only;
+                // see RestrictedSchemaURIResolver.
+                schemaCollection.setSchemaResolver(
+                        new RestrictedSchemaURIResolver(allowAbsoluteSchemaLocations));
                 SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
                 compiler.compile(schemaCollection.read(new InputSource(xsdFile.toURI().toString())));
             }

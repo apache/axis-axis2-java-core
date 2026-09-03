@@ -26,6 +26,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.w3c.dom.Document;
@@ -67,6 +68,8 @@ public class XSD2Java {
                                        .create("dp"));
         options.addOption(OptionBuilder.withDescription(getMessage("schema.h.description"))
                                        .create("h"));
+        options.addOption(OptionBuilder.withDescription(getMessage("schema.asl.description"))
+                                       .create("asl"));
         options.addOption(OptionBuilder.withArgName(getMessage("schema.p.argname"))
                                        .hasArg()
                                        .withDescription(getMessage("schema.p.description"))
@@ -110,14 +113,22 @@ public class XSD2Java {
     private static void compile(File xsdFile, File outputFolder) throws Exception {
             //load the current Schema through a file
             //first read the file into a DOM
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
+            // This tool exists to compile a schema somebody else wrote, so the input
+            // is untrusted by definition: parse with DOCTYPE and external entities
+            // refused, and resolve include/import locations from the filesystem only
+            // unless -asl says otherwise. Without either, a schema can read local
+            // files, exfiltrate them through an external entity, or make the
+            // developer's machine fetch internal URLs.
+            DocumentBuilderFactory documentBuilderFactory =
+                    XMLUtils.newSecureDocumentBuilderFactory();
 
             DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
             Document doc = builder.parse(xsdFile);
 
             //now read it to a schema
             XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+            schemaCol.setSchemaResolver(
+                    new RestrictedSchemaURIResolver(line != null && line.hasOption("asl")));
             XmlSchema currentSchema = schemaCol.read(doc, xsdFile.toURI().toString(), null);
 
             if (outputFolder.exists()) {
