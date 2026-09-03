@@ -21,6 +21,7 @@ package org.apache.axis2.schema.writer;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.schema.SourceLiteralEscaper;
 import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
@@ -834,8 +835,11 @@ public class JavaBeanWriter implements BeanWriter {
             if (metainf.isDefaultValueAvailable(name)){
                 QName schemaQName = metainf.getSchemaQNameForQName(name);
                 if (baseTypeMap.containsKey(schemaQName)){
+                    // Emitted inside a string literal in a field initializer, so
+                    // the schema's text must not be able to close it.
                     XSLTUtils.addAttribute(model, "defaultValue",
-                            metainf.getDefaultValueForQName(name), property);
+                            SourceLiteralEscaper.escape(
+                                    metainf.getDefaultValueForQName(name)), property);
                 }
             }
             
@@ -1012,23 +1016,28 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
         if (metainf.isRestrictionBaseType(name) && metainf.getTotalDigitsFacet() != null) {
-            XSLTUtils.addAttribute(model, "totalDigitsFacet", metainf.getTotalDigitsFacet() + "", property);
+            XSLTUtils.addAttribute(model, "totalDigitsFacet",
+                    SourceLiteralEscaper.escape(metainf.getTotalDigitsFacet() + ""), property);
         }
 
         if (metainf.isRestrictionBaseType(name) && metainf.getMaxExclusiveFacet() != null) {
-            XSLTUtils.addAttribute(model, "maxExFacet", metainf.getMaxExclusiveFacet() + "", property);
+            XSLTUtils.addAttribute(model, "maxExFacet",
+                    SourceLiteralEscaper.escape(metainf.getMaxExclusiveFacet() + ""), property);
         }
 
         if (metainf.isRestrictionBaseType(name) && metainf.getMinExclusiveFacet() != null) {
-            XSLTUtils.addAttribute(model, "minExFacet", metainf.getMinExclusiveFacet() + "", property);
+            XSLTUtils.addAttribute(model, "minExFacet",
+                    SourceLiteralEscaper.escape(metainf.getMinExclusiveFacet() + ""), property);
         }
 
         if (metainf.isRestrictionBaseType(name) && metainf.getMaxInclusiveFacet() != null) {
-            XSLTUtils.addAttribute(model, "maxInFacet", metainf.getMaxInclusiveFacet() + "", property);
+            XSLTUtils.addAttribute(model, "maxInFacet",
+                    SourceLiteralEscaper.escape(metainf.getMaxInclusiveFacet() + ""), property);
         }
 
         if (metainf.isRestrictionBaseType(name) && metainf.getMinInclusiveFacet() != null) {
-            XSLTUtils.addAttribute(model, "minInFacet", metainf.getMinInclusiveFacet() + "", property);
+            XSLTUtils.addAttribute(model, "minInFacet",
+                    SourceLiteralEscaper.escape(metainf.getMinInclusiveFacet() + ""), property);
         }
 
         if (!metainf.getEnumFacet().isEmpty()) {
@@ -1044,7 +1053,9 @@ public class JavaBeanWriter implements BeanWriter {
             int id = 0;
             for (String attribValue : metainf.getEnumFacet()) {
                 Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
-                XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
+                // Keeps the deliberate QName argument split intact.
+                XSLTUtils.addAttribute(model, "value",
+                        SourceLiteralEscaper.escapeEnumFacet(attribValue), enumFacet);
                 if (validJava) {
                     XSLTUtils.addAttribute(model, "id", attribValue, enumFacet);
                 } else {

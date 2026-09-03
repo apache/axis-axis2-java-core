@@ -19,6 +19,7 @@
 
 package org.apache.axis2.schema.writer;
 
+import org.apache.axis2.schema.SourceLiteralEscaper;
 import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
@@ -647,8 +648,11 @@ public class CStructWriter implements BeanWriter {
             if (metainf.isDefaultValueAvailable(name)){
                 QName schemaQName = metainf.getSchemaQNameForQName(name);
                 if (baseTypeMap.containsKey(schemaQName)){
+                    // Emitted inside a string literal in a field initializer, so
+                    // the schema's text must not be able to close it.
                     XSLTUtils.addAttribute(model, "defaultValue",
-                            metainf.getDefaultValueForQName(name), property);
+                            SourceLiteralEscaper.escape(
+                                    metainf.getDefaultValueForQName(name)), property);
                 }
             }
 
@@ -889,7 +893,9 @@ public class CStructWriter implements BeanWriter {
                 int id = 0;
                 for (String attribValue : metainf.getEnumFacet()) {
                     Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
-                    XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
+                    // Keeps the deliberate QName argument split intact.
+                    XSLTUtils.addAttribute(model, "value",
+                            SourceLiteralEscaper.escapeEnumFacet(attribValue), enumFacet);
                     if (validJava) {
                         XSLTUtils.addAttribute(model, "id", attribValue.toUpperCase(), enumFacet);
                     } else {
