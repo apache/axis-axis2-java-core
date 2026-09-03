@@ -502,7 +502,7 @@
         <maven.compiler.release>17</maven.compiler.release>
         <jacoco.version>0.8.15</jacoco.version>
         <asm.version>9.10.1</asm.version>
-        <swagger.version>2.2.54</swagger.version>
+        <swagger.version>2.2.55</swagger.version>
     </properties>
 
     <dependencyManagement>
@@ -1042,7 +1042,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.15.0</version>
+                    <version>3.16.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-dependency-plugin</artifactId>
