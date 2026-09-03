@@ -356,4 +356,41 @@ public class AddressingResponseEndpointPolicyTest extends TestCase {
         assertFalse(AddressingResponseEndpointPolicy.isAllowed(
                 new EndpointReference("http:///no-host"), messageContext));
     }
+
+    /**
+     * The predicate transports use to decide whether to follow redirects. A redirect
+     * is only refused where the destination came from the caller, which is the
+     * decoupled-response case; ordinary client requests keep following them.
+     */
+    public void testDecoupledResponseIsOnlyServerSideNonAnonymous() {
+        messageContext.setServerSide(true);
+        messageContext.setTo(new EndpointReference("https://caller.example.com/replies"));
+        assertTrue("a server-side send to a caller-named address is a decoupled response",
+                AddressingResponseEndpointPolicy.isDecoupledResponse(messageContext));
+    }
+
+    public void testClientRequestIsNotADecoupledResponse() {
+        messageContext.setServerSide(false);
+        messageContext.setTo(new EndpointReference("https://service.example.com/svc"));
+        assertFalse("a client-side request must keep following redirects",
+                AddressingResponseEndpointPolicy.isDecoupledResponse(messageContext));
+    }
+
+    public void testAnonymousAndNoneRepliesAreNotDecoupled() {
+        messageContext.setServerSide(true);
+        messageContext.setTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+        assertFalse("an anonymous reply goes back down the inbound connection",
+                AddressingResponseEndpointPolicy.isDecoupledResponse(messageContext));
+
+        messageContext.setTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+        assertFalse("a none reply is not sent anywhere",
+                AddressingResponseEndpointPolicy.isDecoupledResponse(messageContext));
+    }
+
+    public void testMissingDestinationIsNotDecoupled() {
+        messageContext.setServerSide(true);
+        messageContext.setTo(null);
+        assertFalse(AddressingResponseEndpointPolicy.isDecoupledResponse(messageContext));
+        assertFalse(AddressingResponseEndpointPolicy.isDecoupledResponse(null));
+    }
 }

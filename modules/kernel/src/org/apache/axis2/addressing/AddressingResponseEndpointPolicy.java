@@ -427,6 +427,28 @@ public final class AddressingResponseEndpointPolicy {
         }
     }
 
+    /**
+     * Whether this send is a WS-Addressing decoupled response: a server-side send to
+     * a destination the caller named, rather than an ordinary client-side request.
+     * <p>
+     * Transports use this to decide whether to follow redirects. The scheme allow-list
+     * and the address checks in {@link #isAllowed} run against the endpoint reference
+     * the caller supplied, and nothing re-examines where a redirect leads, so following
+     * one steps straight past them: a 307 from the caller's own endpoint to an address
+     * this policy had already refused would be honoured. A decoupled reply is
+     * fire-and-forget, so nothing legitimate depends on following a redirect.
+     *
+     * @param messageContext the message being sent; may be {@code null}
+     * @return whether the destination was nominated by the caller
+     */
+    public static boolean isDecoupledResponse(MessageContext messageContext) {
+        if (messageContext == null || !messageContext.isServerSide()) {
+            return false;
+        }
+        EndpointReference to = messageContext.getTo();
+        return to != null && !to.hasAnonymousAddress() && !to.hasNoneAddress();
+    }
+
     private static boolean booleanParameter(MessageContext messageContext, String name,
                                             boolean defaultValue) {
         if (messageContext == null) {

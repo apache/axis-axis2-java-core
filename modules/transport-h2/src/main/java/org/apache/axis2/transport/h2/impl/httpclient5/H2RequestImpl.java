@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.axiom.mime.Header;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingResponseEndpointPolicy;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.HTTPConstants;
 import org.apache.axis2.transport.http.AxisRequestEntity;
@@ -276,6 +277,14 @@ public class H2RequestImpl implements Request {
         String cookiePolicy = (String) msgContext.getProperty(HTTPConstants.COOKIE_POLICY);
         if (cookiePolicy != null) {
             requestConfig.setCookieSpec(cookiePolicy);
+        }
+
+        // Following a redirect on a decoupled response would step past the scheme
+        // and address checks, which only ever saw the caller-supplied destination;
+        // see AddressingResponseEndpointPolicy.isDecoupledResponse. The async client
+        // follows redirects by default just as the blocking one does.
+        if (AddressingResponseEndpointPolicy.isDecoupledResponse(msgContext)) {
+            requestConfig.setRedirectsEnabled(false);
         }
 
         clientContext.setRequestConfig(requestConfig.build());
