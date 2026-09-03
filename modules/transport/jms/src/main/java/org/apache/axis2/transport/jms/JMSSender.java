@@ -122,9 +122,15 @@ public class JMSSender extends AbstractTransportSender implements ManagementSupp
         JMSOutTransportInfo jmsOut = null;
         JMSMessageSender messageSender = null;
 
-        if (targetAddress != null && (targetAddress.toUpperCase().indexOf("LDAP")!=-1 || targetAddress.toUpperCase().indexOf("RMI")!=-1 || targetAddress.toUpperCase().indexOf("JMX")!=-1 || targetAddress.toUpperCase().indexOf("JRMP")!=-1 || targetAddress.toUpperCase().indexOf("DNS")!=-1 || targetAddress.toUpperCase().indexOf("IIOP")!=-1 || targetAddress.toUpperCase().indexOf("CORBANAME")!=-1)) {
-            throw new AxisFault("targetAddress received by JMSSender is not supported by this method: " + targetAddress);
-	}
+        // AXIS2-6062: a JMS address becomes JNDI lookups, and a name carrying a
+        // remote naming scheme resolves through that scheme's URL context factory.
+        // See JMSTargetAddressPolicy for why this screens the scheme position of the
+        // resolved fields rather than searching the whole address for substrings.
+        String rejection = JMSTargetAddressPolicy.rejectionReason(targetAddress);
+        if (rejection != null) {
+            handleException("Refusing the JMS target address because " + rejection
+                    + ": " + targetAddress);
+        }
 
         // A decoupled response goes to a destination the caller named, so this EPR's
         // query string is attacker-supplied. JMSOutTransportInfo hands that query
