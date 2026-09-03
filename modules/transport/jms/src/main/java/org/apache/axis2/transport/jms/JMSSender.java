@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMNode;
 import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingResponseEndpointPolicy;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportOutDescription;
@@ -48,6 +49,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -123,6 +125,24 @@ public class JMSSender extends AbstractTransportSender implements ManagementSupp
         if (targetAddress != null && (targetAddress.toUpperCase().indexOf("LDAP")!=-1 || targetAddress.toUpperCase().indexOf("RMI")!=-1 || targetAddress.toUpperCase().indexOf("JMX")!=-1 || targetAddress.toUpperCase().indexOf("JRMP")!=-1 || targetAddress.toUpperCase().indexOf("DNS")!=-1 || targetAddress.toUpperCase().indexOf("IIOP")!=-1 || targetAddress.toUpperCase().indexOf("CORBANAME")!=-1)) {
             throw new AxisFault("targetAddress received by JMSSender is not supported by this method: " + targetAddress);
 	}
+
+        // A decoupled response goes to a destination the caller named, so this EPR's
+        // query string is attacker-supplied. JMSOutTransportInfo hands that query
+        // string wholesale to new InitialContext(...), where a java.naming.* entry
+        // chooses which JNDI provider -- which broker -- the server connects to, and
+        // what it does once connected. The destination name is fine to take from the
+        // caller; the environment used to resolve it is not. Refused rather than
+        // quietly stripped, so that a deployment genuinely replying through a foreign
+        // provider names it in its own transport configuration and a caller cannot
+        // choose it per message.
+        if (targetAddress != null && AddressingResponseEndpointPolicy.isDecoupledResponse(msgCtx)) {
+            for (String name : BaseUtils.getEPRProperties(targetAddress).keySet()) {
+                if (name.toLowerCase(Locale.ENGLISH).startsWith("java.naming.")) {
+                    handleException("Refusing a JMS decoupled response whose endpoint "
+                            + "reference supplies the JNDI environment parameter " + name);
+                }
+            }
+        }
 
         if (targetAddress != null) {
 

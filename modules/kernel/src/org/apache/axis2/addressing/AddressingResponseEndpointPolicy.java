@@ -190,6 +190,14 @@ public final class AddressingResponseEndpointPolicy {
             // mailto: and JNDI-style jms: addresses name a destination rather
             // than a network host, so there is no address to range-check. The
             // transport behind them has to be enabled by an administrator.
+            //
+            // Returning true here screens nothing about the rest of the address,
+            // and for these schemes the query string is not inert: a jms: EPR
+            // carries the JNDI environment used to resolve the destination. That
+            // is screened where the meaning of those parameters is known, in
+            // JMSSender, which refuses a caller-supplied java.naming.* on a
+            // decoupled response. Do not read this early return as a statement
+            // that host-less addresses are harmless.
             return true;
         }
 
