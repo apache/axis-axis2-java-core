@@ -138,7 +138,7 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 | **Form-urlencoded builder** | Unbounded body read into an in-memory map | `formUrlEncodedMaxRequestSize` bounds the read; the stream fails rather than truncating |
 | **Service dispatchers** | Routing to unintended service; header spoofing; a service chosen from message content after the Security phase has already run | Dispatchers validate service existence and unknown services return fault; selecting the service from the SOAP body namespace is off unless `allowContentBasedServiceDispatch` is set, so binding happens before the Security phase runs |
 | **Hot-deployment** (DeploymentEngine) | Malicious AAR/MAR deploys arbitrary code | Trust boundary is filesystem access; no signature verification (admin operation) |
-| **Context externalization** (SafeObjectInputStream) | Java deserialization gadget chains | Whitelist-based `SafeObjectInputStream`; restricted to known Axis2 context classes |
+| **Context externalization** (SafeObjectInputStream) | Java deserialization gadget chains | No class allowlist is possible: the feature exists to carry application objects (self-managed data, `Parameter` values). Streams Axis2 creates refuse dynamic proxies and honour `org.apache.axis2.context.externalize.serialFilter`; no Axis2 path feeds them from the network, and an integrator who persists or replicates contexts must restrict the stream they own |
 | **Metadata endpoints** (`?wsdl`, `?xsd`, `/services/`, `.xsd`/`.wsdl` by name, OpenAPI/MCP) | Service enumeration, schema disclosure | `exposeServiceMetadata` enforced uniformly across the servlet and standalone HTTP paths and the OpenAPI/MCP generators |
 | **WS-Addressing response endpoints** (`wsa:ReplyTo`, `wsa:FaultTo`) | SSRF: an inbound header names the destination of a server-initiated send | Non-anonymous response endpoints refused by default (`allowNonAnonymousResponseEndpoints`); when enabled, scheme restricted to HTTPS, destination screened at both the header-parsing and transport-selection layers, and redirects not followed |
 | **OpenAPI / Swagger UI surface** | Reflected XSS from request-controlled values; Host reflected into published URLs | Host validated, values encoded for their output context, CSP with a per-response script nonce; the published `servers[].url` is relative unless `openapi.serverBaseUrl` pins it |
@@ -178,8 +178,11 @@ release 2.0.1.
 
 **Lesson:** Any `ObjectInputStream.readObject()` on network input is a
 critical-severity finding. The remaining use of Java serialization in
-Axis2 is `SafeObjectInputStream` for context externalization, which uses
-a class whitelist.
+Axis2 is `SafeObjectInputStream` for context externalization. It has no
+class allowlist and cannot have one: the data it carries includes
+application objects by design. Nothing in Axis2 feeds it from the
+network -- see item 6 below for what it does enforce, and for what an
+integrator who persists contexts has to do themselves.
 
 ### 2. XML Parsing (XXE/SSRF)
 
@@ -226,8 +229,32 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    block HTTP/HTTPS/FTP/JAR/file scheme resolution to prevent SSRF via
    xmlschema-core's `DefaultURIResolver`.
 
-4. **Deserialization whitelist:** `SafeObjectInputStream` restricts Java
-   object deserialization to known Axis2 context classes.
+4. **Deserialization of externalized contexts (2.0.2):** There is no class
+   allowlist, and one cannot be shipped: context externalization exists to
+   carry application objects -- `SelfManagedDataHolder` holds whatever a
+   service put there, and a `Parameter` value may be any serializable
+   object -- so a list of Axis2's own context classes would refuse the data
+   the feature is for. Earlier revisions of this document claimed such an
+   allowlist; it never existed. What holds without knowing the
+   application's types:
+
+   - The streams Axis2 creates refuse **dynamic proxies**. Axis2 never
+     writes one, and a proxy over an attacker-chosen invocation handler is
+     the entry point of the classic gadget chains. Override with
+     `org.apache.axis2.context.externalize.allowProxies=true`.
+   - `org.apache.axis2.context.externalize.serialFilter` takes a JEP 290
+     pattern applied to those streams only, for an integrator who does know
+     their own types. An unparseable pattern, or one defining no filter, is
+     an error rather than a silent no-op. The JVM-wide `jdk.serialFilter`
+     applies as well.
+   - Not covered: where the writer chose object form, `SafeObjectInputStream`
+     calls `readObject()` on the `ObjectInput` its caller supplied. That
+     stream belongs to the caller and has already read objects by then, so no
+     filter can be installed on it. Restricting it is the caller's to do.
+
+   No Axis2 code path feeds these streams from the network. The risk arrives
+   when an integrator persists or replicates contexts, and deserializing
+   attacker-influenced bytes stays dangerous whatever is configured here.
 
 5. **Clustering removed:** The entire clustering module (Tribes-based
    inter-node communication with unvalidated deserialization) has been

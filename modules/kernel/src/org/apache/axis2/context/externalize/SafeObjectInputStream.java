@@ -392,6 +392,12 @@ public class SafeObjectInputStream implements ObjectInput, ObjectStreamConstants
     private ObjectInputStream createObjectInputStream(InputStream is) throws IOException {
         // The created ObjectInputStream must use the same class/object resolution 
         // code that is used by the original ObjectInput
-        return new ObjectInputStreamWithCL(is);
+        ObjectInputStreamWithCL stream = new ObjectInputStreamWithCL(is);
+        // Every byte-form read routes through here, so this is the one place a
+        // filter reaches each stream this class owns. See ContextDeserializationFilter
+        // for what it can enforce, and for why the object-form path -- readObject()
+        // on the ObjectInput the caller supplied -- is the caller's to restrict.
+        ContextDeserializationFilter.apply(stream);
+        return stream;
     }
 }
