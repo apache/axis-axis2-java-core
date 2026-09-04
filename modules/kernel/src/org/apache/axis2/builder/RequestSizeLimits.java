@@ -62,6 +62,26 @@ public final class RequestSizeLimits {
     public static final long DEFAULT_FORM_URLENCODED_MAX_REQUEST_SIZE = 2L * 1024 * 1024;
 
     /** Sentinel for "no ceiling", matching the commons-fileupload2 convention. */
+    /**
+     * Ceiling on a {@code multipart/related} body: MTOM and SwA.
+     * <p>
+     * The same reasoning as the form builders, which is why this belongs here: the
+     * MIME builder reads the transport stream directly, so a servlet container's
+     * post-size limit never sees the body. It also means the caller picks which
+     * builder runs by choosing the Content-Type, so bounding only the form builders
+     * bounds nothing -- an attacker simply sends {@code multipart/related}.
+     */
+    public static final String MTOM_MAX_REQUEST_SIZE = "mtomMaxRequestSize";
+
+    /** Ceiling on a plain SOAP or POX body. */
+    public static final String SOAP_MAX_REQUEST_SIZE = "soapMaxRequestSize";
+
+    /** Default {@link #MTOM_MAX_REQUEST_SIZE}: 100 MB. */
+    public static final long DEFAULT_MTOM_MAX_REQUEST_SIZE = 100L * 1024 * 1024;
+
+    /** Default {@link #SOAP_MAX_REQUEST_SIZE}: 100 MB. */
+    public static final long DEFAULT_SOAP_MAX_REQUEST_SIZE = 100L * 1024 * 1024;
+
     public static final long UNLIMITED = -1L;
 
     private RequestSizeLimits() {

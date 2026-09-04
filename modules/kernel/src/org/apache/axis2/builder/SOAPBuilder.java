@@ -41,7 +41,15 @@ public class SOAPBuilder implements MIMEAwareBuilder {
             
             // createSOAPModelBuilder takes care of configuring the underlying parser to
             // avoid the security issue described in CVE-2010-1632
-            OMXMLParserWrapper builder = OMXMLBuilderFactory.createSOAPModelBuilder(inputStream,
+            // Bounded for the same reason as the other builders: this reads the
+            // transport stream directly. processMIMEMessage below takes its root
+            // part from an already-bounded multipart body, so it needs no ceiling
+            // of its own.
+            long maxRequestSize = RequestSizeLimits.resolve(messageContext,
+                    RequestSizeLimits.SOAP_MAX_REQUEST_SIZE,
+                    RequestSizeLimits.DEFAULT_SOAP_MAX_REQUEST_SIZE);
+            OMXMLParserWrapper builder = OMXMLBuilderFactory.createSOAPModelBuilder(
+                    BoundedInputStream.wrap(inputStream, maxRequestSize),
                     charSetEncoding);
             messageContext.setProperty(Constants.BUILDER, builder);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();

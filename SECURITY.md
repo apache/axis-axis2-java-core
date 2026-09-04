@@ -312,12 +312,18 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    does not currently support. Operators in cloud environments should pair
    these settings with network egress controls.
 
-10. **Request body ceilings (2.0.2):** The `multipart/form-data` and
-    `application/x-www-form-urlencoded` builders read the transport stream
-    directly, so a servlet container's post-size limit never sees the body.
-    `multipartMaxRequestSize` and `multipartMaxFileSize` (100 MB) and
-    `formUrlEncodedMaxRequestSize` (2 MB) bound them; `-1` restores the
-    previous unbounded behaviour, and either may be set per service.
+10. **Request body ceilings (2.0.2):** The message builders read the transport
+    stream directly, so a servlet container's post-size limit never sees the
+    body. `multipartMaxRequestSize` and `multipartMaxFileSize` (100 MB),
+    `formUrlEncodedMaxRequestSize` (2 MB), `mtomMaxRequestSize` (100 MB, the
+    whole `multipart/related` body, so MTOM and SwA) and `soapMaxRequestSize`
+    (100 MB, a plain SOAP or POX body) bound them; `-1` restores the previous
+    unbounded behaviour, and any may be set per service.
+
+    Every builder that reads the stream has to be bounded, not just the ones
+    whose limits were reported: the caller picks which builder runs by choosing
+    the Content-Type, so a ceiling on the form builders alone is avoided by
+    sending `multipart/related` instead.
     Multipart temp files are now deleted rather than accumulating: form-field
     parts as soon as their text is read, file parts once the item backing the
     `DataHandler` is unreachable.

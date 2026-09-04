@@ -36,8 +36,16 @@ public class MIMEBuilder implements Builder {
     public OMElement processDocument(InputStream inputStream, String contentType,
                                      MessageContext msgContext)
             throws AxisFault {
-        Attachments attachments =
-                BuilderUtil.createAttachmentsMap(msgContext, inputStream, contentType);
+        // Bounded before the parts are read: the attachment map buffers parts in
+        // heap by default, or on disk with cacheAttachments, and neither was
+        // bounded. The caller chooses this builder by sending
+        // multipart/related, so leaving it unbounded left the form-builder
+        // ceilings trivially avoidable.
+        long maxRequestSize = RequestSizeLimits.resolve(msgContext,
+                RequestSizeLimits.MTOM_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_MTOM_MAX_REQUEST_SIZE);
+        Attachments attachments = BuilderUtil.createAttachmentsMap(msgContext,
+                BoundedInputStream.wrap(inputStream, maxRequestSize), contentType);
 
         ContentType ct;
         try {

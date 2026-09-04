@@ -127,4 +127,36 @@ public class RequestSizeLimitsTest extends TestCase {
         }
         return total;
     }
+
+    /**
+     * The ceilings the form builders had were avoidable: the caller picks the
+     * builder by choosing the Content-Type, so multipart/related and a plain SOAP
+     * body needed their own.
+     */
+    public void testMtomAndSoapCeilingsHaveDefaults() throws Exception {
+        assertEquals(RequestSizeLimits.DEFAULT_MTOM_MAX_REQUEST_SIZE,
+                RequestSizeLimits.resolve(messageContext,
+                        RequestSizeLimits.MTOM_MAX_REQUEST_SIZE,
+                        RequestSizeLimits.DEFAULT_MTOM_MAX_REQUEST_SIZE));
+        assertEquals(RequestSizeLimits.DEFAULT_SOAP_MAX_REQUEST_SIZE,
+                RequestSizeLimits.resolve(messageContext,
+                        RequestSizeLimits.SOAP_MAX_REQUEST_SIZE,
+                        RequestSizeLimits.DEFAULT_SOAP_MAX_REQUEST_SIZE));
+    }
+
+    public void testMtomCeilingIsConfigurable() throws Exception {
+        axisConfiguration.addParameter(
+                new Parameter(RequestSizeLimits.MTOM_MAX_REQUEST_SIZE, "8192"));
+        assertEquals(8192L, RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.MTOM_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_MTOM_MAX_REQUEST_SIZE));
+    }
+
+    public void testSoapCeilingCanBeOptedOut() throws Exception {
+        axisConfiguration.addParameter(
+                new Parameter(RequestSizeLimits.SOAP_MAX_REQUEST_SIZE, "-1"));
+        assertEquals(RequestSizeLimits.UNLIMITED, RequestSizeLimits.resolve(messageContext,
+                RequestSizeLimits.SOAP_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_SOAP_MAX_REQUEST_SIZE));
+    }
 }
