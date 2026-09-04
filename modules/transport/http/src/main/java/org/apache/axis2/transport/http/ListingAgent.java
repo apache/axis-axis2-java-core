@@ -358,8 +358,17 @@ public class ListingAgent extends AbstractAgent {
                 // either: the listing gives its name, EPR and every operation, which
                 // is what those routes were hidden to withhold.
                 for (java.util.Map.Entry<String, AxisService> entry : services.entrySet()) {
-                    if (entry.getValue() == null || entry.getValue().isMetadataExposed()) {
-                        sortedServices.put(entry.getKey(), entry.getValue());
+                    AxisService service = entry.getValue();
+                    // Filter here rather than relying on the view: a hidden service
+                    // that reaches the request attributes can still be rendered by
+                    // any other consumer of it. hiddenService and metadata exposure
+                    // are separate controls and both withhold the listing, which is
+                    // the same pair HTTPTransportReceiver applies for the standalone
+                    // transport. A null cannot be rendered at all -- isHiddenService
+                    // would throw on it -- so it is dropped rather than carried.
+                    if (service != null && !Utils.isHiddenService(service)
+                            && service.isMetadataExposed()) {
+                        sortedServices.put(entry.getKey(), service);
                     }
                 }
             }
