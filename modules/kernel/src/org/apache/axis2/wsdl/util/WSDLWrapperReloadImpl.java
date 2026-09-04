@@ -19,6 +19,7 @@
 
 package org.apache.axis2.wsdl.util;
 
+import org.apache.axis2.util.HardenedWSDLLocator;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLUtil;
@@ -1422,7 +1423,13 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
                 def = (Definition) AccessController.doPrivileged(new PrivilegedExceptionAction() {
                     public Object run() throws WSDLException {
                         WSDLReader reader = getWSDLReader();
-                        return reader.readWSDL(wsdlExplicitURI);
+                        // This re-reads the WSDL at runtime, repeatedly, long
+                        // after any deployment-time screening. Reading it through
+                        // the hardened locator refuses a DOCTYPE in the document
+                        // or in anything it imports, without narrowing which
+                        // schemes can be loaded.
+                        return reader.readWSDL(
+                                new HardenedWSDLLocator(wsdlExplicitURI));
                     }
                 });
             } catch (PrivilegedActionException e) {

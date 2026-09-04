@@ -131,7 +131,7 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 | Component | Threats | Mitigations |
 |-----------|---------|-------------|
 | **XML parsers** (AXIOM/StAX, DocumentBuilderFactory) | XXE, billion laughs, entity expansion DoS | DOCTYPE disallowed; external entities disabled; `DefaultEntityResolver` returns empty source |
-| **WSDL/XSD import resolution** (wsdl4j, xmlschema-core) | XXE in imported documents; SSRF via `file://`/`gopher://` schemes | `SecureWSDLLocator` pre-validates with hardened SAX parser; protocol whitelist (HTTP/HTTPS only); size limit (10MB default); connect/read timeouts; relative-path SSRF bypass blocked |
+| **WSDL/XSD import resolution** (wsdl4j, xmlschema-core) | XXE in imported documents; SSRF via `file://`/`gopher://` schemes | `SecureWSDLLocator` pre-validates the client-side path with a hardened SAX parser (HTTP/HTTPS only, 10MB default, connect/read timeouts, relative-path SSRF bypass blocked); `HardenedWSDLLocator` screens the file, archive, classpath and catalog paths, refusing a DOCTYPE without restricting where a document may be loaded from |
 | **JSON parser** (Gson) | Deep nesting stack exhaustion, large payload DoS | Fuzz-tested (1.7M+ iterations); Gson nesting limits |
 | **JSON-RPC dispatch** | Method name injection; unexpected operation invocation | Method names validated against deployed operations; unknown methods return fault |
 | **Multipart/file upload** (commons-fileupload2) | Unbounded file count DoS (CVE-2023-24998 pattern); unbounded body size; temp-file accumulation | commons-fileupload2 enforces the file count limit; `multipartMaxRequestSize` / `multipartMaxFileSize` bound the body; temp files are deleted immediately for form fields and tracked to collection for file parts |
@@ -220,10 +220,27 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    instances created by the framework disable DTDs and external entities
    (`XMLUtils.java`, `SecureWSDLLocator.java`, `DefaultEntityResolver.java`).
 
-2. **WSDL import security:** `SecureWSDLLocator` pre-parses imported
-   documents before passing them to wsdl4j. Protocol-restricted to
-   HTTP/HTTPS. Size-limited. Timeout-protected. Relative-path SSRF
-   bypass patched.
+2. **WSDL import security (extended in 2.0.2):** wsdl4j parses with its own
+   unhardened parser and fetches the whole import chain itself, so every
+   document has to be screened before it reaches wsdl4j.
+
+   - `SecureWSDLLocator` screens the client-side path
+     (`createClientSideAxisService`): protocol-restricted to HTTP/HTTPS,
+     size-limited, timeout-protected, relative-path SSRF bypass patched.
+   - `HardenedWSDLLocator` screens the paths that load a WSDL from a file, an
+     archive, the classpath or a catalog, where an HTTP-only fetcher could not
+     be used: JAX-WS WSDL loading, the runtime reload wrapper, the deployment
+     builder's resolver path, and the codegen entry point. It refuses a DOCTYPE
+     in the document or in anything it imports, bounds size and applies
+     timeouts, but does not decide where a document comes from -- a delegate
+     locator keeps its own resolution behaviour, and a bare relative path still
+     loads, as wsdl4j accepts. Screening must not narrow what can be loaded, or
+     it breaks ordinary deployments rather than attacks.
+   - Not screened: `WSDL11ToAxisServiceBuilder.readInTheWSDLFile` when no
+     resolver is supplied parses the top document with the hardened
+     `XMLUtils.newDocument`, but wsdl4j fetches any `wsdl:import` itself. The
+     deployment callers do supply a resolver; a caller that does not, with a
+     remote base URI, is outside what is screened.
 
 3. **Schema import security:** URI resolvers for AAR and WAR deployments
    block HTTP/HTTPS/FTP/JAR/file scheme resolution to prevent SSRF via

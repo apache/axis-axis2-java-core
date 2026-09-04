@@ -31,6 +31,7 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.kernel.http.HTTPConstants;
+import org.apache.axis2.util.HardenedWSDLLocator;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
@@ -2322,13 +2323,24 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // imports are safe and necessary. The remote-URL code path in
         // AxisService.createClientSideAxisService() defaults to false and uses
         // a hardened WSDLLocator when opt-in is enabled.
+        //
+        // Note what this method does and does not enforce. Where a resolver is
+        // supplied -- which the deployment callers do -- both the document and its
+        // imports are screened, below. On the resolver-less branch only the top
+        // document is (XMLUtils.newDocument is hardened); wsdl4j fetches any
+        // wsdl:import itself, and nothing here checks that the input really is
+        // local. A caller handing this method a remote base URI without a resolver
+        // is outside what is screened.
         reader.setFeature("javax.wsdl.importDocuments", true);
 
         Definition def;
         // if the custem resolver is present then use it
         if (customWSDLResolver != null) {
+            // The deployment resolvers (AAR/WAR) resolve from inside the archive and
+            // keep doing so; wrapping them only refuses a DOCTYPE in what they
+            // return, which wsdl4j would otherwise parse with entities enabled.
             // make sure the wsdl definition has the URI for the base document set
-            def = reader.readWSDL(customWSDLResolver);
+            def = reader.readWSDL(new HardenedWSDLLocator(customWSDLResolver));
             def.setDocumentBaseURI(customWSDLResolver.getBaseURI());
             return def;
         } else {

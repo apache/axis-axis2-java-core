@@ -19,6 +19,7 @@
 
 package org.apache.axis2.wsdl.codegen;
 
+import org.apache.axis2.util.HardenedWSDLLocator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
@@ -761,7 +762,13 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         WSDLReader reader = WSDLUtil.newWSDLReaderWithPopulatedExtensionRegistry();
         reader.setFeature("javax.wsdl.importDocuments", true);
 
-        return reader.readWSDL(uri);
+        // The tool's whole purpose is to consume a contract somebody else wrote, so
+        // this document and every wsdl:import in its chain are untrusted input. Left
+        // to wsdl4j they are parsed with entities enabled: a DOCTYPE in a vendor's
+        // WSDL would read local files on the developer's machine and exfiltrate them
+        // through an external entity. Imports stay enabled -- a split WSDL is
+        // ordinary -- but each document is screened first.
+        return reader.readWSDL(new HardenedWSDLLocator(uri));
         
     }
 }

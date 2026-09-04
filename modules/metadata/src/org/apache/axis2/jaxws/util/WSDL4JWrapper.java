@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.util;
 
+import org.apache.axis2.util.HardenedWSDLLocator;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
@@ -708,7 +709,13 @@ public class WSDL4JWrapper implements WSDLWrapper {
                             def = (Definition) AccessController.doPrivileged(new PrivilegedExceptionAction() {
                                 public Object run() throws WSDLException {
                                     WSDLReader reader = getWSDLReader();
-                                    return reader.readWSDL(locator);
+                                    // The catalog and module locators keep
+                                    // resolving from a catalog, an archive or the
+                                    // classpath; the wrapper only refuses a DOCTYPE
+                                    // in what they return, which wsdl4j would
+                                    // otherwise parse with entities enabled.
+                                    return reader.readWSDL(
+                                            new HardenedWSDLLocator(locator));
                                 }
                             });
                         }
@@ -728,7 +735,10 @@ public class WSDL4JWrapper implements WSDLWrapper {
                     def = (Definition) AccessController.doPrivileged(new PrivilegedExceptionAction() {
                         public Object run() throws WSDLException {
                             WSDLReader reader = getWSDLReader();
-                            return reader.readWSDL(wsdlExplicitURL);
+                            // No locator here previously, so wsdl4j fetched the URL
+                            // and its whole import chain itself, unscreened.
+                            return reader.readWSDL(
+                                    new HardenedWSDLLocator(wsdlExplicitURL));
                         }
                     });
                 }
