@@ -48,21 +48,30 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- provided, not compile: this module is an integration layer, so the
+             application already has Spring and decides its version. As compile
+             scope these were transitive, and a consumer on an older Spring who did
+             not import the Spring Boot BOM silently got this build's Spring on the
+             classpath next to their own. Nothing here is shipped for them. -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
