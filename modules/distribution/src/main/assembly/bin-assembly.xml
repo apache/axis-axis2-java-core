@@ -185,6 +185,13 @@
                  <exclude>org.springframework:spring-context:jar</exclude>
                  <exclude>org.springframework:spring-core:jar</exclude>
                  <exclude>org.springframework:spring-web:jar</exclude>
+                 <!-- Transitive behind spring-context and spring-core in Spring 7;
+                      useless without the four above, which are excluded on purpose. -->
+                 <exclude>org.springframework:spring-aop:jar</exclude>
+                 <exclude>org.springframework:spring-expression:jar</exclude>
+                 <exclude>io.micrometer:micrometer-observation:jar</exclude>
+                 <exclude>io.micrometer:micrometer-commons:jar</exclude>
+                 <exclude>org.jspecify:jspecify:jar</exclude>
                  <exclude>org.apache.ant:ant:jar</exclude>
                  <exclude>org.apache.ant:ant-launcher:jar</exclude>
                  <exclude>aopalliance:aopalliance:jar</exclude>

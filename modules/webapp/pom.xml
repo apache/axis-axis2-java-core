@@ -323,6 +323,14 @@
                         WEB-INF/lib/spring-context-*.jar,
                         WEB-INF/lib/spring-core-*.jar,
                         WEB-INF/lib/spring-web-*.jar,
+                        <!-- Spring 7 pulls these in behind spring-context and
+                             spring-core. Without the four excluded above they
+                             cannot work, so shipping them was accidental. -->
+                        WEB-INF/lib/spring-aop-*.jar,
+                        WEB-INF/lib/spring-expression-*.jar,
+                        WEB-INF/lib/micrometer-observation-*.jar,
+                        WEB-INF/lib/micrometer-commons-*.jar,
+                        WEB-INF/lib/jspecify-*.jar,
                         WEB-INF/lib/aopalliance-*.jar,
                         WEB-INF/lib/js-*.jar
                     </packagingExcludes>
