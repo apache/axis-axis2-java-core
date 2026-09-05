@@ -752,14 +752,24 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             if (requestUrl != null) {
                 HttpURLConnection connection =
                         (HttpURLConnection) requestUrl.openConnection();
-                connection.setInstanceFollowRedirects(false);
-                connection.setConnectTimeout(REDIRECT_CONNECT_TIMEOUT);
-                connection.setReadTimeout(REDIRECT_READ_TIMEOUT);
-                int responseCode = connection.getResponseCode();
-                String newLocation = redirectTarget(requestUrl, responseCode,
-                        connection.getHeaderField("Location"));
-                if (newLocation != null) {
-                    wsdlUri = newLocation;
+                try {
+                    connection.setInstanceFollowRedirects(false);
+                    connection.setConnectTimeout(REDIRECT_CONNECT_TIMEOUT);
+                    connection.setReadTimeout(REDIRECT_READ_TIMEOUT);
+                    int responseCode = connection.getResponseCode();
+                    String newLocation = redirectTarget(requestUrl, responseCode,
+                            connection.getHeaderField("Location"));
+                    if (newLocation != null) {
+                        wsdlUri = newLocation;
+                    }
+                } finally {
+                    // The probe wants the status line and one header, so the body is
+                    // never read and the socket cannot go back to the keep-alive pool
+                    // on its own. wsdl2java also runs from the ant task and the
+                    // wsdl2code maven plugin, inside a build JVM that generates for
+                    // many WSDLs in a row, so releasing it here rather than leaving
+                    // it to finalization matters more than it would in the CLI.
+                    connection.disconnect();
                 }
             }
 
