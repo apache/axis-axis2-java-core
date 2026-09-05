@@ -1,6 +1,6 @@
-# Build artifacts — produced by mvn install, not source
-WEB-INF/lib/
-WEB-INF/modules/
-WEB-INF/services/
-WEB-INF/classes/userguide/
+# Build artifacts — produced by mvn install, not source.
+# Webapp source lives under src/main/; a META-INF/ or WEB-INF/ directory at the
+# module root is always an exploded WAR that got left behind.
+META-INF/
+WEB-INF/
 target/
