@@ -139,11 +139,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-transport-jms</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-mail</artifactId>
             <version>${project.version}</version>
         </dependency>

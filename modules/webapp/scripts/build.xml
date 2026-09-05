@@ -78,6 +78,12 @@
 				<exclude name="axis2-java2wsdl-*.jar"/>
 				<!-- codegen is required for Rampart because of AXIS2-4265 -->
 				<!-- exclude name="axis2-codegen*.jar"/ -->
+				<!-- The JMS transport is shipped in lib/ but not bundled in the WAR:
+				     no default axis2.xml enables a JMS listener or sender, and
+				     jakarta.jms-api is an API with no provider, so a WAR that wanted
+				     JMS always had to add a broker client anyway. -->
+				<exclude name="axis2-transport-jms-*.jar" />
+				<exclude name="jakarta.jms-api-*.jar" />
 				<exclude name="commons-cli-*.jar" />
 				<exclude name="jibx-bind-*.jar" />
 				<exclude name="bcel-*.jar" />
