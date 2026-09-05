@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.description.builder;
 
 import org.apache.axiom.util.UIDGenerator;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
@@ -325,8 +326,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             HashMap<String, XmlSchema> docMap = new HashMap<String, XmlSchema>();
 
             // Doc factory to read schema files
-            DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
-            fac.setNamespaceAware(true);
+            DocumentBuilderFactory fac = XMLUtils.newSecureDocumentBuilderFactory();
 
             List<File> schemaFiles = getSchemaFiles(localOutputDirectory);
             for (File schemaFile : schemaFiles) {

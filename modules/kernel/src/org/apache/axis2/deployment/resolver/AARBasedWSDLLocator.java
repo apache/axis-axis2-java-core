@@ -77,7 +77,14 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
             if (loc.regionMatches(true, 0, "http:", 0, 5)
                     || loc.regionMatches(true, 0, "https:", 0, 6)
                     || loc.regionMatches(true, 0, "ftp:", 0, 4)
-                    || loc.regionMatches(true, 0, "jar:", 0, 4)) {
+                    || loc.regionMatches(true, 0, "jar:", 0, 4)
+                    // file: as well. The threat model says these resolvers block it,
+                    // and an absolute file: import would read the server's own
+                    // filesystem rather than the archive these resolvers exist to read
+                    // from. Only AARBasedWSDLLocator counts file: as absolute, so only
+                    // there did one reach this branch and fall through to the parent
+                    // resolver; the rest are covered so the guard reads the same way.
+                    || loc.regionMatches(true, 0, "file:", 0, 5)) {
                 throw new RuntimeException(
                         "Remote WSDL import blocked: " + loc);
             }

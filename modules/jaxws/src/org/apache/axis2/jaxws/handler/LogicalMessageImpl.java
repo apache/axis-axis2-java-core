@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.handler;
 
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -212,9 +213,9 @@ public class LogicalMessageImpl implements LogicalMessage {
                     // DOMSource so that the handler programmer can read the data
                     // multiple times and (as opposed to using a StreamSource) and
                     // they can more easily access the data in DOM form.
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    dbf.setNamespaceAware(true);
-                    
+                    DocumentBuilderFactory dbf =
+                            XMLUtils.newSecureDocumentBuilderFactory();
+
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     Document dom = db.parse(bais);
                     payloads.HANDLER_PAYLOAD = new DOMSource(dom);

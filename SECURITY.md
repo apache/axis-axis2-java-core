@@ -216,9 +216,25 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
 
 ## Existing Security Hardening
 
-1. **XML parsing:** All `DocumentBuilderFactory` and `SAXParserFactory`
-   instances created by the framework disable DTDs and external entities
-   (`XMLUtils.java`, `SecureWSDLLocator.java`, `DefaultEntityResolver.java`).
+1. **XML parsing (scoped accurately in 2.0.2):** The parser factories on the
+   runtime paths disable DTDs and external entities:
+   `XMLUtils.newSecureDocumentBuilderFactory` and `XMLUtils.newDocument`,
+   `SecureWSDLLocator`, `HardenedWSDLLocator`, `DefaultEntityResolver`, and the
+   SAAJ and JAX-WS conversions that were missed until 2.0.2 (`XMLUtils.toDOM`,
+   `SAAJUtil.toDOM`, `SOAPBodyImpl`, `LogicalMessageImpl`,
+   `JAXWSRIWSDLGenerator`).
+
+   Earlier revisions of this document said *all* factories created by the
+   framework. That was not true and is not a promise to make:
+
+   - The code-generation tooling creates its own factories. Its dedicated
+     entry points are hardened (see item 13 and `XSD2Java`), but the
+     build-time emitters and schema generators are not audited here.
+   - `HbmXmlIntrospector` allows DTDs deliberately, because hbm.xml files
+     declare one. That is a permanent exception, not a gap.
+   - `TransformerFactory` instances do not set `ACCESS_EXTERNAL_DTD` or
+     `ACCESS_EXTERNAL_STYLESHEET`. Restricting them can break stylesheets
+     that legitimately import, so it has not been done blind.
 
 2. **WSDL import security (extended in 2.0.2):** wsdl4j parses with its own
    unhardened parser and fetches the whole import chain itself, so every
@@ -243,8 +259,17 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
      remote base URI, is outside what is screened.
 
 3. **Schema import security:** URI resolvers for AAR and WAR deployments
-   block HTTP/HTTPS/FTP/JAR/file scheme resolution to prevent SSRF via
-   xmlschema-core's `DefaultURIResolver`.
+   refuse HTTP/HTTPS/FTP/JAR/file scheme resolution, so an import cannot
+   reach the network or the server's filesystem through xmlschema-core's
+   `DefaultURIResolver`; a location that is not absolute is looked up inside
+   the archive.
+
+   `file:` was added to the guard in 2.0.2. Only `AARBasedWSDLLocator` had
+   been letting one through: it counts `file:` as absolute, so an absolute
+   `file:` import passed the scheme check and fell through to the parent
+   resolver. In the other three the predicate does not count `file:` as
+   absolute, so such a location was already treated as an archive resource
+   name and never opened a filesystem path.
 
 4. **Deserialization of externalized contexts (2.0.2):** There is no class
    allowlist, and one cannot be shipped: context externalization exists to

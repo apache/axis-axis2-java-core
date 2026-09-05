@@ -554,8 +554,9 @@ public class XMLUtils {
         element.serialize(baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        // This file is the one SECURITY.md item 1 cites for parser hardening, and
+        // this method sat eight lines below the hardened factory without using it.
+        DocumentBuilderFactory factory = newSecureDocumentBuilderFactory();
         return factory.newDocumentBuilder().parse(bais).getDocumentElement();
     }
 

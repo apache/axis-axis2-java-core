@@ -19,6 +19,7 @@
 
 package org.apache.axis2.saaj.util;
 
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axiom.blob.Blob;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttachmentAccessor;
@@ -128,8 +129,9 @@ public class SAAJUtil {
         element.serialize(baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        // SECURITY.md item 1 says every framework parser factory refuses DTDs and
+        // external entities; this was one of the sites that did not.
+        DocumentBuilderFactory factory = XMLUtils.newSecureDocumentBuilderFactory();
         return factory.newDocumentBuilder().parse(bais).getDocumentElement();
     }
 

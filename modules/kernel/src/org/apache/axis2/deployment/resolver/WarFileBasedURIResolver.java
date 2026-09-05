@@ -58,7 +58,14 @@ public class WarFileBasedURIResolver extends DefaultURIResolver {
             if (resolved.regionMatches(true, 0, "http:", 0, 5)
                     || resolved.regionMatches(true, 0, "https:", 0, 6)
                     || resolved.regionMatches(true, 0, "ftp:", 0, 4)
-                    || resolved.regionMatches(true, 0, "jar:", 0, 4)) {
+                    || resolved.regionMatches(true, 0, "jar:", 0, 4)
+                    // file: as well. The threat model says these resolvers block it,
+                    // and an absolute file: import would read the server's own
+                    // filesystem rather than the archive these resolvers exist to read
+                    // from. Only AARBasedWSDLLocator counts file: as absolute, so only
+                    // there did one reach this branch and fall through to the parent
+                    // resolver; the rest are covered so the guard reads the same way.
+                    || resolved.regionMatches(true, 0, "file:", 0, 5)) {
                 log.warn("Blocked remote schema resolution in WAR deployment: " + resolved);
                 return new InputSource(new java.io.ByteArrayInputStream(new byte[0]));
             }

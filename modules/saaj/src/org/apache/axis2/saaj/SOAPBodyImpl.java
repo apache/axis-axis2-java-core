@@ -19,6 +19,7 @@
 
 package org.apache.axis2.saaj;
 
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
@@ -457,10 +458,11 @@ public class SOAPBodyImpl extends SOAPElementImpl<org.apache.axiom.soap.SOAPBody
 
 
         Document document;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
 
         try {
+            // Created inside the try: the hardened factory reports a parser that
+            // will not accept the restrictions, which this block already handles.
+            DocumentBuilderFactory factory = XMLUtils.newSecureDocumentBuilderFactory();
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.newDocument();
             Element element =

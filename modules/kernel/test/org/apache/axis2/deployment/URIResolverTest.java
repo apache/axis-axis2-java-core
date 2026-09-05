@@ -21,6 +21,7 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 
+import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
 import org.apache.axis2.deployment.resolver.WarFileBasedURIResolver;
 import org.xml.sax.InputSource;
@@ -118,5 +119,40 @@ public class URIResolverTest extends TestCase {
         boolean absolute(String uri) {
             return isAbsolute(uri);
         }
+    }
+
+    /**
+     * The threat model says these resolvers block file: resolution. Only one of the
+     * four ever let a file: location reach the scheme guard: AARBasedWSDLLocator
+     * counts file: as absolute, so an absolute file: import passed the guard, fell
+     * through to the parent resolver and read the server's filesystem instead of the
+     * archive. That is the one this closes.
+     */
+    public void testAarWsdlLocatorRefusesAFileImport() {
+        try {
+            new AARBasedWSDLLocator(null, null, null)
+                    .getImportInputSource("file:/deploy/service.wsdl", "/etc/passwd");
+            fail("an absolute file: import must not be resolved from the filesystem");
+        } catch (RuntimeException expected) {
+            assertTrue("should say it was blocked, was: " + expected.getMessage(),
+                    expected.getMessage().contains("blocked"));
+        }
+    }
+
+    /**
+     * The other three reach safety a different way, and it is worth pinning which:
+     * their isAbsolute does not count file: as absolute, so the location is treated
+     * as a name to look up inside the archive and never opens a filesystem path. The
+     * file: clause added to their scheme guard is therefore unreachable today, and
+     * kept only so the guard reads the same way in all four.
+     */
+    public void testFileLocationsAreLookedUpInTheArchiveNotTheFilesystem() {
+        WarFileBasedURIResolver war =
+                new WarFileBasedURIResolver(getClass().getClassLoader());
+        InputSource inputSource = war.resolveEntity(null,
+                "file:///etc/passwd", "file:///etc/passwd");
+        assertNotNull(inputSource);
+        assertNull("nothing may be read from the filesystem",
+                inputSource.getByteStream());
     }
 }
