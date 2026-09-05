@@ -144,6 +144,14 @@ public class OpenApiConfiguration {
     /** Swagger UI version to use */
     private String swaggerUiVersion = "5.32.13";
 
+    /**
+     * Subresource Integrity hashes for the Swagger UI scripts, when the deployment
+     * pins a version other than the one this release ships hashes for. A version
+     * pin alone says which release to fetch, not that what arrived is that release.
+     */
+    private String swaggerUiBundleIntegrity;
+    private String swaggerUiStandalonePresetIntegrity;
+
     /** Maven group and artifact for Swagger UI */
     private String swaggerUiMavenGroupAndArtifact = "org.webjars:swagger-ui";
 
@@ -267,6 +275,10 @@ public class OpenApiConfiguration {
 
         // Swagger UI
         swaggerUiVersion = getProperty(props, "openapi.swaggerUi.version", swaggerUiVersion);
+        swaggerUiBundleIntegrity = getProperty(props,
+                "openapi.swaggerUi.integrity.bundle", swaggerUiBundleIntegrity);
+        swaggerUiStandalonePresetIntegrity = getProperty(props,
+                "openapi.swaggerUi.integrity.standalonePreset", swaggerUiStandalonePresetIntegrity);
 
         // Resource packages (comma-separated)
         String packages = getProperty(props, "openapi.resourcePackages", null);
@@ -428,6 +440,16 @@ public class OpenApiConfiguration {
     public String getSwaggerUiVersion() { return swaggerUiVersion; }
     public void setSwaggerUiVersion(String swaggerUiVersion) { this.swaggerUiVersion = swaggerUiVersion; }
 
+    public String getSwaggerUiBundleIntegrity() { return swaggerUiBundleIntegrity; }
+    public void setSwaggerUiBundleIntegrity(String swaggerUiBundleIntegrity) {
+        this.swaggerUiBundleIntegrity = swaggerUiBundleIntegrity;
+    }
+
+    public String getSwaggerUiStandalonePresetIntegrity() { return swaggerUiStandalonePresetIntegrity; }
+    public void setSwaggerUiStandalonePresetIntegrity(String swaggerUiStandalonePresetIntegrity) {
+        this.swaggerUiStandalonePresetIntegrity = swaggerUiStandalonePresetIntegrity;
+    }
+
     public String getSwaggerUiMavenGroupAndArtifact() { return swaggerUiMavenGroupAndArtifact; }
     public void setSwaggerUiMavenGroupAndArtifact(String swaggerUiMavenGroupAndArtifact) {
         this.swaggerUiMavenGroupAndArtifact = swaggerUiMavenGroupAndArtifact;
@@ -523,6 +545,8 @@ public class OpenApiConfiguration {
         copy.scannerClass = this.scannerClass;
         copy.supportSwaggerUi = this.supportSwaggerUi;
         copy.swaggerUiVersion = this.swaggerUiVersion;
+        copy.swaggerUiBundleIntegrity = this.swaggerUiBundleIntegrity;
+        copy.swaggerUiStandalonePresetIntegrity = this.swaggerUiStandalonePresetIntegrity;
         copy.swaggerUiMavenGroupAndArtifact = this.swaggerUiMavenGroupAndArtifact;
         copy.configLocation = this.configLocation;
         copy.propertiesLocation = this.propertiesLocation;

@@ -63,6 +63,25 @@ public class SwaggerUIHandler {
     // Default Swagger UI version (can be overridden by configuration)
     private static final String DEFAULT_SWAGGER_UI_VERSION = "5.32.13";
 
+    /**
+     * Subresource Integrity hashes for {@link #DEFAULT_SWAGGER_UI_VERSION}.
+     * <p>
+     * Pinning the version in the URL says which release to ask the CDN for. It does
+     * not say that what came back is that release: the page is built to drive
+     * authenticated API calls, so a CDN serving modified script runs it with the
+     * reader's session. These are SHA-384 digests of the published 5.32.13 files,
+     * taken from two independent CDNs and confirmed byte-identical.
+     * <p>
+     * They are version-specific. A deployment pinning a different version supplies
+     * its own with {@code openapi.swaggerUi.integrity.bundle} and
+     * {@code openapi.swaggerUi.integrity.standalonePreset}; without them the page
+     * still renders, and a warning says integrity is not being enforced.
+     */
+    private static final String DEFAULT_BUNDLE_INTEGRITY =
+            "sha384-PsJla434CobCNv3y1K4wRavOqkUAvwGEQEfbUmI98CCqqGCJsmuDsgIjM6ZQQODP";
+    private static final String DEFAULT_STANDALONE_PRESET_INTEGRITY =
+            "sha384-IxiIENmaFuZnXUo3BucU89aVUoQ3Z6o2mk+SzTkxlsiYX23mun5v8eb2wbhsfEr8";
+
     // Default resource paths
     private static final String SWAGGER_UI_ROOT = "/swagger-ui/";
     private static final String API_DOCS_PATH = "/api-docs/";
@@ -330,9 +349,17 @@ public class SwaggerUIHandler {
 
         // Add Swagger UI scripts
         html.append("    <script src=\"https://unpkg.com/swagger-ui-dist@")
-            .append(swaggerUiVersion).append("/swagger-ui-bundle.js\"></script>\n")
+            .append(swaggerUiVersion).append("/swagger-ui-bundle.js\"")
+            .append(integrityAttributes(swaggerUiVersion,
+                    configuration.getSwaggerUiBundleIntegrity(),
+                    DEFAULT_BUNDLE_INTEGRITY, "swagger-ui-bundle.js"))
+            .append("></script>\n")
             .append("    <script src=\"https://unpkg.com/swagger-ui-dist@")
-            .append(swaggerUiVersion).append("/swagger-ui-standalone-preset.js\"></script>\n");
+            .append(swaggerUiVersion).append("/swagger-ui-standalone-preset.js\"")
+            .append(integrityAttributes(swaggerUiVersion,
+                    configuration.getSwaggerUiStandalonePresetIntegrity(),
+                    DEFAULT_STANDALONE_PRESET_INTEGRITY, "swagger-ui-standalone-preset.js"))
+            .append("></script>\n");
 
         // Add Swagger UI initialization script
         html.append(generateSwaggerUIScript(openApiUrl, scriptNonce));
@@ -490,11 +517,44 @@ public class SwaggerUIHandler {
     }
 
     /**
+     * Builds the integrity and crossorigin attributes for a CDN script tag.
+     *
+     * @param version    the Swagger UI version being requested
+     * @param configured an operator-supplied hash, used whatever the version
+     * @param shipped    the hash this release knows, valid only for the default version
+     * @param fileName   named in the warning when no hash applies
+     * @return the attributes to add, or an empty string when no hash is known
+     */
+    private String integrityAttributes(String version, String configured,
+                                       String shipped, String fileName) {
+        String integrity = null;
+        if (configured != null && !configured.trim().isEmpty()) {
+            integrity = configured.trim();
+        } else if (DEFAULT_SWAGGER_UI_VERSION.equals(version)) {
+            integrity = shipped;
+        }
+        if (integrity == null) {
+            // Not fatal: refusing to render would turn a supply-chain hardening
+            // into an outage for anyone who pinned a different version.
+            log.warn("Serving " + fileName + " for Swagger UI version " + version
+                    + " without Subresource Integrity: this release ships a hash for "
+                    + DEFAULT_SWAGGER_UI_VERSION + " only. Set"
+                    + " openapi.swaggerUi.integrity.bundle and"
+                    + " openapi.swaggerUi.integrity.standalonePreset to pin this version.");
+            return "";
+        }
+        // crossorigin is required for the browser to check integrity cross-origin.
+        return " integrity=\"" + integrity + "\" crossorigin=\"anonymous\"";
+    }
+
+    /**
      * Apply a Content-Security-Policy to the Swagger UI page.
      *
-     * <p>Only the nonced initialisation script and the pinned Swagger UI
-     * distribution may execute, so script injected anywhere into this page does
-     * not run even if an encoding defect is reintroduced. Operator-configured
+     * <p>Only the nonced initialisation script and the Swagger UI distribution may
+     * execute, so script injected anywhere into this page does not run even if an
+     * encoding defect is reintroduced. The policy names the CDN origin, which says
+     * where script may come from but not what it is; that is what the Subresource
+     * Integrity hashes on the script tags are for. Operator-configured
      * custom CSS and JavaScript origins are added to the policy so that
      * customised deployments keep working.
      */

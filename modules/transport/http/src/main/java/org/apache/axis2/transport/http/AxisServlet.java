@@ -241,7 +241,8 @@ public class AxisServlet extends HttpServlet {
                             }
                         }
                     }
-                    handleFault(msgContext, out, new AxisFault(t.toString(), t));
+                    handleFault(msgContext, out,
+                            new AxisFault(unexpectedErrorReason(msgContext, t), t));
                 } catch (AxisFault e2) {
                     log.info(e2);
                     throw new ServletException(e2);
@@ -481,6 +482,31 @@ public class AxisServlet extends HttpServlet {
         } catch (AxisFault e2) {
             log.info(e2);
         }
+    }
+
+    /**
+     * The fault reason sent to the caller for an otherwise unhandled Throwable.
+     * <p>
+     * {@code Throwable.toString()} is {@code fully.qualified.Class: message}, and the
+     * reason goes to the client, so the framework's internals were disclosed whatever
+     * {@code sendStacktraceDetailsWithFaults} said. This catch-all serves every
+     * request the servlet handles, so that applied to JSON and REST responses as much
+     * as to SOAP faults. The Throwable is logged with its stack above either way, so
+     * a generic reason costs the operator nothing.
+     *
+     * @param msgContext the message being answered, may be null
+     * @param t          the unhandled error
+     * @return the class name and message when details are enabled, otherwise generic
+     */
+    private String unexpectedErrorReason(MessageContext msgContext, Throwable t) {
+        if (msgContext != null) {
+            Parameter param = msgContext.getParameter(
+                    Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
+            if (param != null && JavaUtils.isTrue(param.getValue())) {
+                return t.toString();
+            }
+        }
+        return "Internal server error";
     }
 
     protected void handleFault(MessageContext msgContext, OutputStream out, AxisFault e)
