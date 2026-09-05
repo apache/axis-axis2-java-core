@@ -57,6 +57,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.kernel.TransportListener;
 import org.apache.axis2.util.IOUtils;
+import org.apache.axis2.util.MetaInfResources;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.LoggingControl;
@@ -1397,11 +1398,11 @@ public class AxisService extends AxisDescription {
                 schema.write(new OutputStreamWriter(out, "UTF8"));
                 out.flush();
             } else {
-                // make sure we are only serving .xsd files and ignore requests with
-                // ".." in the name.
-                if (xsd.endsWith(".xsd") && xsd.indexOf("..") == -1) {
-                    InputStream in = getClassLoader().getResourceAsStream(
-                            DeploymentConstants.META_INF + "/" + xsd);
+                // Only .xsd files, and only from this service's own archive:
+                // MetaInfResources does not delegate to ancestor classloaders, so
+                // the name cannot reach a schema packaged in an unrelated jar.
+                if (xsd.endsWith(".xsd")) {
+                    InputStream in = MetaInfResources.getResourceAsStream(this, xsd);
                     if (in != null) {
                         IOUtils.copy(in, out, true);
                     } else {
@@ -1873,11 +1874,10 @@ public class AxisService extends AxisDescription {
         // if the wsdl2 parameter is not empty or null in the requested URL, get the wsdl  from the META-INF and serve.
         //else construct the wsdl out of axis service and serve.
         if ((wsdl != null ) && (!"".equals(wsdl))) {
-            // make sure we are only serving .wsdl files and ignore requests with
-            // ".." in the name.
-            if (wsdl.endsWith(".wsdl") && wsdl.indexOf("..") == -1) {
-                InputStream in = getClassLoader().getResourceAsStream(
-                                    DeploymentConstants.META_INF + "/" + wsdl);
+            // Only .wsdl files, and only from this service's own archive; see the
+            // note on the ?xsd= route above.
+            if (wsdl.endsWith(".wsdl")) {
+                InputStream in = MetaInfResources.getResourceAsStream(this, wsdl);
                 if (in != null) {
                     IOUtils.copy(in, out, true);
                 } else {

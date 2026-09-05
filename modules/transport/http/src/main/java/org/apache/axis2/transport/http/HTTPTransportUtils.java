@@ -37,6 +37,7 @@ import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.MetaInfResources;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -53,11 +54,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Map;
@@ -455,52 +453,16 @@ public class HTTPTransportUtils {
     }
 
     static InputStream getMetaInfResourceAsStream(AxisService service, String name) {
-        // Only the packaged schema and WSDL documents are servable here. One caller,
-        // the ?xsd= route, reaches this with the request's value verbatim, and a
-        // service archive's META-INF holds more than schemas: services.xml, whose
-        // parameters name keystores and password-callback classes, plus MANIFEST.MF
-        // and module policies. Guarding inside this method rather than at each call
-        // site means a future caller inherits the restriction instead of having to
-        // remember it.
-        if (!isServableMetadataResource(name)) {
-            return null;
-        }
-        ClassLoader classLoader = service.getClassLoader();
-        if (classLoader instanceof URLClassLoader) {
-            // Only search the service class loader and skip searching the ancestors to
-            // avoid local file inclusion vulnerabilities such as AXIS2-5846.
-            URL url = ((URLClassLoader)classLoader).findResource("META-INF/" + name);
-            try {
-                return url == null ? null : url.openStream();
-            } catch (IOException ex) {
-                return null;
-            }
-        } else {
-            return null;
-        }
+        // The lookup itself lives in the kernel, because AxisService.printXSD and
+        // printWSDL2 serve the same documents by name and have to obey the same two
+        // rules -- schemas and WSDLs only, and only from the queried service's own
+        // archive (AXIS2-5846). Keeping one implementation is what stops those two
+        // routes from drifting apart again.
+        return MetaInfResources.getResourceAsStream(service, name);
     }
 
-    /**
-     * Whether a request-supplied META-INF resource name may be served.
-     *
-     * @param name the resource name, relative to META-INF
-     * @return true only for a schema or WSDL document that stays inside META-INF
-     */
     static boolean isServableMetadataResource(String name) {
-        if (name == null || name.isEmpty()) {
-            return false;
-        }
-        String lower = name.toLowerCase(Locale.ENGLISH);
-        int extension = lower.endsWith(".xsd") ? 4 : (lower.endsWith(".wsdl") ? 5 : 0);
-        if (extension == 0) {
-            return false;
-        }
-        // Require something to be named, so that a bare ".xsd" is not a document.
-        String base = name.substring(0, name.length() - extension);
-        if (base.isEmpty() || base.endsWith("/")) {
-            return false;
-        }
-        return name.indexOf("..") < 0 && name.indexOf(':') < 0 && !name.startsWith("/");
+        return MetaInfResources.isServable(name);
     }
 
     /**

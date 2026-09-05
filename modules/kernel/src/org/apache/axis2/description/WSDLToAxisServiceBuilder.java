@@ -146,8 +146,10 @@ public abstract class WSDLToAxisServiceBuilder {
             // resolution (SSRF via absolute schemaLocation URLs). The
             // default URIResolver in xmlschema-core follows any absolute
             // URI including http://, https://, ftp://, and jar://.
-            // Local file:// and relative paths are allowed for co-packaged
-            // schemas in .aar/.war deployments.
+            // Every absolute location is refused, file:// included; only a
+            // relative path resolves, against the base URI of the WSDL
+            // document, which is how co-packaged schemas in .aar/.war
+            // deployments refer to each other.
             schemaCollection.setSchemaResolver(
                 new org.apache.ws.commons.schema.resolver.URIResolver() {
                     private final org.apache.ws.commons.schema.resolver.DefaultURIResolver
@@ -158,17 +160,11 @@ public abstract class WSDLToAxisServiceBuilder {
                         // SSRF and LFI. Relative paths (e.g., "wsat.xsd")
                         // are safe — they resolve against the local base
                         // URI of the WSDL document.
-                        if (loc != null) {
-                            try {
-                                java.net.URI locUri = new java.net.URI(loc);
-                                if (locUri.isAbsolute()) {
-                                    throw new RuntimeException(
-                                        "Absolute schemaLocation blocked: "
-                                        + loc + " (use setCustomResolver"
-                                        + " to opt in)");
-                                }
-                            } catch (java.net.URISyntaxException ignored) {
-                            }
+                        if (isAbsoluteSchemaLocation(loc)) {
+                            throw new RuntimeException(
+                                "Absolute schemaLocation blocked: "
+                                + loc + " (use setCustomResolver"
+                                + " to opt in)");
                         }
                         return delegate.resolveEntity(ns, loc, base);
                     }
@@ -176,6 +172,48 @@ public abstract class WSDLToAxisServiceBuilder {
         }
 
         return schemaCollection.read(element);
+    }
+
+    /**
+     * Whether a schemaLocation names an absolute location, and so must not be
+     * resolved by the default resolver.
+     * <p>
+     * Classified textually rather than with {@link java.net.URI}, which is what this
+     * used to do. {@code URI} enforces RFC 2396 and throws on a location containing a
+     * space or another illegal character, while {@code java.net.URL} -- which the
+     * delegate builds -- accepts many of those. A {@code URISyntaxException} therefore
+     * meant "unclassified", and the guard caught it, treated the location as relative
+     * and resolved it: exactly the absolute remote locations it exists to refuse got
+     * through, by being malformed. A guard that cannot classify its input must not
+     * pass it.
+     *
+     * @param loc the schemaLocation as the document gave it
+     * @return true if it carries a scheme, or is a network-path reference
+     */
+    static boolean isAbsoluteSchemaLocation(String loc) {
+        if (loc == null) {
+            return false;
+        }
+        String trimmed = loc.trim();
+        // A network-path reference inherits the base document's scheme, so it is
+        // remote whenever the base is.
+        if (trimmed.startsWith("//")) {
+            return true;
+        }
+        // RFC 3986 scheme: ALPHA *( ALPHA / DIGIT / "+" / "-" / "." ) ":"
+        for (int i = 0; i < trimmed.length(); i++) {
+            char c = trimmed.charAt(i);
+            if (c == ':') {
+                return i > 0;
+            }
+            boolean schemeChar = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                    || (i > 0 && ((c >= '0' && c <= '9')
+                            || c == '+' || c == '-' || c == '.'));
+            if (!schemeChar) {
+                return false;
+            }
+        }
+        return false;
     }
 
     /**

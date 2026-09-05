@@ -264,6 +264,19 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    `DefaultURIResolver`; a location that is not absolute is looked up inside
    the archive.
 
+   `WSDLToAxisServiceBuilder` installs a second, separate resolver where a
+   caller supplied none, refusing *every* absolute `schemaLocation` -- `file:`
+   included -- so that only a relative location resolves, against the WSDL's own
+   base URI. Until 2.0.2 it classified with `java.net.URI` and swallowed
+   `URISyntaxException`. `URI` enforces RFC 2396 and rejects a location holding a
+   space, `|`, `{`, `}`, `^` or a backslash, while the `java.net.URL` the delegate
+   builds accepts them, so such a location was never classified and was resolved as
+   if relative -- the absolute remote fetch the guard exists to refuse, reached by
+   being malformed. Classification is now textual (a scheme prefix, or a `//`
+   network-path reference, which takes the base document's scheme) and cannot fail
+   open. A relative name that `URI` also rejects, such as one containing a space,
+   still resolves.
+
    `file:` was added to the guard in 2.0.2. Only `AARBasedWSDLLocator` had
    been letting one through: it counts `file:` as absolute, so an absolute
    `file:` import passed the scheme check and fell through to the parent
@@ -404,8 +417,23 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
     Separately, the `?xsd=` route reaches a service's packaged META-INF with
     the request's value, and that directory holds `services.xml`, whose
     parameters name keystores and password-callback classes. Only schema and
-    WSDL documents are servable, enforced inside the shared stream helper so
-    every caller inherits it rather than repeating it.
+    WSDL documents are servable, and only from the queried service's own
+    archive: the lookup uses `URLClassLoader.findResource`, which does not
+    delegate, so a name cannot reach a `META-INF` resource in an unrelated jar
+    further up the chain -- Axis2's own jars, `WEB-INF/lib`, or the container's
+    shared libraries. That is the AXIS2-5846 rule, and in 2.0.2 it holds on every
+    route: `AxisService.printXSD` and `printWSDL2` had kept using
+    `getResourceAsStream`, which delegates parent-first, so the `?xsd=` and
+    `?wsdl2=` queries searched the whole hierarchy while the file routes did not.
+    Both rules now live in one kernel helper, `MetaInfResources`, which the
+    transport delegates to, because two copies of this check are what let the two
+    routes drift apart in the first place.
+
+    A classloader that is not a `URLClassLoader` cannot be searched without
+    delegating, so this route serves nothing there rather than serving too much.
+    Deployed archives always get a `DeploymentClassLoader`, which is one; an
+    embedder building an `AxisService` against some other classloader loses this
+    route and keeps every other way of publishing a schema.
 
     A hidden service is answered exactly as an undeployed one, on every route,
     body included: the query routes no longer send 403 where an absent service
@@ -423,6 +451,24 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
     `allowContentBasedServiceDispatch` defaults to `false`. Dispatch by request
     URI, SOAPAction and WS-Addressing binds the service before the Security phase
     and is unaffected.
+
+14. **Generated endpoint addresses depend on deployment configuration
+    (documentation, 2.0.2):** Set `httpFrontendHostUrl` in `axis2.xml` -- or an
+    explicit `port` parameter on the servlet transport -- for any deployment whose
+    published WSDL is consumed by others. Neither is set by default, and without
+    them `AxisServlet` autodetects its port from the first request after startup
+    and keeps it for the lifetime of the process. In a standard container
+    `getServerPort()` derives from the client's `Host` header, so the first caller
+    after a deployment or restart decides the port written into the `soap:address`
+    and EPRs served to every later client. The host part is taken per request and
+    reflects only to the requester; the port is shared state.
+
+    This is not fixed in code. Reading the actual listening port instead would
+    return the back-end port and publish a wrong address for every deployment
+    behind a TLS-terminating proxy, which is the common case, and deriving the
+    port per request means changing `TransportListener.getEPRsForService`, which
+    `ListenerManager` also calls at startup with no request in scope. Configure
+    the front-end URL; it is the only answer that is correct for both.
 
 ## Reporting Security Issues
 
