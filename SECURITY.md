@@ -252,6 +252,16 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
      locator keeps its own resolution behaviour, and a bare relative path still
      loads, as wsdl4j accepts. Screening must not narrow what can be loaded, or
      it breaks ordinary deployments rather than attacks.
+   - `WSDL2Java` probes an http location for a redirect before parsing it, and
+     that probe is the hostile server's input, not the developer's. It now
+     follows a redirect only from a 3xx status, only to http or https, and
+     resolves a relative target against the document requested. It previously
+     took `Location` from any response and used it verbatim, so a stray header on
+     a 200 retargeted the tool and `Location: file:///etc/passwd` aimed the parse
+     at the developer's own filesystem. A redirect elsewhere stops code
+     generation rather than being ignored, so the tool cannot quietly parse a
+     document other than the one named. Connect and read timeouts apply
+     (`axis2.codegen.wsdl.connect.timeout`, `axis2.codegen.wsdl.read.timeout`).
    - Not screened: `WSDL11ToAxisServiceBuilder.readInTheWSDLFile` when no
      resolver is supplied parses the top document with the hardened
      `XMLUtils.newDocument`, but wsdl4j fetches any `wsdl:import` itself. The

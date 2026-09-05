@@ -40,6 +40,8 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -661,18 +663,102 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         isUseOperationName = useOperationName;
     }
 
+    private static final int REDIRECT_CONNECT_TIMEOUT =
+            Integer.getInteger("axis2.codegen.wsdl.connect.timeout", 10000);
+    private static final int REDIRECT_READ_TIMEOUT =
+            Integer.getInteger("axis2.codegen.wsdl.read.timeout", 30000);
+
+    /**
+     * The WSDL location as an http/https URL, or null if it is anything else --
+     * a file path, a jar: URL, a classpath name. Only an http(s) document can be
+     * redirected, and only those are probed here.
+     *
+     * @param wsdlUri the location as given on the command line
+     * @return the URL to probe, or null to leave the location alone
+     */
+    static URL asHttpUrl(String wsdlUri) {
+        if (wsdlUri == null) {
+            return null;
+        }
+        try {
+            URL url = new URL(wsdlUri);
+            String protocol = url.getProtocol();
+            // "http" as a prefix test also matched schemes like "httpx"; ask the
+            // parsed URL instead of the string.
+            return "http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)
+                    ? url : null;
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Where a redirect points, or null if this response is not one to follow.
+     * <p>
+     * The Location header was previously taken from whatever the server answered,
+     * without looking at the status code and without constraining the target, so a
+     * 200 carrying a stray Location redirected the tool, and a hostile server could
+     * answer {@code Location: file:///etc/passwd} and retarget the parse at the
+     * developer's own filesystem. A redirect is followed only from a redirect
+     * status, only to http or https, and a relative target is resolved against the
+     * document that was asked for, as RFC 9110 requires.
+     *
+     * @param requestUrl   the URL that was requested
+     * @param responseCode the status the server answered with
+     * @param location     the Location header, or null
+     * @return the absolute http(s) target, or null to keep the original location
+     * @throws CodeGenerationException if a redirect points somewhere unusable, which
+     *                                 is worth stopping for rather than silently
+     *                                 parsing the wrong document
+     */
+    static String redirectTarget(URL requestUrl, int responseCode, String location)
+            throws CodeGenerationException {
+        if (responseCode < 300 || responseCode > 399 || location == null) {
+            return null;
+        }
+        String trimmed = location.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        URI target;
+        try {
+            target = requestUrl.toURI().resolve(trimmed);
+        } catch (URISyntaxException e) {
+            throw new CodeGenerationException(
+                    "WSDL location " + requestUrl + " redirected to a target that is"
+                    + " not a valid URI: " + trimmed, e);
+        } catch (IllegalArgumentException e) {
+            throw new CodeGenerationException(
+                    "WSDL location " + requestUrl + " redirected to a target that is"
+                    + " not a valid URI: " + trimmed, e);
+        }
+        String scheme = target.getScheme();
+        if (scheme == null
+                || !("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))) {
+            throw new CodeGenerationException(
+                    "WSDL location " + requestUrl + " redirected to " + target
+                    + "; only http and https redirects are followed. Fetch the"
+                    + " document yourself if that target is what you intended.");
+        }
+        return target.toString();
+    }
+
     public void loadWsdl(String wsdlUri) throws CodeGenerationException {
         try {
             // the redirected urls gives problems in code generation some times with jaxbri
             // eg. https://www.paypal.com/wsdl/PayPalSvc.wsdl
             // if there is a redirect url better to find it and use.
-            if (wsdlUri.startsWith("http")) {
-                URL url = new URL(wsdlUri);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            URL requestUrl = asHttpUrl(wsdlUri);
+            if (requestUrl != null) {
+                HttpURLConnection connection =
+                        (HttpURLConnection) requestUrl.openConnection();
                 connection.setInstanceFollowRedirects(false);
-                connection.getResponseCode();
-                String newLocation = connection.getHeaderField("Location");
-                if (newLocation != null){
+                connection.setConnectTimeout(REDIRECT_CONNECT_TIMEOUT);
+                connection.setReadTimeout(REDIRECT_READ_TIMEOUT);
+                int responseCode = connection.getResponseCode();
+                String newLocation = redirectTarget(requestUrl, responseCode,
+                        connection.getHeaderField("Location"));
+                if (newLocation != null) {
                     wsdlUri = newLocation;
                 }
             }
