@@ -102,7 +102,6 @@ Study</strong></a></li>
 <p><a href="http-transport.html">HTTP Transports</a></p>
 <p><a href="mtom-guide.html">MTOM with Axis2</a></p>
 <p><a href="https://axis.apache.org/axis2/java/rampart/">Securing SOAP Messages with Apache Rampart</a></p>
-<p><a href="soapmonitor-module.html">SOAPMonitor</a></p>
 <p><a href="adv-userguide.html">Apache Axis2 Advance User's Guide</a></p>
 </body>
 </html>

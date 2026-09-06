@@ -41,7 +41,7 @@ WSDL2Java Reference
           -t                       Generate a test case for the generated code.
           -ss                      Generate server side code (i.e. skeletons) (Default: off).
           -sd                      Generate service descriptor (i.e. services.xml). (Default: off). Valid with -ss.
-          -d <databinding>         Valid databinding(s) are adb, xmlbeans, jibx and jaxbri (Default: adb).
+          -d <databinding>         Valid databinding(s) are adb, xmlbeans, jaxbri and none (Default: adb).
           -g                       Generates all the classes. Valid only with -ss.
           -pn <port_name>          Choose a specific port when there are multiple ports in the wsdl.
           -sn <service_name>       Choose a specific service when there are multiple services in the wsdl.
@@ -61,7 +61,6 @@ WSDL2Java Reference
           -b                       Generate Axis 1.x backword compatible code.
           -sp                      Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
           -E<key> <value>          Extra configuration options specific to certain databindings. Examples:
-                                   -Ebindingfile <path>                   (for jibx) - specify the file path for the binding file
                                    -Etypesystemname <my_type_system_name> (for xmlbeans) - override the randomly generated type system name
                                    -Ejavaversion 1.5                      (for xmlbeans) - generates Java 1.5 code (typed lists instead of arrays)
                                    -Emp <package name> (for ADB) - extension mapper package name

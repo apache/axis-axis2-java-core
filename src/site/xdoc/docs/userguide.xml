@@ -308,7 +308,6 @@ WEB-INF
         modules.list 
         addressing.mar
         ...
-        soapmonitor.mar
     services
         services.list
         aservice.aar

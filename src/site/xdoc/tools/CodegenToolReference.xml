@@ -156,7 +156,7 @@ generation option.</td>
 <td width="20%">-d &lt;databinding&gt;</td>
 <td width="20%">--databinding-method &lt;databinding&gt;</td>
 <td width="60%">Specifies the Databinding framework. Valid values
-are xmlbeans, adb, jibx, and none. Default is adb.</td>
+are adb, xmlbeans, jaxbri, and none. Default is adb.</td>
 <td></td>
 </tr>
 <tr>
@@ -335,7 +335,7 @@ using the target namespace of the WSDL) will be used. Maps to the
 <td>databindingName</td>
 <td>Data binding framework name. Maps to the -d option of the
 command line tool. Possible values include "adb", "xmlbeans",
-"jibx","jaxbri".</td>
+"jaxbri" and "none".</td>
 </tr>
 <tr>
 <td>serviceName</td>

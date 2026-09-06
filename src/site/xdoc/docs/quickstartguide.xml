@@ -49,7 +49,6 @@ creating clients to access those services.</p>
 <li><a href="#adb">Generating the service using ADB</a></li>
 <li><a href="#xmlbeans">Generating the service using
 XMLBeans</a></li>
-<li><a href="#jibx">Generating the service using JiBX</a></li>
 </ul>
 </li>
 <li><a href="#clients">Generating Clients</a>
@@ -58,7 +57,6 @@ XMLBeans</a></li>
 <li><a href="#clientadb">Generating a client using ADB</a></li>
 <li><a href="#clientxmlbeans">Generating a client using XML
 Beans</a></li>
-<li><a href="#clientjibx">Generating a client using JiBX</a></li>
 </ul>
 </li>
 <li><a href="#summary">Summary</a></li>
@@ -68,8 +66,8 @@ Beans</a></li>
 <p>The code for the document can be found in the extracted <a href=
 "../download.cgi">Standard
 Binary Distribution</a>, more specifically at Axis2_HOME/samples/
-inside the directories- quickstart, quickstartadb, quickstartaxiom,
-quickstartjibx and quickstartxmlbeans. (Consider getting it now as
+inside the directories- quickstart, quickstartadb, quickstartaxiom
+and quickstartxmlbeans. (Consider getting it now as
 it will help you to follow along.) It includes Ant buildfiles
 (build.xml) that we'll refer to throughout the examples to make
 compilation easier.</p>
@@ -171,7 +169,6 @@ WEB-INF
         modules.list 
         addressing.mar
         ...
-        soapmonitor.mar
     services
         services.list
         aservice.aar
@@ -263,8 +260,7 @@ services.</p>
 based on the StockQuoteService class: deploying Plain Old Java
 Objects (POJO), building the service using AXIOM's OMElement,
 generating the service using Axis2 Databinding Framework (ADB),
-generating the service using XMLBeans, and generating the service
-using JiBX.</p>
+and generating the service using XMLBeans.</p>
 <a name="deploy" id="deploy"></a>
 <h3>Deploying POJOs</h3>
 <p>To deploy the service using POJOs (Plain Old Java Objects),
@@ -636,90 +632,12 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 <pre>
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
-<a name="jibx" id="jibx"></a>
-<h3>Generating the Service using JiBX</h3>
-<p>To generate and deploy the service using <a href=
-"http://www.jibx.org">JiBX data binding</a>, execute the following
-steps.</p>
-<p>Generate the skeleton using the WSDL2Java utility by typing the
-following at a console in the Axis2_HOME/samples/quickstartjibx
-directory:</p>
-<pre>
-%AXIS2_HOME%\bin\wsdl2java.bat -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.service.jibx -d jibx -s -ss -sd -ssi -uw -o build\service
-</pre>
-<p>Else, simply type "ant generate.service" in the
-Axis2_HOME/samples/quickstartjibx directory.</p>
-<p>The option -d jibx specifies JiBX data binding. The -s switch
-specifies synchronous or blocking calls only. The -ss switch
-creates the server side code (skeleton and related files). The -sd
-switch creates a service descriptor (services.xml file). The -ssi
-switch creates an interface for the service skeleton. The -uw
-switch unwraps the parameters passed to and from the service
-operations in order to create a more natural programming
-interface.</p>
-<p>After running WSDL2Java, the service files should be located at
-build/service. If you generated the code by using WSDL2Java
-directly, you need to modify the generated skeleton to implement
-the service (if you used "ant generate.service" a completed
-skeleton will be copied over the generated one automatically). Open
-the
-build/service/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.java
-file and modify it to add the functionality of your service to the
-generated methods, as shown in Code Listing 8.</p>
-<p><b>Code Listing 8: Defining the Service Skeleton File</b></p>
-<pre>
-package samples.quickstart.service.jibx;
-
-import java.util.HashMap;
-
-public class StockQuoteServiceSkeleton implements StockQuoteServiceSkeletonInterface {
-    private HashMap map = new HashMap();
-
-    public void update(String symbol, Double price) {
-        map.put(symbol, price);
-    }
-
-    public Double getPrice(String symbol) {
-        Double ret = (Double) map.get(symbol);
-        if (ret == null) {
-            ret = new Double(42.0);
-        }
-        return ret;
-    }
-}
-</pre>
-<p>Now you can build the project by typing the following command in
-the build/service directory:</p>
-<pre>
-ant jar.server
-</pre>
-<p>If all goes well, you should see the BUILD SUCCESSFUL message in
-your window, and the StockQuoteService.aar file in the
-build/service/build/lib directory. Copy this file to the
-webapps/axis2/WEB-INF/services directory of the servlet engine.</p>
-<p>You can check to make sure that the service has been properly
-deployed by viewing the list of services at,</p>
-<pre>
-http://localhost:8080/axis2/services/listServices
-</pre>
-<p>You can also check the custom WSDL at,</p>
-<pre>
-http://localhost:8080/axis2/services/StockQuoteService?wsdl
-</pre>
-<p>and the schema at,</p>
-<pre>
-http://localhost:8080/axis2/services/StockQuoteService?xsd
-</pre>
-<p>For more information on using JiBX with Axis2, see the <a href=
-"jibx/jibx-codegen-integration.html">JiBX code generation
-integration</a> details.</p>
 <a name="clients" id="clients"></a>
 <h2>Creating Clients</h2>
-<p>In this section, we'll look at four ways to create clients based
+<p>In this section, we'll look at three ways to create clients based
 on the StockQuoteService class: building an AXIOM based client,
 generating a client using Axis2 Databinding Framework (ADB),
-generating a client using XMLBeans, and generating a client using
-JiBX.</p>
+and generating a client using XMLBeans.</p>
 <a name="clientaxiom" id="clientaxiom"></a>
 <h3>Creating a Client with AXIOM</h3>
 <p>To build a client using AXIOM, execute the following steps.</p>
@@ -1010,80 +928,6 @@ the Axis2_HOME/samples/quickstartxmlbeans directory.</p>
 price updated
 42.32
 </pre>
-<a name="clientjibx" id="clientjibx"></a>
-<h3>Generating a Client using JiBX</h3>
-<p>To build a client using JiBX, execute the following steps.</p>
-<p>Generate the client stub by typing the following at a console in
-the Axis2_HOME/samples/quickstartjibx directory.</p>
-<pre>
-%AXIS2_HOME%\bin\wsdl2java.bat -uri resources\META-INF\StockQuoteService.wsdl -p samples.quickstart.clients -d jibx -s -uw -o build\client
-</pre>
-<p>Else, simply type "ant generate.client".</p>
-<p>Next take a look at
-quickstartjibx/src/samples/quickstart/clients/JiBXClient.java,
-shown below in Code Listing 12.</p>
-<p><b>Code Listing 12: The JiBXClient class</b></p>
-<pre>
-package samples.quickstart.clients;
-
-import samples.quickstart.service.jibx.StockQuoteServiceStub;
-
-public class JiBXClient{
-    public static void main(java.lang.String args[]){
-        try{
-            StockQuoteServiceStub stub =
-                new StockQuoteServiceStub
-                ("http://localhost:8080/axis2/services/StockQuoteService");
-
-            getPrice(stub);
-            update(stub);
-            getPrice(stub);
-
-        } catch(Exception e){
-            e.printStackTrace();
-            System.err.println("\n\n\n");
-        }
-    }
-
-    /* fire and forget */
-    public static void update(StockQuoteServiceStub stub){
-        try{
-            stub.update("CDE", new Double(42.35));
-            System.err.println("price updated");
-        } catch(Exception e){
-            e.printStackTrace();
-            System.err.println("\n\n\n");
-        }
-    }
-
-    /* two way call/receive */
-    public static void getPrice(StockQuoteServiceStub stub){
-        try{
-            System.err.println(stub.getPrice("CDE"));
-        } catch(Exception e){
-            e.printStackTrace();
-            System.err.println("\n\n\n");
-        }
-    }
-
-}
-</pre>
-<p>This class uses the created JiBX client stub to access the
-getPrice and the update operations on the Web service. The getPrice
-method sends a request for the stock "ABC" and displays the current
-price. The update method setsnex the price for stock "ABC" to
-42.35.</p>
-<p>Now build and run the client by typing "ant run.client" at a
-console in the Axis2_HOME/samples/quickstartjibx directory.</p>
-<p>You should get the following as output:</p>
-<pre>
-42
-price updated
-42.35
-</pre>
-<p>For more information on using JiBX with Axis2, see the <a href=
-"jibx/jibx-codegen-integration.html">JiBX code generation
-integration</a> details.</p>
 <a name="summary" id="summary"></a>
 <h2>Summary</h2>
 <p>Axis2 provides a slick and robust way to get web services up and

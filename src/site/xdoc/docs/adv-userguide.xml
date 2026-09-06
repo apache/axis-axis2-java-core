@@ -496,9 +496,6 @@ to the following documents for more information.</p>
   <li><a href="adb/adb-tweaking.html">ADB Tweaking Guide</a></li>
 </ol>
 
-<h4>JiBX</h4>
-<a href="jibx/jibx-codegen-integration.html">JiBX Integration With Axis2</a>
-
 <h3>Other Topics</h3>
 <ol>
   <li><a href="spring.html">Axis2 Integration With The Spring
@@ -511,7 +508,6 @@ to the following documents for more information.</p>
   <li><a href="migration.html">Migrating from Apache Axis 1.x to Axis
   2</a></li>
   <li><a href="modules.html">Writing your Own Axis2 Module</a></li>
-  <li><a href="soapmonitor-module.html">Using the SOAP Monitor</a></li>
   <li><a href="xmlbased-server.html">Writing Web Services Using Axis2's
     Primary APIs</a></li>
   <li><a href="dii.html">Writing Web Service Clients Using Axis2's Primary

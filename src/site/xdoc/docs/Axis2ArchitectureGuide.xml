@@ -979,9 +979,6 @@ schema support is needed!</li>
 <li><strong>JAXB-RI</strong> - JAXB2 support has been added in a
 similar manner to XMLbeans and serves as another option for the
 user</li>
-<li><strong>JibX</strong> - This is the most recent addition to the
-family of databinding extensions, and it is also another option
-users have for data binding.</li>
 </ol>
 <a name="serial" id="serial"></a>
 <h3>Serialization and De-Serialization of Data bound classes</h3>

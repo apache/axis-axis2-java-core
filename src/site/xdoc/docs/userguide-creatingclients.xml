@@ -104,8 +104,8 @@ Study</a></li>
 <a name="choosingclient" id="choosingclient"></a>
 <h2>Choosing a Client Generation Method</h2>
 <p>Axis2 gives you several options when it comes to mapping WSDL to
-objects when generating clients. Three of these options are Axis2
-DataBinding Framework, XMLBeans, and JiBX databinding. All of these
+objects when generating clients. Two of these options are the Axis2
+DataBinding Framework and XMLBeans. Both of these
 methods involve using databinding to create Java objects out of the
 XML structures used by the service, and each has its pros and cons.
 You can also generate XML in-out stubs that are not based on
@@ -122,18 +122,10 @@ compiler, so it doesn't carry the same limitations as ADB. It is,
 however, a bit more complicated to use than ADB. It generates a
 huge number of files, and the programming model, while being
 certainly usable, is not as straightforward as ADB.</p>
-<p>JiBX: JiBX is a complete databinding framework that actually
-provides not only WSDL-to-Java conversion, as covered in this
-document, but also Java-to-XML conversion. In some ways, JiBX
-provides the best of both worlds. JiBX is extremely flexible,
-enabling you to choose the classes that represent your entities,
-but it can be complicated to set up. On the other hand, once it is
-set up, actually using the generated code is as easy as using
-ADB.</p>
 <p>In the end, for simple structures, ADB will likely be enough for
 you. If, on the other hand you need more power or flexibility,
-whether you choose XMLBeans or JiBX depends on how much power or
-flexibility you need and your tolerance for complexity.</p>
+XMLBeans gives you a full schema compiler at the cost of some
+complexity.</p>
 <a name="generating" id="generating"></a>
 <h2>Generating Clients</h2>
 <p>The process for generating and using a client varies slightly
@@ -234,8 +226,7 @@ servlet container. It should look something like this:</p>
 "images/fig03.jpg" /><br clear="all" /></p>
 <p>ADB is not your only option for generating Web service clients.
 Other options include <a href=
-"userguide-creatingclients-xmlbeans.html">XmlBeans</a>, <a href=
-"userguide-creatingclients-jibx.html">JiBX</a> and
+"userguide-creatingclients-xmlbeans.html">XmlBeans</a> and
 JAXBRI.</p>
 <p><strong>See the Next Section</strong> -<a href=
 "userguide-buildingservices.html#buildservices">Building
