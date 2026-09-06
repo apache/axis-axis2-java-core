@@ -393,6 +393,7 @@
         <module>modules/mtompolicy</module>
         <module>modules/mtompolicy-mar</module>
         <module>modules/ping</module>
+        <module>modules/samples/swagger-server</module>
         <module>modules/samples/version</module>
         <!-- SOAPMonitor removed: AXIS2-6105 (Java Applets removed from JDK in Java 11) -->
         <module>modules/schema-validation</module>
@@ -1000,6 +1001,14 @@
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <!-- The Spring Boot userguide samples cannot join the reactor: they
+                             inherit spring-boot-starter-parent, so release:prepare never sees
+                             them and their <axis2.version> would keep pointing at a SNAPSHOT
+                             that does not exist once the release is out. Running the sync
+                             here means the rewrite lands in the release commit and the tag,
+                             next to the versions release:prepare rewrites itself. -->
+                        <preparationGoals>clean verify antrun:run@sync-userguide-sample-versions</preparationGoals>
+                        <completionGoals>antrun:run@sync-userguide-sample-versions</completionGoals>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1343,6 +1352,36 @@
                 <configuration>
                     <attach>true</attach>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Deliberately bound to no phase: an ordinary build must not
+                             rewrite checked-in sample poms. maven-release-plugin invokes
+                             it by id (see preparationGoals above); it can also be run by
+                             hand as
+                                 mvn antrun:run@sync-userguide-sample-versions
+                             which is what the release guide tells the RM to do when
+                             cutting by hand rather than with release:prepare. -->
+                        <id>sync-userguide-sample-versions</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Setting axis2.version to ${project.version} in the userguide Spring Boot samples"/>
+                                <replaceregexp
+                                        match="&lt;axis2\.version&gt;[^&lt;]*&lt;/axis2\.version&gt;"
+                                        replace="&lt;axis2.version&gt;${project.version}&lt;/axis2.version&gt;"
+                                        byline="true">
+                                    <fileset dir="${basedir}/modules/samples/userguide/src/userguide"
+                                             includes="*/pom.xml"/>
+                                </replaceregexp>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>

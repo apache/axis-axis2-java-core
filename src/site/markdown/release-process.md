@@ -122,9 +122,27 @@ You may also execute a dry run of the release process: mvn release:prepare -Ddry
     `src/site/markdown/release-notes/` (e.g., `2.0.2.md`). The distribution assembly
     references this file and the build will fail without it.
 
-5.  Check that the source distribution is buildable.
+5.  The Spring Boot userguide samples under
+    `modules/samples/userguide/src/userguide/` inherit `spring-boot-starter-parent`,
+    so they cannot be reactor modules and `release:prepare` does not rewrite their
+    versions. Each declares a single `<axis2.version>` property, and the release
+    plugin's `preparationGoals`/`completionGoals` invoke
 
-6.  Check that the source tree is buildable with an empty local Maven repository.
+        mvn antrun:run@sync-userguide-sample-versions
+
+    which rewrites that property to the version being built. Nothing to do when
+    releasing with `release:prepare` -- but check the release commit contains the
+    rewrite, and run the goal by hand if you are cutting a release any other way.
+    Left unsynced, the shipped samples point at a SNAPSHOT that does not exist.
+
+    The same class of problem bites any sample kept out of the reactor:
+    `swagger-server` sat at `2.0.1-SNAPSHOT` through the whole 2.0.1 cycle because
+    of it. It is a reactor module now, which is the preferred fix where the sample's
+    parent allows it.
+
+6.  Check that the source distribution is buildable.
+
+7.  Check that the source tree is buildable with an empty local Maven repository.
 
 If any problems are detected, they should be fixed on the trunk (except for issues specific to the
 release branch) and then merged to the release branch.
