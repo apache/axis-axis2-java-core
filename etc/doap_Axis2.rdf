@@ -75,12 +75,16 @@
     <release><Version><name>Apache Axis2</name><created>2018-05-19</created><revision>1.7.8</revision></Version></release>
     <release><Version><name>Apache Axis2</name><created>2018-11-16</created><revision>1.7.9</revision></Version></release>
     <release><Version><name>Apache Axis2</name><created>2021-08-01</created><revision>1.8.0</revision></Version></release>
+    <release><Version><name>Apache Axis2</name><created>2022-07-01</created><revision>1.8.1</revision></Version></release>
+    <release><Version><name>Apache Axis2</name><created>2022-07-13</created><revision>1.8.2</revision></Version></release>
+    <release><Version><name>Apache Axis2</name><created>2025-03-04</created><revision>2.0.0</revision></Version></release>
+    <release><Version><name>Apache Axis2</name><created>2026-05-17</created><revision>2.0.1</revision></Version></release>
      
     <repository>
-      <SVNRepository>
-        <location rdf:resource="http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk/"/>
-        <browse rdf:resource="http://svn.apache.org/viewvc/axis/axis2/java/core/trunk/"/>
-      </SVNRepository>
+      <GitRepository>
+        <location rdf:resource="https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git"/>
+        <browse rdf:resource="https://github.com/apache/axis-axis2-java-core"/>
+      </GitRepository>
     </repository>
     <maintainer>
       <foaf:Person>

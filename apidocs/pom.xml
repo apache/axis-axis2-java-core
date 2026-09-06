@@ -138,6 +138,30 @@
             <artifactId>axis2-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- javadoc here aggregates axis2-spring's own sources
+             (includeDependencySources + org.apache.axis2:*), so it compiles
+             imports of org.springframework.*. Those are provided in
+             axis2-spring and therefore not transitive, so declare them. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-webapp</artifactId>
