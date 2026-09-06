@@ -82,6 +82,10 @@
 				     no default axis2.xml enables a JMS listener or sender, and
 				     jakarta.jms-api is an API with no provider, so a WAR that wanted
 				     JMS always had to add a broker client anyway. -->
+				<!-- Deprecated for removal in 2.1.0 and enabled by no default
+				     axis2.xml. angus-mail and jakarta.mail-api stay: JAX-WS
+				     attachment handling needs them, not the transport. -->
+				<exclude name="axis2-transport-mail-*.jar" />
 				<exclude name="axis2-transport-jms-*.jar" />
 				<exclude name="jakarta.jms-api-*.jar" />
 				<exclude name="commons-cli-*.jar" />
