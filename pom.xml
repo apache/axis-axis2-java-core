@@ -1378,6 +1378,28 @@
                                     <fileset dir="${basedir}/modules/samples/userguide/src/userguide"
                                              includes="*/pom.xml"/>
                                 </replaceregexp>
+                                <!-- replaceregexp reports nothing when it matches nothing, so a
+                                     renamed or dropped property would leave a sample pinned to a
+                                     stale version and the release would carry on quietly. Count
+                                     the poms, count the ones now carrying this version, and fail
+                                     if they differ. -->
+                                <resourcecount property="userguide.pom.count">
+                                    <fileset dir="${basedir}/modules/samples/userguide/src/userguide"
+                                             includes="*/pom.xml"/>
+                                </resourcecount>
+                                <resourcecount property="userguide.synced.count">
+                                    <fileset dir="${basedir}/modules/samples/userguide/src/userguide"
+                                             includes="*/pom.xml">
+                                        <contains text="&lt;axis2.version&gt;${project.version}&lt;/axis2.version&gt;"/>
+                                    </fileset>
+                                </resourcecount>
+                                <fail message="axis2.version sync reached only ${userguide.synced.count} of ${userguide.pom.count} userguide sample poms - check the property name in each">
+                                    <condition>
+                                        <not>
+                                            <equals arg1="${userguide.pom.count}" arg2="${userguide.synced.count}"/>
+                                        </not>
+                                    </condition>
+                                </fail>
                             </target>
                         </configuration>
                     </execution>
