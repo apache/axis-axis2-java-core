@@ -48,6 +48,8 @@
                      "src" component in the path. We need to exclude them explicitly. -->
                 <exclude>modules/tool/axis2-wsdl2code-maven-plugin/src/test/test1/target/**</exclude>
                 <exclude>modules/tool/axis2-java2wsdl-maven-plugin/src/test/test1/target/**</exclude>
+                <exclude>modules/samples/userguide/src/userguide/*/target/**</exclude>
+                <exclude>modules/samples/userguide/src/userguide/*/*/target/**</exclude>
                 
                 <!-- Exclusions from org.apache.resources:apache-source-release-assembly-descriptor.
                      Note that they assume that all sources are located under an "src" directory. This
