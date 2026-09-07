@@ -1380,7 +1380,22 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
+                            <target xmlns:if="ant:if" xmlns:unless="ant:unless">
+                                <!-- Only sync for a real release version. release:prepare
+                                     transforms the poms first, so ${project.version} is the
+                                     release version by the time this runs. A dry run does
+                                     not transform them, so this is a SNAPSHOT and the whole
+                                     body is skipped: without the guard a dry run would
+                                     rewrite the samples off the last released version and
+                                     leave them staged, since nothing reverts a dry run. -->
+                                <condition property="axis2.syncing.a.release">
+                                    <not>
+                                        <contains string="${project.version}" substring="-SNAPSHOT"/>
+                                    </not>
+                                </condition>
+                                <echo unless:set="axis2.syncing.a.release"
+                                      message="${project.version} is a SNAPSHOT - leaving the userguide sample poms alone"/>
+                                <sequential if:set="axis2.syncing.a.release">
                                 <echo message="Setting axis2.version to ${project.version} in the userguide Spring Boot samples"/>
                                 <replaceregexp
                                         match="&lt;axis2\.version&gt;[^&lt;]*&lt;/axis2\.version&gt;"
@@ -1428,6 +1443,7 @@
                                         </not>
                                     </condition>
                                 </fail>
+                                </sequential>
                             </target>
                         </configuration>
                     </execution>

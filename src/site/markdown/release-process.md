@@ -152,10 +152,14 @@ You may also execute a dry run of the release process: mvn release:prepare -Ddry
       deliberate: master's samples then point at a real published artifact, and the
       next release rewrites them again.
 
-    A `-DdryRun=true` run does **not** exercise any of this. A dry run never replaces
-    `pom.xml`, so the goal sees the SNAPSHOT version and writes it straight back, and no
-    commit happens at all. Only a real `release:prepare` transforms the poms first,
-    which is why the check above is on the release commit.
+    The whole body is skipped unless `${project.version}` is a non-SNAPSHOT, which is
+    what makes a `-DdryRun=true` run safe: a dry run never replaces `pom.xml`, so the
+    goal sees the SNAPSHOT and does nothing. Without that guard a dry run would rewrite
+    the samples off the last released version *and stage them*, and nothing reverts a
+    dry run -- the RM would be left with staged changes that any later commit would
+    sweep up. It also means a dry run cannot verify the sync; only a real
+    `release:prepare` transforms the poms first, which is why the check above is on the
+    release commit.
 
     The same class of problem bites any sample kept out of the reactor:
     `swagger-server` sat at `2.0.1-SNAPSHOT` through the whole 2.0.1 cycle because
