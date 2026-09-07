@@ -803,8 +803,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
                 }
 
                 WSDL11ToAxisServiceBuilder builder;
-                // jibx currently does not support multiservice
-                if ((serviceQname != null) || (getDatabindingType().equals("jibx"))) {
+                if (serviceQname != null) {
                     builder = new WSDL11ToAxisServiceBuilder(
                             wsdl4jDef,
                             serviceQname,

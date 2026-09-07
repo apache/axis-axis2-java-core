@@ -93,21 +93,25 @@ public class PrettyPrinter {
         int depth = 0;
 
         for (String raw : source.split("\r\n|\n|\r", -1)) {
+            // Every branch must fold the scan result into depth, including the ones
+            // that emit the line unchanged: a line can close a text block or a block
+            // comment and still carry code after the delimiter -- "*/ }" is the plain
+            // case -- and dropping those braces shifts every later line permanently.
             if (scanner.inTextBlock) {
                 // Leading whitespace here is part of the string value.
                 out.add(raw);
-                scanner.scan(raw);
+                depth = Math.max(depth + scanner.scan(raw), 0);
                 continue;
             }
             String trimmed = raw.trim();
             if (trimmed.isEmpty()) {
                 out.add("");
-                scanner.scan(raw);
+                depth = Math.max(depth + scanner.scan(raw), 0);
                 continue;
             }
             if (scanner.inBlockComment) {
                 out.add(indent(depth) + (trimmed.startsWith("*") ? " " + trimmed : trimmed));
-                scanner.scan(raw);
+                depth = Math.max(depth + scanner.scan(raw), 0);
                 continue;
             }
             // A line that starts by closing a block sits at the level of the block

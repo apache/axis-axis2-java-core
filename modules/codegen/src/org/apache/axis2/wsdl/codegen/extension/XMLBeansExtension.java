@@ -73,7 +73,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             return;
         }
 
-        // check the JiBX binding definition file specified
+        // the caller may override the randomly generated type system name
         String typeSystemName = (String)configuration.getProperties().get(TYPESYSTEMNAME_OPTION);
 
         try {

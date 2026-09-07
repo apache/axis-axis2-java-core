@@ -1393,6 +1393,11 @@
                                         <contains text="&lt;axis2.version&gt;${project.version}&lt;/axis2.version&gt;"/>
                                     </fileset>
                                 </resourcecount>
+                                <fail message="axis2.version sync found no userguide sample poms under modules/samples/userguide/src/userguide - the samples moved or were renamed, and the sync is now doing nothing">
+                                    <condition>
+                                        <equals arg1="${userguide.pom.count}" arg2="0"/>
+                                    </condition>
+                                </fail>
                                 <fail message="axis2.version sync reached only ${userguide.synced.count} of ${userguide.pom.count} userguide sample poms - check the property name in each">
                                     <condition>
                                         <not>

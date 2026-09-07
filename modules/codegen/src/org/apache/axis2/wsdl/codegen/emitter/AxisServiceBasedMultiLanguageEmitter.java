@@ -1766,8 +1766,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //add the db type attribute  - the name of the databinding type
         //this will be used to select the correct template
         addAttribute(doc, "dbtype", codeGenConfiguration.getDatabindingType(), rootElement);
-        //add the wrapped flag state - this is used by JiBX, but may be useful
-        //for other frameworks in the future
+        //add the wrapped flag state - read by InterfaceImplementationTemplate
         String wrapflag = Boolean.toString(codeGenConfiguration.isParametersWrapped());
         addAttribute(doc, "wrapped", wrapflag, rootElement);
 

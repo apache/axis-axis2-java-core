@@ -133,6 +133,38 @@ public class PrettyPrinterTest {
         assertTrue(out.contains("    /**\n     * javadoc\n     */"), out);
     }
 
+    /**
+     * A line can close a block comment and still carry code after the delimiter.
+     * Dropping those braces shifted every later line permanently.
+     */
+    @Test
+    public void testBracesAfterAClosingBlockCommentAreCounted() {
+        String out = PrettyPrinter.format(
+                "class A {\n"
+                + "void m() {\n"
+                + "/* comment\n"
+                + "*/ }\n"
+                + "int after = 1;\n"
+                + "}\n");
+        assertTrue(out.contains("\n    int after = 1;\n"),
+                "the method closed on the comment line, so this sits at class level:\n" + out);
+        assertTrue(out.endsWith("}\n"), out);
+    }
+
+    /** Same, for a line that closes a text block and then opens a brace. */
+    @Test
+    public void testBracesAfterAClosingTextBlockAreCounted() {
+        String out = PrettyPrinter.format(
+                "class A {\n"
+                + "String s = \"\"\"\n"
+                + "body\n"
+                + "\"\"\"; if (x) {\n"
+                + "y();\n"
+                + "}\n"
+                + "}\n");
+        assertTrue(out.contains("\n        y();\n"), out);
+    }
+
     @Test
     public void testBlankLinesStayBlankAndCountIsPreserved() {
         assertOnlyIndentChanged("class A {\n\n   \nvoid m() {}\n\n}\n");
