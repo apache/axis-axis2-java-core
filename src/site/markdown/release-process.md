@@ -135,6 +135,13 @@ You may also execute a dry run of the release process: mvn release:prepare -Ddry
     rewrite, and run the goal by hand if you are cutting a release any other way.
     Left unsynced, the shipped samples point at a SNAPSHOT that does not exist.
 
+    Two things to know about it. The execution is marked `<inherited>false</inherited>`
+    because `preparationGoals` runs across the whole reactor, and an inherited copy
+    resolves `${basedir}` to each child module. And a `-DdryRun=true` run does **not**
+    exercise the rewrite: a dry run never replaces `pom.xml`, so the goal sees the
+    SNAPSHOT version and writes that back. Only a real `release:prepare` transforms
+    the poms first, which is why the check above is on the release commit.
+
     The same class of problem bites any sample kept out of the reactor:
     `swagger-server` sat at `2.0.1-SNAPSHOT` through the whole 2.0.1 cycle because
     of it. It is a reactor module now, which is the preferred fix where the sample's

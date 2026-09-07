@@ -1355,6 +1355,12 @@
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <!-- Not inherited: preparationGoals runs across the whole reactor,
+                     and an inherited execution resolves ${basedir} to each child,
+                     so it looked for modules/resource-bundle/modules/samples/... and
+                     failed the release. Children now have the goal with no target and
+                     do nothing; the rewrite happens once, at the root. -->
+                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <!-- Deliberately bound to no phase: an ordinary build must not
