@@ -1008,7 +1008,12 @@
                              here means the rewrite lands in the release commit and the tag,
                              next to the versions release:prepare rewrites itself. -->
                         <preparationGoals>clean verify antrun:run@sync-userguide-sample-versions</preparationGoals>
-                        <completionGoals>antrun:run@sync-userguide-sample-versions</completionGoals>
+                        <!-- No completionGoals. It would run after the poms are bumped to the
+                             next SNAPSHOT, and invoking any goal across the reactor then needs
+                             that SNAPSHOT's artifacts, which do not exist yet, so the release
+                             aborts after tagging. So the samples keep the released version
+                             after a release, which is what you want anyway: master's samples
+                             point at a real artifact instead of a SNAPSHOT. -->
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1399,6 +1404,18 @@
                                         <contains text="&lt;axis2.version&gt;${project.version}&lt;/axis2.version&gt;"/>
                                     </fileset>
                                 </resourcecount>
+                                <!-- Stage them. maven-release-plugin only transforms reactor
+                                     poms, so without this the rewrite stays an unstaged working-tree
+                                     change and the release commit and tag ship the old version;
+                                     verified by rehearsing release:prepare on a throwaway clone.
+                                     The commit phase takes whatever is staged, so this is enough.
+                                     failonerror is deliberate: a release that cannot stage these
+                                     must stop rather than tag the wrong versions. -->
+                                <exec executable="git" dir="${basedir}" failonerror="true">
+                                    <arg value="add"/>
+                                    <arg value="--"/>
+                                    <arg value="modules/samples/userguide/src/userguide"/>
+                                </exec>
                                 <fail message="axis2.version sync found no userguide sample poms under modules/samples/userguide/src/userguide - the samples moved or were renamed, and the sync is now doing nothing">
                                     <condition>
                                         <equals arg1="${userguide.pom.count}" arg2="0"/>

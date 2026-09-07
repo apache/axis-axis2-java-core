@@ -135,12 +135,27 @@ You may also execute a dry run of the release process: mvn release:prepare -Ddry
     rewrite, and run the goal by hand if you are cutting a release any other way.
     Left unsynced, the shipped samples point at a SNAPSHOT that does not exist.
 
-    Two things to know about it. The execution is marked `<inherited>false</inherited>`
-    because `preparationGoals` runs across the whole reactor, and an inherited copy
-    resolves `${basedir}` to each child module. And a `-DdryRun=true` run does **not**
-    exercise the rewrite: a dry run never replaces `pom.xml`, so the goal sees the
-    SNAPSHOT version and writes that back. Only a real `release:prepare` transforms
-    the poms first, which is why the check above is on the release commit.
+    Three things to know about it, all found by rehearsing `release:prepare` against a
+    throwaway clone:
+
+    - The execution is `<inherited>false</inherited>`, because `preparationGoals` runs
+      across the whole reactor and an inherited copy resolves `${basedir}` to each
+      child module.
+    - The target stages the rewritten poms with `git add` itself. The release plugin
+      only transforms *reactor* poms, so without that the rewrite stays an unstaged
+      working-tree change and the release commit and tag ship the old version. The
+      commit phase takes whatever is staged, which is why staging is sufficient.
+    - There is no `completionGoals`. Anything invoked there runs after the poms are
+      bumped to the next SNAPSHOT and needs that SNAPSHOT's artifacts, which do not
+      exist yet -- the release aborts after tagging. So after a release the sample poms
+      keep the released version rather than moving to the next SNAPSHOT. That is
+      deliberate: master's samples then point at a real published artifact, and the
+      next release rewrites them again.
+
+    A `-DdryRun=true` run does **not** exercise any of this. A dry run never replaces
+    `pom.xml`, so the goal sees the SNAPSHOT version and writes it straight back, and no
+    commit happens at all. Only a real `release:prepare` transforms the poms first,
+    which is why the check above is on the release commit.
 
     The same class of problem bites any sample kept out of the reactor:
     `swagger-server` sat at `2.0.1-SNAPSHOT` through the whole 2.0.1 cycle because
