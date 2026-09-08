@@ -324,7 +324,7 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    **Why the machinery is not simply deleted.** Clustering was the reason it
    was written and clustering is gone (item 5), so removing it is the obvious
    next question and scanners will keep asking it. It was scoped in
-   AXIS2-6107 and deliberately not done, for three reasons that are worth
+   AXIS2-6107 and closed as Won't Do, for three reasons that are worth
    recording so the question does not need re-answering:
 
    - `SessionContext` is stored as an `HttpSession` attribute
