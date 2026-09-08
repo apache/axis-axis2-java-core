@@ -321,6 +321,29 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    when an integrator persists or replicates contexts, and deserializing
    attacker-influenced bytes stays dangerous whatever is configured here.
 
+   **Why the machinery is not simply deleted.** Clustering was the reason it
+   was written and clustering is gone (item 5), so removing it is the obvious
+   next question and scanners will keep asking it. It was scoped in
+   AXIS2-6107 and deliberately not done, for three reasons that are worth
+   recording so the question does not need re-answering:
+
+   - `SessionContext` is stored as an `HttpSession` attribute
+     (`AxisServletListener`), and servlet containers serialize session
+     attributes when they persist sessions across a restart. That has nothing
+     to do with clustering, so its serializability is load-bearing today.
+   - `EndpointReference` carries Axiom `OMElement` and `OMAttribute` values,
+     which are not serializable. Custom externalization is *why* it round
+     trips at all, and `EndpointReferenceTypeTest` asserts that contract.
+     Replacing it means writing new Axiom-aware serialization code, which is
+     more XML-specific machinery, not less.
+   - Persisting a paused `MessageContext` and resuming it later is a
+     capability, exercised by `PausingHandlerExecutionTest`. Removing the
+     externalization removes the capability, not just dead code.
+
+   The mitigation above is therefore the answer rather than deletion: the
+   proxy refusal and the scoped filter bound what these streams will accept,
+   and nothing reaches them from the network.
+
 5. **Clustering removed:** The entire clustering module (Tribes-based
    inter-node communication with unvalidated deserialization) has been
    removed from the codebase.

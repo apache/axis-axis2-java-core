@@ -47,8 +47,21 @@ where a JVM cannot run. The same MCP client connects to both Axis2/Java
 (enterprise) and Axis2/C (embedded) with identical protocol and identical
 results. See the
 <a href="https://axis.apache.org/axis2/c/core/">Axis2/C site</a> for details.</p>
+<p><strong>Apache Axis2/Java 2.0.2 is a security release.</strong> Most of its
+content comes from security reports and from security reviews of the code, and
+several defaults now refuse what earlier versions allowed: decoupled
+WS-Addressing responses, service dispatch from the SOAP body namespace, and the
+administration console's shipped credentials. Request bodies, multiref
+resolution and metadata exposure are bounded or gated as well. Every change has
+a documented way to restore the previous behaviour where a deployment genuinely
+needs it, collected in the <em>Upgrading from 2.0.1</em> section of the
+<a href="release-notes/2.0.2.html">2.0.2 release notes</a> &#x2014; read that
+section before upgrading rather than after. Advisories for the reported issues
+are published after the release, which is this project's normal order.
+<code>SECURITY.md</code> in the source distribution carries the threat model,
+including what is deliberately <em>not</em> covered.</p>
 <p><strong>Apache Rampart 2.0.0 is ready for release</strong> and will ship
-immediately after Axis2/Java 2.0.1, on which it depends. Rampart 2.0.0
+immediately after Axis2/Java 2.0.2, on which it depends. Rampart 2.0.0
 brings WS-Security up to date with the Jakarta EE 9+ / Axis2 2.0.x line
 (<code>jakarta.*</code> namespaces, modern WSS4J, current OpenJDK support)
 so legacy SOAP services with WS-Security policies can run unchanged on
@@ -58,7 +71,7 @@ server/JDK combinations listed below. See the
 <a href="https://axis.apache.org/axis2/java/rampart/">Apache Rampart
 site</a> for details.</p>
 <p>Apache Axis2, Axis2, Apache, the Apache feather logo, and the Apache Axis2 project logo are trademarks of The Apache Software Foundation.</p>
-<h3><em>Why Apache Axis2 in 2026:</em></h3>
+<h3><em>Why Apache Axis2 today:</em></h3>
 
 <p><strong>One service, three protocols.</strong> Axis2 is the only Java framework
 that serves JSON-RPC, REST+OpenAPI, and
