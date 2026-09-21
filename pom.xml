@@ -462,7 +462,7 @@
         <woden.version>1.0M10</woden.version>
         <axiom.version>2.0.0</axiom.version>
         <xmlschema.version>2.3.2</xmlschema.version>
-        <ant.version>1.10.17</ant.version>
+        <ant.version>1.10.18</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.25.1</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
@@ -1064,7 +1064,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.1.4</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -1677,7 +1677,7 @@ $${type_declaration}</template></templates>]]></value>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tidy-maven-plugin</artifactId>
-                <version>1.4.0</version>
+                <version>1.4.1</version>
                 <executions>
                     <execution>
                         <goals>
