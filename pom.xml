@@ -459,7 +459,6 @@
 
     <properties>
         <neethi.version>3.2.3</neethi.version>
-        <woden.version>1.0M10</woden.version>
         <axiom.version>2.0.0</axiom.version>
         <xmlschema.version>2.3.2</xmlschema.version>
         <ant.version>1.10.18</ant.version>
@@ -758,11 +757,9 @@
                 <artifactId>wsdl4j</artifactId>
                 <version>${wsdl4j.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.woden</groupId>
-                <artifactId>woden-core</artifactId>
-                <version>${woden.version}</version>
-            </dependency>
+            <!-- No woden-core entry: WSDL 2.0 support was removed in 2.0.1
+                 (AXIS2-6102) and Apache Woden itself is being archived. Nothing
+                 in the reactor compiles against it; do not reinstate. -->
             <dependency>
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
