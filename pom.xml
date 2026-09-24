@@ -482,7 +482,7 @@
         <spring.version>7.0.9</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xmlbeans.version>5.4.0</xmlbeans.version>
-        <xmlunit.version>2.13.0</xmlunit.version>
+        <xmlunit.version>2.14.0</xmlunit.version>
         <xml_resolver.version>1.2</xml_resolver.version>
         <commons.cli.version>1.11.0</commons.cli.version>
         <!-- The build failing if tests are skipped is very annoying -->
@@ -1108,7 +1108,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>6.1.2</version>
+                    <version>6.2.0</version>
                     <configuration>
                         <instructions>
                             <_bundleannotations />
