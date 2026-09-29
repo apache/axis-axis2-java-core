@@ -78,7 +78,9 @@ public abstract class AbstractJSONDataSource extends AbstractPullOMDataSource {
                 }
                 jsonString = sb.toString();
             } catch (IOException e) {
-                throw new OMException();
+                // Keep the cause: an over-sized body surfaces here, as the
+                // ceiling applied by AbstractJSONOMBuilder.
+                throw new OMException(e);
             }
             isRead = true;
             return jsonString;

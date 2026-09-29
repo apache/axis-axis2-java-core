@@ -29,7 +29,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.BoundedInputStream;
 import org.apache.axis2.builder.Builder;
+import org.apache.axis2.builder.RequestSizeLimits;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.factory.JsonConstant;
 import org.apache.commons.logging.Log;
@@ -46,6 +48,9 @@ public class JsonBuilder implements Builder {
         JsonReader jsonReader;
         String charSetEncoding=null;
         if (inputStream != null) {
+            inputStream = BoundedInputStream.wrap(inputStream, RequestSizeLimits.resolve(messageContext,
+                    RequestSizeLimits.JSON_MAX_REQUEST_SIZE,
+                    RequestSizeLimits.DEFAULT_JSON_MAX_REQUEST_SIZE));
             try {
                 charSetEncoding = (String) messageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
                 if (charSetEncoding != null && charSetEncoding.indexOf("UTF-8") == -1) {

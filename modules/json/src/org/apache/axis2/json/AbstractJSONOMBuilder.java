@@ -25,7 +25,9 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.builder.BoundedInputStream;
 import org.apache.axis2.builder.Builder;
+import org.apache.axis2.builder.RequestSizeLimits;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.kernel.http.util.URIEncoderDecoder;
 
@@ -111,8 +113,14 @@ public abstract class AbstractJSONOMBuilder implements Builder {
             if (charSetEncoding == null) {
                 charSetEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
+            // The data source buffers the whole body into one String, so bound
+            // the transport stream as SOAPBuilder does.
+            long maxRequestSize = RequestSizeLimits.resolve(messageContext,
+                    RequestSizeLimits.JSON_MAX_REQUEST_SIZE,
+                    RequestSizeLimits.DEFAULT_JSON_MAX_REQUEST_SIZE);
             try {
-                reader = new InputStreamReader(inputStream, charSetEncoding);
+                reader = new InputStreamReader(
+                        BoundedInputStream.wrap(inputStream, maxRequestSize), charSetEncoding);
             } catch (UnsupportedEncodingException ex) {
                 throw AxisFault.makeFault(ex);
             }

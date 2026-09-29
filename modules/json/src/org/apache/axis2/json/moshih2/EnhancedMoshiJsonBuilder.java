@@ -26,7 +26,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.BoundedInputStream;
 import org.apache.axis2.builder.Builder;
+import org.apache.axis2.builder.RequestSizeLimits;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -160,6 +162,11 @@ public class EnhancedMoshiJsonBuilder implements Builder {
                 }
                 return createDefaultEnvelope();
             }
+
+            // The payload-size strategy below only picks a code path; it bounds nothing.
+            inputStream = BoundedInputStream.wrap(inputStream, RequestSizeLimits.resolve(messageContext,
+                    RequestSizeLimits.JSON_MAX_REQUEST_SIZE,
+                    RequestSizeLimits.DEFAULT_JSON_MAX_REQUEST_SIZE));
 
             // Determine processing strategy based on payload characteristics (from HTTP/2 analysis)
             ProcessingStrategy strategy = analyzeProcessingStrategy(messageContext, contentType);

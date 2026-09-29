@@ -132,7 +132,7 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 |-----------|---------|-------------|
 | **XML parsers** (AXIOM/StAX, DocumentBuilderFactory) | XXE, billion laughs, entity expansion DoS | DOCTYPE disallowed; external entities disabled; `DefaultEntityResolver` returns empty source |
 | **WSDL/XSD import resolution** (wsdl4j, xmlschema-core) | XXE in imported documents; SSRF via `file://`/`gopher://` schemes | `SecureWSDLLocator` pre-validates the client-side path with a hardened SAX parser (HTTP/HTTPS only, 10MB default, connect/read timeouts, relative-path SSRF bypass blocked); `HardenedWSDLLocator` screens the file, archive, classpath and catalog paths, refusing a DOCTYPE without restricting where a document may be loaded from |
-| **JSON parser** (Gson) | Deep nesting stack exhaustion, large payload DoS | Fuzz-tested (1.7M+ iterations); Gson nesting limits |
+| **JSON parser** (Gson) | Deep nesting stack exhaustion, large payload DoS | Fuzz-tested (1.7M+ iterations); Gson nesting limits; `jsonMaxRequestSize` bounds the body for every JSON builder |
 | **JSON-RPC dispatch** | Method name injection; unexpected operation invocation | Method names validated against deployed operations; unknown methods return fault |
 | **Multipart/file upload** (commons-fileupload2) | Unbounded file count DoS (CVE-2023-24998 pattern); unbounded body size; temp-file accumulation | commons-fileupload2 enforces the file count limit; `multipartMaxRequestSize` / `multipartMaxFileSize` bound the body; temp files are deleted immediately for form fields and tracked to collection for file parts |
 | **Form-urlencoded builder** | Unbounded body read into an in-memory map | `formUrlEncodedMaxRequestSize` bounds the read; the stream fails rather than truncating |
@@ -404,9 +404,10 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
     stream directly, so a servlet container's post-size limit never sees the
     body. `multipartMaxRequestSize` and `multipartMaxFileSize` (100 MB),
     `formUrlEncodedMaxRequestSize` (2 MB), `mtomMaxRequestSize` (100 MB, the
-    whole `multipart/related` body, so MTOM and SwA) and `soapMaxRequestSize`
-    (100 MB, a plain SOAP or POX body) bound them; `-1` restores the previous
-    unbounded behaviour, and any may be set per service.
+    whole `multipart/related` body, so MTOM and SwA), `soapMaxRequestSize`
+    (100 MB, a plain SOAP or POX body) and `jsonMaxRequestSize` (100 MB, every
+    builder in `axis2-json`, streaming or not) bound them; `-1` restores the
+    previous unbounded behaviour, and any may be set per service.
 
     Every builder that reads the stream has to be bounded, not just the ones
     whose limits were reported: the caller picks which builder runs by choosing

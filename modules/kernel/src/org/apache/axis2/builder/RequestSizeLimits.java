@@ -61,7 +61,6 @@ public final class RequestSizeLimits {
     /** 2 MB: form encoding is for field data, not bulk transfer. */
     public static final long DEFAULT_FORM_URLENCODED_MAX_REQUEST_SIZE = 2L * 1024 * 1024;
 
-    /** Sentinel for "no ceiling", matching the commons-fileupload2 convention. */
     /**
      * Ceiling on a {@code multipart/related} body: MTOM and SwA.
      * <p>
@@ -82,6 +81,23 @@ public final class RequestSizeLimits {
     /** Default {@link #SOAP_MAX_REQUEST_SIZE}: 100 MB. */
     public static final long DEFAULT_SOAP_MAX_REQUEST_SIZE = 100L * 1024 * 1024;
 
+    /**
+     * Ceiling on a JSON body, for every builder in the axis2-json module.
+     * <p>
+     * JSON is the primary protocol, so this is the ceiling most deployments
+     * actually rely on. Streaming does not make a JSON builder safe to leave
+     * unbounded: a single string token is still materialised whole.
+     */
+    public static final String JSON_MAX_REQUEST_SIZE = "jsonMaxRequestSize";
+
+    /**
+     * Default {@link #JSON_MAX_REQUEST_SIZE}: 100 MB, matching SOAP. The HTTP/2
+     * JSON builders are tuned for payloads of 50 MB and more, so a smaller
+     * default would break the deployments they were written for.
+     */
+    public static final long DEFAULT_JSON_MAX_REQUEST_SIZE = 100L * 1024 * 1024;
+
+    /** Sentinel for "no ceiling", matching the commons-fileupload2 convention. */
     public static final long UNLIMITED = -1L;
 
     private RequestSizeLimits() {
