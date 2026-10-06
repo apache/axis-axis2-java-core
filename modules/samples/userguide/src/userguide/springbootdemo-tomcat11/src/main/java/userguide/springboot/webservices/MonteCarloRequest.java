@@ -79,7 +79,7 @@ package userguide.springboot.webservices;
  *
  * <h3>Reproducibility</h3>
  * <p>Setting a non-zero {@code randomSeed} makes the run deterministic
- * AGAINST THIS IMPLEMENTATION (Java {@link java.util.Random}).  The same
+ * AGAINST THIS IMPLEMENTATION (the JDK's {@code L64X128MixRandom}).  The same
  * seed will not produce the same output under other PRNGs — xorshift128+,
  * PCG64, Mersenne Twister, NumPy's Generator — so seeded reproducibility
  * is per-backend, not cross-backend.  Callers comparing VaR numbers
@@ -162,7 +162,7 @@ public class MonteCarloRequest {
     /**
      * Random seed for reproducibility. 0 (default) → non-deterministic
      * (each call yields different results). A non-zero value seeds
-     * {@link java.util.Random} so repeated calls with the same seed give
+     * the JDK's {@code L64X128MixRandom} so repeated calls with the same seed give
      * bit-identical output.
      *
      * <p>Cross-PRNG caveat: the same seed in a different language or PRNG
