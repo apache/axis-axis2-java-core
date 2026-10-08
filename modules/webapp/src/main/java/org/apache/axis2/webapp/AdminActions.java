@@ -45,6 +45,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -224,12 +226,33 @@ final class AdminActions {
         String adminPassword = (String) configContext.getAxisConfiguration().getParameter(
                 Constants.PASSWORD).getValue();
 
-        if (username.equals(adminUserName) && password.equals(adminPassword)) {
+        // Compare both credentials in constant time and without short-circuiting
+        // between them. String.equals returns as soon as it hits a differing
+        // character, which leaks how much of the admin username/password a guess
+        // got right through response timing (CWE-208). The '&' keeps both
+        // comparisons running regardless of the first result.
+        boolean userMatches = constantTimeEquals(adminUserName, username);
+        boolean passwordMatches = constantTimeEquals(adminPassword, password);
+        if (userMatches & passwordMatches) {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
             return new Redirect(INDEX);
         } else {
             return new Redirect(WELCOME).withParameter("failed", "true");
         }
+    }
+
+    /**
+     * Compares two strings without leaking, through timing, where they first
+     * differ. Returns false when either side is null. Used for the admin
+     * credential check so a remote guesser cannot learn a correct prefix from
+     * how long the comparison takes.
+     */
+    private static boolean constantTimeEquals(String expected, String actual) {
+        if (expected == null || actual == null) {
+            return false;
+        }
+        return MessageDigest.isEqual(expected.getBytes(StandardCharsets.UTF_8),
+                actual.getBytes(StandardCharsets.UTF_8));
     }
 
     @Action(name=EDIT_SERVICE_PARAMETERS)
