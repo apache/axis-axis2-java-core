@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>39</version>
+        <version>40</version>
     </parent>
 
     <groupId>org.apache.axis2</groupId>
@@ -458,9 +458,9 @@
     </distributionManagement>
 
     <properties>
-        <neethi.version>3.2.3</neethi.version>
+        <neethi.version>3.2.4</neethi.version>
         <axiom.version>2.0.0</axiom.version>
-        <xmlschema.version>2.3.2</xmlschema.version>
+        <xmlschema.version>2.3.3</xmlschema.version>
         <ant.version>1.10.18</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <aspectj.version>1.9.25.1</aspectj.version>
@@ -469,20 +469,20 @@
         <commons.logging.version>1.4.0</commons.logging.version>
         <!-- fi.version removed: AXIS2-6105 -->
         <google.gson.version>2.14.0</google.gson.version>
-        <groovy.version>5.1.2</groovy.version>
-        <httpcore.version>5.4.3</httpcore.version>
+        <groovy.version>6.0.0</groovy.version>
+        <httpcore.version>5.4.4</httpcore.version>
         <httpclient.version>5.6.4</httpclient.version>
         <jaxbri.version>4.0.3</jaxbri.version>
-        <jetty.version>12.1.13</jetty.version>
+        <jetty.version>12.1.14</jetty.version>
         <!-- jibx.version removed: AXIS2-6105 -->
         <maven.archiver.version>3.6.6</maven.archiver.version>
-        <maven.version>3.9.16</maven.version>
+        <maven.version>3.10.0</maven.version>
         <rhino.version>1.9.1</rhino.version>
-        <slf4j.version>2.0.19</slf4j.version>
+        <slf4j.version>2.0.20</slf4j.version>
         <spring.version>7.0.9</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
-        <xmlbeans.version>5.4.0</xmlbeans.version>
-        <xmlunit.version>2.13.0</xmlunit.version>
+        <xmlbeans.version>5.4.1</xmlbeans.version>
+        <xmlunit.version>2.14.0</xmlunit.version>
         <xml_resolver.version>1.2</xml_resolver.version>
         <commons.cli.version>1.11.0</commons.cli.version>
         <!-- The build failing if tests are skipped is very annoying -->
@@ -668,7 +668,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.23.0</version>
+                <version>5.24.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.xmlschema</groupId>
@@ -857,7 +857,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.20.0</version>
+                <version>3.21.0</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.transaction</groupId>
@@ -872,7 +872,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.7.1-jre</version>
+                <version>33.7.2-jre</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -887,7 +887,7 @@
             <dependency>
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
-                <version>7.2.2</version>
+                <version>7.3.0</version>
             </dependency>
             
             <!-- Jetty is used by some of the unit tests -->
@@ -931,7 +931,7 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.18.13</version>
+                <version>1.18.14</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
