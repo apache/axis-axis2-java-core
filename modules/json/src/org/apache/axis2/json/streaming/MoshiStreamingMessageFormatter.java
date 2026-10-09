@@ -19,6 +19,7 @@
 
 package org.apache.axis2.json.streaming;
 
+import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
@@ -634,6 +635,12 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * including) Object. This ensures inherited fields are included when
      * a response object extends a base class.
      *
+     * <p>Fields that Moshi itself never serializes are excluded as well:
+     * synthetic fields (such as the {@code this$0} reference to an enclosing
+     * instance) and fields annotated {@code @Json(ignore = true)}. The field
+     * filter selects a subset of the normal response; it must not make a
+     * field reachable that the unfiltered output never contains.</p>
+     *
      * <p>Note: this method reflects over the class on each call. For extreme
      * performance needs, the result could be cached in a
      * {@code ConcurrentHashMap<Class<?>, List<Field>>}. The current approach
@@ -644,9 +651,15 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
         for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields()) {
                 int mods = field.getModifiers();
-                if (!Modifier.isStatic(mods) && !Modifier.isTransient(mods)) {
-                    result.add(field);
+                if (Modifier.isStatic(mods) || Modifier.isTransient(mods)
+                        || field.isSynthetic()) {
+                    continue;
                 }
+                Json json = field.getAnnotation(Json.class);
+                if (json != null && json.ignore()) {
+                    continue;
+                }
+                result.add(field);
             }
         }
         return result;
