@@ -271,6 +271,28 @@ public class FieldFilteringMessageFormatterTest {
             response.getAsJsonObject().has("tempCache"));
     }
 
+    @Test
+    public void testSyntheticFieldsNeverIncluded() throws Exception {
+        // this$0 is a synthetic field pointing at the enclosing instance.
+        // Neither GSON nor Moshi serializes it on the unfiltered path, so
+        // requesting it by name must not expose the enclosing object's state.
+        EnclosingService svc = new EnclosingService("db-password-123");
+        setReturnObject(svc.new Result("ok"));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "this$0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        String raw = outputStream.toString("UTF-8");
+        JsonElement response = parseResponse();
+
+        Assert.assertEquals("ok",
+            response.getAsJsonObject().get("status").getAsString());
+        Assert.assertFalse("synthetic this$0 must never appear",
+            response.getAsJsonObject().has("this$0"));
+        Assert.assertFalse("enclosing instance state must not leak",
+            raw.contains("db-password-123"));
+    }
+
     // ── parseFieldsCsv / parseFieldsFromUrl tests ─────────────────────────
 
     @Test
@@ -433,6 +455,18 @@ public class FieldFilteringMessageFormatterTest {
         public ChildData() {}
         public ChildData(String s, double v, String e) {
             super(s, v); extra = e;
+        }
+    }
+
+    /** Enclosing object whose state must not leak through a synthetic this$0. */
+    public static class EnclosingService {
+        public String dbPassword;
+        public EnclosingService(String p) { dbPassword = p; }
+
+        /** Non-static inner class — carries a synthetic this$0 field. */
+        public class Result {
+            public String status;
+            public Result(String s) { status = s; }
         }
     }
 

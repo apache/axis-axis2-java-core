@@ -455,13 +455,19 @@ public class JSONStreamingMessageFormatter implements MessageFormatter {
 
     /**
      * Collect all non-static, non-transient fields from the class hierarchy.
+     *
+     * <p>Synthetic fields (such as the {@code this$0} reference to an
+     * enclosing instance) are excluded, matching GSON's own excluder. The
+     * field filter selects a subset of the normal response; it must not make
+     * a field reachable that the unfiltered output never contains.</p>
      */
     private static List<Field> getAllFields(Class<?> clazz) {
         List<Field> result = new ArrayList<>();
         for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields()) {
                 int mods = field.getModifiers();
-                if (!Modifier.isStatic(mods) && !Modifier.isTransient(mods)) {
+                if (!Modifier.isStatic(mods) && !Modifier.isTransient(mods)
+                        && !field.isSynthetic()) {
                     result.add(field);
                 }
             }

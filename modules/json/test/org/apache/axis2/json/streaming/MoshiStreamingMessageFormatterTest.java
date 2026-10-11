@@ -19,6 +19,7 @@
 
 package org.apache.axis2.json.streaming;
 
+import com.squareup.moshi.Json;
 import com.squareup.moshi.Moshi;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -36,6 +37,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 /**
  * Unit tests for {@link MoshiStreamingMessageFormatter}.
@@ -160,6 +163,36 @@ public class MoshiStreamingMessageFormatterTest {
     }
 
     /**
+     * Test that a field excluded from serialization with
+     * {@code @Json(ignore = true)} cannot be pulled into the response by
+     * naming it in the field filter. The filter may only narrow the
+     * normal Moshi output, never widen it.
+     */
+    @Test
+    public void testFieldFilterDoesNotExposeIgnoredField() throws Exception {
+        CredentialData data = new CredentialData("public-label", "secret-token-xyz");
+        outMsgContext.setProperty(JsonConstant.RETURN_OBJECT, data);
+        outMsgContext.setProperty(JsonConstant.RETURN_TYPE, CredentialData.class);
+
+        // Unfiltered baseline: Moshi never serializes the ignored field.
+        MoshiStreamingMessageFormatter formatter = new MoshiStreamingMessageFormatter();
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        Assert.assertFalse("ignored field must be absent from the unfiltered response",
+            outputStream.toString("UTF-8").contains("secret-token-xyz"));
+
+        // Filtered: requesting the ignored field by name must not expose it.
+        outputStream.reset();
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            new LinkedHashSet<>(Arrays.asList("label", "apiToken")));
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+
+        String result = outputStream.toString("UTF-8");
+        Assert.assertTrue(result.contains("\"label\":\"public-label\""));
+        Assert.assertFalse("@Json(ignore = true) field must not be exposed by the field filter",
+            result.contains("secret-token-xyz"));
+    }
+
+    /**
      * Test content type passthrough.
      */
     @Test
@@ -184,6 +217,20 @@ public class MoshiStreamingMessageFormatterTest {
         OMElement detail = factory.createOMElement("detail", ns, fault);
         detail.setText("moshi fault test");
         return fault;
+    }
+
+    /** POJO with a field opted out of serialization via {@code @Json(ignore = true)}. */
+    public static class CredentialData {
+        public String label;
+        @Json(ignore = true)
+        public String apiToken;
+
+        public CredentialData() {}
+
+        public CredentialData(String label, String apiToken) {
+            this.label = label;
+            this.apiToken = apiToken;
+        }
     }
 
     /**
