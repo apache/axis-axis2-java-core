@@ -193,6 +193,29 @@ public class MoshiStreamingMessageFormatterTest {
     }
 
     /**
+     * Same as above for an ignored field on elements of a nested
+     * collection, which go through the nested walker rather than the
+     * top-level prune.
+     */
+    @Test
+    public void testDotNotationDoesNotExposeIgnoredField() throws Exception {
+        CredentialHolder holder = new CredentialHolder(java.util.List.of(
+            new CredentialData("public-label", "secret-token-xyz")));
+        outMsgContext.setProperty(JsonConstant.RETURN_OBJECT, holder);
+        outMsgContext.setProperty(JsonConstant.RETURN_TYPE, CredentialHolder.class);
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            new LinkedHashSet<>(Arrays.asList("creds.label", "creds.apiToken")));
+
+        new MoshiStreamingMessageFormatter().writeTo(
+            outMsgContext, outputFormat, outputStream, false);
+
+        String result = outputStream.toString("UTF-8");
+        Assert.assertTrue(result.contains("\"label\":\"public-label\""));
+        Assert.assertFalse("@Json(ignore = true) field must not be exposed via dot notation",
+            result.contains("secret-token-xyz"));
+    }
+
+    /**
      * Test content type passthrough.
      */
     @Test
@@ -217,6 +240,13 @@ public class MoshiStreamingMessageFormatterTest {
         OMElement detail = factory.createOMElement("detail", ns, fault);
         detail.setText("moshi fault test");
         return fault;
+    }
+
+    /** Wraps CredentialData in a collection for the nested filtering test. */
+    public static class CredentialHolder {
+        public java.util.List<CredentialData> creds;
+        public CredentialHolder() {}
+        public CredentialHolder(java.util.List<CredentialData> c) { creds = c; }
     }
 
     /** POJO with a field opted out of serialization via {@code @Json(ignore = true)}. */

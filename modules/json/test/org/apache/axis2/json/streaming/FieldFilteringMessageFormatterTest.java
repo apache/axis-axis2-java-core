@@ -293,6 +293,35 @@ public class FieldFilteringMessageFormatterTest {
             raw.contains("db-password-123"));
     }
 
+    @Test
+    public void testSyntheticFieldsNotReachableThroughDotNotation() throws Exception {
+        // The nested walker enumerates fields separately from the top-level
+        // prune, so a dot path must not reach this$0 either -- directly on
+        // the return object or on elements of a nested collection.
+        EnclosingService svc = new EnclosingService("db-password-123");
+        List<EnclosingService.Result> items = new ArrayList<>();
+        items.add(svc.new Result("ok"));
+        setReturnObject(new ResultHolder("SUCCESS", items));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "items.status", "items.this$0"));
+
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        Assert.assertFalse("enclosing instance state must not leak via items.this$0",
+            outputStream.toString("UTF-8").contains("db-password-123"));
+        JsonElement item = parseResponse().getAsJsonObject()
+            .getAsJsonArray("items").get(0);
+        Assert.assertEquals("ok", item.getAsJsonObject().get("status").getAsString());
+        Assert.assertFalse(item.getAsJsonObject().has("this$0"));
+
+        outputStream.reset();
+        setReturnObject(svc.new Result("ok"));
+        outMsgContext.setProperty(JsonConstant.FIELD_FILTER,
+            setOf("status", "this$0.dbPassword"));
+        formatter.writeTo(outMsgContext, outputFormat, outputStream, false);
+        Assert.assertFalse("enclosing instance state must not leak via this$0.dbPassword",
+            outputStream.toString("UTF-8").contains("db-password-123"));
+    }
+
     // ── parseFieldsCsv / parseFieldsFromUrl tests ─────────────────────────
 
     @Test
@@ -468,6 +497,13 @@ public class FieldFilteringMessageFormatterTest {
             public String status;
             public Result(String s) { status = s; }
         }
+    }
+
+    /** Holds a collection of inner-class results for nested filtering tests. */
+    public static class ResultHolder {
+        public String status;
+        public List<EnclosingService.Result> items;
+        public ResultHolder(String s, List<EnclosingService.Result> i) { status = s; items = i; }
     }
 
     /** POJO with static and transient fields for modifier filtering test. */
