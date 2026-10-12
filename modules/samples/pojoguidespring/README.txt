@@ -18,22 +18,25 @@ framework to initialize the weather property of the WeatherSpringService.
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
-Spring-1.2.6.jar or later 
-You need to have this jar in your build and runtime class path. The easiest way to do this 
-is to copy it to Axis2_HOME/lib directory.
+Spring Framework 7.x jars (Axis2 is built against Spring 7.0.9). The binary
+distribution ships axis2-spring but not Spring itself. The build downloads spring-core,
+spring-beans, spring-context, spring-aop and spring-expression 7.0.9 from Maven Central
+into this sample's lib/ directory the first time it runs. To run the service, the same
+jars must also be on the server's class path: copy them from lib/ into Axis2_HOME/lib
+(or the axis2 webapp's WEB-INF/lib).
 
 Building the Service
 ====================
 
-Type $ant from Axis2_HOME/samples/pojoguidespring
+Type $ant from Axis2_HOME/modules/samples/pojoguidespring
 
 
 Running the Client
 ==================
-Type $ant rpc.client from from Axis2_HOME/samples/pojoguidespring
+Type $ant rpc.client from Axis2_HOME/modules/samples/pojoguidespring
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.

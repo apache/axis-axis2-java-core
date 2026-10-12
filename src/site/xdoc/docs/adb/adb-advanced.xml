@@ -97,7 +97,7 @@ package name can also be explicitly set by a CompilerOption:</p>
         try {
             SchemaCompiler schemaCompiler = new SchemaCompiler(compilerOptions);
             XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
-            XmlSchema xmlSchema =xmlSchemaCollection.read(new FileReader("schema/sample.xsd"),null);
+            XmlSchema xmlSchema =xmlSchemaCollection.read(new FileReader("schema/sample.xsd"));
             schemaCompiler.compile(xmlSchema);
         } catch (Exception e) {
             e.printStackTrace();

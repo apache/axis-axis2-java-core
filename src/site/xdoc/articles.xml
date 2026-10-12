@@ -49,12 +49,10 @@ please refer to the <a href="docs/userguide.html">official Axis2 User Guide</a> 
 <li><a class="externalLink" href="https://www.packtpub.com/apache-axis2-web-services/book">
 Apache Axis2 Web Services</a>
 - By Deepal Jayasinghe and Afkham Azeez</li>
-<img alt="Apache Axis2 Web Services" src="https://www.packtpub.com/sites/default/files/imagecache/productview/1568_Apache%20Axis2cov.jpg"></img>
 
-<li><a class="externalLink" href="http://www.packtpub.com/article/create-quality-web-services-with-quicktstart-apache-axis2">
+<li><a class="externalLink" href="https://www.packtpub.com/article/create-quality-web-services-with-quicktstart-apache-axis2">
 Quicktstart Apache Axis2</a>
 - By Deepal Jayasinghe</li>
-<img alt="Quicktstart Apache Axis2" src="http://images.packtpub.com/images/100x123/1847192866.png"></img>
 
 </ul>
 <h2>Articles:</h2>
@@ -67,9 +65,9 @@ Ranabahu</li>
 "http://www.developer.com/services/article.php/3525481">Introducing
 Axis2, the Next Generation of the Apache Web Service Stack</a></s> <em>(Developer.com may be inaccessible)</em>- By
 Srinath Perera</li>
-<li><a href=
+<li><s><a href=
 "http://www.onjava.com/pub/a/onjava/2005/07/27/axis2.html">Web
-Services Messaging with Apache Axis2: Concepts and Techniques</a>-
+Services Messaging with Apache Axis2: Concepts and Techniques</a></s> <em>(OnJava is no longer accessible)</em>-
 By Srinath Perera, Ajith Ranabahu (27 July 2005)</li>
 <li><s><a href=
 "http://developer.com/java/web/article.php/3529321">Axis2 Execution
@@ -80,9 +78,9 @@ Axis2 Deployment Model</a></s> <em>(JAXMag may be inaccessible)</em>- By Deepal 
 <li><s><a href=
 "http://www.developer.com/open/article.php/3557741">Understanding
 Axis2 Deployment Architecture</a></s> <em>(Developer.com may be inaccessible)</em>- By Deepal Jayasinghe</li>
-<li><a href=
+<li><s><a href=
 "http://wso2.org/library/35">
-Inside the Axis2 Code Generator</a>- By Ajith Ranabahu (06 Feb
+Inside the Axis2 Code Generator</a></s> <em>(WSO2 library may be inaccessible)</em>- By Ajith Ranabahu (06 Feb
 2006)</li>
 <li><s><a href=
 "http://www.developer.com/java/other/article.php/3570031">Utilizing
@@ -115,8 +113,8 @@ June 2006)</li>
 <li><s><a href=
 "http://www.developer.com/java/web/article.php/3620661">Apache
 Axis2 Session Management</a></s> <em>(Developer.com may be inaccessible)</em>- By Deepal Jayasinghe</li>
-<li><a href="http://www.devx.com/Java/Article/33839">Apache Axis2
-with POJO's and Spring</a>- By Ramanujam A. Rao</li>
+<li><s><a href="http://www.devx.com/Java/Article/33839">Apache Axis2
+with POJO's and Spring</a></s> <em>(DevX may be inaccessible)</em>- By Ramanujam A. Rao</li>
 
 <li><s><a href=
 "http://www-128.ibm.com/developerworks/webservices/library/ws-axis2soap/">
@@ -134,11 +132,11 @@ ADB Generated Code in Apache Axis2</a></s> <em>(WSO2 library may be inaccessible
 
 
 
-<li><a href="http://www.ibm.com/developerworks/webservices/library/ws-java2/">Java
-Web services, Part 2: Digging into Axis2: AXIOM</a> - By Dennis Sosnoski (30 Nov
+<li><s><a href="http://www.ibm.com/developerworks/webservices/library/ws-java2/">Java
+Web services, Part 2: Digging into Axis2: AXIOM</a></s> <em>(IBM developerWorks has been retired)</em> - By Dennis Sosnoski (30 Nov
 2006)</li>
-<li><a href="http://www.ibm.com/developerworks/webservices/library/ws-java3/">Java
-Web services, Part 3: Axis2 Data Binding</a> - By Dennis Sosnoski (26 Jul
+<li><s><a href="http://www.ibm.com/developerworks/webservices/library/ws-java3/">Java
+Web services, Part 3: Axis2 Data Binding</a></s> <em>(IBM developerWorks has been retired)</em> - By Dennis Sosnoski (26 Jul
 2007)</li>
 
 

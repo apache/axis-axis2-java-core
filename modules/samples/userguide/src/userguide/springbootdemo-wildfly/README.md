@@ -33,7 +33,7 @@ All Java source is shared from `../springbootdemo-tomcat11/src/main/java` via
 
 | File | Purpose |
 |------|---------|
-| `src/main/webapp/WEB-INF/jboss-deployment-structure.xml` | Excludes conflicting WildFly subsystems (jaxrs, logging, jpa, cdi) and modules (log4j, slf4j, jboss-logging); adds `jdk.unsupported` dependency |
+| `src/main/webapp/WEB-INF/jboss-deployment-structure.xml` | Excludes WildFly's `org.apache.logging.log4j.api` module (the WAR bundles its own Log4j2); adds `org.bouncycastle`, `jdk.unsupported` and `jdk.net` module dependencies and exports the system `org/w3c/dom/css` path |
 | `src/main/webapp/WEB-INF/jboss-web.xml` | Sets WildFly context root (defaults to `/axis2-json-api` from WAR name) |
 | `src/main/webapp/WEB-INF/beans.xml` | `bean-discovery-mode="none"` — prevents Weld CDI from scanning Spring beans |
 
@@ -118,15 +118,18 @@ lazy init). `Axis2WebAppInitializer.addAxis2Servlet()` bypasses this by calling
 `getRealPath()` eagerly at startup time and setting the `axis2.repository.path` servlet
 init parameter directly. Without this, only some services load.
 
-### Excluded subsystems
+### Deployment structure
 
-`jboss-deployment-structure.xml` excludes:
+`jboss-deployment-structure.xml` excludes no subsystems. It:
 
-- **jaxrs** — RESTEasy conflicts with Axis2 servlet dispatch
-- **logging** — WildFly logging conflicts with bundled Log4j2 + log4j-jcl
-- **jpa** — no `persistence.xml`; prevents WildFly JPA subsystem activation
-- **bean-validation** — Spring handles its own validation
-- **cdi** — prevents Weld from managing Spring beans
+- **excludes** the `org.apache.logging.log4j.api` module, so the Log4j2 API bundled in the
+  WAR is used instead of WildFly's copy
+- **adds** the `org.bouncycastle` (exported), `jdk.unsupported` and `jdk.net` module
+  dependencies
+- **exports** the system path `org/w3c/dom/css`
+
+Weld CDI scanning is switched off by `beans.xml` (`bean-discovery-mode="none"`), not by a
+subsystem exclusion.
 
 ### WildFly module upgrade notes
 

@@ -113,7 +113,7 @@ description tag.</p>
 </pre>
 <p>2. The name of the service class is provided as a parameter.</p>
 <pre>
-&lt;parameter name="serviceClass"&gt;userguide.example1.MyService&lt;/parameter&gt;
+&lt;parameter name="ServiceClass"&gt;userguide.example1.MyService&lt;/parameter&gt;
 </pre>
 <p>3. The "operation" XML tag describes the operations that are
 available in this service with respective message receivers.</p>
@@ -145,7 +145,7 @@ interaction using the ServiceGroupContext. If you hope to use this
 functionality, the services.xml file should have the following
 format.</p>
 <pre>
-&lt;ServiceGroup&gt;
+&lt;serviceGroup&gt;
   &lt;service name="Service1"&gt;
     &lt;!-- details for Service1 --&gt;
   &lt;/service&gt;
@@ -172,9 +172,10 @@ align="bottom" width="176" height="91" border="0" id=
 "Graphic1" /></p>
 <p>To create the archive file, you can create a .jar file
 containing all the necessary files and then rename it to a .aar
-file. This archive file can be found in the
-"Axis2_HOME/samples/userguide" directory. This file has to be
-deployed now.</p>
+file. Alternatively, run <code>ant generate.service</code> in the
+"Axis2_HOME/modules/samples/userguide" directory: it builds
+build/MyService.aar and copies it to the repository/services directory
+as sample-MyService.aar. This file has to be deployed now.</p>
 <a name="Step4_:Deploy_the_Web_Service" id=
 "Step4_:Deploy_the_Web_Service"></a>
 <h4>Step4: Deploy the Web Service</h4>

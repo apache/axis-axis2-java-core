@@ -28,35 +28,32 @@
 </head>
 <body>
 <h1>How to Build the Axis2 Project's Website</h1>
-<h2>Installing Maven2</h2>
-<p>The Axis 2.0 website build system solely depends on <a href=
-"http://maven.apache.org/">Maven2</a>. The build has been
-specifically tested to work with Maven version 2.0.7. To install
-Maven, download the distributions and follow the instructions in
-the documentation. Make sure you don't forget to add MAVEN_HOME/bin
-directory in the path.</p>
-<h2>Checking out Axis 2.0</h2>
-<p>Checkout the <a href=
-"http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk">latest
-source</a> using your favorite SVN client. If you are a committer,
-get a <a href=
-"https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk">commiter
-check out.</a></p>
+<h2>Installing Maven</h2>
+<p>The Axis2 website build system depends on <a href=
+"https://maven.apache.org/">Maven</a>. The build requires Maven 3.6.0
+or later and JDK 17 through 25. To install Maven, download the
+distribution and follow the instructions in the documentation. Make
+sure you add the MAVEN_HOME/bin directory to the path.</p>
+<h2>Checking out Axis2</h2>
+<p>Clone the latest source from GitHub:
+<i>git clone https://github.com/apache/axis-axis2-java-core.git</i>
+(see <a href="git.html">Developing Apache Axis2</a>).</p>
 <h2>Building the Site</h2>
 <p>During maven releases site should have been generated on target/site directory and no special action required. Further <a href="release-process.html">release process guide </a> describes necessary steps to update Axis2 site with your new modifications.</p>
 <p>In case if you want to generate site only you could run <i>mvn site</i> on root project of your local copy.</p>
 <h2>FAQ</h2>
 <ol>
 <li>How can I update a document in the site ?<br />
-Get a commiter check out. All the documents are in XHTML format
-under the modules/documentation/xdocs folder, and you can change only the documents found
-under this folder. Change the relevant file and run <i>mvn
-install</i>. New documentation will be available under
-the target folder.</li>
+The documents are under the src/site folder: XDoc pages in
+src/site/xdoc, Markdown pages in src/site/markdown, APT pages in
+src/site/apt and the FAQ in src/site/fml. Change the relevant file
+and run <i>mvn site</i>. The new site will be available under
+target/site.</li>
 <li>How can I add a new document?<br />
-Add the new document in the xdocs folder. Change the navigation.xml
-found under the xdocs folder by adding a link to the newly added
-document. Re-generate the site.<br />
+Add the new document under the matching src/site folder. If it
+needs a menu entry, add a link to it in src/site/site.xml (most
+documentation pages are linked from src/site/xdoc/docs/toc.xml
+instead). Re-generate the site.<br />
 Please make sure you have not included any of the illegal
 characters and your document should be well formed.</li>
 </ol>

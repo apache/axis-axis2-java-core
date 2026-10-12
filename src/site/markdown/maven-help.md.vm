@@ -20,16 +20,16 @@
 Quick Guide to Maven for Axis2
 ==============================
 
-The Axis2 build uses [Maven 3](https://maven.apache.org/). To build the source code, use the
+The Axis2 build uses [Maven 3](https://maven.apache.org/) and requires Maven 3.6.0 or later and
+JDK 17 through 25 (the build is tested on OpenJDK 17, 21 and 25). To build the source code, use the
 following command:
 
     mvn clean install
 
 The build may fail because Maven runs out of memory. To avoid this, increase the heap
-size (and PermGen size, unless you are using Java 8 or above) using the `MAVEN_OPTS`
-environment variable, as shown in the following example:
+size using the `MAVEN_OPTS` environment variable, as shown in the following example:
 
-    MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256m"
+    MAVEN_OPTS="-Xmx2g"
 
 Note that depending on your platform and Java version, you may need to adjust these
 values further.

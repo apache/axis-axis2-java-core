@@ -47,7 +47,7 @@ and how to get involved.</p>
   <ul>
   <li><a href="#handler-chain-differentiator">The Handler Chain as Architectural Differentiator</a></li>
   <li><a href="#modern-deployment">Modern Deployment Targets</a></li>
-  <li><a href="#whats-new-2">What's New in 2.0.1</a></li>
+  <li><a href="#whats-new-2">What's New in 2.0.x</a></li>
   <li><a href="#architecture-at-a-glance">Architecture at a Glance</a></li>
   <li><a href="#contributing">Where to Contribute</a></li>
   </ul>
@@ -106,7 +106,7 @@ and how to get involved.</p>
 <a name="modern-overview" id="modern-overview"></a>
 <h2>Axis2 in 2026: Multi-Protocol Platform</h2>
 
-<p>Axis2 2.0.1 delivers JSON-RPC, REST+OpenAPI, Model Context Protocol (MCP),
+<p>Axis2 2.0.x delivers JSON-RPC, REST+OpenAPI, Model Context Protocol (MCP),
 and classic SOAP -- all from one deployment artifact, all processed by the
 same handler chain. A service written as a plain Java class can simultaneously
 accept SOAP/XML requests, JSON-RPC calls, RESTful HTTP requests with
@@ -115,8 +115,8 @@ frameworks, no glue code, no protocol-specific deployment descriptors.</p>
 
 <p>This is possible because the handler-chain architecture designed in 2004
 was protocol-agnostic from the start. Messages enter a pipeline of phases
-and handlers regardless of wire format. Axis2 2.0.1 extends that pipeline with
-new dispatchers and message receivers that understand JSON and MCP, while
+and handlers regardless of wire format. Axis2 2.0.x extends that pipeline with
+dispatchers and message receivers that understand JSON, while
 every existing SOAP handler, module, and service continues to work
 unchanged.</p>
 
@@ -134,16 +134,17 @@ headers, TLS client certificates, HTTP/2 stream management).</li>
 <li><strong>Pre-Dispatch Phase</strong> -- populates the MessageContext with
 addressing information, content-type sniffing, and protocol detection.</li>
 <li><strong>Dispatch Phase</strong> -- dispatchers identify the target service
-and operation. The new <code>JSONBasedDefaultDispatcher</code> handles
-JSON-RPC method resolution alongside the classic URI, SOAP-action, and
-WS-Addressing dispatchers.</li>
+and operation. The <code>JSONBasedDefaultDispatcher</code> resolves a JSON
+request by its operation name (the first key of the JSON body) alongside the
+classic URI, SOAP-action, and WS-Addressing dispatchers.</li>
 <li><strong>User Phases</strong> -- custom handlers for logging, security
 policy enforcement, rate limiting, or any cross-cutting concern.</li>
 <li><strong>Message Receiver</strong> -- the terminal handler that delivers
 the message to your service implementation. SOAP messages reach the classic
-<code>RawXMLINOutMessageReceiver</code>; JSON-RPC calls reach the new
-<code>JsonRpcMessageReceiver</code>; MCP invocations reach the
-<code>McpToolMessageReceiver</code>.</li>
+<code>RawXMLINOutMessageReceiver</code>; JSON calls reach the
+<code>JsonRpcMessageReceiver</code>. MCP tool invocations arrive through the
+MCP bridge, which forwards each tool call to the service as an ordinary JSON
+request, so they reach the same <code>JsonRpcMessageReceiver</code>.</li>
 </ol>
 
 <p>Because security handlers, logging handlers, and WS-Addressing handlers
@@ -155,7 +156,7 @@ and MCP traffic alike.</p>
 <a name="modern-deployment" id="modern-deployment"></a>
 <h3>Modern Deployment Targets</h3>
 
-<p>Axis2 2.0.1 runs on current Java platforms and application servers:</p>
+<p>Axis2 2.0.x runs on current Java platforms and application servers:</p>
 
 <table border="1" cellpadding="4" cellspacing="0">
 <tr>
@@ -187,25 +188,28 @@ Tested on 17, 21, and 25. The CI builds with
 
 <!-- =============================================================== -->
 <a name="whats-new-2" id="whats-new-2"></a>
-<h3>What's New in 2.0.1</h3>
+<h3>What's New in 2.0.x</h3>
 
-<p>The following features are new or substantially reworked in Axis2 2.0.1:</p>
+<p>The following features are new or substantially reworked in the Axis2 2.0.x line:</p>
 
 <dl>
-<dt><strong>JSON-RPC Message Receivers</strong></dt>
+<dt><strong>JSON Message Receivers</strong></dt>
 <dd>The <code>JsonRpcMessageReceiver</code> and
-<code>JsonRpcInOnlyMessageReceiver</code> allow any Axis2 service to accept
-JSON-RPC 2.0 calls. No WSDL required -- method names map directly to
-operations. See the
+<code>JsonInOnlyRPCMessageReceiver</code> allow any Axis2 service to accept
+JSON calls. No WSDL required -- the request is
+<code>{"operationName":[{"arg0":{...}}]}</code> and the operation name maps
+directly to a service method. This is Axis2's own JSON convention, not the
+JSON-RPC 2.0 wire format. See the
 <a href="json-rpc-mcp-guide.html">JSON-RPC and MCP Guide</a>.</dd>
 
 <dt><strong>JSONBasedDefaultDispatcher</strong></dt>
-<dd>A new dispatcher that examines the JSON-RPC <code>method</code> field
-to resolve the target service and operation, complementing the existing
-URI-based, SOAP-action-based, and WS-Addressing-based dispatchers.</dd>
+<dd>A dispatcher (added in 2.0.0) that uses the operation name -- the first
+key of the JSON request body -- to resolve the target operation,
+complementing the URI-based, SOAP-action-based, and WS-Addressing-based
+dispatchers.</dd>
 
 <dt><strong>OpenAPI Auto-Generation</strong></dt>
-<dd>Axis2 can generate an OpenAPI 3.1 specification from any deployed
+<dd>Axis2 can generate an OpenAPI 3.0.1 specification from any deployed
 service, making REST endpoints discoverable by standard tooling and API
 gateways.</dd>
 
@@ -216,7 +220,7 @@ See the <a href="mcp-architecture.html">MCP Architecture Guide</a>.</dd>
 
 <dt><strong>HTTP/2 Transport</strong></dt>
 <dd>The new HTTP/2-capable transport, built on Apache HttpComponents 5,
-supports multiplexed streams, server push, and HTTPS-only deployments.</dd>
+supports multiplexed streams and HTTPS-only deployments.</dd>
 
 <dt><strong>mTLS and X.509 Security</strong></dt>
 <dd>Mutual TLS authentication with X.509 client certificates is supported
@@ -267,7 +271,7 @@ HTTPS endpoints.</dd>
   |                                                    |
   |  SOAP:      RawXMLINOutMessageReceiver             |
   |  JSON-RPC:  JsonRpcMessageReceiver                 |
-  |  MCP:       McpToolMessageReceiver                 |
+  |  MCP:       JsonRpcMessageReceiver (via MCP bridge)|
   +--------------------------------------------------+
          |
          v
@@ -327,7 +331,7 @@ Modern multi-protocol features are described in the sections above.</em></p>
 2004 Summit in Colombo, Sri Lanka. This new architecture on which
 Axis2 is based is more flexible, efficient, and configurable in
 comparison to <a href=
-"http://ws.apache.org/axis/java/architecture-guide.html">Axis1.x
+"https://axis.apache.org/axis/java/architecture-guide.html">Axis1.x
 architecture</a>. Some well established concepts from Axis 1.x,
 like handlers etc., have been preserved in this new
 architecture.</p>
@@ -613,9 +617,10 @@ particular message.</p>
 <h2>XML Processing Model</h2>
 <p>As mentioned above, the XML processing model of Axis2 has become
 a separate sub-project, called <a href=
-"http://ws.apache.org/axiom/">Apache Axiom</a>,
+"https://ws.apache.org/axiom/">Apache Axiom</a>,
 in the Apache Web services project. Please refer to the <a href=
-"OMTutorial.html">OM Tutorial</a> for more information.</p>
+"https://ws.apache.org/axiom/userguide/userguide.html">Axiom User Guide</a>
+for more information.</p>
 <a name="bmSOAPPM" id="bmSOAPPM"></a>
 <h2>SOAP Processing Model</h2>
 <p><img src="images/archi-guide/soap-processing.gif" name=
@@ -673,9 +678,7 @@ message is directed to. Dispatchers always run on the
 <em>In-Pipe</em> and inside the Dispatch phase. The in-built
 dispatchers dispatch to a particular operation depending on various
 conditions like WS-Addressing information, URI information, SOAP
-action information, etc. ( See more information on <a href=
-"http://wso2.org/library/176">
-Dispatching</a>)</li>
+action information, etc.</li>
 </ol>
 <ul>
 <li><a name="mr" id="mr"></a>Message Receiver - Consumes the SOAP
@@ -763,6 +766,7 @@ modification of the default processing behavior. The SOAP
 Processing Model can be extended with <a href=
 "#extendingwithhandlers">handlers</a> or <a href=
 "#extendingwithmodules">modules</a>.</p>
+<a name="extendingwithhandlers" id="extendingwithhandlers"></a>
 <h4>Extending the SOAP Processing Model with Handlers</h4>
 <p>The handlers in a module can specify the phase they need to be
 placed in. Furthermore, they can specify their location inside a
@@ -922,12 +926,15 @@ the SOAP message.</p>
 <ol>
 <li>HTTP - In HTTP transport, the transport listener is a servlet
 or org.apache.axis2.transport.http.SimpleHTTPServer provided by
-Axis2. The transport sender uses apache httpcomponents to connect and
-send the SOAP message.</li>
+Axis2. The transport sender uses Apache HttpComponents 5 to connect and
+send the message.</li>
+<li>HTTP/2 - An HTTPS-only transport sender built on Apache HttpComponents 5
+(<code>axis2-transport-h2</code>). See the
+<a href="http2-transport-additions.html">HTTP/2 transport documentation</a>.</li>
 <li>Local - This transport can be used for in-VM communication.</li>
-<li>Transports for TCP, SMTP, JMS and other protocols are available
-from the <a href="http://ws.apache.org/commons/transport/">WS-Commons Transport</a>
-project.</li>
+<li>TCP, UDP, JMS and mail (SMTP/POP3/IMAP) - These transports are part of
+Axis2 (<code>modules/transport</code>) and ship in the <code>lib</code>
+directory of the binary distribution.</li>
 </ol>
 <a name="bmWSDL" id="bmWSDL"></a>
 <h2>Code Generation</h2>
@@ -953,6 +960,7 @@ language. No matter what the output language is, the process is the
 same except for the XSL template that is used.</p>
 <a name="bmDB" id="bmDB"></a>
 <h2>Data Binding</h2>
+<a name="integration" id="integration"></a>
 <h3>Integration with the Code Generation Engine</h3>
 <p>Databinding for Axis2 is implemented in an interesting manner.
 Databinding has not been included in the core deliberately, and
@@ -998,7 +1006,7 @@ org.apache.axiom.om.OMElement toOM(org.soapinterop.xsd.EchoStringParamDocument
 param)// This method will handle the serialization.
 
 public static org.apache.xmlbeans.XmlObject
-fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type) //This
+fromOM(org.apache.axiom.om.OMElement param, java.lang.Class type) //This
 method will handle the de-serialization.
 </pre>
 </body>

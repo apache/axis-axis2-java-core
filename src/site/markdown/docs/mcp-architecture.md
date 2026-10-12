@@ -13,7 +13,7 @@ modelcontextprotocol.io.
 
 ---
 
-## Current State (2026-05-16)
+## Current State
 
 ### What exists today
 
@@ -26,7 +26,7 @@ modelcontextprotocol.io.
 | mTLS transport | ✅ Done | Tomcat 8443, `certificateVerification="required"`, IoT CA pattern |
 | X.509 Spring Security | ✅ Done | `X509AuthenticationFilter` at `@Order(2)`, CN → `ROLE_X509_CLIENT` |
 | A3 end-to-end validation | ✅ Done | `Claude Desktop → bridge → mTLS 8443 → BigDataH2Service` confirmed |
-| `axis2-spring-boot-starter` | ❌ Not started | Phase 1 of modernization plan |
+| `axis2-spring-boot-starter` | ✅ Done | `modules/spring-boot-starter/` — servlet registration, repository staging, OpenAPI/MCP activation |
 | `axis2-transport-mcp` native | ❌ Not started | Track B — novel Apache contribution |
 
 ### Reference implementations
@@ -199,7 +199,7 @@ OpenAPI filter chain (`@Order(3)`) handles it without auth.
 
 **Key decision**: No MCP Java SDK (Apache 2.0 license constraint — SDK license
 uncertain at implementation time). JSON-RPC 2.0 is implemented directly using
-Jackson 2.21.1 (Apache 2.0) + Java stdlib `HttpClient`. The three-method
+Jackson (Apache 2.0) + Apache HttpClient 5. The three-method
 handshake is straightforward enough to hand-roll correctly.
 
 **Classes**:
@@ -208,8 +208,8 @@ handshake is straightforward enough to hand-roll correctly.
 - `McpStdioServer` — blocking stdin read loop, JSON-RPC 2.0 dispatch
 - `McpTool` — data class: name, description, inputSchema (JsonNode), endpoint, path
 
-**Build**: maven-shade-plugin 3.6.0 produces `axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar`
-(classifier: `exe`) with `MainClass=McpBridgeMain`.
+**Build**: maven-shade-plugin produces `axis2-mcp-bridge-<version>-exe.jar`
+(classifier: `exe`, e.g. `axis2-mcp-bridge-2.0.2-exe.jar`) with `MainClass=McpBridgeMain`.
 
 **Axis2 JSON envelope translation**: The bridge translates between standard MCP
 JSON-RPC 2.0 and Axis2's internal JSON convention. MCP sends clean named parameters
@@ -234,7 +234,7 @@ with no response, as required by JSON-RPC 2.0.
   "mcpServers": {
     "axis2-demo": {
       "command": "java",
-      "args": ["-jar", "/path/to/axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar",
+      "args": ["-jar", "/path/to/axis2-mcp-bridge-2.0.2-exe.jar",
                "--base-url",    "https://localhost:8443/axis2-json-api",
                "--keystore",    "${project.basedir}/certs/client-keystore.p12",
                "--truststore",  "${project.basedir}/certs/ca-truststore.p12"]
@@ -305,7 +305,7 @@ axis2.transport.mcp.transport=stdio
 ```
 Claude Desktop / AI agent  →  MCP (axis2-transport-mcp, native)
                                          ↓
-REST clients               →  REST (planned, Phase 3)       →  Axis2 Service
+REST clients               →  REST (axis2-openapi)          →  Axis2 Service
                                          ↑                      (one Java class)
 Existing JSON-RPC callers  →  JSON-RPC (unchanged)
 ```
@@ -323,8 +323,8 @@ decouples the bridge from Axis2 internals. The bridge works against any HTTP ser
 that serves this format — not just Axis2. This is useful for the Apache community
 beyond the Axis2 user base.
 
-**Why no MCP Java SDK**: Apache 2.0 license constraint. Jackson (Apache 2.0) + Java
-stdlib `HttpClient` implement the three-method JSON-RPC 2.0 protocol without external
+**Why no MCP Java SDK**: Apache 2.0 license constraint. Jackson (Apache 2.0) + Apache
+HttpClient 5 implement the three-method JSON-RPC 2.0 protocol without external
 dependencies whose license compatibility is uncertain. The protocol is well-specified
 enough to hand-roll correctly.
 
@@ -400,7 +400,7 @@ interactive time budgets — portfolio variance in under 1 ms, Monte Carlo
 is a concern, the same financial benchmark operations are available on
 [Axis2/C](https://axis.apache.org/axis2/c/core/), which runs 2-3x faster:
 Monte Carlo 100K paths in ~0.7 seconds, 500-asset portfolio variance in
-232 μs vs Java's 660 μs (see [performance comparison](mcp-examples.md#full-performance-summary)).
+232 μs vs Java's 660 μs (see [performance comparison](mcp-examples.md#Full_Performance_Summary)).
 Both implementations expose identical MCP tool schemas — an AI assistant
 configured with either backend gets the same financial capabilities.
 
@@ -430,8 +430,9 @@ use it when you need `required` fields, `minimum`/`maximum` constraints,
 
 Track A (`axis2-mcp-bridge`) requires:
 - `axis2-openapi` module (for `/openapi-mcp.json`)
-- `com.fasterxml.jackson.core:jackson-databind:2.21.1` (Apache 2.0)
-- Java 21+ (HttpClient is standard library)
+- `com.fasterxml.jackson.core:jackson-databind` (Apache 2.0)
+- Apache HttpClient 5 (`httpclient5`, Apache 2.0)
+- Java 17+
 - No Axis2 core dependency — bridge is a separate process
 
 Track B (`axis2-transport-mcp`) requires:

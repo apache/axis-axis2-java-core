@@ -35,7 +35,7 @@
 services policy in Apache Axis2.</p>
 <p>Send your feedback to: <a href=
 "mailto:java-dev@axis.apache.org?subject=[Axis2]">java-dev@axis.apache.org</a>.
-(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.)
+(Subscription details are available on the <a href="../mailing-lists.html">Axis2 site</a>.)
 Kindly prefix every email subject with [Axis2].</p>
 <h2>Content</h2>
 <ul>
@@ -119,7 +119,7 @@ propreties from the user. These methods store any user input in the
 ServiceClient properties
 (ServiceClient.getOptions().putProperty(...)) which can later be
 accessed by the module.</p>
-<h4>Phase 2: At AxisServiceBasedMultiLanguageClientEmitter</h4>
+<h4>Phase 2: At AxisServiceBasedMultiLanguageEmitter</h4>
 <p>Further, policies (based on the WSDL) at appropriate levels
 (service level, operation level) are stored as policy strings in
 the stub. If there are a few policies at a given level, they are
@@ -147,7 +147,7 @@ MessageContext.</p>
 <a name="server" id="server"></a>
 <h2>Server Side WS-Policy Support</h2>
 <p>In this current release, the Apache Axis2 framework uses the
-WS-Commons/Neethi framework to manipulate policy documents. All its
+Apache Neethi framework to manipulate policy documents. All its
 description builders store the policy information included in
 description documents (services.xml, axis2.xml, .. etc) in the
 appropriate description classes. This information is available at
@@ -175,11 +175,11 @@ you send us in this regard. Keep on contributing!</p>
 <h2>Resources</h2>
 <ul>
 <li>Apache Neethi (WS Policy Implementation) official site-
-<a href="http://ws.apache.org/commons/neethi/index.html">Home Page</a></li>
-<li>Sanka Samaranayake, March 2006. <a href=
-"http://wso2.org/library/23">Web services Policy - Why, What &amp; How</a></li>
+<a href="https://ws.apache.org/neethi/">Home Page</a></li>
+<li>Sanka Samaranayake, March 2006. <s><a href=
+"http://wso2.org/library/23">Web services Policy - Why, What &amp; How</a></s> <em>(Original URL no longer available)</em></li>
 <li><a href=
-"https://github.com/apache/ws-neethi">WS-commons/policy GitHub</a></li>
+"https://github.com/apache/ws-neethi">Apache Neethi GitHub</a></li>
 <li><a href=
 "http://specs.xmlsoap.org/ws/2004/09/policy/ws-policy.pdf">Web Services Policy Framework (WS-Policy)</a></li>
 </ul>

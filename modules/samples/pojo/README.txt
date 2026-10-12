@@ -11,14 +11,10 @@ service using Aixs2.
 Prerequisites  
 =============
 
-To build the sample service you must have ant-1.6.x installed in your system. 
+To build the sample service you must have Apache Ant 1.10 or later installed in your system. 
 
 To set AXIS2_HOME in Unix/Linux type:
 $export AXIS2_HOME=<path to axis2 distribution>
-
-xerces.jar (Containing the intersection of the contents of xercesImpl.jar and xml-apis.jar)
-You need to have this jar in your build and runtime class path. The easiest way to do this
-is to copy it to Axis2_HOME/lib directory.
 
 Building the Service
 ====================
@@ -54,7 +50,7 @@ $ant adb.client -Dwsdl=http://<yourhost>:<yourport>/axis2/services/AddressBookSe
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.
 
 
 

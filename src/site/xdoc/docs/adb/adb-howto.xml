@@ -69,8 +69,8 @@ a pre-configured writer depending on the configuration. The 'big
 block diagram' for the code generator architecture is depicted
 below.</p>
 <p><img src="images/ADB.jpg" alt="ADB architecture" /></p>
-<p>ADB utilizes the WS-Commons <a href=
-"http://ws.apache.org/commons/XmlSchema/index.html">XmlSchema
+<p>ADB utilizes the Apache <a href=
+"https://ws.apache.org/xmlschema/">XmlSchema
 library</a> for reading the Schema. The object model for the schema
 comes in the form of an XmlSchema object. The schema compiler keeps
 an instance of the writer (in the default case it's the
@@ -84,13 +84,12 @@ overriding the property setting.</p>
 <a name="code_depend" id="code_depend"></a>
 <h2>Code and Dependencies</h2>
 <p>As explained in the previous section, the schema compiler
-depends on the WS-Commons XmlSchema library. The XSLT
-transformations are dependent on the JVM's DOM implementation
-(either Crimson or Xerces) which means that the underlying JVM
-should be 1.4 or higher. Apart from that ADB has no dependencies on
+depends on the Apache XmlSchema library. The XSLT
+transformations use the JVM's built-in XSLT and DOM implementation;
+Axis2 requires Java 17 or later. Apart from that ADB has no dependencies on
 any other special jar files. The code for the schema compiler is
 completely in the <strong>org.apache.axis2.schema.*</strong>
-package. This package resides in the codegen module of the Axis2
+package. This package resides in the adb-codegen module of the Axis2
 source tree.</p>
 <p>The following are the important classes and files of ADB:</p>
 <ol>
@@ -116,12 +115,12 @@ build for the Axis2 adb-codegen module. This will generate the
 folder which is directly usable when the ADB schema compiler is
 required.</p>
 <p>The runtime dependencies for the ADB generated classes is in the
-Axis2 adb module and the kernal module. Hence to compile and work
+Axis2 adb module and the kernel module. Hence to compile and work
 with the generated classes the
 <strong>axis2-adb-{$version}.jar</strong> and
-<strong>axis2-kernal-{$version}.jar</strong> needs to be in the
-classpath in addition to other dependencies such as StAX, Axiom,
-Commons-logging and javax.activation.</p>
+<strong>axis2-kernel-{$version}.jar</strong> need to be in the
+classpath in addition to other dependencies such as Axiom,
+Commons-logging and Jakarta Activation.</p>
 <a name="code_gen" id="code_gen"></a>
 <h2>Invoking the ADB Code Generator</h2>
 <a name="schema_compiler" id="schema_compiler"></a>
@@ -299,27 +298,6 @@ Note that to make this work, the generated beans implement the
 <ul>
 <li>
 <pre>
-public javax.xml.stream.XMLStreamReader
-    getPullParser(javax.xml.namespace.QName qName)
-</pre>
-<p>This method returns a pull parser that throws the right events
-for this particular object. However there is a subtle difference
-between element based classes and complexType based classes</p>
-<ol>
-<li>An element based bean class (like MyElement.java in the
-example) will <strong><em>ignore the passed in QName</em></strong>.
-Instead of using the passed in QName it'll utilize its own QName
-which is embedded in the class under the constant MY_QNAME, during
-the code generation. Hence it is usual to call getPullparser() with
-a null parameter for elements.</li>
-<li>A ComplexType based bean class (like SOAPStruct.java in the
-example) will use the passed-in QName to return an instance of the
-ADBpullparser. This will effectively wrap the elements inside with
-an element having the passed QName</li>
-</ol>
-</li>
-<li>
-<pre>
  public org.apache.axiom.om.OMElement getOMElement(
             final javax.xml.namespace.QName parentQName,
             final org.apache.axiom.om.OMFactory factory){
@@ -330,8 +308,13 @@ object.</p>
 <li>Inside the getOMElement method an anonymous ADBDataSource class
 is created. This anonymous class implements a serialize() method
 where the serialization logic for that particular bean class is
-handled. Finally an OMSourcedElementImpl object with the above
-anonymous class type object as the data source is returned.</li>
+handled. Finally an OMSourcedElement created by
+<code>factory.createOMElement(dataSource, qName)</code> with the above
+data source is returned. An element based bean class (like
+MyElement.java in the example) uses its own QName, embedded in the
+class under the constant MY_QNAME; a complexType based bean class
+(like SOAPStruct.java) wraps its content in an element with the passed
+QName.</li>
 </ol>
 </li>
 <li>
@@ -392,10 +375,10 @@ the parse method becomes a huge advantage for hassle free object
 creation.</p>
 <p>Similarly the reader obtained from the object can also be
 utilized as needed. The following code fragment shows how to
-utilize the getPullParser method to create an OMElement :</p>
+obtain an OMElement and a reader from a bean:</p>
 <pre>
-XMLStreamReader reader = elt.getPullParser(null);
-OMElement omElt =  new StAXOMBuilder(reader).getDocumentElement();
+OMElement omElt = elt.getOMElement(MyElement.MY_QNAME, OMAbstractFactory.getOMFactory());
+XMLStreamReader reader = omElt.getXMLStreamReader();
 </pre>
 <p>That's all to it! If you are interested in learning more on ADB
 the following documents may also be helpful. However, be sure to

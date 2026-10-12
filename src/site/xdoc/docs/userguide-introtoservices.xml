@@ -49,8 +49,6 @@ distributions</a></li>
 Distribution</a></li>
 <li><a href="userguide.html#hierarchy">Axis2.war Directory
 Hierarchy</a></li>
-<li><a href="userguide.html#docs">Axis2 Documents
-Distribution</a></li>
 <li><a href="userguide.html#clients">Axis2 and clients</a></li>
 </ul>
 </li>
@@ -102,7 +100,7 @@ Study</a></li>
 <pre>
 &lt;?xml version='1.0' ?&gt;
 &lt;env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
-xmlns:wsa="http://www.w3.org/2005/03/addressing"&gt; 
+xmlns:wsa="http://www.w3.org/2005/08/addressing"&gt; 
  &lt;env:Header&gt;
 
     &lt;wsa:MessageID&gt;

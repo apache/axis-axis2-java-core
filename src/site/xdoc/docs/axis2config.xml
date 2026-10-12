@@ -156,11 +156,6 @@ complete configurations will look as follows: </p>
                      class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
-
-            &lt;handler name="InstanceDispatcher"
-                     class="org.apache.axis2.engine.InstanceDispatcher"&gt;
-                &lt;order phase="Dispatch"/&gt;
-            &lt;/handler&gt;
         &lt;/phase&gt;
         &lt;!--   Global phases   --&gt;
         &lt;!--   After the Dispatch phase module author or service author can add any phase he wants    --&gt;
@@ -194,10 +189,6 @@ complete configurations will look as follows: </p>
 
             &lt;handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"&gt;
-                &lt;order phase="Dispatch"/&gt;
-            &lt;/handler&gt;
-            &lt;handler name="InstanceDispatcher"
-                     class="org.apache.axis2.engine.InstanceDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
         &lt;/phase&gt;

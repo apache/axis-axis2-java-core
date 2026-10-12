@@ -1,5 +1,5 @@
  ------
- Maven 2 Aar Plugin
+ Maven Mar Plugin
  ------
  Jochen Wiedmann
  <jochen.wiedmann@gmail.com>
@@ -7,7 +7,7 @@
 
 Introduction
 
-  This plugin generates an Axis 2 service file (AAR file).
+  This plugin generates an Axis 2 module archive file (MAR file).
 
   The full description of goals is available {{{howto.html}here}}.
 

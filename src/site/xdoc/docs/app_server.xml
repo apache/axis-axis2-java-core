@@ -28,12 +28,21 @@
         <p>This document provides configuration information required for
         your Application Server to run Apache Axis2 to its fullest
         potential.</p>
-        <section name="WebLogic">
+        <p><strong>Note:</strong> Axis2 2.x requires a Jakarta EE container
+        (Jakarta Servlet 6.0) and OpenJDK 17 or later. It is tested on Apache
+        Tomcat 11 and WildFly 32 and 41; see the
+        <a href="json-springboot-userguide.html">WildFly</a> and
+        <a href="json-springboot-tomcat11-userguide.html">Tomcat 11</a> guides.
+        The WebLogic and WebSphere notes below were written for Axis2 1.x on
+        javax-based releases of those servers (WebLogic 9, WebSphere 6.1 and
+        7.0). They are kept for historical reference and have not been tested
+        with Axis2 2.x.</p>
+        <section name="WebLogic (historical)">
             <subsection name="Use exploded configuration to deploy Axis2 WAR">
                 <p>We recommend using the exploded configuration to deploy Axis2
                 WAR in WebLogic application server to support the
                 hotupdate/ hotdeployment features in Axis2. However, if you want to
-                deploy custom WARs, say in a clustering environment, you need to
+                deploy custom WARs, for example the same WAR on several servers, you need to
                 add two additional files into the WEB-INF named "services.list" and
                 "modules.list" under the modules and services directory
                 respectively.</p>
@@ -92,7 +101,7 @@
                 to be on the application classpath.</p>
             </subsection>
         </section>
-        <section name="WebSphere">
+        <section name="WebSphere (historical)">
             <subsection name="Avoiding conflicts with WebSphere's JAX-WS runtime">
                 <p>
                     The JAX-WS runtime in WebSphere Application Server is based on a modified version of Axis2 and these

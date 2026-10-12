@@ -20,7 +20,7 @@
 Apache Axis2 ${project.version} build (${buildTimestamp})
 Binary Release
 
-http://axis.apache.org/axis2/java/core/
+https://axis.apache.org/axis2/java/core/
 ------------------------------------------------------
 
 This is the Standard Binary Release of Axis2.
@@ -28,18 +28,19 @@ This is the Standard Binary Release of Axis2.
 The lib directory contains the Axis2 jars and all 3rd party distributable dependencies of
 these jars.
 
-The repository/modules directory contains the deployable addressing module.
+The repository/modules directory contains the deployable modules (addressing, mex, ping,
+mtompolicy and the JAX-WS module).
 
 The webapp folder contains an ant build script to generate the axis2.war out of this distribution.
-(This requires Ant 1.6.5 or later)
+(This requires Ant 1.10 or later)
 
-The samples directory contains all the Axis2 samples which demonstrates some of the key features of
-Axis2. It also contains a few samples relevant to documents found in Axis2's Docs Distribution.
+The modules/samples directory contains the Axis2 samples which demonstrate some of the key features
+of Axis2. It also contains a few samples relevant to documents found in Axis2's Docs Distribution.
 
-The bin directory contains a set of usefull scripts for the users.
+The bin directory contains a set of useful scripts for the users.
 
 The conf directory contains the axis2.xml file which allows to configure Axis2.
 
 (Please note that this release does not include the other WS-* implementation modules, like
-WS-Security, that are being developed within Axis2. Those can be downloaded from
-http://axis.apache.org/axis2/java/core/modules/)
+WS-Security, that are developed as separate Axis2 projects. Those can be downloaded from
+https://axis.apache.org/axis2/java/core/modules/)

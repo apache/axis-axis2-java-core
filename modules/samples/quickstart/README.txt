@@ -12,19 +12,19 @@ creating an aar. We also test the getPrice and update methods using a browser.
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
 Building the Service
 ====================
 
-Type "ant generate.service" or just "ant" from Axis2_HOME/samples/quickstart directory 
-and then deploy the Axis2_HOME/samples/quickstart/build/StockQuoteService.aar
+Type "ant generate.service" or just "ant" from Axis2_HOME/modules/samples/quickstart directory 
+and then deploy the Axis2_HOME/modules/samples/quickstart/build/StockQuoteService.aar
 
 Generate WSDL
 ==============
 
-Type "ant generate.wsdl" from Axis2_HOME/samples/quickstart directory which generates a 
-WSDL file for the above Web service and it will be placed in Axis2_HOME/samples/quickstart/build 
+Type "ant generate.wsdl" from Axis2_HOME/modules/samples/quickstart directory which generates a 
+WSDL file for the above Web service and it will be placed in Axis2_HOME/modules/samples/quickstart/build 
 directory.
 
 Running the Client
@@ -42,4 +42,4 @@ And then execute the first getPrice url. You can see that the price got updated.
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.

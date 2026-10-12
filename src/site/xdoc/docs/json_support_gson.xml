@@ -36,9 +36,9 @@
 	   For users of JSON and Spring Boot, the Native approach discussed below can be seen as a complete sample application in 
 	   the <a href="json-springboot-userguide.html">JSON and Spring Boot 3 User's Guide.</a> 
 	</p>
-        <p>This documentation explains how the existing JSON support in Apache Axis2 have been improved with two new
+        <p>This documentation explains how the original JSON support in Apache Axis2 has been improved with two
             methods named, Native approach and XML stream API based approach. Here it initially explains about the
-            drawbacks of the old JSON support, how to overcome those drawbacks with the new approaches and, how to use
+            drawbacks of the original (Badgerfish and Mapped) JSON support, how to overcome those drawbacks with the new approaches and, how to use
             those approaches to send pure JSON objects without converting it to any XML representations. XML Stream API
             based approach addresses the namespace problem with pure JSON support, and provides a good solution for
             that.</p>
@@ -49,21 +49,21 @@
                 Object Notation) is a lightweight data-interchange format and, an alternative for XML which is easily
                 human readable and writable as well as it can be parsed and generated easily for machines.</p>
 
-            <p>The existing JSON implementation in Apache Axis2/Java supports badgerfish format of the JSON object,
+            <p>The original JSON implementation in Apache Axis2/Java, which is still available, supports badgerfish format of the JSON object,
                 which is an XML representation of JSON object. With this approach, it first completely converts the
                 badgerfish JSON string to the relevant XML format in the server side and, treats it as a normal SOAP
-                message. The current JSON implementation also supports Mapped JSON, which is another XML representation
+                message. That implementation also supports Mapped JSON, which is another XML representation
                 of the JSON object, if we set xmlToJsonNamespaceMap parameter in the services.xml file of the service.
                 The main problem with Mapped JSON format is, at the client side it is not aware of the namespaces which
-                is used in server side to validate the request. Therefore with current implementation, it is required
-                to do modifications to the existing services to use this mapped format support. The current JSON
-                implementations of Axis2 are slower than the existing SOAP support too. Therefore the existing JSON
-                support doesn't expose its advantages at all.</p>
+                is used in server side to validate the request. Therefore with that implementation, it is required
+                to do modifications to the existing services to use this mapped format support. The Badgerfish and
+                Mapped implementations are also slower than the SOAP support, so they do not expose the advantages
+                of JSON at all.</p>
 
             <p>However this JSON support can be improved to support pure JSON objects without using any format to
                 convert it into a XML, as JSON is a light weighted alternative to XML. Thre are two new approaches
                 have been used with google-gson library, a rich library to convert a JSON string to a Java object
-                and vice-versa, in order to improve the existing JSON support in Apache Axis2/java.</p>
+                and vice-versa, in order to improve the original JSON support in Apache Axis2/java.</p>
 
             <p>Gson[1] is a Java library that can be used to convert Java Objects into their JSON representation.
                 It can be also used to convert a JSON string to an equivalent Java object. Gson can work with arbitrary
@@ -86,7 +86,7 @@
             </ul>
 
             <p>As mentioned above, these two new approaches have been introduced to overcome the above explained
-                problems in the existing JSON implementation (Badgerfish and Mapped) of Axis2. The first one, the
+                problems in the original JSON implementation (Badgerfish and Mapped) of Axis2. The first one, the
                 Native approach, has been implemented with completely pure JSON support throughout the axis2 message
                 processing process while with the second approach which is XML stream API based approach, an
                 XMLStreamReader/XMLStreamWriter implementation using google-gson with the help of XMLSchema is being
@@ -121,19 +121,19 @@
                 to the message receiver to invoke the service and send the response. So according to the Axis2
                 architecture to accomplish this approach it is required to implement three main components, a
                 MessageBuilder, a MessageReceiver and a MessageFormatter, where in this Native implementation those are
-                JSONBuilder, JSONRPCMessageReceiver and JSONFomatter, to handle the pure JSON request and invoke the
+                JsonBuilder, JsonRpcMessageReceiver and JsonFormatter, to handle the pure JSON request and invoke the
                 service and return a completely pure JSON string as a response. In the builder, it creates and returns
                 a dummy SOAP envelop to process over execution chain, while storing input json stream and a boolean
-                flag IS_JSON_STREAM as a property of input MessageContext. The next one is JSONRPCMessageReceiver which
+                flag IS_JSON_STREAM as a property of input MessageContext. The next one is JsonRpcMessageReceiver which
                 is an extended subclass of RPCMessageReceiver. In here it checks IS_JSON_STREAM property value, if it is
                 'true' then it processes InputStream stored in input MessageContext, using JsonReader in google-gson API.
                 Then it invokes request service operation by Gson in google-gson API which uses Java reflection to invoke
                 the service. To write the response to wire, it stores the returned object and return java bean type, as
                 properties of output MessageContext. If IS_JSON_STREAM is 'false' or null then it is handed over to its
-                super class RPCMessageReceiver, in order to handle the request. This means, using JSONRPCMessageReceiver
+                super class RPCMessageReceiver, in order to handle the request. This means, using JsonRpcMessageReceiver
                 as the message receiver of your service you can send pure JSON messages as well as SOAP requests too.
-                There is a JSONRPCInOnly-MessageReceiver which extends RPCInOnlyMessageReceiver class, to handle In-Only
-                JSON requests too. In JSONformatter it gets return object and the java bean type, and writes response as
+                There is a JsonInOnlyRPCMessageReceiver which extends RPCInOnlyMessageReceiver class, to handle In-Only
+                JSON requests too. In JsonFormatter it gets return object and the java bean type, and writes response as
                 a pure JSON string to the wire using JsonWriter in google-gson API. The native approach doesn’t support
                 namespaces. If you need namespace support with JSON then go through XML Stream API based approach.</p>
 
@@ -178,10 +178,10 @@
                 In the MessageBuilder it creates GsonXMLStreamReader parsing JsonReader instance which is created using
                 inputStream and stores it in input MessageContext as a message property and returns a default SOAP
                 envelop. Inside the JSONMessageHandler it checks for this GsonXMLStreamReader property, if it is not
-                null and messageReceiver of the operation is not an instance of JSONRPCMessageReceiver, it gets the
+                null and messageReceiver of the operation is not an instance of JsonRpcMessageReceiver, it gets the
                 element qname and relevant XMLSchema list from the input MessageContext and pass it to
-                GsonXMLStreamReader. After that it creates StAXOMBuilder passing this GsonXMLStreamReader as the
-                XMLStreamReader and get the document element. Finally set this document element as child of default
+                GsonXMLStreamReader. After that it creates an Axiom builder with OMXMLBuilderFactory.createStAXOMBuilder, passing this
+                GsonXMLStreamReader as the XMLStreamReader, and gets the document element. Finally set this document element as child of default
                 SOAP body. If Axis2 going to process XMLSchema for every request this would be a performance issue.
                 To solve this, Axis2 uses an intermediate representation(XmlNode) of operation XmlSchema list and store
                 it inside the ConfigurationContext with element qname as a property to use it for a next request

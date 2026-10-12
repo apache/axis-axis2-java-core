@@ -49,8 +49,6 @@ distributions</a></li>
 Distribution</a></li>
 <li><a href="userguide.html#hierarchy">Axis2.war Directory
 Hierarchy</a></li>
-<li><a href="userguide.html#docs">Axis2 Documents
-Distribution</a></li>
 <li><a href="userguide.html#clients">Axis2 and clients</a></li>
 </ul>
 </li>
@@ -112,8 +110,9 @@ and make sure all the Axis2 libraries are on the CLASSPATH.</li>
 <!--stopped here-->
 <p><b>The Long Story:</b></p>
 <p>Start by installing a suitable container, such as <a href=
-"http://tomcat.apache.org/">Apache Tomcat</a>. Any J2EE server will
-do. To install Apache Axis2 on the server, <a href="../download.cgi">download</a> the Axis2 WAR
+"https://tomcat.apache.org/">Apache Tomcat</a> 11. Any Jakarta EE
+servlet container supporting Servlet 6.0 will do (Axis2 is tested on
+Tomcat 11 and WildFly 32 and 41). To install Apache Axis2 on the server, <a href="../download.html">download</a> the Axis2 WAR
 distribution and place the axis2.war file in the server's webapps directory. The
 server will then expand the distribution into its proper structure,
 as seen in the <a href="userguide.html#hierarchy">earlier
@@ -129,13 +128,14 @@ MyService service distributed as one of the Axis2 samples, copy the
 file &lt;AXIS2_HOME&gt;/modules/samples/userguide/build/MyService.aar file,
 which is built using the <code>ant</code> command, from
 &lt;AXIS2_HOME&gt;/modules/samples/userguide, to the directory
-&lt;J2EE_HOME&gt;/webapps/axis2/WEB-INF/services.</p>
+the WEB-INF/services directory of the deployed axis2 web application
+(for example &lt;TOMCAT_HOME&gt;/webapps/axis2/WEB-INF/services).</p>
 <p>Your client can come in any number of forms, from a collection
 of files to a single *.jar file. The important thing is to ensure
 that all the appropriate classes are on the classpath. In addition
 to the classes that pertain to the actual client, you must also add
 the Axis2 .jar files into the CLASSPATH. Normally you will do this
-by downloading and unpacking the <a href="../download.cgi">
+by downloading and unpacking the <a href="../download.html">
 Axis2 Standard Distribution</a> and adding the *.jar files in the
 lib directory to your CLASSPATH, or you also have the option of
 running your client using the axis2.bat (or axis2.sh) script, which

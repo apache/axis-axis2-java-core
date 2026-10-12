@@ -1,5 +1,5 @@
  ------
- Maven 2 Aar Plugin: configuration examples
+ Maven Aar Plugin: configuration examples
  ------
  Jochen Wiedmann 
  <jochen.wiedmann@gmail.com>
@@ -7,7 +7,8 @@
 
 Goals
 
-  The Aar plugin allows the packaging of an Axis 2 service aar in 3 different modes:
+  The Aar plugin allows the packaging of an Axis 2 service aar in 3 different modes,
+  and the deployment of the result:
 
    * aar (default): generates the aar artifact
 
@@ -15,9 +16,15 @@ Goals
 
    * exploded : package an exploded aar application
 
-  Each mode is materialized by a goal. For instance, to generate an exploded
-  aar from the current project, one would type
+   * deployaar : deploy the aar to a running Axis2 server through its administration
+     console (parameters axis2AdminConsoleURL, default
+     http://localhost:8080/axis2/axis2-admin, axis2AdminUser and axis2AdminPassword)
+
+  Each mode is materialized by a goal. The plugin's goal prefix is axis2, which it
+  shares with the other Axis2 plugins (the Mar plugin has goals with the same names),
+  so invoke the goals with the full plugin coordinates. For instance, to generate an
+  exploded aar from the current project, one would type
 
 +--------
-  mvn aar:exploded
+  mvn org.apache.axis2:axis2-aar-maven-plugin:exploded
 +---------

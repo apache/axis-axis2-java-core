@@ -50,8 +50,6 @@ Distributions</a></li>
 Distribution</a></li>
 <li><a href="userguide.html#hierarchy">Axis2.war Directory
 hierarchy</a></li>
-<li><a href="userguide.html#docs">Axis2 Documents
-Distribution</a></li>
 <li><a href="userguide.html#clients">Axis2 and Clients</a></li>
 </ul>
 </li>
@@ -146,11 +144,11 @@ for calling each of these operations.</p>
 <p><b>The short story:</b></p>
 <ol>
 <li>
-<a href="../download.cgi">Download</a> and unpack the Apache Axis2 Standard
+<a href="../download.html">Download</a> and unpack the Apache Axis2 Standard
 Distribution, if you have not done it already.</li>
 <li>Create the client stub with the following command (Assuming that you have Axis2UserGuide.wsdl file on your current working directory):
 <pre>
-%AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s
+%AXIS2_HOME%\bin\wsdl2java.bat -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s
 </pre></li>
 <li>Create the client (for example, Client.java), a Java
 application that uses the generated stub, and save it in the
@@ -162,7 +160,7 @@ located in build/lib to the classpath and type: java
 org.apache.axis2.axis2userguide.Client</li>
 </ol>
 <p><b>The long story:</b></p>
-<p>If you have not done it already, <a href="../download.cgi">
+<p>If you have not done it already, <a href="../download.html">
 download</a> and unpack the Apache Axis2 Standard Distribution. The
 Axis2 WAR Distribution does not include the necessary utilities for
 generating code, such as WSDL2Java.</p>
@@ -176,7 +174,7 @@ their methods. To generate the client, issue the following command
 in Code Listing 6.</p>
 <h3><b>Code Listing 6 - Generating the Client</b></h3>
 <pre>
-%AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s
+%AXIS2_HOME%\bin\wsdl2java.bat -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s
 </pre>
 <p>This command analyzes the WSDL file and creates the stub in the
 package org.apache.axis2.axis2userguide. The options specify that

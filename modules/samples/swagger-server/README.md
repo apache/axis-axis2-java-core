@@ -14,11 +14,13 @@ This project showcases:
 
 ## API Endpoints
 
-- `/bigdataservice/login` - Authentication
-- `/bigdataservice/funds` - Fund data operations
-- `/bigdataservice/assets` - Asset calculations
-- `/bigdataservice/user` - User management
+- `/bigdataservice/login` - Authentication (`AuthenticationService`, the only service currently implemented)
 - `/swagger-ui` - Interactive API documentation
+
+`src/main/resources/openapi/financial-api-schema.json` also describes fund, asset,
+calculation and user operations (`/bigdataservice/funds/summary`, `/bigdataservice/assets/calculate`,
+`/bigdataservice/user/info`, `/bigdataservice/user/permissions`). Those are
+schema only; the sample does not implement them.
 
 ## Building and Running
 
@@ -30,4 +32,5 @@ mvn clean package
 The OpenAPI specification will be available at:
 - JSON: `/openapi.json`
 - YAML: `/openapi.yaml`
+- MCP tool catalog: `/openapi-mcp.json`
 - Swagger UI: `/swagger-ui/`

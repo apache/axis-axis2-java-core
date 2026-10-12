@@ -126,6 +126,7 @@
         </subsection>
 
         <subsection name="Field Selection (?fields=)">
+        <a name="Field_Selection" id="Field_Selection"></a>
         <p>When using <code>FieldFilteringMessageFormatter</code>, callers can
         reduce response payload size by specifying which fields to include.
         This is useful for AI agents (MCP tools), mobile clients, and API
@@ -275,6 +276,7 @@ OutputStream flushingStream = new FlushingOutputStream(outputStream, flushInterv
         <p>The streaming formatter has been tested on:</p>
         <ul>
             <li>WildFly 32 (local) — all services produce valid JSON</li>
+            <li>WildFly 41 with OpenJDK 21 and OpenJDK 25 (local) — all services produce valid JSON</li>
             <li>WildFly 32 behind a reverse proxy (HTTP/2 ALPN on port 8443)
             — all services produce bit-identical results compared to the
             non-streaming formatter</li>

@@ -24,25 +24,32 @@
 <meta name="generator" content=
 "HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
 <meta http-equiv="content-type" content="" />
-<title>Maven2 AAR Plug-in Guide</title>
+<title>Maven AAR Plugin Guide</title>
 </head>
 <body>
-<h1>Maven2 AAR Plug-in Guide</h1>
+<h1>Maven AAR Plugin Guide</h1>
 <h2>Introduction</h2>
 <p>This plugin generates an Axis 2 service file (AAR file).</p>
 <p><a href="../index.html">[Download Plugin Tool]</a></p>
 <h2>Goals</h2>
 <p>The AAR plugin allows the packaging of an Axis 2 service aar in
-3 different modes:</p>
+3 different modes, and the deployment of the result:</p>
 <ol>
-<li><b>axis2-aar:aar</b>: generates the aar artifact</li>
-<li><b>axis2-aar:inplace</b> : package the aar in the source tree</li>
-<li><b>axis2-aar:exploded</b> : package an exploded aar application</li>
+<li><b>aar</b>: generates the aar artifact</li>
+<li><b>inplace</b> : package the aar in the source tree</li>
+<li><b>exploded</b> : package an exploded aar application</li>
+<li><b>deployaar</b> : deploy the aar to a running Axis2 server through
+its administration console (parameters <tt>axis2AdminConsoleURL</tt>,
+default <tt>http://localhost:8080/axis2/axis2-admin</tt>,
+<tt>axis2AdminUser</tt> and <tt>axis2AdminPassword</tt>)</li>
 </ol>
-<p>Each mode is materialized by a goal. For instance, to generate
-an exploded aar from the current project, one would type</p>
+<p>Each mode is materialized by a goal. The plugin's goal prefix is
+<tt>axis2</tt>, which it shares with the other Axis2 plugins (the MAR
+plugin has goals with the same names), so invoke the goals with the
+full plugin coordinates. For instance, to generate an exploded aar from
+the current project, one would type</p>
 <pre>
-mvn axis2-aar:exploded
+mvn org.apache.axis2:axis2-aar-maven-plugin:exploded
 </pre>
 <h2>Configuration</h2>
 <p>All AAR plugin goals takes the following configuration
@@ -72,17 +79,22 @@ parameters as input:</p>
 </tr>
 <tr>
 <td>servicesXmlFile</td>
-<td></td>
-<td>Location of the services.xml file. By default, it is assumed
-that the file is already present in classesDirectory/META-INF and
-no special processing is required</td>
+<td>src/main/resources/META-INF/services.xml</td>
+<td>Location of the services.xml file. If it is present at the
+default location it is included automatically; otherwise this
+parameter must be set</td>
+</tr>
+<tr>
+<td>includeDependencies</td>
+<td>true</td>
+<td>Whether the dependency jars should be included in the aar</td>
 </tr>
 <tr>
 <td>wsdlFile</td>
 <td></td>
-<td>Location of the WSDL file. By default, it is assumed that the
-file is already present in classesDirectory/META-INF and no special
-processing is required</td>
+<td>Location of the WSDL file, if any. By default, no WSDL file is
+added and it is assumed that Axis2 will automatically generate a WSDL
+file</td>
 </tr>
 <tr>
 <td>wsdlFileName</td>

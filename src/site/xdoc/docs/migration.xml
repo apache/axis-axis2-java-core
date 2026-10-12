@@ -34,7 +34,7 @@ in comparison with Axis1. This will be followed by guidelines for
 migration to the new version.</p>
 <p><i>Send your feedback or questions to: <a href=
 "mailto:java-user@axis.apache.org?subject=[Axis2]">java-user@axis.apache.org</a></i>.
-(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.)
+(Subscription details are available on the <a href="../mailing-lists.html">Axis2 site</a>.)
 Kindly prefix subject with [Axis2].</p>
 <h2>Content</h2>
 <ul>
@@ -165,7 +165,8 @@ the services.xml (using &lt;module ref="foo/&gt;").</p>
 <p>Services are hot deployable in Axis2, but modules are not. This
 is one feature which is unique to Axis2.</p>
 <p>Let's take a detailed look at what it takes to migrate the Axis
-1.x handlers to the Axis 2 modules via the "SOAP Monitor". The SOAP
+1.x handlers to the Axis 2 modules, using the Axis 1.x "SOAP Monitor"
+as the example. The Axis 1.x SOAP
 monitor is really a combination of three components: An applet
 which displays responses/requests, a servlet which binds to a
 default port of 5001 and connects to the applet, and a handler
@@ -215,59 +216,64 @@ WSDD that defines their Web Service:</b></p>
   &lt;/service&gt;
 &lt;/deployment&gt;
 </pre>
+<p>Axis2 does not ship a SOAP Monitor module (it was removed in Axis2
+2.0.1), so the equivalent in Axis2 is a custom module containing your own
+handler. The example below ports the Axis 1.x handler to a module named
+"monitor"; the class names in the <code>org.example.monitor</code>
+package stand for your own code.</p>
 <p><b>Axis 2 requires a module.xml, placed inside a jar with a .mar
 extension under WEB-INF/modules, to define a Handler:</b></p>
 <pre>
-&lt;module name="soapmonitor" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorModule"&gt;
-    &lt;inflow&gt;
-        &lt;handler name="InFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
-            &lt;order phase="soapmonitorPhase"/&gt;
+&lt;module name="monitor" class="org.example.monitor.MonitorModule"&gt;
+    &lt;InFlow&gt;
+        &lt;handler name="InFlowMonitorHandler" class="org.example.monitor.MonitorHandler"&gt;
+            &lt;order phase="monitorPhase"/&gt;
         &lt;/handler&gt;
-    &lt;/inflow&gt;
+    &lt;/InFlow&gt;
 
-    &lt;outflow&gt;
-        &lt;handler name="OutFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
-            &lt;order phase="soapmonitorPhase"/&gt;
+    &lt;OutFlow&gt;
+        &lt;handler name="OutFlowMonitorHandler" class="org.example.monitor.MonitorHandler"&gt;
+            &lt;order phase="monitorPhase"/&gt;
         &lt;/handler&gt;
-    &lt;/outflow&gt;
+    &lt;/OutFlow&gt;
 
-    &lt;Outfaultflow&gt;
-        &lt;handler name="FaultOutFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
-            &lt;order phase="soapmonitorPhase"/&gt;
+    &lt;OutFaultFlow&gt;
+        &lt;handler name="FaultOutFlowMonitorHandler" class="org.example.monitor.MonitorHandler"&gt;
+            &lt;order phase="monitorPhase"/&gt;
         &lt;/handler&gt;
-    &lt;/Outfaultflow&gt;
+    &lt;/OutFaultFlow&gt;
 
-    &lt;INfaultflow&gt;
-        &lt;handler name="FaultInFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler"&gt;
-            &lt;order phase="soapmonitorPhase"/&gt;
+    &lt;InFaultFlow&gt;
+        &lt;handler name="FaultInFlowMonitorHandler" class="org.example.monitor.MonitorHandler"&gt;
+            &lt;order phase="monitorPhase"/&gt;
         &lt;/handler&gt;
-    &lt;/INfaultflow&gt;
+    &lt;/InFaultFlow&gt;
 &lt;/module&gt;
 </pre>
-<p>The SOAPMonitorModule referenced above simply implements the
+<p>The MonitorModule referenced above simply implements
 org.apache.axis2.modules.Module, and is used for any additional
 tasks needed to initialize the module and shutdown the module. In
 this situation, nothing is needed and the implemented interface
-methods have blank bodies. Furthermore, the 'soapmonitorPhase' will
+methods have blank bodies. Furthermore, the 'monitorPhase' will
 be used later (below) in the axis2.xml .</p>
 <p><b>Axis 1.x the SOAPMonitorHandler has the class signature
 as:</b></p>
 <pre>
 public class SOAPMonitorHandler extends BasicHandler
 </pre>
-<p><b>Axis 2 the SOAPMonitorHandler has the class signature
-as:</b></p>
+<p><b>In Axis 2 the equivalent handler extends AbstractHandler
+instead:</b></p>
 <pre>
-public class SOAPMonitorHandler extends AbstractHandler 
+public class MonitorHandler extends AbstractHandler 
 </pre>
 <p><b>In Axis2, you need to reference the module that contains the
 handler chain that you want to use inside your
 services.xml:</b></p>
 <pre>
 &lt;service name="ExampleService"&gt;
-    &lt;module ref="soapmonitor"/&gt;
+    &lt;module ref="monitor"/&gt;
     &lt;description&gt;
-       This service has the SOAP Monitor wired in 
+       This service has the monitor module wired in 
     &lt;/description&gt;
     &lt;parameter name="ServiceClass"&gt;org.ExampleService&lt;/parameter&gt;
     &lt;operation name="myExecute"&gt;
@@ -275,71 +281,32 @@ services.xml:</b></p>
     &lt;/operation&gt;
 &lt;/service&gt;
 </pre>
-<p><b>Finally, Axis2 requires you to make some changes to
-axis2.xml. Start by adding a global module:</b></p>
+<p><b>Alternatively, engage the module globally by adding it to
+axis2.xml:</b></p>
 <pre>
-    &lt;module ref="soapmonitor"/&gt;
+    &lt;module ref="monitor"/&gt;
 </pre>
-<p><b>Then define your phase orders for the 'soapmonitorPhase'
-referenced in the module.xml :</b></p>
+<p><b>Then add the 'monitorPhase' referenced in the module.xml to
+each of the four phaseOrder elements (InFlow, OutFlow, InFaultFlow
+and OutFaultFlow) of the axis2.xml shipped with Axis2. For
+example, at the end of the InFlow phases, after the dispatch
+phases:</b></p>
 <pre>
-    &lt;phaseOrder type="inflow"&gt;
-        &lt;!--  Global Phases       --&gt;
-        &lt;phase name="TransportIn"/&gt;
-        &lt;phase name="PreDispatch"/&gt;
+    &lt;phaseOrder type="InFlow"&gt;
+        ...
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
-            &lt;handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"&gt;
-                &lt;order phase="Dispatch"/&gt;
-            &lt;/handler&gt;
-
-            &lt;handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"&gt;
-                &lt;order phase="Dispatch"/&gt;
-            &lt;/handler&gt;
-
-            &lt;handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"&gt;
-                &lt;order phase="Dispatch"/&gt;
-            &lt;/handler&gt;
-
-            &lt;handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"&gt;
-                &lt;order phase="Dispatch"/&gt;
-            &lt;/handler&gt;
-            &lt;handler name="InstanceDispatcher"
-                     class="org.apache.axis2.engine.InstanceDispatcher"&gt;
-                &lt;order phase="Dispatch"/&gt;
-            &lt;/handler&gt;
+            ...
         &lt;/phase&gt;
-        &lt;!--    Global Phases     --&gt;
-        &lt;!--   After Dispatch phase module author or service author can add any phase he wants      --&gt;
-        &lt;phase name="userphase1"/&gt;
-        &lt;phase name="soapmonitorPhase"/&gt;
+        ...
+        &lt;phase name="OperationInPhase"&gt;
+            ...
+        &lt;/phase&gt;
+        &lt;phase name="monitorPhase"/&gt;
     &lt;/phaseOrder&gt;
-    &lt;phaseOrder type="outflow"&gt;
-        &lt;!--   user can add his own phases to this area  --&gt;
-        &lt;!--   Global phases   --&gt;
-        &lt;!--   these phases will run irrespective of the service   --&gt;
-        &lt;phase name="MessageOut"/&gt;
-        &lt;phase name="userphase1"/&gt;
-        &lt;phase name="soapmonitorPhase"/&gt;
-        &lt;phase name="PolicyDetermination"/&gt;
-        &lt;!--   Global phases   --&gt;
-    &lt;/phaseOrder&gt;
-    &lt;phaseOrder type="INfaultflow"&gt;
-        &lt;phase name="userphase1"/&gt;
-        &lt;phase name="soapmonitorPhase"/&gt;
-        &lt;!--   user can add his own phases to this area  --&gt;
-    &lt;/phaseOrder&gt;
-    &lt;phaseOrder type="Outfaultflow"&gt;
-        &lt;!--   user can add his own phases to this area  --&gt;
-        &lt;!--   Global phases   --&gt;
-        &lt;phase name="MessageOut"/&gt;
-        &lt;phase name="userphase1"/&gt;
-        &lt;phase name="soapmonitorPhase"/&gt;
-        &lt;phase name="PolicyDetermination"/&gt;
-        &lt;!--   Global phases   --&gt;
+    &lt;phaseOrder type="OutFlow"&gt;
+        &lt;phase name="monitorPhase"/&gt;
+        &lt;phase name="OperationOutPhase"/&gt;
+        ...
     &lt;/phaseOrder&gt;
 </pre>
 <p>See the user guide for more information on Axis2 modules.</p>
@@ -466,8 +433,8 @@ location' be changed to:</p>
 <pre>
 &lt;soap:address location="http://localhost:8080/axis2/services/SimpleEndpoint"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;
 </pre>
-<p>In Axis2, the default databinding uses ADB. However, XMLBeans,
-JiBX and JAXB-RI are also supported. This example uses XMLBeans. For
+<p>In Axis2, the default databinding uses ADB. However, XMLBeans
+and JAXB-RI are also supported. This example uses XMLBeans. For
 Axis2, our example uses the following Ant task:</p>
 <pre>
 &lt;target name="wsdl2java"&gt;
@@ -632,7 +599,7 @@ package org.simple.endpoint;
 along with the generated services.xml in an AAR, and then hot
 deploy the AAR by placing it in the Axis2.war under
 WEB-INF/services. Point a browser to
-http://localhost:8080/axis2/listServices, and you should see the
+http://localhost:8080/axis2/services/listServices, and you should see the
 service 'SimpleService' ready for action. See the Axis2 user guide
 for more info.</p>
 <p>The last step is constructing the client. Our Axis 1.x client

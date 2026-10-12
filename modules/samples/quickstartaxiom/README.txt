@@ -15,20 +15,20 @@ deployment using an AXIOM based client.
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
 Building the Service
 ====================
 
-Type "ant generate.service" from AXIS2_HOME/samples/quickstartaxiom directory.
+Type "ant generate.service" from AXIS2_HOME/modules/samples/quickstartaxiom directory.
 Then deploy the 
-AXIS2_HOME/samples/quickstartaxiom/build/StockQuoteService.aar
+AXIS2_HOME/modules/samples/quickstartaxiom/build/StockQuoteService.aar
 
 
 Running the Client
 ==================
 
-Type ant run.client in the AXIS2_HOME/samples/quickstartaxiom directory
+Type ant run.client in the AXIS2_HOME/modules/samples/quickstartaxiom directory
 
 You will get following response
 [java] price updated
@@ -36,5 +36,5 @@ You will get following response
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have
+Please contact java-user list (java-user@axis.apache.org) if you have
 any trouble running the sample.

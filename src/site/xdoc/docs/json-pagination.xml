@@ -157,7 +157,7 @@ int limit = endRow - startRow;
 
 <h2>Test Coverage</h2>
 
-<p>The <code>PaginatedResponseTest</code> class provides 20 tests covering:</p>
+<p>The <code>PaginatedResponseTest</code> class provides 28 tests covering:</p>
 <ul>
   <li>First page, last page, partial last page, single page, empty result</li>
   <li>Null data treated as empty list</li>

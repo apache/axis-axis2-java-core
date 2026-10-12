@@ -74,7 +74,7 @@
                     <li>Developers : <a href="mailto:java-dev@axis.apache.org">java-dev@axis.apache.org</a></li>
                 </ul>
                 <p>
-                    Before posting to a list, you need to <a href="mail-lists.html">subscribe</a> first.
+                    Before posting to a list, you need to <a href="mailing-lists.html">subscribe</a> first.
                     Since the mailing lists are shared with other subprojects (such as Rampart), please
                     prefix the subject with <tt>[Axis2]</tt>. 
                 </p>

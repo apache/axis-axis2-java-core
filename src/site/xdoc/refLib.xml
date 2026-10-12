@@ -52,17 +52,18 @@ Adding security to SOAP.</p>
 "http://www.w3c.org/TR/wsdl.html">1.1</a></p>
 <p>WS - Addressing <a href=
 "http://www.w3.org/Submission/ws-addressing/">submission</a>
-<a href="http://www.w3.org/TR/2005/WD-ws-addr-core-20050331/">1.0
-(31st March,2005)</a></p>
+<a href="https://www.w3.org/TR/ws-addr-core/">1.0
+Core (W3C Recommendation, 2006)</a></p>
 <p><a href=
 "http://www.w3.org/TR/ws-policy/">
 Web Services Policy Framework (WSPolicy)</a></p>
-<p><a href=
+<p><s><a href=
 "http://www.ws-i.org/Profiles/BasicProfile-1.0.html">WS-I Basic
-Profile Version 1.0</a></p>
+Profile Version 1.0</a></s> <em>(ws-i.org is no longer maintained; the WS-I
+profiles are now published by OASIS)</em></p>
 <p><a href=
-"http://jcp.org/aboutJava/communityprocess/first/jsr101/index.html">
-Java API for XML-based RPC (JAX-RPC)</a></p>
+"https://jakarta.ee/specifications/xml-web-services/">
+Jakarta XML Web Services (JAX-WS)</a></p>
 <p><a href=
 "http://www.w3.org/TR/2005/REC-soap12-mtom-20050125/">SOAP Message
 Transmission Optimization Mechanism</a></p>
@@ -85,10 +86,9 @@ This Sun document specifies the de-facto standard way of formatting
 Java code. All code written for this project must follow these
 conventions.</p>
 <p><a href=
-"http://svnbook.red-bean.com/en/1.1/svn-book.html"><strong>Version
-Control with SubVersion</strong></a><br />
-Written by Ben Collins-Sussman, Brian W. Fitzpatrick, C. Michael
-Pilato. It provides details on SVN features.</p>
+"https://git-scm.com/book"><strong>Pro Git</strong></a><br />
+Written by Scott Chacon and Ben Straub. It provides details on Git
+features; Axis2 source control is Git, hosted on GitHub.</p>
 <p></p>
 </body>
 </html>

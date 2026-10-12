@@ -42,7 +42,7 @@ For users of JSON and Spring Boot, see the sample application in the <a href=
 <h1>Introducing Axis2</h1>
 <p>This section introduces Axis2 and its structure, including an
 explanation of various directories/files included in the latest
-Axis2 <a href="../download.cgi">download</a>.</p>
+Axis2 <a href="../download.html">download</a>.</p>
 <h2>Content</h2>
 <ul>
 <li><a href="userguide.html#intro"><strong>Introducing
@@ -62,8 +62,6 @@ Distributions</strong></a></li>
 Distribution</strong></a></li>
 <li><a href="userguide.html#hierarchy"><strong>Axis2.war Directory
 Hierarchy</strong></a></li>
-<li><a href="userguide.html#docs"><strong>Axis2 Documents
-Distribution</strong></a></li>
 <li><a href="userguide.html#clients"><strong>Axis2 and
 Clients</strong></a></li>
 </ul>
@@ -221,7 +219,7 @@ includes Spring Security - see the sample application in the <a href=
 </p>
 <a name="distributions" id="distributions"></a>
 <h2>Axis2 Distributions</h2>
-<p>Axis2 is released in several <a href="../download.cgi">
+<p>Axis2 is released in several <a href="../download.html">
 distributions</a>. Which one you need depends on what you'll be
 doing with it.</p>
 <a name="sbd" id="sbd"></a>
@@ -243,30 +241,34 @@ bin
       wsdl2java.sh
       setenv.sh
 lib
-      activation-1.1.jar
+      axiom-api-*.jar
       ...
-      XmlSchema.jar
+      xmlschema-core-*.jar
 repository
              modules
          modules.list 
-                addressing-1.1.mar
+                addressing-*.mar
                ..
              services
          services.list
-                version.aar
+                version-*.aar
          ..
-samples
-      ...
+modules
+      samples
+            ...
 webapp
       ...
+dist
+      axis2.war
 conf
     axis2.xml
 
 LICENSE.txt
 README.txt
+README-std-bin.txt
 NOTICE.txt
-INSTALL.txt
-release-notes.html
+installation-std-bin.txt
+RELEASE-NOTE.txt
 </pre>
 <p>The bin directory includes a number of useful scripts. They
 include axis2.bat (or axis2.sh), which enables you to easily
@@ -283,14 +285,14 @@ you can add any other necessary module such as Rampart to the
 repository/modules directory.</p>
 <p>conf directory includes the axis2.xml which is the global
 deployment descriptor.</p>
-<p>Finally, the samples directory includes all the sample code
+<p>Finally, the modules/samples directory includes all the sample code
 distributed with Axis2. See the list of <a href=
 "userguide-samples.html">samples and their descriptions</a>.</p>
 <a name="hierarchy" id="hierarchy"></a>
 <h2>axis2.war Distribution Directory Hierarchy</h2>
-<p>axis2.war is available in <a href="../download.cgi">
+<p>axis2.war is available in <a href="../download.html">
 WAR (Web Archive) Distribution</a>. The server side of Axis2 ships
-as a J2EE application, and has the following structure shown in
+as a Jakarta EE web application, and has the following structure shown in
 Code Listing 2.</p>
 <p><b>Code Listing 2: Server Side of Axis2</b></p>
 <pre>
@@ -339,7 +341,7 @@ phase.</p>
 Web application, but if you restart the Axis2 application, these
 changes are lost and the server goes back to the definitions in the
 axis2.xml file.</p>
-<p>Axis2 also provides a third distribution, the <a href="../download.cgi">
+<p>Axis2 also provides a third distribution, the <a href="../download.html">
 source distribution</a>, which enables you to generate this .war
 file yourself.</p>
 <!-- Documents Distribution section removed as obsolete -->
@@ -347,7 +349,7 @@ file yourself.</p>
 <h2>Axis2 and Clients</h2>
 <p>Now that explains how Axis2 behaves as part of a Web
 application. What about a standalone client that is not part of a
-J2EE application? In that case, a sender can use the Axis2 default
+Jakarta EE web application? In that case, a sender can use the Axis2 default
 properties, in other words, no special handlers, and so on. But you
 also have the option to tell the client to load its own copy of the
 axis2.xml file and behave accordingly.</p>

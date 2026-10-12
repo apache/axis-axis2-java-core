@@ -13,7 +13,8 @@ Configuration
 |                             |                                                | being read and transformed into a WSDL.        |
 *-----------------------------+------------------------------------------------+------------------------------------------------+
 | outputFileName              | ${axis2.java2wsdl.outputFileName}              | Path of the generated service file.            |
-*-----------------------------*------------------------------------------------*------------------------------------------------*
+|                             | ${project.build.directory}/generated-resources/service.wsdl |                                   |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
 | schemaTargetNamespace       | ${axis2.java2wsdl.schemaTargetNamespace}       | Target namespace of the generated schema.      |
 *-----------------------------+------------------------------------------------+------------------------------------------------+
 | schemaTargetNamespacePrefix | ${axis2.java2wsdl.schemaTargetNamespacePrefix} | Prefix, which is being associated with the     |
@@ -27,4 +28,26 @@ Configuration
 *-----------------------------+------------------------------------------------+------------------------------------------------+
 | targetNamespacePrefix       | ${axis2.java2wsdl.targetNamespacePrefix}       | Prefix, which is being associated with the     |
 |                             |                                                | target namespace.                              |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| style                       | ${axis2.java2wsdl.style}                       | Style for the WSDL.                            |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| use                         | ${axis2.java2wsdl.use}                         | Use for the WSDL.                              |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| wsdlVersion                 | ${axis2.java2wsdl.wsdlVersion}                 | Version of the generated WSDL.                 |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| nsGenClassName              | ${axis2.java2wsdl.nsGenClassName}              | Namespace generator class.                     |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| schemaGenClassName          | ${axis2.java2wsdl.schemaGenClassName}          | Schema generator class.                        |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| locationUri                 | ${axis2.java2wsdl.locationUri}                 | Location URI in the WSDL.                      |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| attrFormDefault             | ${axis2.java2wsdl.attrFormDefault}             | attributeFormDefault setting for the schema.   |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| elementFormDefault          | ${axis2.java2wsdl.elementFormDefault}          | elementFormDefault setting for the schema.     |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| docLitBare                  | ${axis2.java2wsdl.docLitBare}                  | Switch on the Doc/Lit/Bare style schema.       |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| extraClasses                | ${axis2.java2wsdl.extraClasses}                | Additional classes for which schema is generated. |
+*-----------------------------+------------------------------------------------+------------------------------------------------+
+| package2Namespace           | ${axis2.java2wsdl.package2Namespace}           | Explicit namespaces for packages.              |
 *-----------------------------+------------------------------------------------+------------------------------------------------+

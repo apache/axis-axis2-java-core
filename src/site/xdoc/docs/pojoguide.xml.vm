@@ -94,9 +94,9 @@ this document</li>
 <li>Spring-based POJO Web service and deployment</li>
 </ul>
 <p>The code for the document can be found at
-Axis2_HOME/samples/pojoguide and Axis2_HOME/samples/pojoguidespring
+Axis2_HOME/modules/samples/pojoguide and Axis2_HOME/modules/samples/pojoguidespring
 once you extract the <a href=
-"../download.cgi">Axis2
+"../download.html">Axis2
 Standard Distribution</a>. (It is better to get it now as it will
 help you to follow along.) Let's get started.</p>
 <a name="pojo" id="pojo"></a>
@@ -233,18 +233,11 @@ the client</li>
 <p>Before you can build the source, you'll need to download the
 Axis2 ${axis2_version}-bin and ${axis2_version}-war distributions
 from <a href=
-"../download.cgi">here</a>. Then
-modify the following line inside the build.xml file (in the
-Axis2_HOME/samples/pojoguide directory in the extracted Axis2
-${axis2_version} Standard Binary (bin) Distribution) :</p>
-<pre>
-&lt;property name="axis2.home" value="c:\apps\axis2" /&gt;
-</pre>
-<p>This modification contains the path to the root of the unzipped
-Axis2 ${axis2_version}-bin <a href=
-"../download.cgi">download</a>.
-With that explanation, you'll now build the source by typing the
-following: ant</p>
+"../download.html">here</a>. The build.xml file in the
+Axis2_HOME/modules/samples/pojoguide directory of the extracted Axis2
+${axis2_version} Standard Binary (bin) Distribution locates the
+distribution's lib directory relative to itself, so no changes are
+needed. Build the source by typing the following in that directory: ant</p>
 <p>The following directory format should now exist at
 build/WeatherService:</p>
 <pre>
@@ -261,7 +254,7 @@ build/WeatherService:</p>
 <p>Simple isn't it? An excellent way to dive into Web services
 development.</p>
 <p>Now get a <a href="http://tomcat.apache.org/">Tomcat</a>
-distribution (I used v5.5), and start it up by running
+11 distribution (Axis2 ${axis2_version} is tested with Tomcat 11.0.x), and start it up by running
 <em>bin/startup.bat</em> or <em>bin/startup.sh</em>. Once it's
 running, deploy the Axis2 ${axis2_version}-war by copying the
 axis2.war file to Tomcat's webapps directory. Tomcat will proceed
@@ -269,7 +262,7 @@ by deploying axis2 and un-archiving it into the webapps directory.
 Now copy the WeatherService directory that was created at the time
 of building our project to:
 <em>&lt;tomcat-home&gt;/webapps/axis2/WEB-INF/services</em>.</p>
-<p>The service should deploy quickly. You willl test the Web
+<p>The service should deploy quickly. You will test the Web
 service using the RPCServiceClient in the next section.</p>
 <a name="testingpojows" id="testingpojows"></a>
 <h2>Testing the POJO Web Service Using RPCServiceClient</h2>
@@ -404,14 +397,17 @@ see how to overcome that limitation with a Spring based POJO, which
 is covered next.</p>
 <a name="springpojows" id="springpojows"></a>
 <h2>Spring-based POJO Web Service</h2>
-<p>Spring is a hot framework for J2EE and makes bean usage a
+<p>Spring is a popular framework for Jakarta EE and makes bean usage a
 breeze. You'll use it in this section to create a Spring based POJO
-Web service. For this section, you'll need the spring.jar from the
-latest 1.x Spring download.</p>
+Web service. For this section, you'll need the Spring Framework jars
+spring-core, spring-beans, spring-context and spring-web (Axis2
+${axis2_version} is built against Spring Framework 7.0.x), together with
+their runtime dependencies (for Spring 7, jspecify; commons-logging is
+already in the distribution).</p>
 <a name="quickintro" id="quickintro"></a>
 <h3>Quick Introduction</h3>
 <p>If you take a look at the source code of this document in
-Axis2_HOME/samples/pojoguidespring (to see how the Spring based
+Axis2_HOME/modules/samples/pojoguidespring (to see how the Spring based
 POJO Web service is coded), you can see that the Weather class
 didn't change at all and the WeatherService class only got its name
 changed to WeatherSpringService.</p>
@@ -492,10 +488,10 @@ them (see Code Listing 8).</p>
 applicationContext.xml</b></p>
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
-"http://www.springframework.org/dtd/spring-beans.dtd"&gt;
-
-&lt;beans&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
   &lt;bean id="<b>applicationContext</b>" class=
 "org.apache.axis2.extensions.spring.receivers.ApplicationContextHolder" /&gt;
 
@@ -559,10 +555,13 @@ ready for our WeatherSpringService.</p>
 <h3>Build and Deploy Using Apache Axis2 and Tomcat</h3>
 <p>Your POJO is now ready for primetime within the Spring
 Framework. Before you build, you'll first need to make sure the
-axis2-spring-${axis2_version}.jar and spring.jar files are in the
-project's <em>Axis2_HOME/lib</em> directory.</p>
+axis2-spring-${axis2_version}.jar and the Spring Framework jars listed
+above are in the <em>Axis2_HOME/lib</em> directory. The binary
+distribution ships axis2-spring but not Spring itself: axis2-spring
+declares Spring as a <code>provided</code> dependency, so you must add
+spring-core, spring-beans, spring-context and spring-web yourself.</p>
 <p><strong>Note:</strong> The service will not deploy if you add
-the above .jar files to the service archive due to class loding
+the above .jar files to the service archive due to class loading
 issues.</p>
 <p>Now build the source and create an AAR file by typing: ant</p>
 <p>It'll be created at <em>target/WeatherSpringService.aar</em>.
@@ -585,7 +584,7 @@ at startup.</p>
 client:</p>
 <pre>
 run.client:
-    [javac] Compiling 1 source file to C:\axis2-${axis2_version}\samples\pojoguidespring\build\cl
+    [javac] Compiling 1 source file to C:\axis2-${axis2_version}\modules\samples\pojoguidespring\build\cl
 asses
      <b>[java] Temperature               : 89.9
      [java] Forecast                  : Sunny
@@ -632,12 +631,9 @@ other goodies provided by the Spring framework.</p>
 <a name="furtherstudy" id="furtherstudy"></a>
 <h2>For Further Study</h2>
 <p><a href="Axis2ArchitectureGuide.html">Axis2 Architecture</a></p>
-<p>Introduction to Apache Axis2-<a href=
-"http://www.redhat.com/magazine/021jul06/features/apache_axis2/">http://www.redhat.com/magazine/021jul06/features/apache_axis2/</a></p>
-<p><a href="http://wso2.org/library/259">Working With Apache Axis2</a></p>
 <p>Apache Tomcat-<a href=
-"http://tomcat.apache.org/">http://tomcat.apache.org</a></p>
+"https://tomcat.apache.org/">https://tomcat.apache.org</a></p>
 <p>Spring Framework-<a href=
-"http://www.springframework.org/">http://www.springframework.org/</a></p>
+"https://spring.io/projects/spring-framework">https://spring.io/projects/spring-framework</a></p>
 </body>
 </html>

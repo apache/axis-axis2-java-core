@@ -18,7 +18,11 @@ Details for the examples are documented in the Apache Metadata Exchange User's G
 Prerequisites  
 =============
 
-To build the sample service you must have ant-1.6.x installed in your system. 
+This sample is not included in the binary distribution. To run it, copy this directory
+into AXIS2_HOME/modules/samples/ of an extracted Axis2 binary distribution and run ant
+from there (the build resolves AXIS2_HOME as ../../..).
+
+To build the sample service you must have Apache Ant 1.10 or later installed in your system. 
 
 To set AXIS2_HOME in Unix/Linux type:
 $export AXIS2_HOME=<path to axis2 distribution>
@@ -45,7 +49,7 @@ The WSDL for this service should be viewable at:
 http://<yourhost>:<yourport>/axis2/services/DefaultAxis2DataLocatorDemoService?wsdl 
 (e.g. http://localhost:8080/axis2/services/DefaultAxis2DataLocatorDemoService?wsdl)
 
-The clients to send GetMetadata requests are available in samples/mex/src/userguide/mex/clients directory.
+The clients to send GetMetadata requests are available in modules/samples/mex/src/userguide/mex/clients directory.
 
 
 Running the Client
@@ -63,7 +67,7 @@ $ant run.client.wsdl
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.
 
 
 

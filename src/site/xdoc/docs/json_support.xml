@@ -294,26 +294,21 @@ HTTP/1.1</code>
                 different conventions and another one test case to send the request
                 in GET.</p>
             </subsection>
-            <subsection name="Yahoo-JSON Sample">
-                <p>This sample is available in the
-                samples module of Axis2. It is a
-                client which calls the Yahoo search API using the GET method, with
-                the parameter output=json. The
-                Yahoo search service sends the response as a
-                formatted JSON string with
-                the content type text/javascript.
-                This content type is mapped with the JSONOMBuilder in the
-                axis2.xml. All the results are shown in a GUI. To run the sample,
-                execute the ant script.</p>
-                <p>These two applications provide good examples of using JSON
-                within Axis2. By reviewing these samples, you will be able to
+            <subsection name="JSON Sample">
+                <p>The <tt>modules/samples/json</tt> sample in the binary
+                distribution deploys a POJO service and calls it with a plain
+                JSON request, using the native (pure JSON) approach described in
+                the <a href="json_support_gson.html">JSON Support guide</a>.
+                To run it, execute the ant script in that directory.</p>
+                <p>The integration test and this sample provide good examples of
+                using JSON within Axis2. By reviewing them, you will be able to
                 better understand Axis2's JSON support implementation.</p>
             </subsection>
             <subsection name="Enabling mapped JSON on the ADB quickstart sample">
                 <p>To illustrate how JSON can be enabled on an existing service deployed in Axis2,
                 we will use the ADB stock quote service sample from the
                 <a href="quickstartguide.html#adb">Quick Start Guide</a>. The code for this sample
-                can be found in the <tt>samples/quickstartadb</tt> folder in the binary distribution.</p>
+                can be found in the <tt>modules/samples/quickstartadb</tt> folder in the binary distribution.</p>
                 <p>Only a few steps are necessary to enable JSON (using the Mapped convention) on
                 that service:</p>
                 <ol>
@@ -341,16 +336,16 @@ HTTP/1.1</code>
 </parameter>
 ]]></pre>
                         <p>The <tt>services.xml</tt> file can be found under
-                        <tt>samples/quickstartadb/resources/META-INF</tt>.</p>
+                        <tt>modules/samples/quickstartadb/resources/META-INF</tt>.</p>
                     </li>
                     <li>
                         <p>Build and deploy the service by executing the ant script in
-                        <tt>samples/quickstartadb</tt> and then start the Axis2 server using
+                        <tt>modules/samples/quickstartadb</tt> and then start the Axis2 server using
                         <tt>bin/axis2server.sh</tt> or <tt>bin/axis2server.bat</tt>.</p>
                     </li>
                 </ol>
                 <p>That's it; the stock quote service can now be invoked using JSON. This can be tested
-                using the well known <a href="http://curl.haxx.se/">curl</a> tool:</p>
+                using the well known <a href="https://curl.se/">curl</a> tool:</p>
                 <pre>curl -H 'Content-Type: application/json' -d '{"getPrice":{"symbol":"IBM"}}' http://localhost:8080/axis2/services/StockQuoteService</pre>
                 <p>This will give the following result:</p>
                 <pre>{"getPriceResponse":{"return":42}}</pre>

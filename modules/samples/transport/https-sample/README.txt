@@ -9,18 +9,24 @@ the web server and keytool-maven-plugin is used to generate secure key for the s
 key is used in client side too. This sample does not try to introduce secure key management best practices, 
 but in real world scenarios it's recommended to follow standard key management practices.   
 
+NOTE: httpsService still uses the old org.mortbay maven-jetty-plugin 6.1.26 (Jetty 6, javax
+Servlet 2.5), which cannot run the Jakarta-based Axis2 2.x webapp, so "mvn jetty:run" below
+does not currently work. Until the sample moves to a Jakarta EE 10 container (for example
+jetty-ee10-maven-plugin), deploy the built war to a Jakarta Servlet 6.0 container such as
+Tomcat 11 with an HTTPS connector on port 8443.
+
 
 Pre-Requisites
 ==============
 
-Apache Maven 2.X or 3.X
+Apache Maven 3.6.0+ and JDK 17 or later
 
 
 
 Running the Sample Service
 =========================
 
-1.) In a command line move to "samples/https-sample/httpsService" directory  and run " mvn clean jetty:run"
+1.) In a command line move to "modules/samples/transport/https-sample/httpsService" directory  and run " mvn clean jetty:run"
 
 2.) You should able to see following message on console. 
 
@@ -34,7 +40,7 @@ Running the Sample Service
 Running the Sample Client
 =========================
 
-1.) In a another command window move to this directory "samples/https-sample/httpsClient".
+1.) In a another command window move to this directory "modules/samples/transport/https-sample/httpsClient".
 
 2.) Run following command.
 

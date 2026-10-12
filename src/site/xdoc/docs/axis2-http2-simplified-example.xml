@@ -38,9 +38,11 @@
 
 <h2>Minimal axis2.xml Configuration</h2>
 
-<p>This example demonstrates the <strong>minimal configuration required</strong> for complete HTTP/2 support with Enhanced Moshi H2 JSON processing and production-ready performance optimization:</p>
+<p>This example demonstrates the <strong>minimal configuration required</strong> for complete HTTP/2 support with Enhanced Moshi H2 JSON processing and production-ready performance optimization.
+It shows only the elements that change: merge them into the stock <code>axis2.xml</code> shipped with
+Axis2, which also supplies the transport receivers, phase orders and other required elements.</p>
 
-<h3>Complete Minimal Configuration</h3>
+<h3>Minimal Configuration (to merge into axis2.xml)</h3>
 
 <source>
 <![CDATA[
@@ -95,11 +97,9 @@
     <!-- HTTP/2 Transport: Minimal Configuration          -->
     <!-- ================================================= -->
 
-    <!-- HTTP/2 Transport Sender (Intelligent Defaults) -->
-    <transportSender name="http"
-                     class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender">
-        <parameter name="PROTOCOL">HTTP/2.0</parameter>
-    </transportSender>
+    <!-- The HTTP/2 sender enforces HTTPS-only connections, so it must not be
+         registered as the "http" sender: keep the stock HTTP/1.1 sender
+         (HTTPClient5TransportSender) for plain http:// endpoints. -->
 
     <!-- HTTPS HTTP/2 Transport (Inherits All Intelligent Defaults) -->
     <transportSender name="https"
@@ -124,7 +124,7 @@
 maxConcurrentStreams = 100        # Memory-constrained optimization
 maxConnectionsTotal = 50          # Enterprise connection management
 maxConnectionsPerRoute = 10       # Route-specific optimization
-initialWindowSize = 2097152       # 2MB flow-control window (not related to 64KB flush interval)
+initialWindowSize = 65536         # 64KB flow-control window (raise to 2097152 for very large payloads)
 streamingBufferSize = 65536       # Server-side flush interval (64KB is correct here)
 connectionKeepAliveTime = 300000  # 5-minute balanced timeout
 connectionTimeout = 30000         # 30-second connection establishment
@@ -159,7 +159,7 @@ enableALPN = true                           # HTTP/2 protocol negotiation
 <source>
 <![CDATA[
 <!-- Example: Override specific parameters for custom requirements -->
-<transportSender name="http" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender">
+<transportSender name="https" class="org.apache.axis2.transport.h2.impl.httpclient5.H2TransportSender">
     <parameter name="PROTOCOL">HTTP/2.0</parameter>
 
     <!-- Override defaults only if needed -->

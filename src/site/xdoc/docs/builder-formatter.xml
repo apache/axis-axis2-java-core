@@ -34,7 +34,7 @@ MessageContext to the wire transfer format. Let's create a
 custom MessageBuilder/Formatter to add the support for a new message type.</p>
 <p>Send your feedback or questions to: <a href=
 "mailto:java-dev@axis.apache.org?subject=[Axis2]">java-dev@axis.apache.org</a>.
-( Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.)
+( Subscription details are available on the <a href="../mailing-lists.html">Axis2 site</a>.)
 Kindly prefix subject with [Axis2].</p>
 <h2>Contents</h2>
 <ul>
@@ -44,7 +44,7 @@ Kindly prefix subject with [Axis2].</p>
 <li><a href="#Step2_MessageFormatter_implementation">Step2 : MessageFormatter implementation</a></li>
 <li><a href="#Step3_Register_builder_formatter">Step3 : Register the builder and formatter with Axis2</a></li>
 <li><a href="#Step4_Packaging">Step4 : Packaging builder and formatter</a></li>
-<li><a href="#Step5_Testing">Step5 : Testing the new ContentType with the echo service</a></li>
+<li><a href="#Step5_Testing">Step5 : Testing the new ContentType with a service</a></li>
 </ul>
 </li>
 </ul>
@@ -54,29 +54,74 @@ Kindly prefix subject with [Axis2].</p>
 
 <a name="Step1_MessageBuilder_implementation"></a>
 <h4>Step1 : MessageBuilder implementation</h4>
-<!--<p>LoggingModule is the implementation class of the Axis2 module.-->
-<!--Axis2 modules should implement the "<a href=-->
-<!--"https://github.com/apache/axis-axis2-java-core/blob/master/modules/kernel/src/org/apache/axis2/modules/Module.java">org.apache.axis2.modules.Module</a>"-->
-<!--interface with the following methods.</p>-->
-<!--<pre>-->
-<!--public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault;//Initialize the module-->
-<!--public void shutdown(ConfigurationContext configurationContext) throws AxisFault;//End of module processing-->
-<!--public void engageNotify(AxisDescription axisDescription) throws AxisFault;-->
-<!--public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault ;-->
-<!--public boolean canSupportAssertion(Assertion assertion) ;-->
-<!--</pre>-->
+<p>A builder implements
+<a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/kernel/src/org/apache/axis2/builder/Builder.java">org.apache.axis2.builder.Builder</a>,
+which has a single method:</p>
+<pre>
+public OMElement processDocument(InputStream inputStream, String contentType,
+                                 MessageContext messageContext) throws AxisFault;
+</pre>
+<p>It reads the raw request from <code>inputStream</code> and returns the
+SOAP envelope (or the payload element) that the rest of the engine will
+process. The builders shipped with Axis2, for example
+<code>org.apache.axis2.builder.ApplicationXMLBuilder</code> and
+<code>org.apache.axis2.builder.XFormURLEncodedBuilder</code>, are good
+starting points.</p>
 
 <a name="Step2_MessageFormatter_implementation"></a>
 <h4>Step2 : MessageFormatter implementation</h4>
+<p>A formatter implements
+<a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/kernel/src/org/apache/axis2/kernel/MessageFormatter.java">org.apache.axis2.kernel.MessageFormatter</a>:</p>
+<pre>
+public void writeTo(MessageContext messageContext, OMOutputFormat format,
+                    OutputStream outputStream, boolean preserve) throws AxisFault;
+
+public String getContentType(MessageContext messageContext, OMOutputFormat format,
+                             String soapAction);
+
+public URL getTargetAddress(MessageContext messageContext, OMOutputFormat format,
+                            URL targetURL) throws AxisFault;
+
+public String formatSOAPAction(MessageContext messageContext, OMOutputFormat format,
+                               String soapAction);
+</pre>
+<p><code>writeTo</code> serializes the outgoing message in the new format and
+<code>getContentType</code> returns the Content-Type header to send. See
+<code>org.apache.axis2.kernel.http.ApplicationXMLFormatter</code> for an
+example.</p>
 
 <a name="Step3_Register_builder_formatter"></a>
 <h4>Step3 : Register the builder and formatter with Axis2</h4>
+<p>Map the content type to the two classes in <code>axis2.xml</code>:</p>
+<pre>
+&lt;messageBuilders&gt;
+    &lt;messageBuilder contentType="application/x-custom"
+                    class="org.example.CustomBuilder"/&gt;
+&lt;/messageBuilders&gt;
+
+&lt;messageFormatters&gt;
+    &lt;messageFormatter contentType="application/x-custom"
+                      class="org.example.CustomFormatter"/&gt;
+&lt;/messageFormatters&gt;
+</pre>
 
 <a name="Step4_Packaging"></a>
 <h4>Step4 : Packaging builder and formatter</h4>
+<p>Package the two classes in a jar and add it to the Axis2 class path:
+<code>WEB-INF/lib</code> of the Axis2 web application, or the
+<code>lib</code> directory of a standalone Axis2 server.</p>
 
 <a name="Step5_Testing"></a>
-<h4>Step5 : Testing the new ContentType with the echo service</h4>
+<h4>Step5 : Testing the new ContentType with a service</h4>
+<p>Restart Axis2, then send a request with the new content type to a
+deployed service, for example with curl:</p>
+<pre>
+curl -H 'Content-Type: application/x-custom' --data-binary @request.txt \
+     http://localhost:8080/axis2/services/MyService/myOperation
+</pre>
+<p>The response is written by your formatter when the request's content
+type, or the <code>messageType</code> property of the response message
+context, is <code>application/x-custom</code>.</p>
 
 </body>
 </html>

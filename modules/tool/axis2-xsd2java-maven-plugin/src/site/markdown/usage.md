@@ -31,25 +31,25 @@ To run the plugin, add the following section to your POM:
     <build>
       <plugins>
         <plugin>
-          <groupId>org.apache.axis2.maven2</groupId>
+          <groupId>org.apache.axis2</groupId>
           <artifactId>axis2-xsd2java-maven-plugin</artifactId>
           <executions>
             <execution>
               <goals>
                 <goal>generate-sources</goal>
               </goals>
+              <configuration>
+                <xsdFiles>
+                  <xsdFile>src/main/resources/xsd/attribute.xsd</xsdFile>
+                </xsdFiles>
+                <namespaceMappings>
+                  <namespaceMapping>
+                    <uri>http://www.example.org/schema/test</uri>
+                    <packageName>org.example.schema.test</packageName>
+                  </namespaceMapping>
+                </namespaceMappings>
+              </configuration>
             </execution>
-            <configuration>
-              <xsdFiles>
-                <xsdFile>src/main/resources/xsd/attribute.xsd</xsdFile>
-              </xsdFiles>
-              <namespaceMappings>
-                <namespaceMapping>
-                  <uri>http://www.example.org/schema/test</uri>
-                  <packageName>org.example.schema.test</packageName>
-                </namespaceMapping>
-              </namespaceMappings>
-            </configuration>
           </executions>
         </plugin>
       </plugins>

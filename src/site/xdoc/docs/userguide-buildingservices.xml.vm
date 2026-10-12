@@ -49,8 +49,6 @@ Distributions</a></li>
 Distribution</a></li>
 <li><a href="userguide.html#hierarchy">Axis2.war Directory
 Hierarchy</a></li>
-<li><a href="userguide.html#docs">Axis2 Documents
-Distribution</a></li>
 <li><a href="userguide.html#clients">Axis2 and Clients</a></li>
 </ul>
 </li>
@@ -386,25 +384,26 @@ based on the same WSDL file used in the <a href=
 document, you will follow the steps below.</p>
 <p><b>The short story:</b></p>
 <ol>
-<li><a href="../download.cgi">
+<li><a href="../download.html">
 Download</a> the Axis2 standard distribution, if you have not done
 so already.</li>
 <li>Generate the skeleton using the WSDL2Java utility, as in:<br />
 <pre>
-java org.apache.axis2.wsdl.WSDL2Java -uri file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd -ssi
+java org.apache.axis2.wsdl.WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd -ssi
 </pre></li>
 <li>Open the *Skeleton.java file and add the functionality of your
 service to the generated methods.</li>
 <li>Build a service using Ant by typing ant jar.server</li>
 <li>Deploy the service by copying the build/lib/*.aar file to
-&lt;J2EE_HOME&gt;/webapps/axis2/WEB-INF/services</li>
+the WEB-INF/services directory of the deployed axis2 web application
+(for example &lt;TOMCAT_HOME&gt;/webapps/axis2/WEB-INF/services)</li>
 <li>Check
 http://&lt;server&gt;:&lt;port&gt;/axis2/services/listServices to
 make sure the service has been properly deployed.</li>
 </ol>
 <p><b>The long story:</b></p>
-<p>As with generating clients, you will need the <a href="../download.cgi">
-Axis2 Standard Distribution</a>, because the <a href="../download.cgi">
+<p>As with generating clients, you will need the <a href="../download.html">
+Axis2 Standard Distribution</a>, because the <a href="../download.html">
 Axis2 WAR Distribution</a> does not include the WSDL2Java utility.
 Once you've got it downloaded and unpacked, make sure that you set
 the AXIS2_HOME variable to point to the location in which you've
@@ -412,7 +411,7 @@ unpacked it.</p>
 <p>Now you are ready to generate the actual service. To keep things
 neat, create a new directory and change to it. The WSDL file is the
 same one referenced in <a href=
-"userguide-creatingclients.html#generating.xhtml">Generating Clients</a>
+"userguide-creatingclients.html#generating">Generating Clients</a>
 and includes four operations: NoParameters, TwoWayOneParameterEcho,
 MultipleParametersAddItem, and DoInOnly. To generate the service,
 use the WSDL2Java utility, as in Code Listing 14.</p>
@@ -421,8 +420,8 @@ Service</h3>
 <p><strong>Code Listing 14.1:</strong></p>
 <pre>
 java org.apache.axis2.wsdl.WSDL2Java -uri 
-file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl -p 
-org.apache.axis2.axis2userguide -d adb -s -wv ${axis2_version} -ss -sd
+Axis2UserGuide.wsdl -p 
+org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd
 </pre>
 <p>Note: Make sure all the .jar files in the Axis2 lib directory is
 set to the CLASSPATH before you run the above code.</p>
@@ -435,20 +434,21 @@ appropriate directories created.) It also indicates that you want
 to use the Axis2 DataBinding Framework, or ADB (-d), to generate
 only synchronous or blocking code (-s), and to generate server-side
 code (-ss) as opposed to a client, including the services.xml
-service descriptor file (-sd). It also specifies version
-${axis2_version} for the WSDL file (-wv)<strong>.</strong></p>
+service descriptor file (-sd). It also specifies WSDL version
+1.1 for the WSDL file (-wv), the only WSDL version supported by the code
+generator<strong>.</strong></p>
 <p><strong>Code Listing 14.2:</strong></p>
 <p>You can also use the following script files to achieve the same.
 In this case you do not have the set the CLASSPATH manually.</p>
 <p>For Linux:</p>
 <pre>
-$AXIS2_HOME/bin/wsdl2java.sh -uri file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl
--p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv ${axis2_version} -ss -sd
+$AXIS2_HOME/bin/wsdl2java.sh -uri Axis2UserGuide.wsdl
+-p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv 1.1 -ss -sd
 </pre>
 <p>For MS Windows:</p>
 <pre>
-%AXIS2_HOME%\bin\wsdl2java.bat -uri file:\\\C:\apps\axis2\samples\zSample\Axis2UserGuide.wsdl
--p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv ${axis2_version} -ss -sd
+%AXIS2_HOME%\bin\wsdl2java.bat -uri Axis2UserGuide.wsdl
+-p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv 1.1 -ss -sd
 </pre>
 <p>In both instances, at this point, you should see four new items
 in your chosen directory: the build.xml file, which includes

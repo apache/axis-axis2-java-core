@@ -54,18 +54,18 @@ Date:   Sat May 6 22:21:10 2017 +0000
 
 <h2>Content</h2>
 <ul>
-  <li><a href="#1">Introduction</a></li>
-  <li><a href="#2">Configuring Axis2 to be Spring Aware</a>
+  <li><a href="#s1">Introduction</a></li>
+  <li><a href="#s2">Configuring Axis2 to be Spring Aware</a>
     <ul>
-      <li><a href="#21">Programming Model</a></li>
-      <li><a href="#22">Simple Spring Config Example</a></li>
-      <li><a href="#23">With a ServletContext</a></li>
-      <li><a href="#24">Without a ServletContext</a></li>
-      <li><a href="#25">Putting it All Together</a></li>
+      <li><a href="#s21">Programming Model</a></li>
+      <li><a href="#s22">Simple Spring Config Example</a></li>
+      <li><a href="#s23">With a ServletContext</a></li>
+      <li><a href="#s24">Without a ServletContext</a></li>
+      <li><a href="#s25">Putting it All Together</a></li>
     </ul>
   </li>
 </ul>
-<a name="1"></a>
+<a name="s1"></a>
 
 <h2>Introduction</h2>
 
@@ -79,16 +79,18 @@ can define a ServiceObjectSupplier that will supply the Object.</p>
 that are a part of the Axis2 standard distribution - one for use with a
 ServletContext, and one without. Configuring Axis2 with a ServletContext is 
 simpler than without, and is recommended for most use cases. Without a 
-ServletContext, ie, Spring inside the AAR, requires an extra Spring bean 
-and is considered an advanced use case. Once configured, the Web service itself 
+ServletContext, an extra Spring bean is required. Once configured, the Web service itself 
 acts like any other Spring wired bean. These Spring beans can be loaded any way
-desired as Axis2 has no configuration file dependencies from Spring. Spring
-versions 1.2.6, 1.2.8 and 2.0 have been tested, but probably any version
-would work as only the core functionality is required.</p>
+desired as Axis2 has no configuration file dependencies from Spring. Axis2
+is built and tested against Spring Framework 7.0.x, and the Spring Boot
+samples use Spring Boot 3.5.x; only the core functionality is required.</p>
 
 <p>This guide assumes some basic knowledge of Axis2. See the <a
 href="userguide.html">User's Guide</a> for more information.</p>
-<a name="2"></a>
+<a name="s2"></a>
+
+<h2>Configuring Axis2 to be Spring Aware</h2>
+<a name="s21"></a>
 
 <h3>Programming Model</h3>
 
@@ -97,7 +99,7 @@ services.xml - the ServiceObjectSupplier that hooks Axis2 and Spring
 together, and the name of the Spring bean that Axis2 will use as the service.
 All Message Receivers are currently supported, as would be any Message
 Receiver that extends org.apache.axis2.receivers.AbstractMessageReceiver .</p>
-<a name="22"></a>
+<a name="s22"></a>
 
 <h3>Simple Spring Config Example</h3>
 
@@ -114,16 +116,17 @@ web.xml. Let's add a context-param and a listener:</p>
 <p>Next we will show two examples of Spring's /WEB-INF/applicationContext.xml
 referenced in the web.xml listener -  one using a ServletContext, and one
 without.</p>
-<a name="23"></a>
+<a name="s23"></a>
 
 <h3>With a ServletContext</h3>
 
 <p>This example (with a ServletContext) applicationContext.xml should be
 familiar to any Spring user:</p>
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
-
-&lt;beans&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
   &lt;!-- Axis2 Web Service, but to Spring, its just another bean that has dependencies --&gt;
   &lt;bean id="springAwareService" class="spring.SpringAwareService"&gt;
     &lt;property name="myBean" ref="myBean"/&gt;
@@ -154,19 +157,20 @@ be using SpringServletContextObjectSupplier such as:</p>
 messageReceiver class, all Message Receivers are currently supported, as
 would be any Message Receiver that extends
 org.apache.axis2.receivers.AbstractMessageReceiver .</p>
-<a name="24"></a>
+<a name="s24"></a>
 
 <h3>Without a ServletContext</h3>
 
 <p>In case Axis2 can't get a ServletContext, (i.e., uses a different
-transport or is running Axis2 inside the AAR etc,) you have the option of
+transport,) you have the option of
 defining a bean that takes advantage of Spring's internal abilities
 (ApplicationContextAware interface, specifically) to provide an Application
 Context to Axis2, with a bean ref 'applicationContext' :</p>
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
-
-&lt;beans&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
   &lt;!-- Configure spring to give a hook to axis2 without a ServletContext --&gt;
   &lt;bean id="applicationContext" 
     class="org.apache.axis2.extensions.spring.receivers.ApplicationContextHolder" /&gt;
@@ -217,8 +221,9 @@ once. Upon start-up, execute the following:</p>
       ClassPathXmlApplicationContext(new String[] {Constants.MY_PATH +
       "spring/applicationContext.xml"}, false);
            ctx.setClassLoader(cl);
-           ctx.refresh();</pre>
-} <a name="25"></a>
+           ctx.refresh();
+}</pre>
+<a name="s25"></a>
 
 <h3>Putting It All Together</h3>
 
@@ -357,11 +362,12 @@ merely contains the services.xml file:</p>
 ./META-INF
 ./META-INF/MANIFEST.MF
 ./META-INF/services.xml</pre>
-<p>To run this example, make sure you have the axis2-spring*.jar that comes
-from the axis2-std-*-bin distro in the server side WEB-INF/lib, as well as
-the appropriate Spring jar - most will use the full spring.jar, but the
-minimum requirements are spring-core, spring-beans, spring-context, and
-spring-web. When running the client, you should see this output:</p>
+<p>To run this example, make sure you have the axis2-spring-*.jar that comes
+with the Axis2 binary distribution in the server side WEB-INF/lib, as well as
+the Spring Framework jars spring-core, spring-beans, spring-context and
+spring-web. Since Axis2 2.0.2, axis2-spring declares Spring as a
+<code>provided</code> dependency, so these Spring jars are not pulled in
+automatically and must be supplied by your application. When running the client, you should see this output:</p>
 <pre>Response: &lt;example1:string xmlns:example1="http://springExample.org/example1" 
   xmlns:tns="http://ws.apache.org/axis2"&gt;Spring, emerge thyself&lt;/example1:string&gt;</pre>
 </body>

@@ -13,15 +13,17 @@ Configuration
 |                  |                                  | the archive. See "File Sets" below for an      |
 |                  |                                  | example.                                       |
 *------------------+----------------------------------+------------------------------------------------+
-| servicesXmlFile  |                                  | Location of the services.xml file. By default, |
-|                  |                                  | it is assumed that the file is already present |
-|                  |                                  | in classesDirectory/META-INF and no special    |
-|                  |                                  | processing is required.                        |
+| servicesXmlFile  | src/main/resources/META-INF/     | Location of the services.xml file. If it is    |
+|                  | services.xml                     | present at the default location it is         |
+|                  |                                  | included automatically; otherwise this         |
+|                  |                                  | parameter must be set.                         |
 *------------------+----------------------------------+------------------------------------------------+
-| wsdlFile         |                                  | Location of the WSDL file. By default, it is   |
-|                  |                                  | assumed that the file is already present in    |
-|                  |                                  | classesDirectory/META-INF and no special       |
-|                  |                                  | processing is required.                        |
+| includeDependencies | true                          | Whether the dependency jars should be included |
+|                  |                                  | in the aar.                                    |
+*------------------+----------------------------------+------------------------------------------------+
+| wsdlFile         |                                  | Location of the WSDL file, if any. By default, |
+|                  |                                  | no WSDL file is added and it is assumed that   |
+|                  |                                  | Axis2 will automatically generate a WSDL file. |
 *------------------+----------------------------------+------------------------------------------------+
 | wsdlFileName     | service.wsdl                     | Name, to which the WSDL file should be mapped. |
 *------------------+----------------------------------+------------------------------------------------+

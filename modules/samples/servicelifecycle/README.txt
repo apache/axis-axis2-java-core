@@ -11,10 +11,10 @@ session related methods.
 
 Prerequisites
 =============
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
 If you want to access the service in a REST manner you have to deploy the service in an
-application server such as Apache Tomcat. Note that it will not work with axis2server.
+application server such as Apache Tomcat 11. Note that it will not work with axis2server.
 
 
 
@@ -23,17 +23,17 @@ Deploying the Service
 
 Deploy into Sample repository:
     
- * Type ant generate.service or simply ant from AXIS2_HOME/samples/servicelifecycle
+ * Type ant generate.service or simply ant from AXIS2_HOME/modules/samples/servicelifecycle
 
 Deploy into Tomcat :
      
  * To build and copy the service archive file into Tomcat, type ant copy.to.tomcat from 
-AXIS2_HOME/samples/servicelifecycle which will copy the aar file into
-<tomcat_home>/web-app/axis2/WEB-INF/services directory.
+AXIS2_HOME/modules/samples/servicelifecycle which will copy the aar file into
+$CATALINA_HOME/webapps/axis2/WEB-INF/services directory (set CATALINA_HOME first).
 
 Running the Client
 ==================
-Type ant run.client from AXIS2_HOME/samples/servicelifecycle.
+Type ant run.client from AXIS2_HOME/modules/samples/servicelifecycle.
 
 And then follow the instructions as mentioned in the console.
 
@@ -53,5 +53,5 @@ and run the client. (i.e. delete services created from previous samples.)
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.
 

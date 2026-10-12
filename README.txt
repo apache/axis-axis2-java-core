@@ -1,7 +1,8 @@
 ======================================================
 Apache Axis2 ${project.version} build (${buildTimestamp})
 
-http://axis.apache.org/axis2/java/core/
+https://axis.apache.org/axis2/java/core/
+Source: https://github.com/apache/axis-axis2-java-core
 ------------------------------------------------------
 
 ___________________
@@ -9,8 +10,8 @@ Building
 ===================
 
 Prerequisites:
-  - JDK 17 or later
-  - Maven 3.9+ (http://maven.apache.org)
+  - JDK 17 to 25 (tested with 17, 21 and 25)
+  - Maven 3.6.0+ (https://maven.apache.org)
   - Bash shell (required by some Maven plugins and integration tests;
     available by default on Linux/macOS, use Git Bash or WSL on Windows)
 
@@ -73,7 +74,7 @@ Mailing list subscription:
     java-dev-subscribe@axis.apache.org
 
 Jira:
-    http://issues.apache.org/jira/browse/AXIS2
+    https://issues.apache.org/jira/browse/AXIS2
 
 
 Thank you for using Axis2!

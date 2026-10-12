@@ -29,8 +29,8 @@ Release process overview
 
 *   When a release is ready to go, release manager (RM) puts
     forward a release plan as per standard Apache process, including
-    dates. This gets VOTEd on by the committers. During this period the
-    trunk is still the only relevant source base.
+    dates. This gets VOTEd on by the committers. During this period
+    master is still the only relevant source base.
 
 *   As soon as a release is approved (or even before), RM should
     add the new version into JIRA as a target.
@@ -48,11 +48,11 @@ Release process overview
     particular new functionality does not go here unless it is a
     solution to a JIRA report targeted at the release.
 
-*   Normal development continues on the trunk.
+*   Normal development continues on master.
 
 ### Dependencies and branches
 
-*   The trunk should always be "cutting edge" and as such should
+*   Master should always be "cutting edge" and as such should
     usually be pointing at SNAPSHOT versions of all dependencies. This
     allows for continuous integration with our partner projects.
 
@@ -64,15 +64,15 @@ Release process overview
 ### Managing change and issue resolution with a release branch
 
 *   The RM goes through JIRA issues and sets "fix for" to point to
-    both "NIGHTLY" and the new branched release number for the fixes
+    both the next development version and the new branched release number for the fixes
     that are targeted for the release after the branch is cut.
 
 *   In general, the assignee/coder fixes JIRA issues or makes other
-    changes *on the trunk*. If the JIRA issue is targeted at the
+    changes *on master*. If the JIRA issue is targeted at the
     release, or upon coder's discretion, they then merge the fix over
     to the release branch.
 
-*   This way the trunk is ALWAYS up-to-date, and we don't have to
+*   This way master is ALWAYS up-to-date, and we don't have to
     worry about losing fixes that have only been made on the release
     branch.
 
@@ -83,13 +83,13 @@ Release process overview
 
 *   If bug fixes are needed later for a release which has long
     since happened (to fix user issues, etc), those fixes generally
-    should also happen on the trunk first assuming the problem still
-    exists on the trunk.
+    should also happen on master first assuming the problem still
+    exists on master.
 
 *   There are only two cases where we would ever check anything
-    into the branch without first checking it into the trunk. 1)
+    into the branch without first checking it into master. 1)
     Release specific items (release number references, release notes,
-    removal of SNAPSHOTs), and 2) if the trunk has moved on in some
+    removal of SNAPSHOTs), and 2) if master has moved on in some
     incompatible way.
 
 Performing a release
@@ -119,7 +119,7 @@ You may also execute a dry run of the release process: mvn release:prepare -Ddry
         <item name="X.Y.Z" href="release-notes/X.Y.Z.html"/>
 
     Also create an empty placeholder release note for the *next* version under
-    `src/site/markdown/release-notes/` (e.g., `2.0.2.md`). The distribution assembly
+    `src/site/markdown/release-notes/` (e.g., `2.0.3.md`). The distribution assembly
     references this file and the build will fail without it.
 
 5.  The Spring Boot userguide samples under
@@ -170,18 +170,18 @@ You may also execute a dry run of the release process: mvn release:prepare -Ddry
 
 7.  Check that the source tree is buildable with an empty local Maven repository.
 
-If any problems are detected, they should be fixed on the trunk (except for issues specific to the
+If any problems are detected, they should be fixed on master (except for issues specific to the
 release branch) and then merged to the release branch.
 
 Next update the release note found under `src/site/markdown/release-notes`. To avoid extra work for
-the RM doing the next major release, these changes should be done on the trunk first and then merged
+the RM doing the next major release, these changes should be done on master first and then merged
 to the release branch.
 
 ### Pre-requisites
 
 The following things are required to perform the actual release:
 
-*   A PGP key that conforms to the [requirements for Apache release signing](http://www.apache.org/dev/release-signing.html).
+*   A PGP key that conforms to the [requirements for Apache release signing](https://infra.apache.org/release-signing.html).
     To make the release process easier, the passphrase for the code signing key should
     be configured in `${user.home}/.m2/settings.xml`:
 
@@ -291,7 +291,7 @@ If you have multiple keys, you can define a ~/.gnupg/gpg.conf file for a default
 
     *   A link to the Nexus staging repository.
     *   A link to the directory containing the distributions
-        (<https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/x.y.x/>).
+        (<https://dist.apache.org/repos/dist/dev/axis/axis2/java/core/x.y.z/>).
     *   A link to the preview of the Maven site (<https://axis.apache.org/axis2/java/core-staging/>).
 
 If the vote passes, execute the following steps:
@@ -308,8 +308,9 @@ If the vote passes, execute the following steps:
 3.  Publish the site:
 
         git clone https://gitbox.apache.org/repos/asf/axis-site.git
-        git rm -r core
-        git mv core-staging core
+        cd axis-site
+        git rm -r axis2/java/core
+        git mv axis2/java/core-staging axis2/java/core
         git commit -am "Axis2 X.Y.Z site"
         git push
 

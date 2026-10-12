@@ -52,7 +52,7 @@ with sensible defaults — for both SOAP and JSON-RPC services.</p>
     without hand-authored definitions. See
     <a href="mcp-examples.html">MCP examples</a> for live demos.</li>
 <li><strong>Response field selection</strong> — the
-    <a href="json-streaming-formatter.html#Field_Selection"><code>?fields=</code></a>
+    <a href="json-streaming-formatter.html#Field_Selection_.28.3Ffields.3D.29"><code>?fields=</code></a>
     query parameter lets clients request only the fields they need,
     reducing payload size and AI token consumption at the
     <a href="json-streaming-formatter.html">serialization layer</a>
@@ -94,7 +94,7 @@ See <a href="#deployment_model">Deployment Model</a> for details.</p>
 <li><a href="#what_stays">6. What Stays in Your Application</a></li>
 <li><a href="#openapi_mcp">7. OpenAPI and MCP Support</a></li>
 <li><a href="#migration">8. Migration from Manual Configuration</a></li>
-<li><a href="#containers">9. Container Support</a></li>
+<li><a href="#testing">9. Tested Configurations</a></li>
 <li><a href="#http2">10. HTTP/2 and Streaming</a></li>
 </ul>
 
@@ -235,14 +235,14 @@ eliminating the filesystem requirement entirely.</p>
 &lt;dependency&gt;
     &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
     &lt;artifactId&gt;axis2-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.1&lt;/version&gt;
+    &lt;version&gt;2.0.2&lt;/version&gt;
 &lt;/dependency&gt;
 
 &lt;!-- Optional: OpenAPI/MCP endpoints --&gt;
 &lt;dependency&gt;
     &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
     &lt;artifactId&gt;axis2-openapi&lt;/artifactId&gt;
-    &lt;version&gt;2.0.1&lt;/version&gt;
+    &lt;version&gt;2.0.2&lt;/version&gt;
 &lt;/dependency&gt;
 </pre>
 
@@ -460,7 +460,7 @@ No additional code is needed in your application.</p>
 &lt;dependency&gt;
     &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
     &lt;artifactId&gt;axis2-openapi&lt;/artifactId&gt;
-    &lt;version&gt;2.0.1&lt;/version&gt;
+    &lt;version&gt;2.0.2&lt;/version&gt;
 &lt;/dependency&gt;
 </pre>
 
@@ -559,7 +559,7 @@ identical in structure to the configuration used by the legacy userguide
 
 <h3>Unit test suite</h3>
 
-<p>The starter includes 9 unit tests covering:</p>
+<p>The starter includes 19 unit tests covering:</p>
 <ul>
 <li>Both axis2.xml templates exist on the classpath</li>
 <li>JSON template correctness (enableJSONOnly=true, JSONBasedDefaultDispatcher, no SOAP receivers)</li>
@@ -600,7 +600,7 @@ JSON message formatter pipeline:</p>
       <code>?fields=status,result</code> to any service URL and the
       response includes only those fields, filtered during serialization
       with zero overhead when not used. See
-      <a href="json-streaming-formatter.html#Field_Selection">Field Selection</a>.</li>
+      <a href="json-streaming-formatter.html#Field_Selection_.28.3Ffields.3D.29">Field Selection</a>.</li>
   <li><strong>C parity</strong> — the same streaming architecture exists
       in <a href="https://axis.apache.org/axis2/c/core/">Axis2/C</a> via
       Apache httpd <code>mod_h2</code>. Both

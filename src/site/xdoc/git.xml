@@ -50,7 +50,7 @@
             </ul>
             <p>
                 Once you have successfully installed Git, you can check
-                out Axis2 trunk by following these steps:
+                out the Axis2 master branch by following these steps:
             </p>
             <ol type="1">
                 <li>Run <strong>git clone &lt;repository URL&gt;</strong> where
@@ -61,14 +61,13 @@
         </section>
         <section name="Installing Maven 3">
             <p>
-                Axis2's build is based on Maven 3. Maven is a build system that
-                allows for the reuse of common build projects across multiple
-                projects. For information about obtaining, installing, and
-                configuring Maven 3, please see the <a href=
-                "http://maven.apache.org">Maven project page</a>.
-                To use Maven to build the Axis2 project, Please install
-                <a href="http://maven.apache.org/download.html">Maven2</a> and
-                follow instructions here -  <a href="maven-help.html">Quick Guide to Maven for Axis 2.0</a>.
+                Axis2's build is based on Maven 3 and requires Maven 3.6.0 or later
+                and JDK 17 through 25 (the build is tested on OpenJDK 17, 21 and 25).
+                For information about obtaining, installing, and configuring Maven,
+                please see the <a href="https://maven.apache.org">Maven project page</a>.
+                To build the Axis2 project, please install
+                <a href="https://maven.apache.org/download.cgi">Maven</a> and
+                follow the instructions in the <a href="maven-help.html">Quick Guide to Maven for Axis2</a>.
             </p>
         </section>
         <section name="Configuring your IDE">
@@ -79,54 +78,24 @@
                 meant as a pointer to ease the process of getting started with
                 Axis2 development.
             </p>
+            <p>
+                Current IDEs import the Axis2 sources directly from the Maven build;
+                no IDE-specific Maven goals are needed. Some modules generate sources
+                during the build, so run <strong>mvn -DskipTests install</strong> once
+                before importing so that the generated sources exist.
+            </p>
             <subsection name="Intellij IDEA">
                 <p>
-                    Type <strong>mvn idea:idea</strong>. Generates the necessary IDEA .ipr, .iml
-                    and .iws project files.
+                    Select File &gt; Open and choose the <tt>pom.xml</tt> in the root of the
+                    checkout. IntelliJ imports every module as a Maven project.
                 </p>
             </subsection>
             <subsection name="Eclipse">
                 <p>
-                    We recommend using <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">maven-eclipse-plugin</a>
-                    to import the Axis2 sources into Eclipse. This works best with the following
-                    combinations of versions and settings:
-                </p>
-                <ul>
-                    <li>
-                        Early versions of Maven 2 have issues with non standard packagings
-                        (<tt>bundle</tt>, <tt>aar</tt> and <tt>mar</tt> in the case of Axis2)
-                        in multi-module builds. While this has no impact on the normal Maven
-                        build, it prevents the Maven Eclipse plugin from identifying modules
-                        with these packagings as Java projects. Therefore it is recommended
-                        to use Maven 2.2.x or 3.0.x to execute the Maven Eclipse plugin.
-                    </li>
-                    <li>
-                        By default, the Maven Eclipse plugin only imports generated sources
-                        and resources created during the <tt>generate-sources</tt> and
-                        <tt>generate-resources</tt> phases, but fails to locate them if they
-                        are generated during the <tt>generate-test-sources</tt> and
-                        <tt>generate-test-resources</tt> phases. This is due to a limitation in Maven 2 (see
-                        <s><a href="http://jira.codehaus.org/browse/MECLIPSE-37">MECLIPSE-37</a></s> <em>(Codehaus JIRA is no longer accessible)</em>
-                        for more information). Executing the <tt>eclipse:eclipse</tt> goal after
-                        the <tt>process-test-resources</tt> phase is also not enough because of
-                        <s><a href="http://jira.codehaus.org/browse/MDEP-259">MDEP-259</a></s> <em>(Codehaus JIRA is no longer accessible)</em>. The
-                        best is to execute it after the <tt>install</tt> phase. The <tt>skipTests</tt>
-                        property can be used to skip the execution of the unit tests (<tt>maven.test.skip</tt>
-                        is not appropriate here because it also skips some of the goals configured
-                        in the <tt>generate-test-sources</tt> and <tt>generate-test-resources</tt> phases).
-                    </li>
-                </ul>
-                <p>
-                    To summarize, use the following command to prepare the Axis2 sources for
-                    import into Eclipse:
-                </p>
-                <pre>mvn -DskipTests=true install eclipse:eclipse</pre>
-                <p>
-                    As usual, before importing the projects into Eclipse, check that a Classpath Variable
-                    for <tt>M2_REPO</tt> is configured in Eclipse. Then select File &gt; Import &gt; Existing Projects
-                    into Workspace &gt; Select root directory. Selecting the root of
-                    the Axis source discovers all the modules and allows them to be
-                    imported as individual projects at once.
+                    With the m2e (Maven Integration for Eclipse) support included in the
+                    Eclipse IDE for Java Developers, select File &gt; Import &gt; Maven &gt;
+                    Existing Maven Projects and choose the root of the checkout. All the
+                    modules are discovered and imported as individual projects at once.
                 </p>
             </subsection>
         </section>

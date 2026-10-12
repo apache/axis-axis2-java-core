@@ -49,7 +49,7 @@ WSDL2Java Reference
           -r <path>                Specify a repository against which code is generated.
           -ns2p ns1=pkg1,ns2=pkg2  Specify a custom package name for each namespace specified in the wsdls schema.
           -ssi                     Generate an interface for the service implementation (Default: off).
-          -wv <version>            WSDL Version. Valid Options : 2, 2.0, 1.1
+          -wv <version>            WSDL Version. Only 1.1 (the default) is supported; WSDL 2.0 code generation was removed in 2.0.1.
           -S                       Specify a directory path for generated source
           -R                       Specify a directory path for generated resources
           -em                      Specify an external mapping file
@@ -62,7 +62,6 @@ WSDL2Java Reference
           -sp                      Suppress namespace prefixes (Optimzation that reduces size of soap request/response)
           -E<key> <value>          Extra configuration options specific to certain databindings. Examples:
                                    -Etypesystemname <my_type_system_name> (for xmlbeans) - override the randomly generated type system name
-                                   -Ejavaversion 1.5                      (for xmlbeans) - generates Java 1.5 code (typed lists instead of arrays)
                                    -Emp <package name> (for ADB) - extension mapper package name
                                    -Eosv (for ADB) - turn off strict validation.
                                    -Eiu (for ADB) - Ignore Unexpected elements instead of throwing ADBException
@@ -77,19 +76,19 @@ WSDL2Java Reference
           -ep                      Exclude packages - these packages are deleted after codegeneration
         
     EXAMPLES
-           wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl
-           wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd 
-           wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans -o ../samples -p org.apache.axis2.userguide
+           wsdl2java.sh -uri ../modules/samples/wsdl/Axis2SampleDocLit.wsdl
+           wsdl2java.sh -uri ../modules/samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd 
+           wsdl2java.sh -uri ../modules/samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans -o ../modules/samples -p org.apache.axis2.userguide
 
 Java2WSDL Reference
 -------------------
 
     NAME
-           Java2WSDL.sh or Java2WSDL.bat - Generates the appropriate WSDL file for a given java class.
+           java2wsdl.sh or java2wsdl.bat - Generates the appropriate WSDL file for a given java class.
            These scripts can be found under the bin directory of the Axis2 distribution.
     
     SYNOPSIS
-           Java2WSDL.sh [OPTION]... -cn <fully qualified class name>
+           java2wsdl.sh [OPTION]... -cn <fully qualified class name>
     
     DESCRIPTION
            Given a java class generates a WSDL file for the given java class. 
@@ -122,7 +121,7 @@ Java2WSDL Reference
           -disableREST                            disable binding generation for REST
         
     EXAMPLES
-           Java2WSDL.sh -cn ../samples/test/searchTool.Search
-           Java2WSDL.sh -cn ../samples/test/searchTool.Search -sn search
-           Java2WSDL.sh -cn ../samples/test/searchTool.Search -u -sn search
-           Java2WSDL.sh -cn ../samples/test/searchTool.Search -sn search -o ../samples/test/wsdl  
+           java2wsdl.sh -cn com.example.search.Search -cp ../build/classes
+           java2wsdl.sh -cn com.example.search.Search -cp ../build/classes -sn search
+           java2wsdl.sh -cn com.example.search.Search -cp ../build/classes -u -sn search
+           java2wsdl.sh -cn com.example.search.Search -cp ../build/classes -sn search -o ../build/wsdl  

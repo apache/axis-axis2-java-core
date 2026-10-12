@@ -52,7 +52,9 @@ to run the WSDL2Code and WSDL2Java appropriately.</td>
 					<td>This plugin generates an Axis2 service file (AAR file).</td>
 				</tr>
 				<tr>
-					<td>axis2-mar-maven-plugin</td>
+					<td>
+						<a href="maven-plugins/axis2-mar-maven-plugin/index.html">axis2-mar-maven-plugin</a>
+					</td>
 					<td>This plugin generates an Axis2 module archive file (MAR file).</td>
 				</tr>
 				<tr>
@@ -88,6 +90,13 @@ WSDL.</p>
                     </td>
                     <td>
                         <p>This plugin generates ADB beans from a set of XSD files.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>simple-server-maven-plugin</td>
+                    <td>
+                        <p>This plugin runs the Axis2 simple HTTP server from a Maven build
+(<code>run</code> goal).</p>
                     </td>
                 </tr>
 			</tbody>

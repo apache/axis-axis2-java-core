@@ -57,6 +57,7 @@
                 <item name="1.7.7" href="release-notes/1.7.7.html"/>
                 <item name="1.7.8" href="release-notes/1.7.8.html"/>
                 <item name="1.7.9" href="release-notes/1.7.9.html"/>
+                <item name="1.7.10" href="release-notes/1.7.10.html"/>
                 <item name="1.8.0" href="release-notes/1.8.0.html"/>
                 <item name="1.8.1" href="release-notes/1.8.1.html"/>
                 <item name="1.8.2" href="release-notes/1.8.2.html"/>
@@ -84,7 +85,7 @@
         </menu>
         <menu name="Get Involved">
             <item name="Overview" href="overview.html" />
-            <item name="Mailing Lists" href="mail-lists.html" />
+            <item name="Mailing Lists" href="mailing-lists.html" />
             <item name="Release Process" href="release-process.html"/>
             <item name="Developer Guidelines" href="guidelines.html" />
             <item name="Build the Site" href="siteHowTo.html" />

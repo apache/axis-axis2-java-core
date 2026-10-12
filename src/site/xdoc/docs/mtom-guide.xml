@@ -31,44 +31,44 @@ binary data with SOAP.</p>
 
 <h2>Content</h2>
 <ul>
-  <li><a href="#1">Introduction</a>
+  <li><a href="#m1">Introduction</a>
     <ul>
-      <li><a href="#11">Where Does MTOM Come In?</a></li>
+      <li><a href="#m11">Where Does MTOM Come In?</a></li>
     </ul>
   </li>
-  <li><a href="#2">MTOM with Axis2 </a>
+  <li><a href="#m2">MTOM with Axis2 </a>
     <ul>
-      <li><a href="#21">Programming Model</a></li>
-      <li><a href="#22">Enabling MTOM Optimization at Client Side</a></li>
-      <li><a href="#23">Enabling MTOM Optimization at Server Side</a></li>
-      <li><a href="#24">Accessing Received Binary Data (Sample Code) </a>
+      <li><a href="#m21">Programming Model</a></li>
+      <li><a href="#m22">Enabling MTOM Optimization at Client Side</a></li>
+      <li><a href="#m23">Enabling MTOM Optimization at Server Side</a></li>
+      <li><a href="#m24">Accessing Received Binary Data (Sample Code) </a>
         <ul>
-          <li><a href="#241">Service</a></li>
-          <li><a href="#242">Client</a></li>
+          <li><a href="#m241">Service</a></li>
+          <li><a href="#m242">Client</a></li>
         </ul>
       </li>
-      <li><a href="#25">MTOM Databinding</a>
+      <li><a href="#m25">MTOM Databinding</a>
         <ul>
-          <li><a href="#251">Using ADB</a></li>
-          <!--li><a href="#252">Using XMLBeans</a></li-->
+          <li><a href="#m251">Using ADB</a></li>
+          <!--li><a href="#m252">Using XMLBeans</a></li-->
         </ul>
       </li>
     </ul>
   </li>
-  <li><a href="#3">SOAP with Attachments with Axis2</a>
+  <li><a href="#m3">SOAP with Attachments with Axis2</a>
     <ul>
-      <li><a href="#31">Sending SwA Type Attachments</a></li>
-      <li><a href="#32">Receiving SwA Type Attachments</a></li>
-      <li><a href="#33">MTOM Backward Compatibility with SwA</a></li>
+      <li><a href="#m31">Sending SwA Type Attachments</a></li>
+      <li><a href="#m32">Receiving SwA Type Attachments</a></li>
+      <li><a href="#m33">MTOM Backward Compatibility with SwA</a></li>
     </ul>
   </li>
-  <li><a href="#4">Advanced Topics </a>
+  <li><a href="#m4">Advanced Topics </a>
     <ul>
-      <li><a href="#41">File Caching for Attachments</a></li>
+      <li><a href="#m41">File Caching for Attachments</a></li>
     </ul>
   </li>
 </ul>
-<a name="1"></a>
+<a name="m1"></a>
 
 <h2>Introduction</h2>
 
@@ -125,11 +125,11 @@ in XML;</p>
     </blockquote>
   </li>
 </ol>
-<a name="11"></a>
+<a name="m11"></a>
 
 <h3>Where Does MTOM Come In?</h3>
 
-<p><a href="http://www.w3.org/TR/2004/PR-soap12-mtom-20041116/">MTOM (SOAP
+<p><a href="https://www.w3.org/TR/soap12-mtom/">MTOM (SOAP
 Message Transmission Optimization Mechanism)</a> is another specification
 that focuses on solving the "Attachments" problem. MTOM tries to leverage the
 advantages of the above two techniques by trying to merge the two techniques.
@@ -137,7 +137,7 @@ MTOM is actually a "by reference" method. The wire format of a MTOM optimized
 message is the same as the SOAP with Attachments message, which also makes it
 backward compatible with SwA endpoints. The most notable feature of MTOM is
 the use of the XOP:Include element, which is defined in the <a
-href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XML Binary Optimized
+href="https://www.w3.org/TR/xop10/">XML Binary Optimized
 Packaging (XOP)</a> specification to reference the binary attachments
 (external unparsed general entities) of the message. With the use of this
 exclusive element, the attached binary content logically becomes inline (by
@@ -147,7 +147,7 @@ model. This allows the applications to process and describe by only looking
 at the XML part, making the reliance on DTDs obsolete. On a lighter note,
 MTOM has standardized the referencing mechanism of SwA. The following is an
 extract from the <a
-href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XOP</a> specification.</p>
+href="https://www.w3.org/TR/xop10/">XOP</a> specification.</p>
 
 <p><em>At the conceptual level, this binary data can be thought of as being
 base64-encoded in the XML Document. As this conceptual form might be needed
@@ -155,9 +155,9 @@ during some processing of the XML document (e.g., for signing the XML
 document), it is necessary to have a one-to-one correspondence between XML
 Infosets and XOP Packages. Therefore, the conceptual representation of such
 binary data is as if it were base64-encoded, using the canonical lexical form
-of the XML Schema base64Binary datatype (see <a href="#XMLSchemaP2">[XML
-Schema Part 2: Datatypes Second Edition] </a> <a
-href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#base64Binary">3.2.16
+of the XML Schema base64Binary datatype (see [XML
+Schema Part 2: Datatypes Second Edition] <a
+href="https://www.w3.org/TR/xmlschema-2/#base64Binary">3.2.16
 base64Binary</a>). In the reverse direction, XOP is capable of optimizing
 only base64-encoded Infoset data that is in the canonical lexical
 form.</em></p>
@@ -165,10 +165,10 @@ form.</em></p>
 <p>Apache Axis2 supports <strong>Base64 encoding</strong>, <strong>SOAP with
 Attachments</strong> and <strong>MTOM (SOAP Message Transmission Optimization
 Mechanism).</strong></p>
-<a name="2"></a>
+<a name="m2"></a>
 
 <h2>MTOM with Axis2</h2>
-<a name="21"></a>
+<a name="m21"></a>
 
 <h3>Programming Model</h3>
 
@@ -224,7 +224,7 @@ optimized at any case. They will be serialized and sent as Base64 Strings.</p>
         jakarta.activation.DataHandler dataHandler = new jakarta.activation.DataHandler(new FileDataSource("SomeFile"));
         OMText textData = fac.createOMText(dataHandler, <strong>false</strong>); 
         image.addChild(textData);</pre>
-<a name="22"></a>
+<a name="m22"></a>
 
 <h3>Enabling MTOM Optimization on the Client Side</h3>
 
@@ -247,15 +247,15 @@ regardless of whether they are qualified to be optimized or not</p>
 <ul>
   <li>if the "enableMTOM" property is set to False.</li>
   <li>if the envelope contains any element information items of the name
-    xop:Include (see <a href="#XOP">[XML-binary Optimized Packaging] </a><a
-    href="http://www.w3.org/TR/2005/REC-xop10-20050125/#xop_infosets">3. XOP
+    xop:Include (see [XML-binary Optimized Packaging] <a
+    href="https://www.w3.org/TR/xop10/#xop_infosets">3. XOP
     Infosets Constructs </a>).</li>
 </ul>
 
 <p>The user does <strong>not</strong> have to specify anything in order for
 Axis2 to receive MTOM optimised messages. Axis2 will automatically identify
 and de-serialize accordingly, as and when an MTOM message arrives.</p>
-<a name="23"></a>
+<a name="m23"></a>
 
 <h3>Enabling MTOM Optimization on the Server Side</h3>
 
@@ -274,10 +274,10 @@ user can enableMTOM on the server side for outgoing messages,</p>
 <pre>&lt;parameter name="enableMTOM"&gt;true&lt;/parameter&gt;</pre>
 
 <p>You must restart the server after setting this parameter.</p>
-<a name="24"></a>
+<a name="m24"></a>
 
 <h3>Accessing Received Binary Data (Sample Code)</h3>
-<a name="241"></a>
+<a name="m241"></a>
 <ul>
   <li><strong>Service</strong></li>
 </ul>
@@ -293,7 +293,7 @@ user can enableMTOM on the server side for outgoing messages,</p>
        ... <em>Do whatever you need with the DataHandler</em> ...
     }
   }</pre>
-<a name="242"></a>
+<a name="m242"></a>
 <ul>
   <li><strong>Client</strong></li>
 </ul>
@@ -303,7 +303,7 @@ user can enableMTOM on the server side for outgoing messages,</p>
         Options options = new Options();
         options.setTo(targetEPR); 
         // enabling MTOM
-        <strong>options.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</strong>
+        <strong>options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</strong>
         ............
 
         OMElement result = sender.sendReceive(payload);
@@ -314,7 +314,7 @@ user can enableMTOM on the server side for outgoing messages,</p>
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
         .............</pre>
-<a name="25"></a>
+<a name="m25"></a>
 
 <h3>MTOM Databinding</h3>
 
@@ -343,7 +343,7 @@ example element becomes:</p>
 <p>You can also use the xmime:base64Binary type to express the above
 mentioned data much clearly.</p>
 <pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' type="xmime:base64Binary"/&gt;</pre>
-<a name="251"></a>
+<a name="m251"></a>
 
 <h3>MTOM Databinding Using ADB</h3>
 
@@ -516,10 +516,10 @@ client:</p>
 <p>The last step is to create an AAR with our Skeleton and the services.xml
 and then deploy the service. You can find the completed sample in the Axis2
 standard binary distribution under the samples/mtom directory</p>
-<a name="252"></a> <a name="3"></a>
+<a name="m252"></a> <a name="m3"></a>
 
 <h2>SOAP with Attachments (SwA) with Axis2</h2>
-<a name="31"></a>
+<a name="m31"></a>
 
 <h3>Receiving SwA Type Attachments</h3>
 
@@ -560,7 +560,7 @@ support Content Location based referencing of MIME parts.</p>
         ...........
     }
 }</pre>
-<a name="32"></a>
+<a name="m32"></a>
 
 <h3>Sending SwA Type Attachments</h3>
 
@@ -574,7 +574,7 @@ over SwA.</p>
         &lt;parameter name="enableSwA"&gt;true&lt;/parameter&gt;</pre>
 <p>"enableSwA" can also be set using the client side Options as follows</p>
 <pre>  
-        options.setProperty(Constants.Configuration.ENABLE_SwA, Constants.VALUE_TRUE);</pre>
+        options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);</pre>
 <p>Users are expected to use the attachment API provided in the
 MessageContext to specify the binary attachments needed to be attached to the
 outgoing message as SwA type attachments. Client side SwA capability can be
@@ -606,7 +606,7 @@ access the MessageContext.</p>
         mepClient.addMessageContext(mc);
         mepClient.execute(true);
     }</pre>
-<a name="33"></a>
+<a name="m33"></a>
 
 <h3>MTOM Backward Compatibility with SwA</h3>
 
@@ -673,10 +673,10 @@ content-id: &lt;1.A91D6D2E3D7AC4D580@apache.org&gt;
 
 <em>Binary Data.....</em>
 --MIMEBoundary4A7AE55984E7438034--</pre>
-<a name="4"></a>
+<a name="m4"></a>
 
 <h2>Advanced Topics</h2>
-<a name="41"></a>
+<a name="m41"></a>
 
 <h3>File Caching for Attachments</h3>
 
@@ -714,5 +714,17 @@ setting the Options as follows.</p>
 <pre>options.setProperty(Constants.Configuration.CACHE_ATTACHMENTS,Constants.VALUE_TRUE);
 options.setProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR,<em>TempDir</em>);
 options.setProperty(Constants.Configuration.FILE_SIZE_THRESHOLD, <em>"4000"</em>);</pre>
+
+<h3>Request Size Limits</h3>
+
+<p>Since Axis2 2.0.2, incoming <code>multipart/related</code> bodies (MTOM and
+SwA) are bounded by the <code>mtomMaxRequestSize</code> parameter, which
+defaults to 100 MB; a larger request is rejected before it is processed,
+whether or not file caching is enabled. <code>multipart/form-data</code>
+requests are bounded the same way by <code>multipartMaxRequestSize</code> and
+<code>multipartMaxFileSize</code> (100 MB each). Raise these in axis2.xml, or
+per service in services.xml, if a deployment legitimately receives larger
+attachments; <code>-1</code> restores the previous unbounded behaviour.</p>
+<pre>    &lt;parameter name="mtomMaxRequestSize"&gt;<em>524288000</em>&lt;/parameter&gt;</pre>
 </body>
 </html>

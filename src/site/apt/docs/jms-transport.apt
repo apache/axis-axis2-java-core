@@ -21,6 +21,10 @@ JMS Transport
 
 %{toc|section=1|fromDepth=1}
 
+  The JMS transport is included in the <<<lib>>> directory of the binary distribution. Since
+  Axis2 2.0.2 it is no longer bundled in <<<axis2.war>>>; a WAR deployment that uses it adds
+  the <<<axis2-transport-jms>>> jar to <<<WEB-INF/lib>>>.
+
 * {Transport configuration}
 
   Connection factories are configured using parameters in the transport description in
@@ -100,7 +104,8 @@ JMS Transport
     Type of the connection factory. Possible values are 'queue' or 'topic' while the default value of 'queue'
     
     [<<<transport.jms.JMSSpecVersion>>>]
-    JMS API version. Possible values are 1.1 or 1.0.2b, and the default API version is 1.1
+    JMS API version. Possible values are 1.1 or 1.0.2b, and the default API version is 1.1.
+    1.0.2b exists only for very old providers; current Jakarta Messaging providers use 1.1
 
     [<<<transport.jms.UserName>>>]
     The JMS connection username

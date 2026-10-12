@@ -41,7 +41,7 @@ the binary distribution of Axis2 are also discussed.</p>
 
 <p>This user guide is written based on the Axis2 Standard Binary
 Distribution. The Standard Binary Distribution can be directly <a
-href="../download.cgi">downloaded</a> or built using
+href="../download.html">downloaded</a> or built using
 the Source Distribution. If
 you choose the latter, then the <a href="installationguide.html">Installation
 Guide</a> will instruct you on how to build Axis2 Standard Binary
@@ -53,7 +53,7 @@ The Axis developer community welcomes your participation.</p>
 
 <p>Let us know what you think! Send your feedback to "<a
 href="mailto:java-user@axis.apache.org?subject=[Axis2]">java-user@axis.apache.org</a>".
-(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.) Kindly
+(Subscription details are available on the <a href="../mailing-lists.html">Axis2 site</a>.) Kindly
 prefix the subject of the mail with [Axis2].</p>
 
 <h2>Getting Started</h2>
@@ -68,7 +68,7 @@ other features.</p>
 <p>In this (first) section, we will learn how to write and deploy Web
 services using Axis2. All the samples mentioned in this guide are located in
 the <b>"modules/samples/userguide/src"</b> directory of <a
-href="../download.cgi">Axis2 standard binary
+href="../download.html">Axis2 standard binary
 distribution</a>.</p>
 
 <p>Please deploy axis2.war in your servlet container and ensure that it works
@@ -93,7 +93,7 @@ better to follow the code generation approach first (given below)</p>
 
 <p>We start with a WSDL, however if you do not have a WSDL and need to create
 a WSDL from a java class, please use the <a
-href="reference.html#wsdl2java">Java2WSDL tool</a> to create the WSDL. As you
+href="reference.html#Java2WSDL_Reference">Java2WSDL tool</a> to create the WSDL. As you
 might already know, a WSDL description of a service provides a precise
 definition of that web service. Axis2 can process the WSDL and generate java
 code that does most of the work for you. At the server side, we call them
@@ -113,17 +113,17 @@ This method of writing a Web service with Axis2 involves four steps:
 tool provided in Axis2. This tool is located in the bin directory of the
 distribution and can be executed using the provided scripts (.bat or .sh).
 The tool's parameter list can be found in the <a
-href="reference.html#wsdl2code">Axis2 Reference Document</a>.</p>
+href="reference.html#WSDL2Java_Reference">Axis2 Reference Document</a>.</p>
 
 <p>The parameters for the wsdl2java tool in our example are as follows.
 Please note that, for this example, we are using xmlbeans as the data binding framework, and the generated
 code will be placed in a "samples" directory. </p>
-<pre>wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans 
+<pre>wsdl2java.sh -uri ../modules/samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans 
 -o ../samples -p org.apache.axis2.userguide</pre>
 
-<p>This will generate the required classes in the <b>"sample/src"</b>
+<p>Run from the <b>bin</b> directory, this will generate the required classes in the <b>"samples/src"</b>
 directory, and the schema classes in the
-<strong>"modules/samples/resources/schemaorg_apache_xmlbeans"</strong>
+<strong>"samples/resources/schemaorg_apache_xmlbeans"</strong>
 directory<strong></strong>. Note that these are not source files and should
 be available in the class path in order to compile the generated classes.</p>
 <a name="Step2_Implement_Business_Logic"></a>
@@ -133,7 +133,7 @@ be available in the class path in order to compile the generated classes.</p>
 <p>Now you should fill the business logic in the skeleton class. You can find
 the skeleton class -Axis2SampleDocLitServiceSkeleton.java- among the
 generated classes in the
-<strong>"modules/samples/src/org/apache/axis2/userguide</strong> directory. Let's
+<strong>"samples/src/org/apache/axis2/userguide"</strong> directory. Let's
 fill the <code>echoString(..)</code> method in the skeleton as shown below.
 Our sample WSDL-Axis2SampleDocLit.wsdl in <strong>"modules/samples/wsdl"</strong>
 directory has three operations: echoString, echoStringArray, echoStruct. To
@@ -163,11 +163,11 @@ archive with the following steps :</p>
     classes to your class folder.</li>
   <li>Among the generated files, there will be a services.xml file, which is
     the deployment descriptor for Axis2 service.[<a
-    href="reference.html#servicedd">learn more about it</a>]. Copy the
+    href="axis2config.html#Service_Configuration">learn more about it</a>]. Copy the
     resources/service.xml to META-INF/services.xml</li>
 
   <p>(To write your own service.xml file, see the sub section in <a
-  href="xmlbased-server.html#Step2_:Write_the_services_xml_file">Writing Web
+  href="xmlbased-server.html#Step2.3A_Write_the_services.xml_file">Writing Web
   Services Using Axis2's Primary APIs</a> )</p>
   <li>Create the archive using content of the class folder. Change the
     directory to the class folder and run <code>jar -cf
@@ -197,7 +197,7 @@ the Axis2SampleDocLitService is displayed under the deployed services.</p>
 <p>We recommend using the exploded configuration to deploy Axis2 WAR in
 <strong>WebLogic and WebSphere</strong> application servers to support the
 hotupdate/hotdeployment features of Axis2. See <a
-href="app_server.html#weblogic_websphere">Application Server Specific
+href="app_server.html">Application Server Specific
 Configuration Guide</a> for details.</p>
 
 <p>Note: Axis2 provides an easy way to deploy Web Services using the "Upload
@@ -219,7 +219,7 @@ generation</strong> approach presented below.</p>
 <p>Let's see how we could generate java code (Stub) to handle the client side
 Web Service invocation for you. This can be done by running the WSDL2Java
 tool using the following arguments</p>
-<pre>wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans 
+<pre>wsdl2java.sh -uri ../modules/samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans 
      -o ../samples/src -p org.apache.axis2.userguide</pre>
 <p>This will generate client side stubs and xmlbeans types for your types.
 The Stub class that you need to use will be of the form
@@ -299,8 +299,8 @@ level. To perform a "true" non-blocking invocation in which two separate
 transport connections are used for the request and the response, please add
 the following code segment after creating the stub. It will force Axis2 to
 use two transport connections for the request and the response while the
-client uses a Callback to process the response.</p>
-<pre>stub._getServiceClient().engageModule(new QName("addressing"));
+client uses a callback to process the response.</p>
+<pre>stub._getServiceClient().engageModule("addressing");
 stub._getServiceClient().getOptions().setUseSeparateListener(true);</pre>
 <p>Once those options are set, Axis2 client does the following:</p>
 <ol>
@@ -417,7 +417,7 @@ for every request received by that service or operation</p>
 
 <p>Axis2 provides a number of built in Modules (such as
 <a href="../modules/index.html">addressing</a> and
-<a href="https://ws.apache.org/rampart/">Security (Rampart)</a>),
+<a href="https://axis.apache.org/axis2/java/rampart/">Security (Rampart)</a>),
 and they can be engaged as shown above. Please refer to each
 module on how to use and configure them. You can also
 <a href="../modules/index.html">create your own modules with Axis2</a>.
@@ -452,13 +452,18 @@ and client sides.</p>
 <h3>Transports</h3>
 
 <p>By default, Axis2 is configured to use HTTP as the transport. However,
-Axis2 supports HTTP, SMTP, TCP and JMS transports. You can also write your
+Axis2 supports HTTP, HTTP/2, SMTP, TCP, UDP and JMS transports. You can also write your
 own transports, and deploy them by adding new transportReceiver or
 transportSender tags to axis2.xml. To learn how to configure and use
 different transports, please refer to the following documents.</p>
 <ol>
   <li><a href="http-transport.html">HTTP Transports</a></li>
-  <li><a href="https://ws.apache.org/commons/transport/">WS-Commons Transport project</a></li>
+  <li><a href="http2-transport-additions.html">HTTP/2 Transport</a></li>
+  <li><a href="jms-transport.html">JMS Transport</a></li>
+  <li><a href="tcp-transport.html">TCP Transport</a></li>
+  <li><a href="udp-transport.html">UDP Transport</a></li>
+  <li><a href="mail-transport.html">Mail Transport</a></li>
+  <li><a href="transport_howto.html">How to write your own Axis2 transport</a></li>
 </ol>
 
 <h3>Attachments</h3>

@@ -36,10 +36,33 @@
 <p>The EJB message receiver allows one to access stateless session
 EJBs (Enterprise JavaBeans) through Web services. The example used
 in this guide illustrates how to use the EJB provider that ships
-with Axis2 to access EJBs deployed on a J2EE server such as
-Geronimo or JBoss.</p>
-<p>This example explains how to use Geronimo 1.1 and JBoss 4.0.4.GA
-as application server.</p>
+with Axis2 to access EJBs deployed on a Java EE / Jakarta EE
+application server.</p>
+<p><strong>Note:</strong> the example below was written for EJB 2.1
+session beans on Geronimo 1.1 and JBoss 4.0.4.GA, both long retired, and
+it has not been re-tested with Axis2 2.x. It is kept for reference: on a
+current Jakarta EE server the <code>javax.ejb</code> types are in the
+<code>jakarta.ejb</code> package, and the JNDI context factory, provider
+URL and client jars come from your server's documentation.</p>
+<p>For EJB 3 session beans, which have no home interface, use
+<code>org.apache.axis2.rpc.receivers.ejb.EJB3MessageReceiver</code> and
+<code>EJB3InOnlyMessageReceiver</code>. They read the
+<code>beanJndiName</code> parameter, either <code>remoteInterfaceName</code>
+or <code>localInterfaceName</code>, and optionally
+<code>jndiContextClass</code>, <code>providerUrl</code>,
+<code>jndiUser</code> and <code>jndiPassword</code>:</p>
+<pre>
+&lt;messageReceivers&gt;
+    &lt;messageReceiver mep="http://www.w3.org/ns/wsdl/in-only"
+        class="org.apache.axis2.rpc.receivers.ejb.EJB3InOnlyMessageReceiver"/&gt;
+    &lt;messageReceiver mep="http://www.w3.org/ns/wsdl/in-out"
+        class="org.apache.axis2.rpc.receivers.ejb.EJB3MessageReceiver"/&gt;
+&lt;/messageReceivers&gt;
+&lt;parameter name="ServiceClass"&gt;my.ejb.HelloBusiness&lt;/parameter&gt;
+&lt;parameter name="remoteInterfaceName"&gt;my.ejb.HelloBusiness&lt;/parameter&gt;
+&lt;parameter name="beanJndiName"&gt;[JNDI name of the bean]&lt;/parameter&gt;
+</pre>
+<p>The rest of this guide shows the EJB 2.1 example.</p>
 <p>The following steps will take you through the example through
 which we will explain how to use an EJB provider in Axis2</p>
 <h2>1. Creating a Simple Stateless Session EJB</h2>
@@ -184,7 +207,7 @@ HelloEJB.jar
              +--HelloHome.class
  
 </pre>
-<p>Next, deploy the HelloEJB.jar file onto the appropriate J2EE
+<p>Next, deploy the HelloEJB.jar file onto the appropriate
 application server.</p>
 <h2>Creating the Axis2 Service Archive</h2>
 <p>Now we need to make the services.xml file.</p>

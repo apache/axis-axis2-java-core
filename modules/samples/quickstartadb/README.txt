@@ -13,19 +13,19 @@ is tested using generated client stubs.
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
 Building the Service
 ====================
 
-Type "ant generate.service" from Axis2_HOME/samples/quickstartadb
+Type "ant generate.service" from Axis2_HOME/modules/samples/quickstartadb
 directory and then deploy the 
-Axis2_HOME/samples/quickstartadb/build/service/build/lib/StockQuoteService.aar
+Axis2_HOME/modules/samples/quickstartadb/build/service/build/lib/StockQuoteService.aar
 
 Running the Client
 ==================
 
-type ant run.client in the Axis2_HOME/samples/quickstartadb directory
+type ant run.client in the Axis2_HOME/modules/samples/quickstartadb directory
 
 You will get the following response
 [java] 42.0
@@ -35,5 +35,5 @@ You will get the following response
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you
+Please contact java-user list (java-user@axis.apache.org) if you
 have any trouble running the sample.

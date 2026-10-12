@@ -444,7 +444,7 @@ error originates:</p>
 <h3>5.1 Structured JSON Errors (service-level validation)</h3>
 
 <p>Services that throw
-<a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/json/src/org/apache/axis2/json/gson/rpc/JsonRpcFaultException.java"><code>JsonRpcFaultException</code></a>
+<a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/json/src/org/apache/axis2/json/rpc/JsonRpcFaultException.java"><code>JsonRpcFaultException</code></a>
 produce structured JSON error responses with proper HTTP status codes:</p>
 
 <pre>

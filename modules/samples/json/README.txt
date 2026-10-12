@@ -9,9 +9,8 @@ convention.
 
 In this sample it sends
 
-{"echoUser":[{"arg0":{"name":My_Name,"surname":MY_Surname,"middleName":My_MiddleName,"age":123
-,"address":{"country":My_Country,"city":My_City,"street":My_Street,"building":My_Building,"fla
-t":My_Flat,"zipCode":My_ZipCode}}}]}
+{"echoUser":[{"arg0":{"name":"My_Name","surname":"MY_Surname","middleName":"My_MiddleName","age":123,
+    "address":{"country":"My_Country","city":"My_City","street":"My_Street","building":"My_Building","flat":"My_Flat","zipCode":"My_ZipCode"}}}]}
 
 
 JSON request to the echoUser method and get the response as
@@ -26,7 +25,7 @@ curl -v -H "Content-Type: application/json" -X POST --data @/root/myjson.dat htt
 Pre-Requisites
 ==============
 
-Apache Ant 1.8 or later
+Apache Ant 1.10 or later
 
 Running The Sample
 ==================
@@ -40,7 +39,7 @@ configuration file in AXIS2_HOME/conf/ directory.
 <messageFormatter contentType="application/json-impl"
 			class="org.apache.axis2.json.gson.JsonFormatter" />
 
-Goto AXIS2_HOME/sample/json/ directory and
+Goto AXIS2_HOME/modules/samples/json/ directory and
 
 Type "ant" or "ant generate.service" to generate sample JsonService.aar and cp it to AXIS2_HOME/repository/services/
 
@@ -48,4 +47,4 @@ Then type "ant run.client" to compile client code and run the client
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.

@@ -26,8 +26,12 @@
             <p>The mail transport allows to send and receive messages using MIME compliant mail messages. The transport sender
             transmits outgoing messages using SMTP, while the transport listener connects to one or more mail accounts
             and periodically polls these accounts for new incoming messages. The implementation is based on
-            <a href="https://eclipse-ee4j.github.io/mail/">Jakarta Mail</a> (formerly JavaMail) and therefore supports any mail store protocol
-            for which a JavaMail provider is available.</p>
+            <a href="https://jakarta.ee/specifications/mail/">Jakarta Mail</a> (formerly JavaMail), using the
+            <a href="https://eclipse-ee4j.github.io/angus-mail/">Eclipse Angus Mail</a> implementation, and therefore supports any mail store protocol
+            for which a Jakarta Mail provider is available.</p>
+            <p>Since Axis2 2.0.2 the mail transport is no longer bundled in <tt>axis2.war</tt>. It is still included in
+            the <tt>lib</tt> directory of the binary distribution; a WAR deployment that uses it must add the
+            <tt>axis2-transport-mail</tt> jar (and its Angus Mail dependency) to <tt>WEB-INF/lib</tt>.</p>
         </section>
         <section name="Transport listener">
           <subsection name="Configuration">
@@ -45,9 +49,8 @@
             interpreted as JavaMail environment properties. The most relevant are <tt>mail.<em>&lt;protocol&gt;</em>.host</tt>
             and <tt>mail.<em>&lt;protocol&gt;</em>.user</tt>, where <tt><em>&lt;protocol&gt;</em></tt> is typically <tt>pop3</tt>
             or <tt>imap</tt>. The complete list of supported properties for these
-            two protocols can be found in the <a href="https://eclipse-ee4j.github.io/mail/docs/api/">Jakarta Mail API documentation</a>
-            (for <a href="https://eclipse-ee4j.github.io/mail/docs/api/com.sun.mail.pop3/com/sun/mail/pop3/package-summary.html">POP3</a>
-            and <a href="https://eclipse-ee4j.github.io/mail/docs/api/com.sun.mail.imap/com/sun/mail/imap/package-summary.html">IMAP</a>).</p>
+            two protocols can be found in the <a href="https://eclipse-ee4j.github.io/angus-mail/">Angus Mail documentation</a>
+            (packages <tt>org.eclipse.angus.mail.pop3</tt> and <tt>org.eclipse.angus.mail.imap</tt>).</p>
             <p>In additional to the JavaMail environment properties, the following transport specific service parameters are
             used:</p>
             <table class="bodyTable">
@@ -186,14 +189,14 @@
         </section>
         <section name="Transport sender">
             <subsection name="Configuration">
-    <pre xml:space="preserve">    &lt;transportSender name="mailto" class="org.apache.synapse.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="mail.smtp.host"&gt;smtp.gmail.com&lt;/parameter&gt;
+    <pre xml:space="preserve">    &lt;transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
+        &lt;parameter name="mail.smtp.host"&gt;smtp.example.org&lt;/parameter&gt;
         &lt;parameter name="mail.smtp.port"&gt;587&lt;/parameter&gt;
         &lt;parameter name="mail.smtp.starttls.enable"&gt;true&lt;/parameter&gt;
         &lt;parameter name="mail.smtp.auth"&gt;true&lt;/parameter&gt;
-        &lt;parameter name="mail.smtp.user"&gt;synapse.demo.0&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.user"&gt;axis2-service&lt;/parameter&gt;
         &lt;parameter name="mail.smtp.password"&gt;mailpassword&lt;/parameter&gt;
-        &lt;parameter name="mail.smtp.from"&gt;synapse.demo.0@gmail.com&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.from"&gt;axis2-service@example.org&lt;/parameter&gt;
     &lt;/transportSender&gt;</pre>
             </subsection>
         </section>

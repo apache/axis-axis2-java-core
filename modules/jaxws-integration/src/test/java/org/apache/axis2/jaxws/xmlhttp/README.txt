@@ -1,28 +1,16 @@
-The xmlhttp test the XML HTTP protocol.
+The xmlhttp tests exercise the JAX-WS XML/HTTP binding.
 
-The structure of the tests will be 
+Structure:
 
 org.apache.axis2.jaxws.xmlhttp.
+                               Dispatch*Tests.java   (Dispatch clients: payload String, Source
+                                                      and JAXB; message String, Source and
+                                                      DataSource)
                                provider.
                                         payload.
-                                                string. ...META_INF, etc.
-                                                source. ...META_INF, etc.
+                                                string.     XPayloadStringProvider
+                                                source.     XPayloadSourceProvider
                                         message.
-                                                string. ...META_INF, etc.
-                                                source. ...META_INF, etc.
-                                                datasource ...META_INF, etc.
-                               webservice.
-                                          sei.
-                                          impl.
-                                               META_INF ...
-                               
-                               clientTests. dispatch.
-                                                     string
-                                                     source
-                                                     datasource
-                                                     jaxb
-                                            proxy.
-                               
-
-                                           
-                                               
+                                                string.     XMessageStringProvider
+                                                source.     XMessageSourceProvider
+                                                datasource. XMessageDataSourceProvider

@@ -87,7 +87,7 @@ requires `certificateVerification="required"` — plain HTTP is not available.
 Set up the cert variables first:
 
 ```bash
-CERTS=/path/to/axis-axis2-java-core/certs
+CERTS=/path/to/axis-axis2-java-core/modules/samples/userguide/src/userguide/springbootdemo-tomcat11/certs
 CURL_MTLS="curl -s --http2 --cert $CERTS/client.crt --key $CERTS/client.key --cacert $CERTS/ca.crt"
 ```
 
@@ -165,7 +165,7 @@ $CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/FinancialBench
 
 ## Streaming JSON message formatter
 
-Axis2 2.0.1 includes streaming message formatters that prevent reverse proxy
+Since 2.0.1, Axis2 includes streaming message formatters that prevent reverse proxy
 body-size rejections on large HTTP responses. Drop-in replacement — no service
 code changes required.
 

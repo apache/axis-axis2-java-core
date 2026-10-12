@@ -20,18 +20,18 @@
 Apache Axis2 ${project.version} build (${buildTimestamp})
 Source Release
 
-http://axis.apache.org/axis2/java/core/
+https://axis.apache.org/axis2/java/core/
 ------------------------------------------------------
 
 This is the Standard Source Release of Axis2.
 
 The modules directory contains the source code for the various Axis2
-components. The distribution can be built with Maven 2.x by executing
-"mvn clean install".
+components. The distribution can be built with Maven 3.6.0+ and JDK 17 to 25
+by executing "mvn clean install".
 
 (Please note that this does not include the other WS-* implementation modules, 
-like WS-Security, that are being developed within Axis2. Those can be downloaded
- from http://axis.apache.org/axis2/java/core/modules/)
+like WS-Security, that are developed as separate Axis2 projects. Those can be
+ downloaded from https://axis.apache.org/axis2/java/core/modules/)
  
 
 

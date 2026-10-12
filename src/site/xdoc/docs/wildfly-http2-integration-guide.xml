@@ -244,21 +244,25 @@ depend on payload size, network conditions, and JVM configuration):</em>
 &lt;byte-buffer-pool name="default" buffer-size="32768" max-pool-size="1024" direct="true"/&gt;
 &lt;buffer-cache name="default" buffer-size="32768"/&gt;
 
-&lt;!-- HTTPS Listener with HTTP/2 Parameters --&gt;
+&lt;!-- HTTPS Listener with HTTP/2 Parameters.
+     ssl-context: your existing SSL context; http2-initial-window-size: 2MB avoids
+     flow-control round trips; http2-max-concurrent-streams: coordinated with
+     transport-h2; http2-max-frame-size: matches the buffer pool;
+     no-request-timeout: 5 minutes for large payloads; max-post-size: 100MB --&gt;
 &lt;https-listener name="https" socket-binding="https"
-                ssl-context="applicationSSC"             &lt;!-- CORRECTED: Matches your existing SSL context --&gt;
+                ssl-context="applicationSSC"
                 enable-http2="true"
                 http2-enable-push="false"
-                http2-header-table-size="4096"           &lt;!-- Conservative headers --&gt;
-                http2-initial-window-size="2097152"      &lt;!-- 2MB: avoids flow-control round trips --&gt;
-                http2-max-concurrent-streams="100"       &lt;!-- Coordinated with transport-h2 --&gt;
-                http2-max-frame-size="32768"             &lt;!-- ALIGNED: Matches buffer pool --&gt;
-                http2-max-header-list-size="16384"       &lt;!-- Sufficient for JSON APIs --&gt;
-                max-connections="200"                     &lt;!-- Matches your existing setup --&gt;
-                receive-buffer="2097152"                  &lt;!-- Keep existing 2MB --&gt;
-                send-buffer="1048576"                     &lt;!-- Keep existing 1MB --&gt;
-                no-request-timeout="300000"              &lt;!-- 5min timeout for large payloads --&gt;
-                max-post-size="104857600"/&gt;              &lt;!-- 100MB max request size --&gt;
+                http2-header-table-size="4096"
+                http2-initial-window-size="2097152"
+                http2-max-concurrent-streams="100"
+                http2-max-frame-size="32768"
+                http2-max-header-list-size="16384"
+                max-connections="200"
+                receive-buffer="2097152"
+                send-buffer="1048576"
+                no-request-timeout="300000"
+                max-post-size="104857600"/&gt;
 </pre>
 
 <h3>Complete Three-Layer Architecture</h3>
@@ -397,30 +401,30 @@ Complete HTTP/2 + JSON Optimization Stack:
                        enable-http2="true"
                        http2-enable-push="false"
                        http2-header-table-size="4096"
-                       http2-initial-window-size="2097152"      &lt;!-- 2MB: avoids flow-control round trips --&gt;
-                       http2-max-concurrent-streams="100"       &lt;!-- Matches transport-h2 limit --&gt;
-                       http2-max-frame-size="32768"             &lt;!-- ALIGNED: Matches buffer pool --&gt;
+                       http2-initial-window-size="2097152"
+                       http2-max-concurrent-streams="100"
+                       http2-max-frame-size="32768"
                        http2-max-header-list-size="16384"
                        max-connections="200"
                        receive-buffer="2097152"
                        send-buffer="1048576"
-                       no-request-timeout="300000"/&gt;            &lt;!-- 5min for large payloads --&gt;
+                       no-request-timeout="300000"/&gt;
 
         &lt;!-- HTTPS Connector (Production) --&gt;
         &lt;https-listener name="https" socket-binding="https"
                         max-post-size="104857600"
-                        ssl-context="applicationSSC"             &lt;!-- CORRECTED: Your actual SSL context --&gt;
+                        ssl-context="applicationSSC"
                         enable-http2="true"
                         http2-enable-push="false"
                         http2-header-table-size="4096"
-                        http2-initial-window-size="2097152"      &lt;!-- 2MB: avoids flow-control round trips --&gt;
-                        http2-max-concurrent-streams="100"       &lt;!-- Matches transport-h2 limit --&gt;
-                        http2-max-frame-size="32768"             &lt;!-- ALIGNED: Matches buffer pool --&gt;
+                        http2-initial-window-size="2097152"
+                        http2-max-concurrent-streams="100"
+                        http2-max-frame-size="32768"
                         http2-max-header-list-size="16384"
                         max-connections="200"
                         receive-buffer="2097152"
                         send-buffer="1048576"
-                        no-request-timeout="300000"/&gt;            &lt;!-- 5min for large payloads --&gt;
+                        no-request-timeout="300000"/&gt;
 
         &lt;host name="default-host" alias="localhost"&gt;
             &lt;access-log pattern="%h %t &quot;%r&quot; %s %b %T Protocol:%H"/&gt;
@@ -487,7 +491,8 @@ Complete HTTP/2 + JSON Optimization Stack:
 <pre>
 // Use HTTP/2 transport for outbound calls
 ServiceClient client = new ServiceClient();
-client.getOptions().setProperty(Constants.Configuration.TRANSPORT_NAME, "h2");
+client.getOptions().setSenderTransport("h2",
+        client.getServiceContext().getConfigurationContext().getAxisConfiguration());
 client.getOptions().setTo(new EndpointReference("https://api.example.com/service"));
 
 // Streaming and async processing are handled automatically by the
@@ -518,7 +523,7 @@ curl -k --http2 --location 'https://localhost:8443/services/YourService' \
 <tr>
     <td>HTTP/1.1 used despite <code>enable-http2="true"</code></td>
     <td>Missing ALPN or TLS &lt; 1.2</td>
-    <td>Ensure OpenJDK 11+ and <code>ssl-context</code> configured with TLS 1.2+</td>
+    <td>Ensure OpenJDK 17+ and <code>ssl-context</code> configured with TLS 1.2+</td>
 </tr>
 <tr>
     <td>502 Bad Gateway on large responses</td>

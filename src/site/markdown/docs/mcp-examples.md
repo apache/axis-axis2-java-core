@@ -75,7 +75,7 @@ client sees only standard MCP JSON-RPC.
   "mcpServers": {
     "axis2-java-finbench": {
       "command": "java",
-      "args": ["-jar", "/path/to/axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar",
+      "args": ["-jar", "/path/to/axis2-mcp-bridge-2.0.2-exe.jar",
                "--base-url", "https://localhost:8443/axis2-json-api"]
     }
   }
@@ -86,7 +86,7 @@ client sees only standard MCP JSON-RPC.
 ```bash
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{
   "name":"portfolioVariance","arguments":{...}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar \
+    | java -jar axis2-mcp-bridge-2.0.2-exe.jar \
         --base-url https://localhost:8443/axis2-json-api
 ```
 
@@ -133,7 +133,7 @@ curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBench
 **MCP stdio equivalent:**
 ```bash
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"portfolioVariance","arguments":{"nAssets":5,"weights":[0.25,0.25,0.20,0.15,0.15],"covarianceMatrix":[[0.0691,0.0313,0.0457,0.0272,-0.0035],[0.0313,0.0976,0.0591,0.0408,0.0058],[0.0457,0.0591,0.1207,0.0437,-0.0086],[0.0272,0.0408,0.0437,0.0638,0.0015],[-0.0035,0.0058,-0.0086,0.0015,0.0303]],"normalizeWeights":true}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.2-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 ### Portfolio Variance — 500 assets
@@ -218,7 +218,7 @@ curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBench
 **MCP stdio equivalent:**
 ```bash
 echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"monteCarlo","arguments":{"nSimulations":100000,"nPeriods":252,"initialValue":1000000,"expectedReturn":0.10,"volatility":0.198,"nPeriodsPerYear":252}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.2-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 ---
@@ -329,7 +329,7 @@ curl -s --http2 -k https://localhost:8443/axis2-json-api/services/FinancialBench
 **MCP stdio equivalent (stressed MC):**
 ```bash
 echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"monteCarlo","arguments":{"nSimulations":100000,"nPeriods":252,"initialValue":1000000,"expectedReturn":0.10,"volatility":0.255,"nPeriodsPerYear":252}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.2-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 **Comparison — Axis2/C vs Axis2/Java (same inputs, same day):**
@@ -478,7 +478,7 @@ done
 **MCP stdio equivalent (example for 100K):**
 ```bash
 echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"monteCarlo","arguments":{"nSimulations":100000,"nPeriods":252,"initialValue":1000000,"expectedReturn":0.10,"volatility":0.198,"nPeriodsPerYear":252}}}' \
-    | java -jar axis2-mcp-bridge-2.0.1-SNAPSHOT-exe.jar --base-url https://localhost:8443/axis2-json-api
+    | java -jar axis2-mcp-bridge-2.0.2-exe.jar --base-url https://localhost:8443/axis2-json-api
 ```
 
 **Axis2/Java results (2026-04-08):**
@@ -596,8 +596,8 @@ financial tools are identical in capability to the Axis2/C MCP stdio server.
 
 ## Container/JDK Testing Matrix
 
-MCP bridge and OpenAPI endpoints need validation across all supported containers
-and JDK versions before the 2.0.1 release:
+MCP bridge and OpenAPI endpoints have been validated across the supported containers
+and JDK versions:
 
 | Container | JDK | MCP Bridge | OpenAPI/Swagger UI | Status |
 |-----------|-----|------------|-------------------|--------|
@@ -646,7 +646,7 @@ cp -r target/deploy/axis2-json-api /path/to/tomcat/webapps/
 **Tomcat 11** (HTTPS/HTTP2 on port 8443 with mTLS):
 
 ```bash
-CERTS=/path/to/axis-axis2-java-core/certs
+CERTS=/path/to/axis-axis2-java-core/modules/samples/userguide/src/userguide/springbootdemo-tomcat11/certs
 CURL_MTLS="curl -s --http2 --cert $CERTS/client.crt --key $CERTS/client.key --cacert $CERTS/ca.crt"
 
 # OpenAPI and MCP (no auth required, but mTLS handshake still needed)
@@ -691,11 +691,13 @@ See the sample READMEs for the complete test flow covering all services.
 
 ## WildFly Deployment Notes
 
-See `WILDFLY32_DEPLOY_STATE.md` in the Axis2/C repo for the full deployment
-walkthrough. Key points (apply to both WildFly 32 and WildFly 41):
+See the `springbootdemo-wildfly` README
+(`modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md`) for the full
+deployment walkthrough. Key points (apply to both WildFly 32 and WildFly 41):
 
-- WildFly 32.0.1.Final or WildFly 41 with `--add-modules=java.se` in `standalone.conf`
-- `jboss-deployment-structure.xml` from production deployment template (includes `jdk.net` module dependency)
+- WildFly 32.0.1.Final with `--add-modules=java.se` in `standalone.conf`, or WildFly 41.0.1.Final
+  (deploys with the default configuration)
+- `jboss-deployment-structure.xml` from the sample's `WEB-INF` (includes the `jdk.net` module dependency)
 - `beans.xml` with `bean-discovery-mode="none"` (satisfies Weld without CDI scanning)
 - Spring Boot 3.5.16 starts in ~1 second inside WildFly
-- WAR: `axis2-json-api-0.0.1-SNAPSHOT.war`
+- WAR: exploded `target/deploy/axis2-json-api/`, deployed as `axis2-json-api.war`

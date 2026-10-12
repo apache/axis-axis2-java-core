@@ -26,7 +26,7 @@
 <h1>Welcome to Apache Axis2/Java</h1>
 <p>Apache Axis2&#x2122; is a Web Services JSON / SOAP / WSDL engine, the successor to the
 widely used <a href=
-"https://ws.apache.org/axis/">Apache Axis</a> SOAP stack. Axis2 serves
+"https://axis.apache.org/axis/">Apache Axis</a> SOAP stack. Axis2 serves
 the same business logic through multiple protocols simultaneously &#x2014;
 JSON-RPC, REST, and <a href="docs/mcp-architecture.html">MCP (Model Context Protocol)</a>
 &#x2014; from a single service deployment.
@@ -60,9 +60,8 @@ section before upgrading rather than after. Advisories for the reported issues
 are published after the release, which is this project's normal order.
 <code>SECURITY.md</code> in the source distribution carries the threat model,
 including what is deliberately <em>not</em> covered.</p>
-<p><strong>Apache Rampart 2.0.0 is ready for release</strong> and will ship
-immediately after Axis2/Java 2.0.2, on which it depends. Rampart 2.0.0
-brings WS-Security up to date with the Jakarta EE 9+ / Axis2 2.0.x line
+<p><strong>Apache Rampart 2.0.0</strong> is released after Axis2/Java
+2.0.2, on which it depends. Rampart 2.0.0 brings WS-Security up to date with the Jakarta EE 9+ / Axis2 2.0.x line
 (<code>jakarta.*</code> namespaces, modern WSS4J, current OpenJDK support)
 so legacy SOAP services with WS-Security policies can run unchanged on
 the same Tomcat 11 / WildFly 32 / WildFly 41 stack as the rest of
@@ -128,7 +127,7 @@ See <a href="docs/mcp-examples.html">live examples</a>.</li>
 <li><strong><a href="docs/http2-integration-guide.html">HTTP/2
 streaming</a></strong> &#x2014; integrated into the serialization pipeline,
 not just the transport layer. Response
-<a href="docs/json-streaming-formatter.html#Field_Selection">field
+<a href="docs/json-streaming-formatter.html#Field_Selection_.28.3Ffields.3D.29">field
 selection</a> (<code>?fields=</code>) filters at serialization time.</li>
 
 <li><strong><a href="docs/spring-boot-starter.html">Spring Boot

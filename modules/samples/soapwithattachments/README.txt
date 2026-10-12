@@ -5,7 +5,7 @@ Introduction
 ============
 This sample demonstrates the capabilities and power of SOAP with Attachment support and the
 Attachment API of AXIS2. More information about Axis2 attachment implementation can be found at 
-http://ws.apache.org/axis2/1_1/mtom-guide.html. 
+https://axis.apache.org/axis2/java/core/docs/mtom-guide.html. 
 
 This sample includes a service and a client which can be used to upload a file to the server using 
 SOAP message containing a SOAP with Attachment type binary attachment. The service is written and 
@@ -24,12 +24,12 @@ Objectives
 
 Prerequisites
 =============
-Install Apache Ant 1.6.2 or later
+Install Apache Ant 1.10 or later
 
 
 Running the Sample:
 ===================
-The files belonging to this sample are contained in the samples/soapwithattachments folder of the 
+The files belonging to this sample are contained in the modules/samples/soapwithattachments folder of the 
 extracted Axis2 binary distribution, which will be called here after as SWA_SAMPLE_DIR. The 
 location of the extracted binary distribution will be refered as AXIS2_DIST. There is a 
 "build.xml" Ant script in the SWA_SAMPLE_DIR that contains build targets for building the service 
@@ -48,11 +48,11 @@ will deploy all the srvices available at AXIS2_DIST/repository/services director
 can drop the sample-swa.aar service archive to the services directory of a running Axis2 servlet)
 
 3. Running the client
-Use "ant run.client -Dfile <file to be send> -Ddest <destination file name>" command in the 
+Use "ant run.client -Dfile=<file to be sent> -Ddest=<destination file name>" command in the 
 SWA_SAMPLE_DIR to build and run the client. Source file ralating to the client can be found at 
 SWA_SAMPLE_DIR/src/sample/soapwithattachments/client/SWAClient.java.
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.
 

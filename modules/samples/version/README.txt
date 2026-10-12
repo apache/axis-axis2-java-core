@@ -15,14 +15,14 @@ date of the Axis2 distribution used.
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
 Running the Sample
 ==================
 
-Type $ant from Axis2_HOME/samples/version
+Type $ant from Axis2_HOME/modules/samples/version
 
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.

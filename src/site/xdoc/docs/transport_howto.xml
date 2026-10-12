@@ -37,10 +37,16 @@ description.</p>
   <li><b>HTTP</b> - In the HTTP transport, the transport Listener is either a
     Servlet or a Simple HTTP server provided by Axis2. The transport Sender
     uses sockets to connect and send the SOAP message. Currently we have the
-    Apache Httpcomponents based HTTP Transport sender as the default
+    Apache HttpComponents (HttpClient 5) based HTTP Transport sender as the default
   transport.</li>
+  <li><b>HTTP/2</b> - An outbound HTTP/2 transport sender (transport-h2) based on
+    HttpClient 5, with ALPN negotiation and stream multiplexing.</li>
   <li><b>TCP</b> - This is the most simple transport, but needs Addressing
     support to be functional.</li>
+  <li><b>UDP</b> - A datagram transport for small messages.</li>
+  <li><b>JMS</b> - Sends and receives messages through a Jakarta Messaging (JMS) provider.</li>
+  <li><b>Mail</b> - Sends messages with SMTP and polls POP3/IMAP mailboxes for incoming messages.</li>
+  <li><b>Local</b> - An in-JVM transport, mainly useful for testing.</li>
 </ul>
 
 <p>To understand the rest of this document you will need some understanding
@@ -79,7 +85,7 @@ building our own transport.</p>
 <p></p>
 
 <p>To get things stared, you will first need to extend from the
-org.apache.Axis2.transport.TransportListener class and write your own
+org.apache.axis2.kernel.TransportListener interface and write your own
 transport listener. To create an engine to process the MessageContext, we
 need a configuration context. The following code fragment will do this. This
 should ideally be only done once for the lifetime of the Transport
@@ -87,9 +93,7 @@ receiver.</p>
 
 <p></p>
 <pre>try {
-        //Create a factory 
-        ConfigurationContextFactory factory = new ConfigurationContextFactory();
-        //Use the factory and an Axis2 repository to create a new Configuration Context
+        //Use an Axis2 repository to create a new Configuration Context
         configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repository_directory, 
 axis2xmllocation);
 } catch (Exception e) {
@@ -99,24 +103,26 @@ axis2xmllocation);
 in. You need to implement this according to the transport that you are trying
 to build. After a message is received at the Receiver, you can use the
 following code to process the request and then forward the message context to
-the engine using the engine.receive(msgContext) method. (The following code
-is extracted from the MailListener as an example)</p>
-<pre>AxisEngine engine = new AxisEngine(configurationContext);
-MessageContext msgContext = null;
+the engine using the static AxisEngine.receive(msgContext) method. (The
+following code is a simplified example for a mail-like transport; "message"
+stands for the transport's own representation of the received message, and
+"TRANSPORT_NAME" for the name your transport is registered under in axis2.xml.)</p>
+<pre>MessageContext msgContext = null;
 
 // create and initialize a message context
 try {
         TransportInDescription transportIn =
-                reg.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_NAME));
+                configurationContext.getAxisConfiguration().getTransportIn(TRANSPORT_NAME);
         TransportOutDescription transportOut =
-                reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_NAME));
+                configurationContext.getAxisConfiguration().getTransportOut(TRANSPORT_NAME);
         if (transportIn != null &amp;&amp; transportOut != null) {
                 //create Message Context
-                
-                msgContext = new MessageContext(configurationContext, transportIn, transportOut);
+                msgContext = configurationContext.createMessageContext();
+                msgContext.setTransportIn(transportIn);
+                msgContext.setTransportOut(transportOut);
                 msgContext.setServerSide(true);
-                msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, message.getContentType());
-                msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, message.getEncoding());
+                msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, message.getContentType());
+                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, message.getEncoding());
 
                 String soapAction = message.getSOAPActionHeader();
                 msgContext.setWSAAction(soapAction);
@@ -125,32 +131,24 @@ try {
                 // Here we are trying to set the reply to if it is present in the transport information.
                 msgContext.setReplyTo(new EndpointReference(message.getReplyTo());
 
-                //Create the SOAP Message -- This code in from the mail transport and will change depending
-                //on how the data is handled in each transport.
-                ByteArrayInputStream bais = new ByteArrayInputStream(message.getContent().toString().getBytes());
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-
-                String soapNamespaceURI = "";
-                if(message.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) &gt; -1){
-                        soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                }else if(message.getContentType().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) &gt; -1){
-                        soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                }
-
-                StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
-
-                SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+                //Create the SOAP Message. TransportUtils selects the message builder
+                //configured in axis2.xml for the content type (SOAP 1.1, SOAP 1.2, MTOM,
+                //JSON, ...), so the transport does not need to parse the payload itself.
+                InputStream in = message.getInputStream();
+                SOAPEnvelope envelope = TransportUtils.createSOAPMessage(msgContext, in,
+                        message.getContentType());
                 msgContext.setEnvelope(envelope);
-                engine.receive(msgContext);
+                AxisEngine.receive(msgContext);
         } else {
-                throw new AxisFault(Messages.getMessage("unknownTransport",Constants.TRANSPORT_NAME));
+                throw new AxisFault("Unknown transport " + TRANSPORT_NAME);
         }
 
 } catch (Exception e) {
         try {
                 if (msgContext != null) {
-                        MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
-                        engine.sendFault(faultContext);
+                        MessageContext faultContext =
+                                MessageContextBuilder.createFaultMessageContext(msgContext, e);
+                        AxisEngine.sendFault(faultContext);
                 } else {
                         log.error(e);
                 }
@@ -162,13 +160,13 @@ try {
 new transport receiver. We do this by adding an entry into the axis2.xml
 file. If you need to pass any properties for the transport to operate, it can
 also be done through the axis2.xml file.</p>
-<pre>   &lt;transportReceiver name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_LISTNER_CLASS"&gt;
+<pre>   &lt;transportReceiver name="TRANSPORT_NAME" class="org.example.transport.TRANSPORT_LISTENER_CLASS"&gt;
         &lt;parameter name="PROPERTY_NAME"&gt;PROPERTY_VALUE&lt;/parameter&gt;
         &lt;parameter name="PROPERTY_NAME_2"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
   &lt;/transportReceiver&gt;
   </pre>
 <p>By using a code fragment like
-<code>Utils.getParameterValue(transportOut.getParameter(MailSrvConstants.SMTP_USER))</code>
+<code>transportIn.getParameter("PROPERTY_NAME").getValue()</code>
 we can extract the parameters that we inserted into the axis2.xml file.</p>
 
 <p>As you can see, getting a new transport receiver up and running is a task
@@ -177,46 +175,35 @@ that requires very little effort.</p>
 <h2>Transport Sender</h2>
 
 <p>Any message that is to be sent out of Axis2, is sent through the Transport
-Sender. The Transport Sender needs to be extended from the
-org.apache.Axis2.transport.AbstractTransportSender class.</p>
+Sender. A Transport Sender implements the org.apache.axis2.kernel.TransportSender
+interface; the easiest way to write one is to extend the
+org.apache.axis2.transport.base.AbstractTransportSender class (in the
+axis2-transport-base module), which is what the JMS, mail and UDP
+transports do.</p>
 
-<p>The following bit of code from the abstract transport sender will call the
-Transport Sender that you wrote.</p>
-<pre>// If an EPR is present then the message is going on a different channel.
-if (epr != null) {
-        out = openTheConnection(epr, msgContext);
-        OutputStream newOut = startSendWithToAddress(msgContext, out);
-        if (newOut != null) {
-                out = newOut;
-        }
-        writeMessage(msgContext, out);
-        finalizeSendWithToAddress(msgContext, out);
-        } else {
-        out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
-        if (out != null) {
-                startSendWithOutputStreamFromIncomingConnection(msgContext, out);
-                writeMessage(msgContext, out);
-                finalizeSendWithOutputStreamFromIncomingConnection(msgContext, out);
-        } else {
-                throw new AxisFault(
-                        "Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No way to send response.");
-        }
-}</pre>
-<p>Therefore, depending on whether your transport is using the same channel
-to send the response or using a different channel, you will need to implement
-a sub-set of the methods from the abstract class.</p>
+<p>AbstractTransportSender works out where the message is going and then calls
+the one abstract method you implement:</p>
+<pre>public abstract void sendMessage(MessageContext msgCtx, String targetEPR,
+        OutTransportInfo outTransportInfo) throws AxisFault;</pre>
+<p>When the message has an explicit destination (a WS-Addressing To address, or
+the <code>TRANSPORT_URL</code> property), <code>targetEPR</code> holds that
+address and your transport opens a new connection to it. When a server sends
+a response back over the channel the request arrived on, <code>targetEPR</code>
+is null and <code>outTransportInfo</code> carries the transport-specific
+information your listener stored on the incoming message context.</p>
 
 <p>After implementing the necessary methods, you can let Axis2 know about
 your new transport sender by adding an entry to the axis2.xml file, like you
 did for the TransportReceiver.</p>
-<pre>  &lt;transportSender name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_SENDER_CLASS"&gt;
+<pre>  &lt;transportSender name="TRANSPORT_NAME" class="org.example.transport.TRANSPORT_SENDER_CLASS"&gt;
         &lt;parameter name="PROPERTY_NAME"&gt;PROPERTY_VALUE&lt;/parameter&gt;
         &lt;parameter name="PROPERTY_NAME_2"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
   &lt;/transportSender&gt;
   </pre>
 <p>Have a look at
-org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender which is used to
-send HTTP responses.</p>
+org.apache.axis2.transport.http.impl.httpclient5.HTTPClient5TransportSender, which is used to
+send HTTP messages, and at org.apache.axis2.transport.mail.MailTransportSender
+for a sender built on AbstractTransportSender.</p>
 
 <p>Once we have written our transport receiver and our transport sender, and
 inserted the required entries into the axis2.xml file, we are done. It is as

@@ -54,62 +54,64 @@
   &lt;!-- Aligned with Axis2 Enhanced Moshi H2 async processing --&gt;
   &lt;Service name="Catalina"&gt;
 
-    &lt;!-- HTTP/2 Thread Pool Configuration --&gt;
+    &lt;!-- HTTP/2 Thread Pool Configuration: maxThreads matches the
+         HTTP/2 concurrent stream limit; idle threads expire after 10 minutes --&gt;
     &lt;Executor name="tomcatThreadPool"
               namePrefix="catalina-exec-"
-              maxThreads="200"                    &lt;!-- Matches HTTP/2 concurrent streams --&gt;
+              maxThreads="200"
               minSpareThreads="20"
-              maxIdleTime="600000"                &lt;!-- 10 minutes --&gt;
+              maxIdleTime="600000"
               prestartminSpareThreads="true" /&gt;
 
-    &lt;!-- HTTP Connector with HTTP/2 Upgrade --&gt;
+    &lt;!-- HTTP Connector (HTTP/1.1, redirects to HTTPS).
+         maxPostSize: 100MB for large JSON payloads;
+         connectionTimeout / keepAliveTimeout: 5 minutes for large payload processing;
+         compression: compress JSON responses larger than 2KB --&gt;
     &lt;Connector executor="tomcatThreadPool"
                port="8080"
                protocol="HTTP/1.1"
                redirectPort="8443"
-               maxPostSize="104857600"           &lt;!-- 100MB for large JSON payloads --&gt;
-               connectionTimeout="300000"        &lt;!-- 5 minutes for large payload processing --&gt;
-               keepAliveTimeout="300000"         &lt;!-- Keep-alive for performance --&gt;
-               maxKeepAliveRequests="1000"       &lt;!-- High keep-alive for HTTP/2 benefits --&gt;
-               compression="on"                  &lt;!-- JSON compression --&gt;
-               compressionMinSize="2048"         &lt;!-- Compress &gt;2KB JSON --&gt;
-               noCompressionUserAgents="gozilla, traviata"
-               compressableMimeType="application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css" /&gt;
+               maxPostSize="104857600"
+               connectionTimeout="300000"
+               keepAliveTimeout="300000"
+               maxKeepAliveRequests="1000"
+               compression="on"
+               compressionMinSize="2048"
+               compressibleMimeType="application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css" /&gt;
 
-    &lt;!-- HTTPS Connector with Native HTTP/2 Support --&gt;
-    &lt;!-- PRODUCTION-OPTIMIZED: Native HTTP/2 implementation --&gt;
+    &lt;!-- HTTPS Connector with HTTP/2 (negotiated with ALPN).
+         Tomcat 11 has no APR connector: use the NIO connector, with JSSE or OpenSSL. --&gt;
     &lt;Connector executor="tomcatThreadPool"
                port="8443"
-               protocol="org.apache.coyote.http11.Http11AprProtocol"
-               maxPostSize="104857600"           &lt;!-- 100MB for large JSON --&gt;
+               protocol="org.apache.coyote.http11.Http11NioProtocol"
+               maxPostSize="104857600"
                SSLEnabled="true"
                scheme="https"
                secure="true"
-               connectionTimeout="300000"        &lt;!-- 5 minutes --&gt;
-               keepAliveTimeout="300000"         &lt;!-- Persistent connections --&gt;
-
-               &lt;!-- HTTP/2 Configuration Parameters --&gt;
-               &lt;!-- ALIGNED: Buffer sizes match Enhanced Moshi H2 --&gt;
-               upgradeAsyncTimeout="300000"      &lt;!-- HTTP/2 upgrade timeout --&gt;
-               http2MaxConcurrentStreams="200"   &lt;!-- High concurrency --&gt;
-               http2InitialWindowSize="2097152"  &lt;!-- 2MB: avoids flow-control round trips --&gt;
-               http2MaxFrameSize="32768"         &lt;!-- 32KB - aligned with buffer management --&gt;
-               http2MaxHeaderTableSize="8192"    &lt;!-- 8KB header table --&gt;
-               http2MaxHeaderListSize="32768"    &lt;!-- 32KB header list --&gt;
-               http2EnablePush="false"           &lt;!-- Disabled for web services --&gt;
-
-               &lt;!-- SSL Configuration --&gt;
-               SSLCertificateFile="/path/to/your/certificate.crt"
-               SSLCertificateKeyFile="/path/to/your/private.key"
-               SSLCertificateChainFile="/path/to/your/chain.crt"
-               SSLProtocol="TLSv1.2+TLSv1.3"    &lt;!-- Modern TLS for HTTP/2 --&gt;
-               SSLCipherSuite="ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384"
-               SSLHonorCipherOrder="true"
-
-               &lt;!-- JSON Processing Optimization --&gt;
+               connectionTimeout="300000"
+               keepAliveTimeout="300000"
                compression="on"
                compressionMinSize="2048"
-               compressableMimeType="application/json,application/xml" /&gt;
+               compressibleMimeType="application/json,application/xml"&gt;
+
+        &lt;!-- HTTP/2 settings belong on the nested UpgradeProtocol element.
+             initialWindowSize 2MB avoids flow-control round trips on large
+             responses; compression settings are inherited from the Connector. --&gt;
+        &lt;UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol"
+                         maxConcurrentStreams="200"
+                         initialWindowSize="2097152"
+                         keepAliveTimeout="300000"
+                         readTimeout="300000"
+                         writeTimeout="300000" /&gt;
+
+        &lt;!-- TLS configuration: TLS 1.2 and 1.3 only --&gt;
+        &lt;SSLHostConfig protocols="TLSv1.2+TLSv1.3"&gt;
+            &lt;Certificate certificateFile="/path/to/your/certificate.crt"
+                         certificateKeyFile="/path/to/your/private.key"
+                         certificateChainFile="/path/to/your/chain.crt"
+                         type="RSA" /&gt;
+        &lt;/SSLHostConfig&gt;
+    &lt;/Connector&gt;
 
     &lt;!-- Engine Configuration --&gt;
     &lt;Engine name="Catalina" defaultHost="localhost"&gt;
@@ -125,13 +127,7 @@
                directory="logs"
                prefix="axis2_http2_access_log"
                suffix=".txt"
-               pattern="%h %l %u %t &quot;%r&quot; %s %b %D Protocol:%{org.apache.coyote.request.protocol}r JSON-Size:%{Content-Length}o Time:%T"
-               resolveHosts="false" /&gt;
-
-        &lt;!-- JSON Compression for Axis2 Responses --&gt;
-        &lt;Context&gt;
-          &lt;Valve className="org.apache.catalina.valves.rewrite.RewriteValve" /&gt;
-        &lt;/Context&gt;
+               pattern="%h %l %u %t &quot;%r&quot; %s %b %D Protocol:%H JSON-Size:%{Content-Length}o Time:%T" /&gt;
 
       &lt;/Host&gt;
     &lt;/Engine&gt;
@@ -143,13 +139,14 @@
 
 <table border="1">
 <tr><th>Parameter</th><th>Tomcat 11 Value</th><th>Optimization Purpose</th><th>WildFly Equivalent</th></tr>
-<tr><td><strong>http2MaxConcurrentStreams</strong></td><td>200</td><td>High multiplexing for large JSON APIs</td><td>http2-max-concurrent-streams="200"</td></tr>
-<tr><td><strong>http2InitialWindowSize</strong></td><td>2097152 (2MB)</td><td>Avoids flow-control round trips on large responses</td><td>http2-initial-window-size="2097152"</td></tr>
-<tr><td><strong>http2MaxFrameSize</strong></td><td>32768 (32KB)</td><td>Optimal for JSON streaming</td><td>http2-max-frame-size="32768"</td></tr>
-<tr><td><strong>maxPostSize</strong></td><td>104857600 (100MB)</td><td>Large JSON payload support</td><td>max-post-size="104857600"</td></tr>
-<tr><td><strong>connectionTimeout</strong></td><td>300000 (5min)</td><td>Large payload processing time</td><td>no-request-timeout="300000"</td></tr>
-<tr><td><strong>http2EnablePush</strong></td><td>false</td><td>Disabled for web services</td><td>http2-enable-push="false"</td></tr>
+<tr><td><strong>UpgradeProtocol maxConcurrentStreams</strong></td><td>200</td><td>High multiplexing for large JSON APIs</td><td>http2-max-concurrent-streams="200"</td></tr>
+<tr><td><strong>UpgradeProtocol initialWindowSize</strong></td><td>2097152 (2MB)</td><td>Avoids flow-control round trips on large responses</td><td>http2-initial-window-size="2097152"</td></tr>
+<tr><td><strong>Connector maxPostSize</strong></td><td>104857600 (100MB)</td><td>Large JSON payload support</td><td>max-post-size="104857600"</td></tr>
+<tr><td><strong>Connector connectionTimeout</strong></td><td>300000 (5min)</td><td>Large payload processing time</td><td>no-request-timeout="300000"</td></tr>
 </table>
+
+<p>Tomcat does not expose a setting for the HTTP/2 maximum frame size, and Tomcat 11 does not
+support HTTP/2 server push, which web services do not need.</p>
 
 <h2>Axis2 Integration Configuration</h2>
 
@@ -184,8 +181,7 @@
 
         &lt;!-- Coordination with Tomcat 11 HTTP/2 --&gt;
         &lt;parameter name="maxConcurrentStreams"&gt;200&lt;/parameter&gt;              &lt;!-- Matches Tomcat --&gt;
-        &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt;             &lt;!-- 2MB: avoids flow-control round trips --&gt;
-        &lt;parameter name="maxFrameSize"&gt;32768&lt;/parameter&gt;                    &lt;!-- 32KB - matches Tomcat --&gt;
+        &lt;parameter name="initialWindowSize"&gt;2097152&lt;/parameter&gt;             &lt;!-- 2MB (default 64KB): avoids flow-control round trips --&gt;
         &lt;parameter name="maxConnectionsTotal"&gt;50&lt;/parameter&gt;
         &lt;parameter name="maxConnectionsPerRoute"&gt;10&lt;/parameter&gt;
         &lt;parameter name="connectionTimeout"&gt;60000&lt;/parameter&gt;               &lt;!-- 1 minute connection --&gt;
@@ -203,33 +199,39 @@
 
 <h3>1. SSL/TLS Certificate Setup</h3>
 
-<p><strong>Tomcat 11 simplifies SSL setup compared to WildFly</strong>:</p>
+<p><strong>Tomcat 11 simplifies SSL setup compared to WildFly</strong>. Tomcat 11 removed the
+APR/native connector; TLS is configured on the NIO connector with a nested
+<code>SSLHostConfig</code>, using either JSSE or OpenSSL.</p>
 
-<h4>Option A: APR/Native SSL (Recommended for Production)</h4>
+<h4>Option A: PEM Certificate Files (Recommended for Production)</h4>
 <pre>
-# Install Tomcat Native Library (Ubuntu/Debian)
-sudo apt-get install libtcnative-1 openssl-dev
-
-# Certificate configuration in server.xml
-SSLCertificateFile="/etc/ssl/certs/your-domain.crt"
-SSLCertificateKeyFile="/etc/ssl/private/your-domain.key"
-SSLCertificateChainFile="/etc/ssl/certs/chain.crt"
+&lt;SSLHostConfig protocols="TLSv1.2+TLSv1.3"&gt;
+    &lt;Certificate certificateFile="/etc/ssl/certs/your-domain.crt"
+                 certificateKeyFile="/etc/ssl/private/your-domain.key"
+                 certificateChainFile="/etc/ssl/certs/chain.crt"
+                 type="RSA" /&gt;
+&lt;/SSLHostConfig&gt;
 </pre>
 
 <h4>Option B: Java KeyStore SSL</h4>
 <pre>
 # Generate keystore
-keytool -genkeypair -keyalg RSA -keysize 2048 -keystore tomcat-keystore.jks \
-        -alias tomcat -dname "CN=your-domain.com,OU=IT,O=YourOrg,C=US"
+keytool -genkeypair -keyalg RSA -keysize 2048 -keystore tomcat-keystore.p12 \
+        -storetype PKCS12 -alias tomcat -dname "CN=your-domain.com,OU=IT,O=YourOrg,C=US"
 
-# Server.xml configuration
+# server.xml configuration
 &lt;Connector port="8443"
            protocol="org.apache.coyote.http11.Http11NioProtocol"
            maxPostSize="104857600"
-           SSLEnabled="true"
-           keystoreFile="/path/to/tomcat-keystore.jks"
-           keystorePass="your-password"
-           keyAlias="tomcat" /&gt;
+           SSLEnabled="true"&gt;
+    &lt;UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" /&gt;
+    &lt;SSLHostConfig&gt;
+        &lt;Certificate certificateKeystoreFile="/path/to/tomcat-keystore.p12"
+                     certificateKeystorePassword="your-password"
+                     certificateKeyAlias="tomcat"
+                     type="RSA" /&gt;
+    &lt;/SSLHostConfig&gt;
+&lt;/Connector&gt;
 </pre>
 
 <h3>2. Memory Optimization for HTTP/2 + JSON Processing</h3>
@@ -242,14 +244,14 @@ export CATALINA_OPTS="$CATALINA_OPTS -XX:+UseG1GC"
 export CATALINA_OPTS="$CATALINA_OPTS -XX:MaxGCPauseMillis=200"
 export CATALINA_OPTS="$CATALINA_OPTS -XX:G1HeapRegionSize=16m"
 
-# HTTP/2 Connection Pool Optimization
+# Networking
 export CATALINA_OPTS="$CATALINA_OPTS -Djava.net.preferIPv6Addresses=false"
-export CATALINA_OPTS="$CATALINA_OPTS -Dorg.apache.coyote.http2.Http2Protocol.maxConcurrentStreams=200"
-
-# Enhanced Moshi H2 Optimization
-export CATALINA_OPTS="$CATALINA_OPTS -Daxis2.json.moshi.h2.enabled=true"
-export CATALINA_OPTS="$CATALINA_OPTS -Daxis2.json.moshi.h2.async.threshold=1048576"
 </pre>
+
+<p>HTTP/2 stream limits are set on the <code>UpgradeProtocol</code> element in server.xml, and
+the Enhanced Moshi H2 builder is selected and tuned in axis2.xml (for example the
+<code>moshiAsyncProcessingThreshold</code> parameter); neither is controlled by system
+properties.</p>
 
 <h3>3. Production Monitoring Configuration</h3>
 
@@ -260,11 +262,7 @@ export CATALINA_OPTS="$CATALINA_OPTS -Daxis2.json.moshi.h2.async.threshold=10485
        directory="logs"
        prefix="http2_performance"
        suffix=".log"
-       pattern="%h %u %t &quot;%r&quot; %s %b %D Protocol:%{org.apache.coyote.request.protocol}r
-                Streams:%{http2.concurrent.streams}r
-                JSON-Size:%{Content-Length}o
-                Moshi-Processing:%{X-Moshi-H2-Processing-Time}o
-                Compression:%{Accept-Encoding}i" /&gt;
+       pattern="%h %u %t &quot;%r&quot; %s %b %D Protocol:%H JSON-Size:%{Content-Length}o Compression:%{Accept-Encoding}i" /&gt;
 </pre>
 
 <h2>Production Deployment Guide</h2>
@@ -357,8 +355,7 @@ tail -f /opt/tomcat11/logs/http2_performance.log
 
 # Key metrics to watch:
 # - Protocol: HTTP/2.0
-# - Concurrent streams usage
-# - JSON processing times
+# - Request processing times (%D)
 # - Compression ratios
 </pre>
 

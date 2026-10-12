@@ -20,6 +20,6 @@
 About
 -----
 
-This plugin takes as input a one or more XSD schemas and generates Axis2 ADB Java Bean classes.
+This plugin takes as input one or more XSD schemas and generates Axis2 ADB Java Bean classes.
 
 The full description of goals is available [here](plugin-info.html).

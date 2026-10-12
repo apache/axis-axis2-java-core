@@ -13,20 +13,20 @@ is tested using generated client stubs.
 Pre-Requisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
 Building the Service
 ====================
 
-Type "ant generate.service" from Axis2_HOME/samples/quickstartxmlbeans
+Type "ant generate.service" from Axis2_HOME/modules/samples/quickstartxmlbeans
 directory. Then deploy the 
-AXIS2_HOME/samples/quickstartxmlbeans/build/service/build/lib/StockQuoteService.aar
+AXIS2_HOME/modules/samples/quickstartxmlbeans/build/service/build/lib/StockQuoteService.aar
 
 
 Running the Client
 ==================
 
-type ant run.client in the AXIS2_HOME/samples/quickstartxmlbeans directory
+type ant run.client in the AXIS2_HOME/modules/samples/quickstartxmlbeans directory
 
 You will get following response
 [java] 42.0
@@ -36,5 +36,5 @@ You will get following response
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have
+Please contact java-user list (java-user@axis.apache.org) if you have
 any trouble running the sample.

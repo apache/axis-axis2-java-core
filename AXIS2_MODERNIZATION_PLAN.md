@@ -1,7 +1,7 @@
 ---
 type: architecture
 created: 2026-04-06
-updated: 2026-05-16
+updated: 2026-10-12
 status: Active
 ---
 
@@ -341,7 +341,7 @@ generic type erasure.
 
 - `modules/json/src/org/apache/axis2/json/rpc/PaginatedResponse.java`
 - `modules/json/src/org/apache/axis2/json/rpc/PaginationRequest.java`
-- `modules/json/test/org/apache/axis2/json/rpc/PaginatedResponseTest.java` (22 tests)
+- `modules/json/test/org/apache/axis2/json/rpc/PaginatedResponseTest.java` (28 tests)
 
 ### Dependency
 
@@ -456,9 +456,9 @@ Phase 1 (starter), Phase 2 (REST paths in OpenAPI spec).
 Standalone stdio JAR (`modules/mcp-bridge/`) that reads `/openapi-mcp.json` at startup
 and implements MCP protocol (initialize, tools/list, tools/call). Forwards calls to
 Axis2 endpoints over HTTPS. Supports both mTLS (Tomcat) and JWT (WildFly) auth.
-No MCP SDK dependency — JSON-RPC 2.0 implemented directly with Jackson + Java stdlib
-HttpClient (Apache 2.0 license constraint). End-to-end validated with Claude Desktop.
-See `mcp-architecture.md` for full details.
+No MCP SDK dependency — JSON-RPC 2.0 implemented directly with Jackson + Apache
+HttpClient 5 (Apache 2.0 license constraint). End-to-end validated with Claude Desktop.
+See `src/site/markdown/docs/mcp-architecture.md` for full details.
 
 ### Dependency
 Phase 2 (requires `/openapi-mcp.json` endpoint — **satisfied**).
@@ -546,7 +546,7 @@ When a service method takes a single POJO parameter (the common case), the POJO'
 fields serialize as standard JSON inside the `arg0` wrapper. The POJO content is
 idiomatic JSON; the wrapping layers are the SOAP-era artifact.
 
-### What Axis2 2.0.1 provides without migration
+### What Axis2 2.0.x provides without migration
 
 | Consumer | Protocol | Compliance |
 |----------|----------|------------|

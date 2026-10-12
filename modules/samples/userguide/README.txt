@@ -7,14 +7,15 @@ more specifically the DII (Dynamic Invocation Interface) and XML-based server se
 The sample explains how to write a Web service and Web service client with 
 Apache Axis2 using XML based client APIs (Axis2's Primary APIs).
 
-For new applications, json-springboot-userguide.html brings Axis2 into 
-modern API's and contemporary servers. 
+For new applications, the JSON and Spring Boot user's guide
+(https://axis.apache.org/axis2/java/core/docs/json-springboot-userguide.html)
+brings Axis2 into modern APIs and contemporary servers.
 
 Introduction
 ============
 
 The following sample clients are located at 
-AXIS2_HOME/samples/userguide/samples/userguide/src/userguide/clients directory. 
+AXIS2_HOME/modules/samples/userguide/src/userguide/clients directory. 
 
 EchoBlockingClient.java -- Demonstrates the request-response, blocking client which 
 is written using Axis2's primary APIs.
@@ -28,7 +29,7 @@ which is written using Axis2's primary APIs.
 EchoNonBlockingDualClient.java -- Demonstrates the request-response, non-blocking invocation 
 using two transport connections and is written using Axis2's primary APIs.
 
-MailClient.java -- Represents a client for invoking 
+MailClient.java -- Represents a client for invoking a Web service over the mail transport
 
 PingClient.java -- Represents a simple one-way client which is written using Axis2's primary APIs.
 
@@ -36,24 +37,24 @@ RESTClient.java -- Represents a client for invoking a REST Web service
 
 TCPClient.java -- Demonstrates a client for invoking a Web service using TCP
 
-example1, example2 and example3 directories inside Axis2_home/samples/userguide/src/userguide 
+example1, example2 and example3 directories inside Axis2_home/modules/samples/userguide/src/userguide 
 contain the Web services which are invoked by the above clients.
 
 
 Pre-Requisites
 ==============
 
-Apache Ant 1.8.0 or later
+Apache Ant 1.10 or later
 
 Building the Service
 ====================
-* Type "ant generate.module" from Axis2_HOME/samples/userguide to generate the logging module.
+* Type "ant generate.module" from Axis2_HOME/modules/samples/userguide to generate the logging module.
 * Add the logging phase to the ../../conf/axis2.xml. For more details please refer to the 
-  http://ws.apache.org/axis2/1_2/modules.html
-* Type "ant generate.service" or just "ant" from Axis2_HOME/samples/userguide
+  https://axis.apache.org/axis2/java/core/docs/modules.html
+* Type "ant generate.service" or just "ant" from Axis2_HOME/modules/samples/userguide
 * Then go to AXIS2_HOME/bin directory and run either axis2server.bat or axis2server.sh depending on your platform.
 
-Alternatively you can copy the the generated service archives in to a servlet container.
+Alternatively you can copy the generated service archives in to a servlet container.
 
 If you go to http://localhost:8080/axis2/, you should see MyService, MyServiceWithModule are deployed. 
 
@@ -61,7 +62,7 @@ If you go to http://localhost:8080/axis2/, you should see MyService, MyServiceWi
 Running the Clients
 ===================
 
-Type the following ant commands from Axis2_HOME/samples/userguide to run the clients one by one.
+Type the following ant commands from Axis2_HOME/modules/samples/userguide to run the clients one by one.
 
  * "ant run.client.blocking"
    This invokes MyService through a request-response, blocking client.   
@@ -87,4 +88,4 @@ and run the client. (i.e. delete services created from previous samples.)
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.

@@ -24,10 +24,10 @@
 <meta name="generator" content=
 "HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
 <meta http-equiv="content-type" content="" />
-<title>Maven2 Java2WSDL Plug-in Guide</title>
+<title>Maven Java2WSDL Plugin Guide</title>
 </head>
 <body>
-<h1>Maven2 Java2WSDL Plug-in Guide</h1>
+<h1>Maven Java2WSDL Plugin Guide</h1>
 <h2>Introduction</h2>
 <p>This plugin takes as input a Java class and generates a WSDL,
 which describes a Web service for invoking the classes methods.</p>
@@ -39,7 +39,7 @@ which describes a Web service for invoking the classes methods.</p>
 for invoking the classes methods as a Web service.</li>
 </ul>
 <p>To run the plugin, add the following section to your <a href=
-"http://maven.apache.org/guides/introduction/introduction-to-the-pom.html">
+"https://maven.apache.org/guides/introduction/introduction-to-the-pom.html">
 POM</a> (Project Object Model):</p>
 <pre>
   &lt;build&gt;
@@ -63,15 +63,15 @@ POM</a> (Project Object Model):</p>
   
 </pre>
 <p>The plugin will be invoked automatically in the
-generate-resources phase. You can also invoke it directly from the
+process-classes phase. You can also invoke it directly from the
 command line by running the command:</p>
 <pre>
-mvn axis2-java2wsdl:java2wsdl
+mvn org.apache.axis2:axis2-java2wsdl-maven-plugin:java2wsdl
 </pre>
 <h3>The Java2WSDL Goal</h3>
 <p>By default, the plugin reads the given Java class and creates a
 file
-<strong>target/generated-resources/java2wsdl/service.wsdl
+<strong>target/generated-resources/service.wsdl
 </strong>.
 The Java class is given by the configuration element
 <strong>className</strong> above.</p>
@@ -100,7 +100,7 @@ transformed into a WSDL</td>
 <td>outputFileName</td>
 <td>${axis2.java2wsdl.outputFileName}</td>
 <td>Path of the generated service file.</td>
-<td></td>
+<td>${project.build.directory}/generated-resources/service.wsdl</td>
 </tr>
 <tr>
 <td>schemaTargetNamespace</td>
@@ -132,6 +132,72 @@ namespace.</td>
 <td>${axis2.java2wsdl.targetNamespacePrefix}</td>
 <td>Prefix, which is being associated with the target
 namespace</td>
+<td></td>
+</tr>
+<tr>
+<td>style</td>
+<td>${axis2.java2wsdl.style}</td>
+<td>Style for the WSDL.</td>
+<td></td>
+</tr>
+<tr>
+<td>use</td>
+<td>${axis2.java2wsdl.use}</td>
+<td>Use for the WSDL.</td>
+<td></td>
+</tr>
+<tr>
+<td>wsdlVersion</td>
+<td>${axis2.java2wsdl.wsdlVersion}</td>
+<td>Version of the generated WSDL.</td>
+<td></td>
+</tr>
+<tr>
+<td>nsGenClassName</td>
+<td>${axis2.java2wsdl.nsGenClassName}</td>
+<td>Namespace generator class.</td>
+<td></td>
+</tr>
+<tr>
+<td>schemaGenClassName</td>
+<td>${axis2.java2wsdl.schemaGenClassName}</td>
+<td>Schema generator class.</td>
+<td></td>
+</tr>
+<tr>
+<td>locationUri</td>
+<td>${axis2.java2wsdl.locationUri}</td>
+<td>Location URI in the WSDL.</td>
+<td></td>
+</tr>
+<tr>
+<td>attrFormDefault</td>
+<td>${axis2.java2wsdl.attrFormDefault}</td>
+<td>attributeFormDefault setting for the schema.</td>
+<td></td>
+</tr>
+<tr>
+<td>elementFormDefault</td>
+<td>${axis2.java2wsdl.elementFormDefault}</td>
+<td>elementFormDefault setting for the schema.</td>
+<td></td>
+</tr>
+<tr>
+<td>docLitBare</td>
+<td>${axis2.java2wsdl.docLitBare}</td>
+<td>Switch on the Doc/Lit/Bare style schema.</td>
+<td></td>
+</tr>
+<tr>
+<td>extraClasses</td>
+<td>${axis2.java2wsdl.extraClasses}</td>
+<td>Additional classes for which schema is generated.</td>
+<td></td>
+</tr>
+<tr>
+<td>package2Namespace</td>
+<td>${axis2.java2wsdl.package2Namespace}</td>
+<td>Explicit namespaces for packages.</td>
 <td></td>
 </tr>
 </tbody>

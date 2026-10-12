@@ -18,12 +18,12 @@ methods just as Java object method invocation.
 Prerequisites
 ==============
 
-Apache Ant 1.6.2 or later
+Apache Ant 1.10 or later
 
 Building the Service
 ====================
 
-Type $ant from Axis2_HOME/samples/pojoguide
+Type $ant from Axis2_HOME/modules/samples/pojoguide
 
 
 Running the Client
@@ -34,4 +34,4 @@ Type $ant rpc.client
 
 Help
 ====
-Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+Please contact java-user list (java-user@axis.apache.org) if you have any trouble running the sample.

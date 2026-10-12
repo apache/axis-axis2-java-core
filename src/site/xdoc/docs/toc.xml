@@ -175,9 +175,9 @@ Support</a></li>
     </li>
     <li><strong>23.5 <a href="mcp-architecture.html">MCP Architecture — Multi-Protocol Design</a></strong>
     <ul>
-        <li><a href="mcp-architecture.html#Current_State_.282026-04-09.29">Current State</a></li>
-        <li><a href="mcp-architecture.html#Track_A_remaining">Track A: OpenAPI-Driven MCP Bridge</a></li>
-        <li><a href="mcp-architecture.html#Track_B">Track B: Native MCP Transport</a></li>
+        <li><a href="mcp-architecture.html#Current_State">Current State</a></li>
+        <li><a href="mcp-architecture.html#Track_A_.E2.80.94_OpenAPI-Driven_MCP_Bridge">Track A: OpenAPI-Driven MCP Bridge</a></li>
+        <li><a href="mcp-architecture.html#Track_B_.E2.80.94_Native_MCP_Transport_.28axis2-transport-mcp.29">Track B: Native MCP Transport</a></li>
         <li><a href="mcp-architecture.html#Security_Architecture">Security Architecture (mTLS + X.509)</a></li>
         <li><a href="mcp-architecture.html#Key_Design_Decisions">Key Design Decisions</a></li>
     </ul>
@@ -222,9 +222,12 @@ Tools</a></li>
 <li>25.1 <a href=
 "../tools/CodegenToolReference.html">Code Generator Tool - Command Line and Ant
 Task</a></li>
-<li>25.2 <a href="../tools/maven-plugins/maven-aar-plugin.html">AAR Maven2 Plug-in</a></li>
-<li>25.6 <a href="../tools/maven-plugins/maven-java2wsdl-plugin.html">Java2WSDL Maven2 Plug-in</a></li>
-<li>25.7 <a href="../tools/maven-plugins/axis2-wsdl2code-maven-plugin/index.html">WSDL2Code Maven2 Plug-in</a></li>
+<li>25.2 <a href="../tools/maven-plugins/maven-aar-plugin.html">AAR Maven Plug-in</a></li>
+<li>25.3 MAR Maven Plug-in (see <a href="../tools/index.html">Tools/Plug-ins</a>)</li>
+<li>25.4 <a href="../tools/maven-plugins/maven-java2wsdl-plugin.html">Java2WSDL Maven Plug-in</a></li>
+<li>25.5 <a href="../tools/maven-plugins/axis2-wsdl2code-maven-plugin/index.html">WSDL2Code Maven Plug-in</a></li>
+<li>25.6 <a href="../tools/maven-plugins/axis2-repo-maven-plugin/index.html">Repository Maven Plug-in</a></li>
+<li>25.7 <a href="../tools/maven-plugins/axis2-xsd2java-maven-plugin/index.html">XSD2Java Maven Plug-in</a></li>
 </ul>
 </li>
 <li><a href="migration.html">Migration Guide

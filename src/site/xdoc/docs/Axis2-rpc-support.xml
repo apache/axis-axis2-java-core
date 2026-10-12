@@ -184,10 +184,9 @@ in bold.</p>
                 XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
                 XmlSchemaParticle particle = cmplxType.getParticle();
                 if (particle instanceof XmlSchemaSequence) {
-                    XmlSchemaObjectCollection items =
+                    List&lt;XmlSchemaSequenceMember&gt; items =
                             ((XmlSchemaSequence) particle).getItems();
-                    for (Iterator i = items.getIterator(); i.hasNext();) {
-                        Object item = i.next();
+                    for (XmlSchemaSequenceMember item : items) {
                         if (item instanceof XmlSchemaElement) {
                            XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
                             XmlSchemaType eltSchemaType = xmlSchemaElement.getSchemaType();

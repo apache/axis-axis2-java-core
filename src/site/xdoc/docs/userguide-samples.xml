@@ -49,8 +49,6 @@ distributions</a></li>
 Distribution</a></li>
 <li><a href="userguide.html#hierarchy">Axis2.war Directory
 Hierarchy</a></li>
-<li><a href="userguide.html#docs">Axis2 Documents
-Distribution</a></li>
 <li><a href="userguide.html#clients">Axis2 and clients</a></li>
 </ul>
 </li>
@@ -112,7 +110,7 @@ Samples</strong></a></li>
 Study</a></li>
 </ul>
 <a name="clients" id="clients"></a>
-<h2>Clients (in AXIS2_HOME/samples/userguide/src/clients):</h2>
+<h2>Clients (in AXIS2_HOME/modules/samples/userguide/src/userguide/clients):</h2>
 <p><strong>EchoBlockingClient.java</strong>: A basic example of the
 send/receive MEP.</p>
 <p><strong>EchoBlockingDualClient.java</strong>: Specifies that the
@@ -141,9 +139,10 @@ object.</p>
 <p><strong>TCPClient.java</strong>: Provides an example of using
 the TCP transport rather than HTTP.</p>
 <a name="services" id="services"></a>
-<h2>Services (in AXIS2_HOME/samples/userguide):</h2>
-<p><strong>groovyService.aar</strong>: Demonstrates how to use
-Groovy classes in the processing of SOAP messages.</p>
+<h2>Services (in AXIS2_HOME/modules/samples/userguide):</h2>
+<p>Run <code>ant generate.service</code> in this directory to build the
+following services; they are copied to the repository/services directory
+with a <code>sample-</code> prefix.</p>
 <p><strong>MyService.aar</strong>: Provides simple "echo" and
 "ping" operations.</p>
 <p><strong>MyServiceWithModule.aar</strong>: Same as above, but
@@ -151,7 +150,7 @@ demonstrates how to engage a module.</p>
 <p><strong>WsaMappingService.aar</strong>: Demonstrates the mapping
 of WS-Addressing actions.</p>
 <a name="wsdl" id="wsdl"></a>
-<h2>Sample WSDL files (in AXIS2_HOME/samples):</h2>
+<h2>Sample WSDL files (in AXIS2_HOME/modules/samples/wsdl):</h2>
 <p><strong>Axis2SampleDocLit.wsdl</strong>: Demonstrates the use of
 the Document/Literal WSDL pattern, rather than RPC.</p>
 <p><strong>perf.wsdl</strong>: Demonstrates the use of array values
@@ -159,12 +158,14 @@ as input values.</p>
 <a name="json" id="json"></a>
 <h2>Sample webapp that uses JSON, Spring Boot, Spring Security, and Moshi</h2>
 <p>A complete Axis2 webapp via Maven that demonstrates JSON and Moshi securely with 
-Spring Boot is located in the <b>"modules/samples/userguide/src/springbootdemo"</b> directory of <a
-href="../download.cgi">Axis2 standard binary
-distribution</a>.</p>
+Spring Boot is located in the <b>"modules/samples/userguide/src/userguide/springbootdemo"</b> directory of <a
+href="../download.html">Axis2 standard binary
+distribution</a>. Container-specific variants of the same application are in
+<b>"springbootdemo-tomcat11"</b> (Apache Tomcat 11) and <b>"springbootdemo-wildfly"</b>
+(WildFly) next to it; each has a README with build, deploy and test instructions.</p>
 <a name="others" id="others"></a>
 <h2>Other samples</h2>
-<h3>In AXIS2_HOME/samples Directory:</h3>
+<h3>In AXIS2_HOME/modules/samples Directory:</h3>
 <!--<p><strong>amazonqs</strong>: Uses the Amazon Queue Service to store and
 retrieve String objects.</p>-->
 <p><strong>faulthandling</strong>: Demonstrates the use of SOAP
@@ -172,16 +173,14 @@ faults and their definitions in WSDL enabling exception processing
 in the client.</p>
 <!--<p><strong>googlesearch</strong>: Creates a GUI-based application making use
 of Google Web Services asynchronously.</p>-->
-<p><strong>googleSpellcheck</strong>: Demonstrates both synchronous
-and non-synchronous use of the Google Web Service in a GUI.</p>
 <p><strong>mtom</strong>: Demonstrates the use of MTOM and SOAP
 with Attachments to send binary files to a service.</p>
-<p><strong>saopwithattachments</strong>: Demonstrates the
+<p><strong>soapwithattachments</strong>: Demonstrates the
 capabilities and power of SOAP with Attachment support and the
 Attachment API of Axis2.</p>
 <p><strong>pojo</strong>: Example of a POJO (Plain Old Java Object)
 Web service. It shows how to expose the methods of a Java class as
-a Web service using Apache Aixs2.</p>
+a Web service using Apache Axis2.</p>
 <p><strong>servicelifecycle</strong>: Demonstrates the usage of a
 service life cycle and a bit of session management. The main idea
 is to show where and how to use the service life cycle interface
@@ -191,8 +190,24 @@ use of Service Groups.</p>-->
 <!-- databinding sample removed: depended on Castor (obsolete, unmaintained since 2016) -->
 <p><strong>version</strong>: A very simple service that simply
 outputs the Apache Axis2 version.</p>
-<p><strong>yahoorestearch</strong>: A complete example of the use
-of a REST service rather than a SOAP service.</p>
+<p><strong>quickstart, quickstartadb, quickstartaxiom,
+quickstartxmlbeans</strong>: The source code for the <a
+href="quickstartguide.html">Quick Start Guide</a>, building the same
+StockQuoteService with POJOs, ADB, AXIOM and XMLBeans.</p>
+<p><strong>pojoguide, pojoguidespring</strong>: The source code for the <a
+href="pojoguide.html">POJO Guide</a>, including a Spring-based POJO
+service.</p>
+<p><strong>json</strong>: A JSON service using the native JSON support
+described in the <a href="json_support_gson.html">JSON support
+documentation</a>.</p>
+<p><strong>jaxws-addressbook, jaxws-calculator, jaxws-interop,
+jaxws-samples, jaxws-version, java_first_jaxws</strong>: JAX-WS samples,
+covering JAXB-based services, code-first and WSDL-first development and
+deployment in a servlet container.</p>
+<p><strong>swagger-server</strong>: A REST service documented with
+OpenAPI; see the <a href="openapi-rest-userguide.html">OpenAPI REST
+Services Guide</a>.</p>
+<p><strong>transport</strong>: HTTPS and JMS transport samples.</p>
 <p><strong>See Next Section</strong> - <a href=
 "userguide-forfurtherstudy.html">For Further Study</a></p>
 </body>

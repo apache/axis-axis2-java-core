@@ -39,9 +39,7 @@ WildFly equivalent, see the
 <a href="json-springboot-userguide.html">WildFly guide</a>.
 For the Spring Boot Starter (one-dependency setup), see the
 <a href="spring-boot-starter.html">Starter guide</a>.</p>
-<p>More docs concerning Axis2 and JSON can be found in the <a href="
-json_support_gson.html">Pure JSON Support documentation</a> and <a href="
-json_gson_user_guide.html">JSON User Guide</a>
+<p>More docs concerning Axis2 and JSON can be found in the <a href="json_support_gson.html">Pure JSON Support documentation</a> and <a href="json_gson_user_guide.html">JSON User Guide</a>
 </p>
 <a name="Introduction"></a>
 
@@ -49,7 +47,7 @@ json_gson_user_guide.html">JSON User Guide</a>
 
 <p>This user guide is written based on the Axis2 Standard Binary
 Distribution. The Standard Binary Distribution can be directly <a
-href="../download.cgi">downloaded</a> or built using
+href="../download.html">downloaded</a> or built using
 the Source Distribution. If
 you choose the latter, then the <a href="installationguide.html">Installation
 Guide</a> will instruct you on how to build Axis2 Standard Binary
@@ -64,7 +62,7 @@ The Axis developer community welcomes your participation.</p>
 
 <p>Let us know what you think! Send your feedback to "<a
 href="mailto:java-user@axis.apache.org?subject=[Axis2]">java-user@axis.apache.org</a>".
-(Subscription details are available on the <a href="../mail-lists.html">Axis2 site</a>.) Kindly
+(Subscription details are available on the <a href="../mailing-lists.html">Axis2 site</a>.) Kindly
 prefix the subject of the mail with [Axis2].</p>
 
 <h2>Differences from the WildFly 32 Guide</h2>
@@ -108,14 +106,14 @@ which targets WildFly 32. The following table summarises all differences:</p>
 </table>
 
 <p>All sample source code for this guide is located in
-the <b>"modules/samples/userguide/src/springbootdemo-tomcat11"</b> directory of <a
-href="../download.cgi">Axis2 standard binary distribution</a>.</p>
+the <b>"modules/samples/userguide/src/userguide/springbootdemo-tomcat11"</b> directory of <a
+href="../download.html">Axis2 standard binary distribution</a>.</p>
 
 <h2>See Also: Axis2/C 2.0.0</h2>
 
 <p>
 <a href="https://github.com/apache/axis-axis2-c-core/blob/master/docs/userguide/json-httpd-h2-userguide.md">Axis2/C 2.0.0</a>
-is in release vote and expected to ship around the same time as Axis2/Java 2.0.1. It provides
+provides
 equivalent services (BigDataH2, Login, TestWS) implemented in native C with Apache httpd and mod_h2.
 For most Java users this is of no interest. For those who need maximum throughput or minimal memory
 footprint, native C achieves 240MB peak for a 50MB JSON payload versus JVM heap overhead, and
@@ -214,8 +212,8 @@ new JSON and REST based Web Service using Axis2, and how to invoke a Web Service
 </p>
 
 <p>All the sample code mentioned in this guide is located in
-the <b>"modules/samples/userguide/src/springbootdemo-tomcat11"</b> directory of <a
-href="../download.cgi">Axis2 standard binary
+the <b>"modules/samples/userguide/src/userguide/springbootdemo-tomcat11"</b> directory of <a
+href="../download.html">Axis2 standard binary
 distribution</a>.</p>
 <p>
 This guide supplies a pom.xml for building an exploded WAR with Spring Boot 3 -
@@ -358,9 +356,10 @@ handle JSON requests, this header behavior needs to be defined in the file
 WEB-INF/conf/axis2.xml.
 </p>
 <pre>
-    &lt;message name="requestMessage"&gt;
+    &lt;messageFormatters&gt;
         &lt;messageFormatter contentType="application/json"
                           class="org.apache.axis2.json.moshi.JsonFormatter"/&gt;
+    &lt;/messageFormatters&gt;
 </pre>
 <p>
 Other required classes for JSON in the axis2.xml file include JsonRpcMessageReceiver,
@@ -420,14 +419,14 @@ Invoking the client for a Test Service that validates a sample token can be done
 follows:
 </p>
 <pre>
-curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" -H "Content-Type: application/json" -X POST --data @test.dat http://localhost:8080/services/testws'
+curl -v -H "Authorization: Bearer 95104Rn2I2oEATfuI90N" -H "Content-Type: application/json" -X POST --data @test.dat http://localhost:8080/services/testws
 </pre>
 <p>
 Where the contents of test.dat are below. arg0 is a var name
 and is used by Axis2 as part of its reflection based code:
 </p>
 <pre>
-{"doTestws":[{"arg0":{"messagein":hello}}]}
+{"doTestws":[{"arg0":{"messagein":"hello"}}]}
 </pre>
 <p>
 Response, HTML encoded to prevent XSS. For the results with encoding see src/site/xdoc/docs/json-springboot-tomcat11-userguide.xml.

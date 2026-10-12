@@ -7,8 +7,9 @@ message-processing pipeline with pluggable transports (HTTP/HTTPS, JMS, TCP,
 local), a module system for cross-cutting concerns (WS-Security via Rampart,
 WS-Addressing), hot-deployment of service archives (AAR/MAR), and
 multi-protocol serving (JSON-RPC, REST/OpenAPI, MCP) from a single service
-deployment. It runs inside a Jakarta Servlet container (Tomcat, Jetty,
-WildFly) or embedded via Spring Boot.
+deployment. It runs inside a Jakarta Servlet container (tested on Tomcat 11
+and WildFly 32/41; Jetty 12 is used only by the test suite) or embedded
+via Spring Boot.
 
 ## Roles and Trust Levels
 
@@ -132,7 +133,7 @@ Axis2 exposes the following URL patterns from the servlet mapping:
 |-----------|---------|-------------|
 | **XML parsers** (AXIOM/StAX, DocumentBuilderFactory) | XXE, billion laughs, entity expansion DoS | DOCTYPE disallowed; external entities disabled; `DefaultEntityResolver` returns empty source |
 | **WSDL/XSD import resolution** (wsdl4j, xmlschema-core) | XXE in imported documents; SSRF via `file://`/`gopher://` schemes | `SecureWSDLLocator` pre-validates the client-side path with a hardened SAX parser (HTTP/HTTPS only, 10MB default, connect/read timeouts, relative-path SSRF bypass blocked); `HardenedWSDLLocator` screens the file, archive, classpath and catalog paths, refusing a DOCTYPE without restricting where a document may be loaded from |
-| **JSON parser** (Gson) | Deep nesting stack exhaustion, large payload DoS | Fuzz-tested (1.7M+ iterations); Gson nesting limits; `jsonMaxRequestSize` bounds the body for every JSON builder |
+| **JSON parser** (Gson, Moshi, and their HTTP/2 variants) | Deep nesting stack exhaustion, large payload DoS | Gson path fuzz-tested (1.7M+ iterations of the 45M+ total in item 8; Moshi is not fuzzed); Gson nesting limits; `jsonMaxRequestSize` bounds the body for every JSON builder |
 | **JSON-RPC dispatch** | Method name injection; unexpected operation invocation | Method names validated against deployed operations; unknown methods return fault |
 | **Multipart/file upload** (commons-fileupload2) | Unbounded file count DoS (CVE-2023-24998 pattern); unbounded body size; temp-file accumulation | commons-fileupload2 enforces the file count limit; `multipartMaxRequestSize` / `multipartMaxFileSize` bound the body; temp files are deleted immediately for form fields and tracked to collection for file parts |
 | **Form-urlencoded builder** | Unbounded body read into an in-memory map | `formUrlEncodedMaxRequestSize` bounds the read; the stream fails rather than truncating |
@@ -355,8 +356,8 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
    defaults to `false`.
 
 8. **Fuzz testing:** Jazzer-based fuzzers cover XML, JSON, HTTP header,
-   and URL parsers. 45M+ iterations with zero crashes or security
-   findings. See `src/site/xdoc/docs/OSS-FUZZ.md`. Axis2/C has an
+   and URL parsers. 45M+ iterations in total (1.7M of them on the Gson
+   JSON parser) with zero crashes or security findings. See `src/site/xdoc/docs/OSS-FUZZ.md`. Axis2/C has an
    active OSS-Fuzz integration.
 
 9. **WS-Addressing response endpoints (2.0.2):** A non-anonymous

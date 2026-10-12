@@ -59,9 +59,19 @@ This tutorial explains how to write a simple CORBA service and how to make it av
 
 <h3>Prerequisites</h3>
 <ul>
-<li>Sun JDK version 5.0 or higher</li>
+<li>OpenJDK 17 or later</li>
 <li>Latest version of Axis2 with Axis2 CORBA module</li>
+<li>A CORBA implementation providing an ORB, an IDL compiler and a naming
+service. The JDK's own CORBA support (<tt>idlj</tt>, <tt>tnameserv</tt> and the
+<tt>org.omg.*</tt> packages) was removed in Java 11, so on Java 17 these must
+come from a separate ORB such as Apache Yoko (the module's default) or
+JacORB.</li>
 </ul>
+
+<p><strong>Note:</strong> this tutorial was written for older JDKs that bundled
+<tt>idlj</tt> and <tt>tnameserv</tt>. On Java 17 and later, use the equivalent
+IDL compiler and naming service of your ORB and put its jars on the class
+path. These steps have not been re-tested with Axis2 2.x.</p>
 
 <h3>Creating the IDL file</h3>
 The Interface Definition Language (IDL) is used to describe the interface to a CORBA object. An IDL file can then be used to generate the source code for the CORBA server.
@@ -92,11 +102,12 @@ module example
 </pre>
 
 <h3>Creating the CORBA server</h3>
-Open a console window and type the following command. (Make sure JAVA_HOME/bin is included to the PATH environment variable)
+Open a console window and run the IDL compiler of your ORB. With JDKs before
+Java 11, which bundled <tt>idlj</tt>, the command was:
 
 <pre>idlj -fall calculator.idl</pre>
 
-idlj generates several classes needed for CORBA servers and client. Typically, idlj command will generate the following file structure.
+The IDL compiler generates several classes needed for CORBA servers and client. Typically, idlj command will generate the following file structure.
 
 <pre>
 |
@@ -178,7 +189,7 @@ Now we are ready to create a CORBA web service using the Axis2 CORBA module. Fir
 <br /><br />
 1. Make sure axis2-corba-{version}.jar is available in AXIS2_HOME/lib directory.
 <br /><br />
-2. Download latest Apache Yoko binary distribution form http://cwiki.apache.org/YOKO/download.html. Extract the downloaded archive to a temporary directory and copy yoko-core-{version}.jar and yoko-spec-corba{version}.jar to AXIS2_HOME/lib directory. (Axis2 CORBA module can also work with other CORBA implementations. Refer 'Additional Configuration Details' section for more information.)
+2. Copy the jars of your CORBA implementation to the AXIS2_HOME/lib directory. The module defaults to Apache Yoko (yoko-core and yoko-spec-corba jars); Axis2 does not ship an ORB. (Axis2 CORBA module can also work with other CORBA implementations. Refer 'Additional Configuration Details' section for more information.)
 <br /><br />
 3. Add the following line to the &lt;axisconfig&gt; section of the axis2.xml file which is located in AXIS2_HOME/conf directory.<br />
 <pre>&lt;deployer extension=".xml" directory="corba" class="org.apache.axis2.corba.deployer.CorbaDeployer"/&gt;</pre>
@@ -200,7 +211,7 @@ Now, your Axis2 server is ready to deploy CORBA web services. Copy calculator.id
 
 Running the Example
 
-Start a console window and execute the following command to start the CORBA name service.
+Start a console window and start the CORBA naming service of your ORB on port 900. With JDKs before Java 11 the command was:
 <pre>tnameserv -ORBInitialPort 900</pre>
 
 Start an other console window and goto the directory where Server.java is located. Execute the following command to start the CORBA server.
@@ -219,25 +230,25 @@ The service definition file (eg. calculator.xml) supports the following paramete
 <th>Required</th>
 </tr>
 <tr>
-<td>idlFil</td>
+<td>idlFile</td>
 <td>Relative path to the IDL file</td>
 <td>Yes</td>
 </tr>
 <tr>
 <td>orbClass</td>
-<td>Overrides the default orb class name.</td>
+<td>Overrides the default orb class name.
+(Default: org.apache.yoko.orb.CORBA.ORB)</td>
 <td>No</td>
 </tr>
 <tr>
 <td>orbSingletonClass</td>
 <td>Overrides the default orb singleton class name.
-(Default: org.apache.yoko.orb.CORBA.ORB)</td>
+(Default: org.apache.yoko.orb.CORBA.ORBSingleton)</td>
 <td>No</td>
 </tr>
 <tr>
 <td>namingServiceUrl</td>
-<td>URL of the CORBA naming service
-(Default: org.apache.yoko.orb.CORBA.ORBSingleton)</td>
+<td>URL of the CORBA naming service</td>
 <td>No</td>
 </tr>
 <tr>
@@ -252,10 +263,12 @@ The service definition file (eg. calculator.xml) supports the following paramete
 </tr>
 <tr>
 <td>objectName</td>
-<td>Name of the CORBA service which used in the naming service
-Required if namingServiceUrl is present
-interfaceName
-Full name of the IDL interface used for the web service. (use :: as the separator between module and interface names)</td>
+<td>Name of the CORBA service which used in the naming service</td>
+<td>Required if namingServiceUrl is present</td>
+</tr>
+<tr>
+<td>interfaceName</td>
+<td>Full name of the IDL interface used for the web service. (use :: as the separator between module and interface names)</td>
 <td>Yes</td>
 </tr>
 </table>

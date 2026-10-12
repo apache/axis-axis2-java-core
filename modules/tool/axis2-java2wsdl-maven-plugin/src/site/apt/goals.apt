@@ -1,5 +1,5 @@
  ------
- Maven 2 Java2WSDL Plugin: configuration examples
+ Maven Java2WSDL Plugin: configuration examples
  ------
  Jochen Wiedmann 
  <jochen.wiedmann@gmail.com>
@@ -17,36 +17,36 @@ Goals
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.axis2.maven2</groupId>
+        <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
+        <configuration>
+          <className>com.foo.myservice.MyHandler</className>
+        </configuration>
         <executions>
           <execution>
             <goals>
               <goal>java2wsdl</goal>
             </goals>
           </execution>
-          <configuration>
-            <className>com.foo.myservice.MyHandler</className>
-          </configuration>
         </executions>
       </plugin>
     </plugins>
   </build>
 ------------------------
 
-  The plugin will be invoked automatically in the generate-resources
+  The plugin will be invoked automatically in the process-classes
   phase. You can also invoke it directly from the command line by
   running the command
 
 +--------
-  mvn java2wsdl:java2wsdl
+  mvn org.apache.axis2:axis2-java2wsdl-maven-plugin:java2wsdl
 +---------
 
 
 The Java2WSDL Goal
 
   By default, the plugin reads the given Java class and creates a
-  file <<<target/generated-resources/java2wsdl/service.xml>>>. The
+  file <<<target/generated-resources/service.wsdl>>>. The
   Java class is given by the configuration element <<<className>>>
   above.
 

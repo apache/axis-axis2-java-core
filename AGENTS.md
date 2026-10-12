@@ -69,8 +69,13 @@ deserialization on network input. Scan for any remaining paths where
 input, ensuring all network transports (HTTP, JMS, TCP, etc.) are
 considered as sources.
 
-The remaining use of Java serialization is `SafeObjectInputStream`
-(whitelist-based) in the context externalization code — `readExternal()`
+The remaining network-adjacent use of Java serialization is
+`SafeObjectInputStream` in the context externalization code. It has no
+class allowlist (it carries application objects by design); it refuses
+dynamic proxies and accepts an optional JEP 290 pattern via
+`org.apache.axis2.context.externalize.serialFilter` — see SECURITY.md.
+(`WSDLWrapperSaveImpl` also uses a plain `ObjectInputStream`, but only to
+re-read a temporary file it wrote itself.) It is used by `readExternal()`
 methods on `MessageContext`, `OperationContext`, `ServiceContext`,
 `SessionContext`, `Options`, `EndpointReference`, and related classes.
 This externalization code is vestigial from the removed clustering

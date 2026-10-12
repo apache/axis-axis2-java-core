@@ -84,10 +84,10 @@ options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 <h3>Sample REST - HTTP POST Client</h3>
 
 <p>There is an example named, userguide.clients.RESTClient.java found in
-AXIS2_HOME/samples/userguide/src/userguide/clients which demonstrates the
+AXIS2_HOME/modules/samples/userguide/src/userguide/clients which demonstrates the
 usage of the above. It uses the "echo" operation of the
 <code>userguide.example1.MyService </code>of the
-AXIS2_HOME/samples/userguide/src/userguide/example1.</p>
+AXIS2_HOME/modules/samples/userguide/src/userguide/example1.</p>
 
 <p>The class source will be as follows:</p>
 <pre>public class RESTClient {
@@ -157,8 +157,8 @@ Axis2.
 
 <h2>Resources</h2>
 
-<p>How I Explained REST to My Wife, By Ryan Tomayko- <a
-href="http://naeblis.cx/articles/2004/12/12/rest-to-my-wife">http://naeblis.cx/articles/2004/12/12/rest-to-my-wife</a></p>
+<p>How I Explained REST to My Wife, By Ryan Tomayko- <s><a
+href="http://naeblis.cx/articles/2004/12/12/rest-to-my-wife">http://naeblis.cx/articles/2004/12/12/rest-to-my-wife</a></s> <em>(Original URL no longer available)</em></p>
 
 <p>Building Web Services the REST Way, By Roger L. Costello- <a
 href="http://www.xfront.com/REST-Web-Services.html">

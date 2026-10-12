@@ -85,9 +85,9 @@ used.</p>
 <p>The template for plain java beans is already available in the
 <strong>org.apache.axis2.schema.template</strong> package. To make
 this work replace the
-<strong>/org/apache/axis2/databinding/schema/template/ADBBeanTemplate.xsl</strong>
+<strong>/org/apache/axis2/schema/template/ADBBeanTemplate.xsl</strong>
 with the
-<strong>/org/apache/axis2/databinding/schema/template/PlainBeanTemplate.xsl</strong>
+<strong>/org/apache/axis2/schema/template/PlainBeanTemplate.xsl</strong>
 in the schema-compile.properties<strong>.</strong></p>
 <p>Congratulations! You just tweaked ADB to generate plain java
 beans.</p>

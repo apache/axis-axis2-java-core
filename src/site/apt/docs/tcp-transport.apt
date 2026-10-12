@@ -42,9 +42,12 @@ TCP Transport
   at the transport level need to be dispatched using one of the following mechanisms:
 
   [[1]] Using the namespace URI of the first child element of SOAPBody
-  (SOAPMessageBodyBasedDispatcher).
+  (SOAPMessageBodyBasedDispatcher). Since Axis2 2.0.2 service dispatch from the body
+  namespace is off by default; set the <<<allowContentBasedServiceDispatch>>> parameter
+  to <<<true>>> in <<<axis2.xml>>> to enable it, and do not rely on per-service security
+  modules while it is on.
 
-  [[2]] Using WS-Addressing headers (SOAPActionBasedDispatcher).
+  [[2]] Using WS-Addressing headers (AddressingBasedDispatcher).
 
   Endpoints are configured by adding <<<parameter>>> elements to the <<<transportReceiver>>>
   element in <<<axis2.xml>>> or to a <<<service>>> element in an <<<services.xml>>> file. The

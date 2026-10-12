@@ -30,17 +30,14 @@
 
 <h1 align="center">Apache Axis2 OpenAPI Advanced Enterprise User Guide</h1>
 
-<p><strong>Enterprise-Grade OpenAPI Integration</strong> - This advanced guide demonstrates the comprehensive
-OpenAPI capabilities introduced in Axis2 2.0.1, featuring enterprise-ready configuration management,
-modern authentication patterns including Bearer tokens and OAuth2, advanced security schemes, and
-sophisticated customization options. Perfect for building modern REST APIs that meet enterprise
-requirements for security, scalability, and developer experience.</p>
+<p><strong>Enterprise-Grade OpenAPI Integration</strong> - This advanced guide covers the
+OpenAPI capabilities introduced in Axis2 2.0.1: configuration through properties files and
+system properties, security schemes in the generated specification, Swagger UI customization,
+the <code>OpenApiCustomizer</code> post-processing interface, and resource filtering.</p>
 
-<p><strong>New in Axis2 2.0.1:</strong> Complete enterprise-grade OpenAPI system with 40+ configuration
-options, multi-source configuration loading (properties files, system properties, environment variables),
-comprehensive security scheme integration (OAuth2, API Key, Bearer, Basic Auth), advanced SwaggerUI
-customization with 20+ options, OpenAPI customizer interface for post-processing, intelligent resource
-filtering, and performance optimizations.</p>
+<p>Anything not covered by the configuration properties listed below (OAuth2 and API key
+security schemes, extra servers, tags, examples and extensions) is done programmatically with an
+<code>OpenApiCustomizer</code>. The OpenAPI module does not read environment variables.</p>
 
 <p>This guide focuses on modern enterprise patterns including Bearer token authentication, OAuth2
 integration, microservices architectures, cloud-native deployments, and developer-first API design
@@ -56,12 +53,12 @@ principles. All examples use contemporary security and architectural patterns.</
 documentation, and management. Unlike basic API documentation tools, this system provides:</p>
 
 <ul>
-<li><strong>Configuration-Driven Architecture:</strong> 40+ configurable properties with multi-source loading</li>
-<li><strong>Enterprise Security:</strong> OAuth2, JWT Bearer tokens, API keys, and custom authentication schemes</li>
-<li><strong>Developer Experience:</strong> Advanced SwaggerUI with 20+ customization options</li>
+<li><strong>Configuration:</strong> <code>openapi.*</code> properties loaded from classpath properties files and system properties</li>
+<li><strong>Security Schemes:</strong> a JWT Bearer scheme by default; OAuth2, API keys and others added with a customizer</li>
+<li><strong>Developer Experience:</strong> Swagger UI with display options set through <code>SwaggerUiConfig</code></li>
 <li><strong>Extensibility:</strong> OpenAPI customizer interface for post-processing and enhancements</li>
-<li><strong>Performance:</strong> Intelligent caching, resource filtering, and optimization</li>
-<li><strong>Cloud-Native:</strong> Environment variable support, container-ready configuration</li>
+<li><strong>Filtering:</strong> include or exclude resource packages, services, operations and routes</li>
+<li><strong>Container-ready:</strong> configuration through a mounted properties file or JVM system properties</li>
 </ul>
 
 <p>This guide assumes familiarity with modern REST API design, OAuth2/JWT authentication, and
@@ -69,24 +66,27 @@ enterprise development patterns. All examples follow contemporary security and a
 
 <h2>Enterprise Configuration System</h2>
 
-<p>The Axis2 OpenAPI module provides a sophisticated configuration system supporting multiple
-sources and precedence levels, designed for enterprise deployment scenarios.</p>
+<p>The Axis2 OpenAPI module reads its configuration from several sources, designed for
+enterprise deployment scenarios.</p>
 
 <h3>Configuration Sources and Precedence</h3>
 
-<p>Configuration is loaded from multiple sources in the following precedence order (highest to lowest):</p>
+<p>Configuration is loaded from the following sources; a later source overrides an earlier one
+(lowest precedence first):</p>
 
 <ol>
-<li><strong>System Properties</strong> - JVM system properties (highest precedence)</li>
-<li><strong>Environment Variables</strong> - OS environment variables</li>
-<li><strong>Properties Files</strong> - Classpath properties files</li>
-<li><strong>Module Parameters</strong> - axis2.xml module configuration</li>
-<li><strong>Default Values</strong> - Built-in defaults (lowest precedence)</li>
+<li><strong>Default Values</strong> - Built-in defaults</li>
+<li><strong>Module Parameters</strong> - <code>title</code>, <code>version</code>, <code>description</code>,
+<code>prettyPrint</code>, <code>supportSwaggerUi</code> and <code>propertiesFile</code> in the module's module.xml</li>
+<li><strong>Properties Files</strong> - <code>openapi.properties</code> on the classpath, the file named by the
+<code>propertiesFile</code> module parameter, and <code>META-INF/openapi.properties</code>,
+<code>WEB-INF/openapi.properties</code> or <code>openapi-config.properties</code> if present</li>
+<li><strong>System Properties</strong> - JVM system properties with the same <code>openapi.*</code> keys (highest precedence)</li>
 </ol>
 
 <h3>Properties File Configuration</h3>
 
-<p>Create <code>openapi.properties</code> in your classpath for comprehensive configuration:</p>
+<p>Create <code>openapi.properties</code> in your classpath. These are all the supported keys:</p>
 
 <pre>
 # API Information
@@ -100,48 +100,32 @@ openapi.license.name=Commercial License
 openapi.license.url=https://company.com/license
 openapi.termsOfServiceUrl=https://company.com/terms
 
-# Security Configuration
-openapi.security.oauth2.enabled=true
-openapi.security.oauth2.authorizationUrl=https://auth.company.com/oauth2/authorize
-openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
-openapi.security.oauth2.scopes=read:markets,write:trades,admin:users
-openapi.security.apikey.enabled=true
-openapi.security.apikey.name=X-API-Key
-openapi.security.apikey.location=header
+# Absolute URL for servers[].url (a relative URL is published by default)
+openapi.serverBaseUrl=https://api.company.com/axis2
 
 # Resource Filtering
 openapi.readAllResources=false
 openapi.resourcePackages=com.company.api.v2,com.company.services
-openapi.resourceClasses=com.company.api.AuthController,com.company.api.TradeController
 openapi.ignoredRoutes=/internal/.*,/health,/metrics
+openapi.ignoredServices=AdminService,InternalService
+openapi.ignoredOperations=TradeService/debugDump,ping
 
-# Swagger UI Configuration
+# Swagger UI
 openapi.swaggerUi.enabled=true
-openapi.swaggerUi.version=4.18.0
-openapi.swaggerUi.deepLinking=true
-openapi.swaggerUi.docExpansion=none
-openapi.swaggerUi.filter=true
-openapi.swaggerUi.customCss=/assets/custom-swagger.css
-openapi.swaggerUi.customJs=/assets/custom-swagger.js
+openapi.swaggerUi.version=5.32.13
+# Only needed when openapi.swaggerUi.version is not the default:
+# openapi.swaggerUi.integrity.bundle=sha384-...
+# openapi.swaggerUi.integrity.standalonePreset=sha384-...
 
-# Performance and Behavior
+# Output
 openapi.prettyPrint=false
-openapi.useContextBasedConfig=true
-openapi.scanKnownConfigLocations=true
+openapi.useContextBasedConfig=false
 </pre>
 
-<h3>Environment Variable Configuration</h3>
-
-<p>All properties can be overridden with environment variables for cloud deployments:</p>
-
-<pre>
-# Docker/Kubernetes environment variables
-OPENAPI_TITLE="Production Financial API"
-OPENAPI_SECURITY_OAUTH2_ENABLED=true
-OPENAPI_SECURITY_OAUTH2_TOKEN_URL=https://prod-auth.company.com/oauth2/token
-OPENAPI_SWAGGER_UI_ENABLED=false  # Disable UI in production
-OPENAPI_RESOURCE_PACKAGES=com.company.api.prod
-</pre>
+<p>Swagger UI is loaded from a CDN. For the default version the page pins Subresource
+Integrity hashes; if you choose another version, supply its hashes with the two
+<code>openapi.swaggerUi.integrity.*</code> keys, otherwise the page still renders but logs a
+warning that integrity is not enforced.</p>
 
 <h3>System Properties Configuration</h3>
 
@@ -149,26 +133,22 @@ OPENAPI_RESOURCE_PACKAGES=com.company.api.prod
 
 <pre>
 java -Dopenapi.title="Development API" \
-     -Dopenapi.security.oauth2.enabled=false \
      -Dopenapi.swaggerUi.enabled=true \
      -jar your-application.jar
 </pre>
 
 <h2>Modern Authentication Patterns</h2>
 
-<p>The OpenAPI system supports modern authentication patterns including OAuth2, JWT Bearer tokens,
-and API keys with comprehensive security scheme integration.</p>
+<p>The generated specification can describe modern authentication patterns including OAuth2,
+JWT Bearer tokens and API keys. Axis2 documents these schemes; validating tokens remains the
+job of your service or of a security layer in front of it.</p>
 
 <h3>Bearer Token Authentication (JWT)</h3>
 
-<p>Modern REST APIs use Bearer token authentication. Configure JWT Bearer tokens:</p>
-
-<pre>
-# properties configuration
-openapi.security.bearer.enabled=true
-openapi.security.bearer.format=JWT
-openapi.security.bearer.description=JWT Bearer token authentication
-</pre>
+<p>Modern REST APIs use Bearer token authentication. The generated specification declares an
+HTTP bearer security scheme named <code>bearerAuth</code> by default, so operations can reference
+it directly. To set <code>bearerFormat</code> or change the description, use a customizer (see
+<a href="#programmatic_security">Programmatic Security Configuration</a>).</p>
 
 <p>Service implementation with Bearer authentication:</p>
 
@@ -247,16 +227,9 @@ curl -X POST https://api.company.com/api/v2/trades \
 
 <h3>OAuth2 Integration</h3>
 
-<p>Complete OAuth2 flow configuration for enterprise security:</p>
-
-<pre>
-# OAuth2 configuration
-openapi.security.oauth2.enabled=true
-openapi.security.oauth2.authorizationUrl=https://auth.company.com/oauth2/authorize
-openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
-openapi.security.oauth2.refreshUrl=https://auth.company.com/oauth2/refresh
-openapi.security.oauth2.scopes=read:markets,write:trades,admin:users,read:reports
-</pre>
+<p>An OAuth2 security scheme, with its authorization and token URLs and scopes, is added to the
+specification programmatically; see <a href="#programmatic_security">Programmatic Security
+Configuration</a> for a complete <code>oauth2</code> scheme.</p>
 
 <p>OAuth2 service implementation:</p>
 
@@ -290,15 +263,9 @@ public class ReportsController {
 
 <h3>API Key Authentication</h3>
 
-<p>Enterprise API key management with flexible header configuration:</p>
-
-<pre>
-# API Key configuration
-openapi.security.apikey.enabled=true
-openapi.security.apikey.name=X-API-Key
-openapi.security.apikey.location=header
-openapi.security.apikey.description=Enterprise API key for programmatic access
-</pre>
+<p>API key schemes (for example an <code>X-API-Key</code> header) are likewise declared with a
+customizer; the <code>apiKeyAuth</code> scheme in <a href="#programmatic_security">Programmatic
+Security Configuration</a> shows one.</p>
 
 <p>Service with API key authentication:</p>
 
@@ -333,37 +300,15 @@ public class MarketDataController {
 
 <h2>Advanced Security Scheme Configuration</h2>
 
-<p>The OpenAPI system supports multiple simultaneous security schemes with sophisticated configuration options.</p>
+<p>The specification can declare multiple simultaneous security schemes. Apart from the default
+<code>bearerAuth</code> scheme, they are configured in code.</p>
 
-<h3>Multi-Security Scheme Setup</h3>
-
-<p>Configure multiple authentication methods for different API endpoints:</p>
-
-<pre>
-# Multiple security schemes configuration
-openapi.security.bearer.enabled=true
-openapi.security.bearer.format=JWT
-openapi.security.bearer.description=JWT Bearer tokens for user authentication
-
-openapi.security.apikey.enabled=true
-openapi.security.apikey.name=X-API-Key
-openapi.security.apikey.location=header
-openapi.security.apikey.description=API keys for service-to-service communication
-
-openapi.security.oauth2.enabled=true
-openapi.security.oauth2.authorizationUrl=https://auth.company.com/oauth2/authorize
-openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
-openapi.security.oauth2.scopes=read:data,write:data,admin:system
-
-openapi.security.basic.enabled=false  # Disable basic auth for security
-</pre>
-
+<a name="programmatic_security"></a>
 <h3>Programmatic Security Configuration</h3>
 
-<p>Advanced security setup using the OpenApiCustomizer interface:</p>
+<p>Security setup using the OpenApiCustomizer interface:</p>
 
 <pre>
-@Component
 public class SecuritySchemeCustomizer implements OpenApiCustomizer {
 
     @Override
@@ -424,43 +369,50 @@ public class SecuritySchemeCustomizer implements OpenApiCustomizer {
 }
 </pre>
 
+<p>Register the customizer on the module's configuration once the OpenAPI module has been
+initialized, for example from your application's startup code:</p>
+
+<pre>
+OpenApiConfiguration config = OpenApiModule.getConfiguration(configContext);
+config.setCustomizer(new SecuritySchemeCustomizer());
+</pre>
+
+<p>Only one customizer is active at a time; to apply several, call them from a single
+customizer.</p>
+
 <h2>Advanced SwaggerUI Customization</h2>
 
-<p>The OpenAPI system provides extensive SwaggerUI customization capabilities for enterprise branding and functionality.</p>
+<p>The OpenAPI module provides SwaggerUI customization capabilities for enterprise branding and functionality.</p>
 
 <h3>Complete SwaggerUI Configuration</h3>
 
+<p>Only <code>openapi.swaggerUi.enabled</code>, <code>openapi.swaggerUi.version</code> and the
+two <code>openapi.swaggerUi.integrity.*</code> keys are read from properties (see
+<a href="#Properties_File_Configuration">Properties File Configuration</a>). The display options
+are set in code on the module's <code>SwaggerUiConfig</code>:</p>
+
 <pre>
-# Complete SwaggerUI customization
-openapi.swaggerUi.enabled=true
-openapi.swaggerUi.version=4.18.0
+SwaggerUiConfig ui = OpenApiModule.getConfiguration(configContext).getSwaggerUiConfig();
 
-# UI Behavior Configuration
-openapi.swaggerUi.deepLinking=true
-openapi.swaggerUi.docExpansion=none
-openapi.swaggerUi.filter=true
-openapi.swaggerUi.displayOperationId=true
-openapi.swaggerUi.displayRequestDuration=true
-openapi.swaggerUi.defaultModelsExpandDepth=2
-openapi.swaggerUi.defaultModelExpandDepth=2
-openapi.swaggerUi.maxDisplayedTags=20
+// UI behavior
+ui.setDeepLinking(true);
+ui.setDocExpansion("none");          // none, list, full
+ui.setFilter(true);
+ui.setDisplayOperationId(true);
+ui.setDisplayRequestDuration(true);
+ui.setDefaultModelsExpandDepth(2);
+ui.setDefaultModelExpandDepth(2);
+ui.setMaxDisplayedTags(20);
 
-# Request/Response Configuration
-openapi.swaggerUi.showRequestHeaders=true
-openapi.swaggerUi.showResponseHeaders=true
-openapi.swaggerUi.supportedSubmitMethods=get,post,put,delete,patch
-openapi.swaggerUi.validatorUrl=https://validator.company.com/validator
+// Request/response
+ui.setShowRequestHeaders(true);
+ui.setShowResponseHeaders(true);
+ui.setSupportedSubmitMethods(new String[] {"get", "post", "put", "delete", "patch"});
+ui.setOauth2RedirectUrl("https://api.company.com/swagger-ui/oauth2-redirect.html");
 
-# OAuth2 Configuration for SwaggerUI
-openapi.swaggerUi.oauth2RedirectUrl=https://api.company.com/swagger-ui/oauth2-redirect.html
-openapi.swaggerUi.oauth2ClientId=swagger-ui-client
-openapi.swaggerUi.oauth2ClientSecret=swagger-ui-secret
-openapi.swaggerUi.oauth2Realm=company-api
-openapi.swaggerUi.oauth2AppName=Financial Services API
-
-# Custom Styling
-openapi.swaggerUi.customCss=/assets/corporate-swagger-theme.css
-openapi.swaggerUi.customJs=/assets/swagger-enhancements.js
+// Custom styling
+ui.setCustomCss("/assets/corporate-swagger-theme.css");
+ui.setCustomJs("/assets/swagger-enhancements.js");
 </pre>
 
 <h3>Corporate Branding with Custom CSS</h3>
@@ -664,9 +616,10 @@ function initializePerformanceMonitoring() {
 
 <h3>Advanced Customizer Implementation</h3>
 
+<p>Register it with <code>OpenApiModule.getConfiguration(configContext).setCustomizer(...)</code>,
+as shown in <a href="#programmatic_security">Programmatic Security Configuration</a>.</p>
+
 <pre>
-@Component
-@Order(100) // High priority
 public class EnterpriseOpenApiCustomizer implements OpenApiCustomizer {
 
     private final ApiDocumentationService documentationService;
@@ -847,7 +800,7 @@ public class EnterpriseOpenApiCustomizer implements OpenApiCustomizer {
 
 <h2>Resource Management and Filtering</h2>
 
-<p>Advanced resource filtering and management capabilities for large-scale enterprise APIs.</p>
+<p>Resource filtering capabilities for large-scale enterprise APIs.</p>
 
 <h3>Intelligent Resource Discovery</h3>
 
@@ -858,62 +811,16 @@ openapi.readAllResources=false
 # Package-based filtering
 openapi.resourcePackages=com.company.api.v2,com.company.services.financial,com.company.auth
 
-# Class-based filtering
-openapi.resourceClasses=com.company.api.TradesController,com.company.api.PortfolioController
-
 # Route exclusion patterns
 openapi.ignoredRoutes=/internal/.*,/admin/.*,/health,/metrics,/actuator/.*
 
-# Custom resource scanner
-openapi.scannerClass=com.company.config.CustomResourceScanner
+# Service and operation exclusion
+openapi.ignoredServices=AdminService,MonitoringService
+openapi.ignoredOperations=TradeService/debugDump,ping
 </pre>
 
-<h3>Custom Resource Scanner</h3>
-
-<pre>
-@Component
-public class CustomResourceScanner implements ResourceScanner {
-
-    @Override
-    public Set&lt;Class&lt;?&gt;&gt; scanForResources() {
-        Set&lt;Class&lt;?&gt;&gt; resources = new HashSet&lt;&gt;();
-
-        // Scan for annotated controllers
-        resources.addAll(scanForAnnotatedControllers());
-
-        // Scan for service interfaces
-        resources.addAll(scanForServiceInterfaces());
-
-        // Apply business rules for inclusion
-        return resources.stream()
-            .filter(this::shouldIncludeResource)
-            .collect(Collectors.toSet());
-    }
-
-    private Set&lt;Class&lt;?&gt;&gt; scanForAnnotatedControllers() {
-        // Custom logic for finding REST controllers
-        return ClasspathScanner.scan("com.company.api")
-            .filter(clazz -> clazz.isAnnotationPresent(Path.class))
-            .filter(clazz -> clazz.isAnnotationPresent(Tag.class))
-            .collect(Collectors.toSet());
-    }
-
-    private boolean shouldIncludeResource(Class&lt;?&gt; resource) {
-        // Business logic for resource inclusion
-        if (resource.isAnnotationPresent(InternalApi.class)) {
-            return false; // Exclude internal APIs
-        }
-
-        if (resource.isAnnotationPresent(DeprecatedApi.class)) {
-            DeprecatedApi deprecation = resource.getAnnotation(DeprecatedApi.class);
-            return !deprecation.excludeFromDocs(); // Include unless explicitly excluded
-        }
-
-        // Include by default
-        return true;
-    }
-}
-</pre>
+<p>System services (such as <code>Version</code> and any service whose name contains
+<code>AdminService</code>) are excluded automatically.</p>
 
 <h2>Enterprise Integration Examples</h2>
 
@@ -1186,25 +1093,10 @@ public class RiskMetrics {
 
 <h3>Performance Configuration</h3>
 
-<pre>
-# Performance optimization settings
-openapi.performance.caching.enabled=true
-openapi.performance.caching.spec.ttl=300  # 5 minutes
-openapi.performance.caching.ui.ttl=3600   # 1 hour
-
-# Memory management
-openapi.performance.streaming.enabled=true
-openapi.performance.streaming.threshold=1048576  # 1MB
-
-# Response compression
-openapi.performance.compression.enabled=true
-openapi.performance.compression.minSize=1024
-
-# Connection pooling
-openapi.performance.http.maxConnections=200
-openapi.performance.http.connectionTimeout=5000
-openapi.performance.http.readTimeout=30000
-</pre>
+<p>The OpenAPI module has no performance properties of its own. The specification responses
+carry a <code>Cache-Control</code> max-age of five minutes and static Swagger UI resources one of
+24 hours, so a reverse proxy or CDN can cache them. Response compression, connection pooling
+and timeouts are configured in the servlet container or proxy.</p>
 
 <h3>Monitoring and Observability</h3>
 
@@ -1272,7 +1164,6 @@ public class OpenApiHealthIndicator implements HealthIndicator {
             return Health.up()
                 .withDetail("specGenerationTime", specGenTime + "ms")
                 .withDetail("swaggerUiEnabled", uiAvailable)
-                .withDetail("version", "2.0.1")
                 .withDetail("configurationSource", getConfigurationSource())
                 .build();
 
@@ -1299,17 +1190,14 @@ public class OpenApiHealthIndicator implements HealthIndicator {
 
 <pre>
 # Dockerfile
-FROM openjdk:17-jre-slim
+FROM tomcat:11.0-jdk21
 
-# Environment variables for OpenAPI configuration
-ENV OPENAPI_TITLE="Financial Services API"
-ENV OPENAPI_SECURITY_OAUTH2_ENABLED=true
-ENV OPENAPI_SWAGGER_UI_ENABLED=false
-ENV OPENAPI_RESOURCE_PACKAGES=com.company.api.v2
+# OpenAPI settings are read from system properties (not environment variables)
+ENV JAVA_OPTS="-Dopenapi.swaggerUi.enabled=false -Dopenapi.resourcePackages=com.company.api.v2"
 
-# Copy application
-COPY target/financial-api.war /opt/axis2/webapps/
-COPY config/openapi-production.properties /opt/axis2/conf/
+# Copy application; openapi.properties in Tomcat's lib directory is on the classpath
+COPY target/financial-api.war /usr/local/tomcat/webapps/
+COPY config/openapi-production.properties /usr/local/tomcat/lib/openapi.properties
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
@@ -1326,10 +1214,8 @@ data:
   openapi.properties: |
     openapi.title=Financial Services API
     openapi.version=2.1.0
-    openapi.security.oauth2.enabled=true
-    openapi.security.oauth2.tokenUrl=https://auth.company.com/oauth2/token
+    openapi.serverBaseUrl=https://api.company.com/axis2
     openapi.swaggerUi.enabled=false
-    openapi.performance.caching.enabled=true
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1351,16 +1237,11 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: OPENAPI_TITLE
-          value: "Production Financial API"
-        - name: OPENAPI_SECURITY_OAUTH2_TOKEN_URL
-          valueFrom:
-            secretKeyRef:
-              name: oauth2-config
-              key: token-url
+        - name: JAVA_OPTS
+          value: "-Dopenapi.title=Production-Financial-API"
         volumeMounts:
         - name: openapi-config
-          mountPath: /opt/axis2/conf/openapi.properties
+          mountPath: /usr/local/tomcat/lib/openapi.properties
           subPath: openapi.properties
         livenessProbe:
           httpGet:
@@ -1389,7 +1270,7 @@ spec:
 <ul>
 <li><strong>✓ JWT Token Validation:</strong> Implement proper JWT signature verification and expiration checking</li>
 <li><strong>✓ OAuth2 PKCE:</strong> Enforce PKCE for public clients and authorization code flows</li>
-<li><strong>✓ CORS Configuration:</strong> Restrict CORS origins to known domains in production</li>
+<li><strong>✓ CORS Configuration:</strong> The specification endpoints send <code>Access-Control-Allow-Origin: *</code>; restrict origins at the proxy or container if you need to</li>
 <li><strong>✓ Rate Limiting:</strong> Implement rate limiting per API key/user to prevent abuse</li>
 <li><strong>✓ Input Validation:</strong> Validate all request parameters against OpenAPI schemas</li>
 <li><strong>✓ HTTPS Only:</strong> Enforce HTTPS for all API endpoints and disable HTTP</li>
@@ -1401,33 +1282,20 @@ spec:
 
 <h3>Security Configuration Example</h3>
 
-<pre>
-# Production security configuration
-openapi.security.enforceHttps=true
-openapi.security.hsts.enabled=true
-openapi.security.hsts.maxAge=31536000
-openapi.security.csp.enabled=true
-openapi.security.csp.policy=default-src 'self'; script-src 'self' 'unsafe-inline'
+<p>The OpenAPI module's own security-relevant settings are few:</p>
 
+<pre>
 # Disable SwaggerUI in production
 openapi.swaggerUi.enabled=false
 
-# Restrict CORS to known origins
-openapi.cors.allowedOrigins=https://app.company.com,https://mobile.company.com
-openapi.cors.allowCredentials=true
-openapi.cors.maxAge=3600
-
-# Rate limiting
-openapi.rateLimiting.enabled=true
-openapi.rateLimiting.requestsPerMinute=100
-openapi.rateLimiting.burstLimit=20
-
-# Audit logging
-openapi.audit.enabled=true
-openapi.audit.logFormat=JSON
-openapi.audit.includeRequestBody=false
-openapi.audit.includeResponseBody=false
+# Publish a fixed absolute server URL instead of a relative one
+openapi.serverBaseUrl=https://api.company.com/axis2
 </pre>
+
+<p>HTTPS enforcement, HSTS, CORS restrictions, rate limiting and audit logging are not OpenAPI
+module settings; configure them in the servlet container, a servlet filter or the reverse proxy.
+The Swagger UI page sets its own Content-Security-Policy with a per-request nonce, and loads the
+default Swagger UI version with Subresource Integrity.</p>
 
 <h2>Troubleshooting and Advanced Topics</h2>
 
@@ -1436,24 +1304,22 @@ openapi.audit.includeResponseBody=false
 <h3>Common Configuration Issues</h3>
 
 <ul>
-<li><strong>Configuration Precedence:</strong> System properties override environment variables override properties files</li>
+<li><strong>Configuration Precedence:</strong> System properties override properties files, which override module.xml parameters; environment variables are not read</li>
 <li><strong>Security Scheme Validation:</strong> Ensure OAuth2 endpoints are accessible and properly configured</li>
 <li><strong>Resource Filtering:</strong> Verify package names and class paths are correct</li>
 <li><strong>Memory Usage:</strong> Monitor memory usage with large OpenAPI specifications</li>
-<li><strong>Performance:</strong> Enable caching for frequently accessed specifications</li>
+<li><strong>Performance:</strong> Let a proxy or CDN cache the specification responses, which carry a Cache-Control max-age</li>
 </ul>
 
 <h3>Advanced Debugging</h3>
 
 <pre>
-# Enable debug logging
-logging.level.org.apache.axis2.openapi=DEBUG
-
-# JVM debugging options
--Dopenapi.debug=true
--Dopenapi.performance.monitoring=true
--Dopenapi.configuration.trace=true
+# Enable debug logging for the OpenAPI module (log4j2 example)
+&lt;Logger name="org.apache.axis2.openapi" level="debug"/&gt;
 </pre>
+
+<p>At startup the module logs the configuration sources it loaded (for example
+"Loaded OpenAPI configuration from: openapi.properties") and the resulting configuration.</p>
 
 <p>For comprehensive support and advanced enterprise deployment scenarios, contact the Apache Axis2
 development team or consult the <a href="openapi-rest-userguide.html">Basic OpenAPI User Guide</a>

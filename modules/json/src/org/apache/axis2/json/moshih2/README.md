@@ -14,7 +14,7 @@ This package provides enhanced JSON processing capabilities for Apache Axis2, in
 
 ## Performance Benefits (Based on HTTP/2 Integration Analysis)
 
-- **40-60% performance improvement** for large JSON payloads (>1MB)
+- **Faster processing** of large JSON payloads (>1MB) through async and streaming paths
 - **Reduced memory usage** through intelligent streaming and GC optimization
 - **Better throughput** for concurrent JSON processing
 - **Specialized optimization** for record-oriented payloads (records, metadata arrays)
@@ -84,10 +84,10 @@ For optimal performance in production environments with large JSON payloads:
 
 ```xml
 <!-- Enhanced Moshi H2 JSON Processing Configuration -->
-<parameter name="JSONProcessingMode">ENHANCED_MOSHI_H2</parameter>
-<parameter name="AsyncProcessingThreshold">1048576</parameter>  <!-- 1MB -->
-<parameter name="LargePayloadThreshold">10485760</parameter>    <!-- 10MB -->
-<parameter name="MemoryOptimizationThreshold">52428800</parameter> <!-- 50MB -->
+<parameter name="enableMoshiH2Processing">true</parameter>
+<parameter name="moshiAsyncProcessingThreshold">1048576</parameter>      <!-- 1MB -->
+<parameter name="moshiLargePayloadThreshold">10485760</parameter>        <!-- 10MB -->
+<parameter name="moshiMemoryOptimizationThreshold">52428800</parameter>  <!-- 50MB -->
 
 <!-- Message Builder Configuration -->
 <messageBuilder contentType="application/json"
@@ -125,17 +125,12 @@ The enhanced components automatically optimize processing based on field naming 
 
 ### Memory Management
 
-For applications processing large JSON payloads:
+For applications processing large JSON payloads, size the JVM heap and garbage collector
+in the application server's JVM options (for example `JAVA_OPTS`); axis2.xml cannot set
+JVM flags:
 
-```xml
-<!-- JVM Memory Settings for Large JSON Processing -->
-<parameter name="java.memory.options">
-    -Xmx4g -Xms2g
-    -XX:+UseG1GC
-    -XX:MaxGCPauseMillis=200
-    -XX:+UnlockExperimentalVMOptions
-    -XX:G1HeapRegionSize=16m
-</parameter>
+```bash
+JAVA_OPTS="-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:G1HeapRegionSize=16m"
 ```
 
 ## Monitoring and Metrics
@@ -249,14 +244,8 @@ Enable debug logging for detailed processing information:
 
 ## Performance Comparison
 
-Based on HTTP/2 integration analysis and production testing:
-
-| Payload Size | Standard Moshi | Enhanced Moshi H2 | Improvement |
-|--------------|---------------|-------------------|-------------|
-| < 100KB      | ~50ms         | ~45ms            | 10%         |
-| 100KB - 1MB  | ~200ms        | ~140ms           | 30%         |
-| 1MB - 10MB   | ~2000ms       | ~1200ms          | 40%         |
-| > 10MB       | ~12000ms+     | ~7000ms          | 42%         |
+No benchmark results for these components are published in this repository; measure
+with your own payloads (the components log processing metrics, see above).
 
 **Note**: Performance improvements are most significant for large payloads where async processing and memory optimization provide the greatest benefit.
 

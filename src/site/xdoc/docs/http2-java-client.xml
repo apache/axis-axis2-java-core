@@ -94,19 +94,20 @@
 
         <section name="Dependencies">
 
-        <p>Requires Java 11+ (ALPN built in) and Apache HttpClient 5.4+:</p>
+        <p>Requires Java 17+ (the Axis2 minimum; ALPN is built in) and Apache HttpClient 5.4+.
+Axis2 2.0.2 builds against httpclient5 5.6.4 and httpcore5 5.4.4:</p>
 
 <source>
 &lt;!-- Maven --&gt;
 &lt;dependency&gt;
     &lt;groupId&gt;org.apache.httpcomponents.client5&lt;/groupId&gt;
     &lt;artifactId&gt;httpclient5&lt;/artifactId&gt;
-    &lt;version&gt;5.4.3&lt;/version&gt;
+    &lt;version&gt;5.6.4&lt;/version&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
     &lt;groupId&gt;org.apache.httpcomponents.core5&lt;/groupId&gt;
     &lt;artifactId&gt;httpcore5-h2&lt;/artifactId&gt;
-    &lt;version&gt;5.4.3&lt;/version&gt;
+    &lt;version&gt;5.4.4&lt;/version&gt;
 &lt;/dependency&gt;
 </source>
 
@@ -235,7 +236,7 @@ IOReactorConfig.custom()
         OS keepalive default (commonly two hours). Two caveats:</p>
         <ul>
             <li>The per-probe knobs (<code>TcpKeepIdle/Interval/Count</code>) use
-            <code>jdk.net.ExtendedSocketOptions</code> and require Java 11+ on
+            <code>jdk.net.ExtendedSocketOptions</code> and work on Java 17+ on
             Linux or macOS. On other platforms <code>setSoKeepAlive(true)</code>
             still works but falls back to the OS default idle time.</li>
             <li>Keep the idle time <strong>below the shortest idle-drop on the
