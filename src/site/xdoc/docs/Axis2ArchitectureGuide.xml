@@ -173,7 +173,7 @@ dependency and your services are live. See
 <td>Deploy as a standard WAR with Jakarta Servlet 6.0 support.</td>
 </tr>
 <tr>
-<td><strong>WildFly 32 / 39</strong></td>
+<td><strong>WildFly 32 / 41</strong></td>
 <td>Deploy as a WAR or EAR. Axis2 integrates with the WildFly
 class-loading and JNDI subsystems.</td>
 </tr>

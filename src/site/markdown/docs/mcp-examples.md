@@ -2,7 +2,7 @@
 
 **Summary**: Apache Axis2/Java serves the same financial calculations as Axis2/C —
 portfolio variance, Monte Carlo VaR (GBM and Merton jump-diffusion), scenario
-analysis — over JSON on WildFly 32/39 and Tomcat 11 with Spring Security JWT
+analysis — over JSON on WildFly 32/41 and Tomcat 11 with Spring Security JWT
 authentication. This document shows the same live demos as the Axis2/C
 `MCP_EXAMPLES.md`, run against the Java implementation, with head-to-head
 performance numbers.
@@ -16,7 +16,7 @@ The implementations compete only on performance.
 
 Both Axis2/C and Axis2/Java support **HTTPS/HTTP2**. Axis2/C runs over
 Apache httpd with mod_h2; Axis2/Java runs over WildFly or Tomcat with
-ALPN-negotiated HTTP/2 on port 8443. Verified on WildFly 32, WildFly 39,
+ALPN-negotiated HTTP/2 on port 8443. Verified on WildFly 32, WildFly 41,
 and Tomcat 11 — all negotiate `h2` via ALPN when accessed over TLS.
 
 All timings in this document use the **server-reported `calcTimeUs` field**
@@ -94,7 +94,7 @@ All curl examples below include paired MCP stdio equivalents.
 
 ---
 
-## Live Examples (Tested on WildFly 32/39 and Tomcat 11)
+## Live Examples (Tested on WildFly 32/41 and Tomcat 11)
 
 ### Portfolio Variance — 5 assets
 
@@ -602,7 +602,7 @@ and JDK versions before the 2.0.1 release:
 | Container | JDK | MCP Bridge | OpenAPI/Swagger UI | Status |
 |-----------|-----|------------|-------------------|--------|
 | WildFly 32 | OpenJDK 21 | ✅ Tested | ✅ Tested | Validated |
-| WildFly 39 | OpenJDK 25 | ✅ Tested | ✅ Tested | Validated |
+| WildFly 41 | OpenJDK 21, 25 | ✅ Tested | ✅ Tested | Validated |
 | Tomcat 11 | OpenJDK 21 | ✅ Tested | ✅ Tested | Validated |
 | Tomcat 11 | OpenJDK 25 | ✅ Tested | ✅ Tested | Validated |
 
@@ -667,7 +667,7 @@ $CURL_MTLS -X POST https://localhost:8443/axis2-json-api/services/FinancialBench
   -d '{"portfolioVariance":[{"arg0":{"nAssets":2,"weights":[0.6,0.4],"covarianceMatrix":[[0.04,0.006],[0.006,0.09]]}}]}'
 ```
 
-**WildFly 32/39** (HTTPS/HTTP2 on port 8443 with self-signed cert, JWT auth):
+**WildFly 32/41** (HTTPS/HTTP2 on port 8443 with self-signed cert, JWT auth):
 
 ```bash
 # OpenAPI and MCP
@@ -692,10 +692,10 @@ See the sample READMEs for the complete test flow covering all services.
 ## WildFly Deployment Notes
 
 See `WILDFLY32_DEPLOY_STATE.md` in the Axis2/C repo for the full deployment
-walkthrough. Key points (apply to both WildFly 32 and WildFly 39):
+walkthrough. Key points (apply to both WildFly 32 and WildFly 41):
 
-- WildFly 32.0.1.Final or WildFly 39 with `--add-modules=java.se` in `standalone.conf`
+- WildFly 32.0.1.Final or WildFly 41 with `--add-modules=java.se` in `standalone.conf`
 - `jboss-deployment-structure.xml` from production deployment template (includes `jdk.net` module dependency)
 - `beans.xml` with `bean-discovery-mode="none"` (satisfies Weld without CDI scanning)
-- Spring Boot 3.4.3 starts in ~0.9 seconds inside WildFly
+- Spring Boot 3.5.16 starts in ~1 second inside WildFly
 - WAR: `axis2-json-api-0.0.1-SNAPSHOT.war`

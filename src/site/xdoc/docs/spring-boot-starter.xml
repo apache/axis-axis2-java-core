@@ -79,7 +79,7 @@ with sensible defaults — for both SOAP and JSON-RPC services.</p>
 </ul>
 
 <p>This starter supports both <strong>WAR deployment</strong> to an external container
-(Tomcat 11, WildFly 32/39) and <strong>embedded Tomcat</strong> for local development.
+(Tomcat 11, WildFly 32/41) and <strong>embedded Tomcat</strong> for local development.
 For embedded mode, set <code>axis2.repo</code> in <code>application.properties</code>
 to the exploded WAR directory from your build.
 See <a href="#deployment_model">Deployment Model</a> for details.</p>
@@ -194,14 +194,14 @@ curl -s http://localhost:9090/openapi-mcp.json
 <tr><th>Container</th><th>JDK</th><th>Tested</th></tr>
 <tr><td>Apache Tomcat 11</td><td>OpenJDK 17, 21, 25</td><td>Yes (21/25 live-tested; 17 is the minimum supported by Tomcat 11 and Spring Boot 3.x)</td></tr>
 <tr><td>WildFly 32</td><td>OpenJDK 17, 21</td><td>Yes (production-tested on WildFly 32 + OpenJDK 17)</td></tr>
-<tr><td>WildFly 39</td><td>OpenJDK 21, 25</td><td>Yes (live-tested with OpenJDK 25)</td></tr>
+<tr><td>WildFly 41</td><td>OpenJDK 21, 25</td><td>Yes (live-tested with OpenJDK 21 and 25)</td></tr>
 </table>
 
 <p><strong>Minimum JDK version: OpenJDK 17.</strong> Axis2 core and the starter
 compile and pass CI tests with <code>-Dmaven.compiler.release=17</code>.
-Spring Boot 3.x and Tomcat 11 both require Java 17 as a minimum. The sample
-applications target Java 21 source level but Axis2 itself imposes no version
-above 17.</p>
+Spring Boot 3.x, Spring Boot 4.x and Tomcat 11 all require Java 17 as a minimum. The starter
+is built against Spring Boot 4.1.1. The sample applications use Spring Boot 3.5.16
+and target Java 21 source level, but Axis2 itself imposes no version above 17.</p>
 
 <p>Other Jakarta EE 9+ containers (WebSphere Liberty, Payara) should work but
 are not tested.</p>
@@ -571,7 +571,7 @@ identical in structure to the configuration used by the legacy userguide
 <h3>Container matrix</h3>
 
 <p>See <a href="#deployment_model">Section 0</a> for the full container
-compatibility matrix covering WAR deployment (Tomcat 11, WildFly 32/39)
+compatibility matrix covering WAR deployment (Tomcat 11, WildFly 32/41)
 and embedded Tomcat for local development.</p>
 
 <!-- ============================================================ -->

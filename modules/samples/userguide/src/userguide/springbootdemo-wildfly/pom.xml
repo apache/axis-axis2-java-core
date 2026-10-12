@@ -22,7 +22,7 @@
 <!--
   springbootdemo-wildfly — WildFly 32+ / Java 21+ deployment of the same
   Spring Boot + Axis2 demo that springbootdemo-tomcat11 targets for Tomcat 11.
-  Tested on WildFly 39.0.1.Final / OpenJDK 25.
+  Tested on WildFly 41.0.1.Final / OpenJDK 21 and OpenJDK 25.
 
   Java source, resources and the Axis2 repository content are all shared from
   ../springbootdemo-tomcat11 — keep the dependency list here in step with that
@@ -43,7 +43,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>axis2-json-api-wildfly</name>
-    <description>Spring Boot + Axis2 demo — WildFly 32+ / Java 21+ (tested on WildFly 39 / Java 25)</description>
+    <description>Spring Boot + Axis2 demo — WildFly 32+ / Java 21+ (tested on WildFly 41 / Java 21 and Java 25)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

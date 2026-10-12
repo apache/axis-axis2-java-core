@@ -38,7 +38,7 @@ catalog, the required envelope format, authentication flow, and current limitati
 <a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/samples/userguide/src/userguide/springbootdemo-tomcat11/README.md">springbootdemo-tomcat11 README</a> (Tomcat 11)
 and
 <a href="https://github.com/apache/axis-axis2-java-core/blob/master/modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md">springbootdemo-wildfly README</a>
-(WildFly 32/39).</p>
+(WildFly 32/41).</p>
 
 <p><strong>In one sentence:</strong> Axis2 auto-generates an MCP tool catalog from its
 deployed services, accessible at <code>/openapi-mcp.json</code>, that tells MCP clients

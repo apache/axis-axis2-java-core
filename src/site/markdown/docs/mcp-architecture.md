@@ -33,7 +33,7 @@ modelcontextprotocol.io.
 
 Build, deploy, and test instructions for each container are in the sample READMEs:
 - **Tomcat 11**: `modules/samples/userguide/src/userguide/springbootdemo-tomcat11/README.md`
-- **WildFly 32/39**: `modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md`
+- **WildFly 32/41**: `modules/samples/userguide/src/userguide/springbootdemo-wildfly/README.md`
 
 ```
 springbootdemo-tomcat11 base URL: https://localhost:8443/axis2-json-api
@@ -44,7 +44,7 @@ springbootdemo-wildfly base URL: https://localhost:8443/axis2-json-api
   - LoginService                (JWT auth)
   - FinancialBenchmarkService   (portfolioVariance, monteCarlo VaR with Merton jump-diffusion, scenarioAnalysis)
   - BigDataH2Service            (HTTP/2 streaming)
-  Deployed and validated on WildFly 32 and WildFly 39
+  Deployed and validated on WildFly 32 and WildFly 41
 ```
 
 `BigDataH2Service` request format (confirmed working via MCP bridge):
@@ -360,7 +360,7 @@ MCP and OpenAPI support needs validation across the full container/JDK matrix:
 | Container | JDK | MCP | OpenAPI | Status |
 |-----------|-----|-----|---------|--------|
 | WildFly 32 | OpenJDK 21 | ✅ | ✅ | Validated |
-| WildFly 39 | OpenJDK 25 | ✅ | ✅ | Validated |
+| WildFly 41 | OpenJDK 21, 25 | ✅ | ✅ | Validated |
 | Tomcat 11 | OpenJDK 21 | ✅ | ✅ | Validated |
 | Tomcat 11 | OpenJDK 25 | ✅ | ✅ | Validated |
 

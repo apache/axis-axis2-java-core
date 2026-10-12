@@ -22,7 +22,7 @@
 Axis2 JSON-RPC services deployed as a WAR in **WildFly** (Undertow), using Spring Boot 3.x as
 a configuration framework only — there is no embedded container.
 
-Tested with: **WildFly 32.0.1.Final** (OpenJDK 21) · **WildFly 39.0.1.Final** (OpenJDK 25) · **Spring Boot 3.4.3**
+Tested with: **WildFly 32.0.1.Final** (OpenJDK 21) · **WildFly 41.0.1.Final** (OpenJDK 21, OpenJDK 25) · **Spring Boot 3.5.16**
 
 All Java source is shared from `../springbootdemo-tomcat11/src/main/java` via
 `build-helper-maven-plugin`. This module only adds WildFly-specific WEB-INF descriptors.
@@ -130,7 +130,7 @@ init parameter directly. Without this, only some services load.
 
 ### WildFly module upgrade notes
 
-When upgrading WildFly (e.g., 32 → 39), clear cached state before redeploying:
+When upgrading WildFly (e.g., 32 → 41), clear cached state before redeploying:
 
 ```bash
 rm -rf ~/wildfly/standalone/configuration/standalone_xml_history/

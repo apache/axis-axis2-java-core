@@ -22,7 +22,7 @@
 Axis2 JSON-RPC services deployed as a WAR in **Apache Tomcat 11**, using Spring Boot 3.x as a
 configuration framework only — there is no embedded container.
 
-Tested with: **Tomcat 11.0.20** · **OpenJDK 21** · **Spring Boot 3.4.3**
+Tested with: **Tomcat 11.0.20** · **OpenJDK 21** · **Spring Boot 3.5.16**
 
 > **JDK compatibility note:** The WAR is compiled at Java 21 source level (`<java.version>21</java.version>`)
 > and has been tested on both **OpenJDK 21** and **OpenJDK 25** under Tomcat 11.
@@ -246,7 +246,7 @@ via `build-helper-maven-plugin`. The only differences are container-specific:
 | Aspect | `springbootdemo-tomcat11` | `springbootdemo-wildfly` |
 |--------|--------------------------|--------------------------|
 | Server | Apache Tomcat 11 | WildFly 32+ (Undertow) |
-| Tested on | Tomcat 11.0.20 / Java 21 and Java 25 | WildFly 39 / Java 25 |
+| Tested on | Tomcat 11.0.20 / Java 21 and Java 25 | WildFly 41 / Java 21 and Java 25 |
 | WAR output | `target/deploy/axis2-json-api/` (no `.war` suffix) | `target/deploy/axis2-json-api/` |
 | Extra WEB-INF files | — | `jboss-deployment-structure.xml`, `jboss-web.xml`, `beans.xml` |
 | Context path | `/axis2-json-api` | `/axis2-json-api` |

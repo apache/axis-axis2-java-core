@@ -74,7 +74,7 @@ prefix the subject of the mail with [Axis2].</p>
 which targets WildFly 32. The following table summarises all differences:</p>
 
 <table border="1" cellpadding="4">
-<tr><th>Aspect</th><th>WildFly 32 / 39</th><th>Tomcat 11</th></tr>
+<tr><th>Aspect</th><th>WildFly 32 / 41</th><th>Tomcat 11</th></tr>
 <tr>
   <td><strong>Context root</strong></td>
   <td><code>/axis2-json-api</code> (WAR name becomes context root automatically)</td>

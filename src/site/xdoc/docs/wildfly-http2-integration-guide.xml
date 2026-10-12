@@ -28,9 +28,9 @@
 
 <h1>WildFly + Axis2 HTTP/2 Integration Guide</h1>
 
-<p><strong>Tested on:</strong> WildFly 32 (OpenJDK 17, 21) and WildFly 39
+<p><strong>Tested on:</strong> WildFly 32 (OpenJDK 17, 21) and WildFly 41
 (OpenJDK 21, 25). Configuration examples below use WildFly 32 syntax;
-WildFly 39 is compatible with the same configuration.</p>
+WildFly 41 is compatible with the same configuration.</p>
 
 <div style="background-color: #ffe8e8; border: 1px solid #ff4444; padding: 10px; margin: 10px 0;">
 
