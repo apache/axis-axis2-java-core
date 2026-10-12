@@ -8,20 +8,28 @@ status: Active
 # Axis2/Java Modernization Plan
 
 **BLUF**: Axis2 becomes a multi-protocol service platform — one service implementation
-serving JSON-RPC (existing callers), REST (Data API consumers), and MCP (AI agents)
+serving JSON-RPC (existing callers), REST (API consumers and web frontends), and MCP (AI agents)
 simultaneously. The Spring Boot starter removes adoption tax. OpenAPI generation makes
 every Axis2 service AI-discoverable. A native MCP transport eliminates the wrapper layer
 entirely. No other Java framework can do all three from the same service deployment.
 
 **Foundation already in place**:
-- `springbootdemo-tomcat11` — working reference implementation (Spring Boot 3.x + Axis2 +
-  Tomcat 11 + Java 25)
+- Axis2/Java 2.0.1 released 2026-05-17 with the starter, OpenAPI, MCP bridge, JPA schema
+  and HTTP/2 modules; 2.0.2 (in progress) adds the security hardening and fixes listed in
+  its release notes
+- `springbootdemo-tomcat11` / `springbootdemo-wildfly` — working reference implementations
+  (Spring Boot 3.5 + Axis2), tested on Tomcat 11.0.20 and WildFly 32 / 41 with OpenJDK 17,
+  21 and 25
 - `axis2-openapi` module — OpenAPI spec served at `/openapi.json`, `/openapi.yaml`,
   `/swagger-ui`, `/openapi-mcp.json`
-- `modules/transport-h2` — HTTP/2 transport module (proof of concept, tested)
-- `modules/spring-boot-starter` — functional Spring Boot autoconfiguration
-- ThreadPool instance-field fix committed (`27860ddf9f`)
-- Java 25 + Tomcat 11.0.20 full end-to-end test passing
+- `modules/transport-h2` — HTTPS-only HTTP/2 transport sender on HttpClient 5, with a
+  76-test suite; production hardening for long-lived HTTP/2 clients is documented and
+  applied in the sample client
+- `modules/spring-boot-starter` — functional Spring Boot autoconfiguration, built against
+  Spring Boot 4.1.1
+- `axis2-openapi`, `axis2-mcp-bridge`, `axis2-spring-boot-starter` and `axis2-jpa-schema`
+  ship through Maven Central only, not in the binary distribution's `lib/`, because their
+  dependencies conflict with the Ant-based samples' codegen classpath
 
 ---
 
@@ -36,7 +44,7 @@ entirely. No other Java framework can do all three from the same service deploym
 | Phase 2 — OpenAPI Annotation Bridge | PARTIAL | POJO introspection done. springdoc @Operation/@Parameter annotation processing not yet started. |
 | Phase 3 — REST Transport | NOT STARTED | Dual-protocol JSON-RPC + REST from same service |
 | Phase 4 — MCP Bridge | **DONE** | `axis2-mcp-bridge` stdio JAR in `modules/mcp-bridge/` |
-| Phase 5 — HTTP/2 Publication | NOT STARTED | transport-h2 graduation to supported module |
+| Phase 5 — HTTP/2 Publication | PARTIAL | Published with a test suite; starter integration and published benchmarks remain |
 | Phase 6 — Native MCP Transport | DEFERRED | Bridge approach sufficient; prove MCP catalog adoption first |
 | Phase 7 — Community | NOT STARTED | Blog post, migration guide |
 | **NEW** Phase JPA — JPA/Hibernate Schema Generation | **DONE** | See below |
@@ -55,15 +63,13 @@ can serve OpenAPI schemas for any Hibernate project regardless of mapping style.
 
 ### Why both annotation AND hbm.xml support
 
-The original pickup doc rejected "OpenAPI from hbm.xml" as too narrow. That was correct
-for hbm.xml alone — but the real opportunity is broader:
+"OpenAPI from hbm.xml" alone would be too narrow — but the real opportunity is broader:
 
 - **JPA annotations** (`@Entity`, `@Column`, `@ManyToOne`) — the standard for new
-  projects and the pattern used by typical financial applications (dozens of entities,
-  Spring Data JPA repositories, Jakarta Persistence)
-- **hbm.xml** — still in production at many organizations (legacy mapping
-  files, Hibernate 3.0 DTD, backtick-quoted SQL Server columns). These projects won't
-  rewrite to annotations just for OpenAPI support.
+  projects (Jakarta Persistence, often with Spring Data JPA repositories)
+- **hbm.xml** — still common in long-lived codebases (Hibernate 3.0 DTD mappings,
+  quoted identifiers). These projects won't rewrite to annotations just for OpenAPI
+  support.
 
 Supporting both from one module covers ~95% of Hibernate deployments.
 
@@ -98,8 +104,8 @@ Two metadata extraction strategies, one unified schema output:
    │  OpenAPI Schema Generator             │
    │  - Read schema (all fields)           │
    │  - Write schema (excludes @Id with    │
-   │    @GeneratedValue, @IgnoreChanges,   │
-   │    version fields)                    │
+   │    @GeneratedValue, version fields,   │
+   │    registered audit annotations)      │
    │  - $ref for relationships             │
    └───────────────────────────────────────┘
 ```
@@ -143,15 +149,14 @@ Two metadata extraction strategies, one unified schema output:
 
 ### Custom annotation support
 
-Projects may use custom annotations that carry business semantics:
+Projects often mark server-managed fields (audit timestamps, created-by columns) with
+their own annotations. `AnnotationIntrospector.addWriteExcludeAnnotation()` accepts any
+annotation class name, and fields carrying it are left out of the write schema:
 
-| Custom Annotation | Schema Effect |
-|-------------------|---------------|
-| `@IgnoreChanges` | Excluded from write schema (audit fields) |
-| `@IncludeInUpdate` | Included in write schema (explicitly) |
-
-The module accepts a configurable list of "exclude from write" annotation class names
-so any project can declare their own audit-field markers.
+| Example annotation | Schema Effect |
+|--------------------|---------------|
+| `@AuditField` (project-defined) | Excluded from write schema |
+| `@CreatedBy` / `@LastModifiedDate` | Excluded from write schema when registered |
 
 ### Integration with OpenApiSpecGenerator
 
@@ -166,6 +171,8 @@ generic POJO introspector.
 - `modules/jpa-schema/src/main/java/org/apache/axis2/jpa/schema/EntitySchemaModel.java`
 - `modules/jpa-schema/src/main/java/org/apache/axis2/jpa/schema/AnnotationIntrospector.java`
 - `modules/jpa-schema/src/main/java/org/apache/axis2/jpa/schema/HbmXmlIntrospector.java`
+- `modules/jpa-schema/src/main/java/org/apache/axis2/jpa/schema/HbmBatchSchemaGenerator.java`
+  (CLI: a directory of `.hbm.xml` files → one OpenAPI `components/schemas` document)
 
 ### Dependency
 
@@ -227,7 +234,7 @@ OutFlow / flowComplete:
 ### Configuration in services.xml
 
 ```xml
-<service name="PortfolioAssetService">
+<service name="OrderService">
     <parameter name="transactional">true</parameter>
     <parameter name="transactionTimeout">30</parameter>
     <!-- operations... -->
@@ -264,8 +271,8 @@ Most enterprise applications paginate with integer offsets because:
    server-side tokens — added complexity with no benefit when the query is already
    offset-based.
 
-2. **Frontend grid compatibility** — SmartClient, AG Grid, React Table, and MUI
-   DataGrid all natively speak offset/limit via `startRow`/`endRow` or
+2. **Frontend grid compatibility** — AG Grid, MUI DataGrid, React Table and SmartClient
+   all natively speak offset/limit via `startRow`/`endRow` or
    `page`/`pageSize`. Cursor tokens require client-side adaptation.
 
 3. **Total count is cheap** — offset-based APIs can include `totalCount` (from a
@@ -467,10 +474,15 @@ Phase 2 (requires `/openapi-mcp.json` endpoint — **satisfied**).
 
 ## Phase 5 — HTTP/2 Transport Publication
 
-**Status: NOT STARTED.**
+**Status: PARTIAL.**
 
-Graduate `modules/transport-h2` to supported module with formal test suite,
-performance benchmarks, and starter integration.
+**Done:** `axis2-transport-h2` is published to Maven Central (2.0.1) and has a 76-test
+suite. It is HTTPS-only by design, and since 2.0.2 does not follow redirects on a
+decoupled response. The HTTP/2 client guide documents production hardening (stale
+connection eviction, TCP keepalive, bounded retry), applied in the sample client.
+
+**Remaining:** starter integration, published performance benchmarks, and a decision on
+shipping it in the binary distribution's `lib/` (it is not there today).
 
 ### Dependency
 Phase 1 (starter) — **satisfied**.
@@ -508,7 +520,7 @@ Apache blog post, migration guide, reference implementation documentation.
 | **2** | OpenAPI annotation bridge (springdoc) | PARTIAL |
 | **3** | REST transport + dual-protocol | NOT STARTED |
 | **4** | MCP bridge (`axis2-mcp-bridge` stdio JAR) | **DONE** |
-| **5** | HTTP/2 transport publication | NOT STARTED |
+| **5** | HTTP/2 transport publication | PARTIAL |
 | **6** | Native MCP transport | DEFERRED |
 | **7** | Community posts, migration guide | NOT STARTED |
 
@@ -580,7 +592,7 @@ A single Axis2 service deployment, configured once, serves:
 ```
 Claude Desktop / AI agent  →  MCP (axis2-mcp-bridge, done)
                                          ↓
-Data API / React frontend  →  REST (Phase 3)    ──►  Axis2 Service
+REST clients / web UI      →  REST (Phase 3)    ──►  Axis2 Service
                                          ↑           (one implementation)
 Existing JSON-RPC callers  →  JSON-RPC (unchanged)
 ```
