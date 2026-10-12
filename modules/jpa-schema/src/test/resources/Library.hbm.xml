@@ -3,15 +3,17 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="com.example.bo">
+<!-- Small mapping in quoted-identifier style: backtick-quoted table and columns,
+     id+generator, version, typed properties, many-to-one, set and component. -->
+<hibernate-mapping package="org.example.library">
 
-    <class name="CompanyBO" table="`COMPANY`"
+    <class name="Library" table="`LIBRARY`"
            dynamic-insert="true"
            optimistic-lock="version"
            lazy="true"
            batch-size="300">
 
-        <id name="id" type="java.lang.Long" column="`companyID`">
+        <id name="id" type="java.lang.Long" column="`libraryID`">
             <generator class="native"/>
         </id>
 
@@ -28,13 +30,13 @@
         <property name="created" column="`created`"
                   type="timestamp" not-null="true" length="6"/>
 
-        <property name="require2FactorAuth" column="`require2FactorAuth`"
+        <property name="requiresMembership" column="`requiresMembership`"
                   type="java.lang.Boolean" not-null="false"/>
 
-        <property name="maxUsers" column="`maxUsers`"
+        <property name="maxMembers" column="`maxMembers`"
                   type="java.lang.Integer" not-null="false"/>
 
-        <property name="annualFee" column="`annualFee`"
+        <property name="annualBudget" column="`annualBudget`"
                   type="java.lang.Double" not-null="false"/>
 
         <property name="deleted" type="java.lang.Boolean">
@@ -42,27 +44,27 @@
         </property>
 
         <many-to-one
-            name="createdUser"
-            column="`createdUserID`"
-            class="com.example.bo.UserBO"
+            name="createdBy"
+            column="`createdByID`"
+            class="org.example.library.Member"
             not-null="true"/>
 
         <many-to-one
-            name="passwordPolicy"
-            class="com.example.bo.PasswordPolicyBO"
-            column="`passwordPolicyID`"
+            name="accessPolicy"
+            class="org.example.library.AccessPolicy"
+            column="`accessPolicyID`"
             not-null="false"/>
 
-        <set name="departments" table="`Department`"
+        <set name="branches" table="`BRANCH`"
              inverse="true" cascade="all-delete-orphan" lazy="true">
-            <key column="`companyID`"/>
-            <one-to-many class="com.example.bo.DepartmentBO"/>
+            <key column="`libraryID`"/>
+            <one-to-many class="org.example.library.Branch"/>
         </set>
 
-        <component name="companyAddress" class="com.example.bo.component.Address">
-            <property name="address1" type="java.lang.String" column="`company_address1`" not-null="false"/>
-            <property name="city" type="java.lang.String" column="`company_city`" not-null="false"/>
-            <property name="state" type="java.lang.String" column="`company_state`" not-null="false"/>
+        <component name="libraryAddress" class="org.example.library.Address">
+            <property name="address1" type="java.lang.String" column="`library_address1`" not-null="false"/>
+            <property name="city" type="java.lang.String" column="`library_city`" not-null="false"/>
+            <property name="state" type="java.lang.String" column="`library_state`" not-null="false"/>
         </component>
 
     </class>

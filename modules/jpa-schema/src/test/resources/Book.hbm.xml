@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<!--
+  Mapping for batch generator testing: a book with its author and loans.
+  Exercises: id+generator, version, not-null properties, nullable properties,
+  many-to-one, set collection, nested column element with default.
+-->
+<hibernate-mapping package="org.example.library">
+	<class name="Book" table="BOOK" dynamic-update="false"
+		dynamic-insert="true" select-before-update="false" optimistic-lock="version"
+		lazy="true" batch-size="300">
+
+		<id name="id" type="java.lang.Long" column="bookID">
+			<generator class="native"/>
+		</id>
+		<version name="version" type="java.lang.Long" access="field"
+			column="OBJ_VERSION" />
+
+		<property name="title" column="title" type="java.lang.String"
+			unique="true" not-null="true" />
+		<property name="isbn" column="isbn" type="java.lang.String"
+			not-null="false" />
+		<property name="subtitle" column="subtitle" type="java.lang.String"
+			not-null="false" />
+		<property name="language" column="language" type="java.lang.String"
+			not-null="false" />
+		<property name="publisher" column="publisher" type="java.lang.String"
+			not-null="false" />
+		<property name="edition" column="edition" type="java.lang.String"
+			not-null="false" />
+		<property name="genre" column="genre" type="java.lang.String"
+			not-null="false" />
+		<property name="summary" column="summary" type="java.lang.String"
+			not-null="false" />
+		<property name="coverUrl" column="coverUrl" type="java.lang.String"
+			not-null="false" />
+		<property name="seriesName" column="seriesName" type="java.lang.String"
+			not-null="false" />
+
+		<many-to-one name="author"
+			class="org.example.library.Author"
+			column="authorID" cascade="save-update" />
+
+		<set name="loans" table="BOOK_LOAN" inverse="true" lazy="true">
+			<key>
+				<column name="bookID" not-null="true" />
+			</key>
+			<one-to-many class="org.example.library.Loan" />
+		</set>
+
+		<property name="deleted" type="java.lang.Boolean">
+			<column name="deleted" not-null="true" default="0" />
+		</property>
+
+	</class>
+</hibernate-mapping>

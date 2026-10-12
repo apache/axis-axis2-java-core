@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<!-- Large mapping (50+ fields): many property types, text and sql-type columns,
+     several many-to-one relationships, a component, set collections with filters,
+     nested column defaults and a placeholder in the generator. -->
+
+<hibernate-mapping package="org.example.library">
+	<class name="Branch"
+               table="`BRANCH`"
+               dynamic-update="false"
+               dynamic-insert="true"
+               select-before-update="false"
+               optimistic-lock="version"
+               lazy="true"
+               batch-size="300"
+        >
+
+	<id name="id" type="java.lang.Long" column="`branchID`">
+            <generator class="native">
+                ${branch_branchid_seq}
+            </generator>
+	</id>
+        <version name="version" type="java.lang.Long" access="field" column="OBJ_VERSION"/>
+
+	<property name="name" column="`name`"
+		type="java.lang.String" not-null="true" />
+	<property name="code" column="`code`"
+		type="java.lang.String" not-null="false" />
+	<property name="created" column="`created`"
+		type="timestamp" not-null="true" length="6" />
+	<property name="modified" column="`modified`"
+		type="timestamp" not-null="true" length="6" />
+	<property name="openedOn" column="`openedOn`"
+		type="timestamp" not-null="false" length="6" />
+	<property name="closedOn" column="`closedOn`"
+		type="timestamp" not-null="false" length="6" />
+	<property name="active" column="`active`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="wheelchairAccessible" column="`wheelchairAccessible`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="hasCafe" column="`hasCafe`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="hasParking" column="`hasParking`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="hasMakerSpace" column="`hasMakerSpace`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="eveningHours" column="`eveningHours`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="weekendHours" column="`weekendHours`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="notes" column="`notes`"
+		type="text" not-null="false" />
+
+	<!-- sql-type override: varchar(max) - no length constraint -->
+	<property name="description" type="java.lang.String">
+                <column name="`description`" sql-type="varchar(max)" not-null="false" />
+	</property>
+
+	<property name="websiteUrl" column="`websiteUrl`"
+		type="java.lang.String" not-null="false" length="8000" />
+	<property name="catalogUrl" column="`catalogUrl`"
+		type="java.lang.String" not-null="false" length="8000" />
+	<property name="occupancyRate" column="`occupancyRate`"
+		type="java.lang.Double" not-null="false" />
+	<property name="loansLast7Days" column="`loansLast7Days`"
+		type="java.lang.Long" not-null="false" />
+	<property name="loansLast30Days" column="`loansLast30Days`"
+		type="java.lang.Long" not-null="false" />
+	<property name="loansLast90Days" column="`loansLast90Days`"
+		type="java.lang.Long" not-null="false" />
+	<property name="loansLast365Days" column="`loansLast365Days`"
+		type="java.lang.Long" not-null="false" />
+	<property name="visitAvg7Days" column="`visitAvg7Days`"
+		type="java.lang.Double" not-null="false" />
+	<property name="visitAvg30Days" column="`visitAvg30Days`"
+		type="java.lang.Double" not-null="false" />
+	<property name="visitAvg90Days" column="`visitAvg90Days`"
+		type="java.lang.Double" not-null="false" />
+	<property name="visitAvg365Days" column="`visitAvg365Days`"
+		type="java.lang.Double" not-null="false" />
+	<property name="memberCount7Days" column="`memberCount7Days`"
+		type="java.lang.Long" not-null="false" />
+	<property name="memberCount30Days" column="`memberCount30Days`"
+		type="java.lang.Long" not-null="false" />
+	<property name="staffed" column="`staffed`"
+		type="java.lang.Boolean" not-null="true" />
+	<property name="lastInventory" column="`lastInventory`"
+		type="timestamp" not-null="false" length="6" />
+	<property name="createdByName" column="`createdByName`"
+		type="java.lang.String" not-null="false" />
+	<property name="modifiedByName" column="`modifiedByName`"
+		type="java.lang.String" not-null="false" />
+	<property name="requiresLibraryCard" column="`requiresLibraryCard`"
+		type="java.lang.Boolean" not-null="false" />
+	<property name="deleted" type="java.lang.Boolean">
+            <column name="deleted" not-null="true" default="0"/>
+        </property>
+
+	<property name="openingNotes" column="`openingNotes`"
+		type="text" not-null="false" />
+	<property name="accessibilityNotes" column="`accessibilityNotes`"
+		type="text" not-null="false" />
+	<property name="announcement" column="`announcement`"
+		type="text" not-null="false" />
+	<property name="announcementExpires" column="`announcementExpires`"
+		type="timestamp" not-null="false" length="6" />
+
+	<!-- Multiple many-to-one relationships -->
+        <many-to-one name="createdBy" column="`createdByID`"
+                class="org.example.library.Member" not-null="true"/>
+
+        <many-to-one name="modifiedBy" column="`modifiedByID`"
+                class="org.example.library.Member" not-null="true"/>
+
+        <many-to-one name="library" column="`libraryID`"
+                class="org.example.library.Library"
+                cascade="save-update" not-null="true"/>
+
+        <many-to-one name="accessPolicy" column="`accessPolicyID`"
+                class="org.example.library.AccessPolicy"
+                cascade="save-update" not-null="false"/>
+
+        <!-- Embedded component -->
+        <component name="branchAddress" class="org.example.library.Address">
+            <property name="address1" type="java.lang.String"
+                    column="`branch_address1`" not-null="false"/>
+            <property name="address2" type="java.lang.String"
+                    column="`branch_address2`" not-null="false"/>
+            <property name="city" type="java.lang.String"
+                    column="`branch_city`" not-null="false"/>
+            <property name="state" type="java.lang.String"
+                    column="`branch_state`" not-null="false"/>
+            <property name="zip" type="java.lang.Integer"
+                    column="`branch_zip`" not-null="false"/>
+            <property name="country" type="java.lang.String"
+                    column="`branch_country`" not-null="false"/>
+            <property name="phone" type="java.lang.String"
+                    column="`branch_phone`" not-null="false"/>
+        </component>
+
+        <!-- Collection mappings (one-to-many via <set>) -->
+        <set name="reservations" fetch="subselect" table="`ROOM_RESERVATION`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`branchID`"/>
+            <one-to-many class="org.example.library.RoomReservation"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+        <set name="members" fetch="subselect" table="`MEMBER`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`branchID`"/>
+            <one-to-many class="org.example.library.Member"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+        <set name="events" fetch="subselect" table="`BRANCH_EVENT`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`branchID`"/>
+            <one-to-many class="org.example.library.BranchEvent"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+        <set name="catalogItems" fetch="subselect" table="`CATALOG_ITEM`"
+             cascade="all-delete-orphan" inverse="true" lazy="true">
+            <key column="`branchID`"/>
+            <one-to-many class="org.example.library.CatalogItem"/>
+            <filter name="deletedFilter"/>
+        </set>
+
+	<filter name="deletedFilter"/>
+	</class>
+</hibernate-mapping>

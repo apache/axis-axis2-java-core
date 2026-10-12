@@ -70,15 +70,15 @@ import java.util.Map;
  * {
  *   "openapi": "3.0.1",
  *   "info": {
- *     "title": "Generated from 146 HBM XML mappings",
+ *     "title": "Generated from 3 HBM XML mappings",
  *     "version": "1.0.0"
  *   },
  *   "components": {
  *     "schemas": {
- *       "CompanyBO": { "type": "object", "properties": { ... } },
- *       "CompanyBOWrite": { "type": "object", "properties": { ... } },
- *       "DepartmentBO": { ... },
- *       "DepartmentBOWrite": { ... },
+ *       "Library": { "type": "object", "properties": { ... } },
+ *       "LibraryWrite": { "type": "object", "properties": { ... } },
+ *       "Branch": { ... },
+ *       "BranchWrite": { ... },
  *       ...
  *     }
  *   }

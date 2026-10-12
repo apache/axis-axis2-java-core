@@ -57,7 +57,7 @@ public class EntitySchemaModel {
         private boolean nullable = true;
         private boolean generatedValue;      // @GeneratedValue or <generator>
         private boolean versionField;        // @Version or <version>
-        private boolean ignoredForWrite;     // @IgnoreChanges, @Transient, or custom
+        private boolean ignoredForWrite;     // @Transient or a registered write-exclude annotation
         private boolean transientField;      // @Transient — excluded from ALL schemas
         private Integer maxLength;           // @Column(length=) or hbm length attribute
         private String refEntityName;        // for relationships: target entity name

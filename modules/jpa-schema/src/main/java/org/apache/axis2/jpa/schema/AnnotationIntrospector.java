@@ -65,7 +65,7 @@ import java.util.Set;
  * <p>Usage:
  * <pre>{@code
  * AnnotationIntrospector introspector = new AnnotationIntrospector();
- * introspector.addWriteExcludeAnnotation("com.example.IgnoreChanges");
+ * introspector.addWriteExcludeAnnotation("com.example.audit.AuditField");
  * EntitySchemaModel model = introspector.introspect(Product.class);
  * }</pre>
  */

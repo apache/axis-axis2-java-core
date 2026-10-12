@@ -44,17 +44,17 @@ import java.util.Map;
  *
  * <p>Parses the Hibernate 3.0 DTD mapping format:
  * <pre>{@code
- * <hibernate-mapping package="com.example.bo">
- *   <class name="CompanyBO" table="`COMPANY`">
- *     <id name="id" type="java.lang.Long" column="`companyID`">
+ * <hibernate-mapping package="org.example.library">
+ *   <class name="Library" table="`LIBRARY`">
+ *     <id name="id" type="java.lang.Long" column="`libraryID`">
  *       <generator class="native"/>
  *     </id>
  *     <version name="version" type="java.lang.Long" column="OBJ_VERSION"/>
  *     <property name="name" type="java.lang.String" not-null="true"/>
- *     <many-to-one name="createdUser" class="...UserBO" column="`createdUserID`"/>
- *     <set name="departments" cascade="all-delete-orphan">
- *       <key column="`companyID`"/>
- *       <one-to-many class="...DepartmentBO"/>
+ *     <many-to-one name="createdBy" class="...Member" column="`createdByID`"/>
+ *     <set name="branches" cascade="all-delete-orphan">
+ *       <key column="`libraryID`"/>
+ *       <one-to-many class="...Branch"/>
  *     </set>
  *   </class>
  * </hibernate-mapping>
@@ -108,7 +108,7 @@ public class HbmXmlIntrospector {
      * Parse a .hbm.xml file and produce an {@link EntitySchemaModel}.
      *
      * @param inputStream the .hbm.xml file content
-     * @param resourceName name for logging (e.g. "CompanyBO.hbm.xml")
+     * @param resourceName name for logging (e.g. "Library.hbm.xml")
      * @return the schema model, or null on parse failure
      */
     public EntitySchemaModel introspect(InputStream inputStream, String resourceName) {

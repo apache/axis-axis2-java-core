@@ -59,10 +59,10 @@ public class JpaSchemaGeneratorTest {
     // Test entities (annotation-based)
     // ═══════════════════════════════════════════════════════════════════════
 
-    /** Custom "ignore for write" annotation — mimics project-specific audit markers. */
+    /** Custom "exclude from write" annotation — stands in for a project-specific audit marker. */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface IgnoreChanges {}
+    public @interface AuditField {}
 
     public enum ProductStatus { ACTIVE, INACTIVE, SUSPENDED }
 
@@ -77,7 +77,7 @@ public class JpaSchemaGeneratorTest {
         @Column(nullable = false, length = 200)
         private String name;
 
-        private Double maxExposure;
+        private Double unitPrice;
 
         @Enumerated(EnumType.STRING)
         private ProductStatus status;
@@ -85,10 +85,10 @@ public class JpaSchemaGeneratorTest {
         @Version
         private Long objVersion;
 
-        @IgnoreChanges
+        @AuditField
         private Timestamp created;
 
-        @IgnoreChanges
+        @AuditField
         private BigDecimal createdUserID;
 
         @Transient
@@ -196,11 +196,11 @@ public class JpaSchemaGeneratorTest {
     @Test
     public void testAnnotationIntrospector_customWriteExcludeAnnotation() {
         AnnotationIntrospector introspector = new AnnotationIntrospector();
-        introspector.addWriteExcludeAnnotation(IgnoreChanges.class.getName());
+        introspector.addWriteExcludeAnnotation(AuditField.class.getName());
         EntitySchemaModel model = introspector.introspect(TestProduct.class);
 
         EntitySchemaModel.FieldModel createdField = model.getFields().get("created");
-        assertTrue("@IgnoreChanges should exclude from write", createdField.isIgnoredForWrite());
+        assertTrue("@AuditField should exclude from write", createdField.isIgnoredForWrite());
         assertTrue(createdField.isExcludedFromWrite());
 
         EntitySchemaModel.FieldModel createdUserId = model.getFields().get("createdUserID");
@@ -251,7 +251,7 @@ public class JpaSchemaGeneratorTest {
     @Test
     public void testReadSchema_includesAllFields() {
         AnnotationIntrospector introspector = new AnnotationIntrospector();
-        introspector.addWriteExcludeAnnotation(IgnoreChanges.class.getName());
+        introspector.addWriteExcludeAnnotation(AuditField.class.getName());
         EntitySchemaModel model = introspector.introspect(TestProduct.class);
 
         ObjectNode readSchema = JpaSchemaGenerator.generateReadSchema(model);
@@ -272,7 +272,7 @@ public class JpaSchemaGeneratorTest {
     @Test
     public void testWriteSchema_excludesServerManagedFields() {
         AnnotationIntrospector introspector = new AnnotationIntrospector();
-        introspector.addWriteExcludeAnnotation(IgnoreChanges.class.getName());
+        introspector.addWriteExcludeAnnotation(AuditField.class.getName());
         EntitySchemaModel model = introspector.introspect(TestProduct.class);
 
         ObjectNode writeSchema = JpaSchemaGenerator.generateWriteSchema(model);
@@ -281,13 +281,13 @@ public class JpaSchemaGeneratorTest {
         // Write schema should exclude server-managed fields
         assertFalse("@GeneratedValue ID excluded", props.has("productID"));
         assertFalse("@Version excluded", props.has("objVersion"));
-        assertFalse("@IgnoreChanges excluded", props.has("created"));
-        assertFalse("@IgnoreChanges excluded", props.has("createdUserID"));
+        assertFalse("@AuditField excluded", props.has("created"));
+        assertFalse("@AuditField excluded", props.has("createdUserID"));
         assertFalse("@Transient excluded", props.has("computedLabel"));
 
         // Regular fields should be present
         assertTrue(props.has("name"));
-        assertTrue(props.has("maxExposure"));
+        assertTrue(props.has("unitPrice"));
         assertTrue(props.has("status"));
         assertTrue(props.has("department"));
         assertTrue(props.has("lineItems"));
@@ -357,15 +357,15 @@ public class JpaSchemaGeneratorTest {
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    public void testHbmXml_parsesCompanyEntity() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/CompanyBO.hbm.xml")) {
+    public void testHbmXml_parsesLibraryEntity() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Library.hbm.xml")) {
             assertNotNull("Test HBM XML file must be on classpath", is);
 
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "CompanyBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Library.hbm.xml");
 
             assertNotNull(model);
-            assertEquals("CompanyBO", model.getEntityName());
+            assertEquals("Library", model.getEntityName());
             assertFalse("Should have at least one ID field", model.getIdFieldNames().isEmpty());
             assertNotNull("Should have a version field", model.getVersionFieldName());
             assertTrue("Should have multiple fields", model.getFields().size() > 3);
@@ -374,9 +374,9 @@ public class JpaSchemaGeneratorTest {
 
     @Test
     public void testHbmXml_idFieldIsGeneratedAndRequired() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/CompanyBO.hbm.xml")) {
+        try (InputStream is = getClass().getResourceAsStream("/Library.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "CompanyBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Library.hbm.xml");
 
             String idName = model.getIdFieldNames().get(0);
             EntitySchemaModel.FieldModel idField = model.getFields().get(idName);
@@ -387,9 +387,9 @@ public class JpaSchemaGeneratorTest {
 
     @Test
     public void testHbmXml_versionFieldExcludedFromWrite() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/CompanyBO.hbm.xml")) {
+        try (InputStream is = getClass().getResourceAsStream("/Library.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "CompanyBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Library.hbm.xml");
 
             EntitySchemaModel.FieldModel vf = model.getFields().get(model.getVersionFieldName());
             assertNotNull(vf);
@@ -400,9 +400,9 @@ public class JpaSchemaGeneratorTest {
 
     @Test
     public void testHbmXml_generatesBothSchemas() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/CompanyBO.hbm.xml")) {
+        try (InputStream is = getClass().getResourceAsStream("/Library.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "CompanyBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Library.hbm.xml");
 
             ObjectNode readSchema = JpaSchemaGenerator.generateReadSchema(model);
             ObjectNode writeSchema = JpaSchemaGenerator.generateWriteSchema(model);
@@ -424,9 +424,9 @@ public class JpaSchemaGeneratorTest {
 
     @Test
     public void testHbmXml_propertyTypesMapCorrectly() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/CompanyBO.hbm.xml")) {
+        try (InputStream is = getClass().getResourceAsStream("/Library.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "CompanyBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Library.hbm.xml");
 
             EntitySchemaModel.FieldModel nameField = model.getFields().get("name");
             if (nameField != null) {
@@ -436,32 +436,32 @@ public class JpaSchemaGeneratorTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // HBM XML — production-grade mapping (DepartmentBO: 70+ fields)
+    // HBM XML — large mapping (Branch: 50+ fields)
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    public void testHbmXml_department_parsesLargeEntity() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
-            assertNotNull("DepartmentBO.hbm.xml must be on classpath", is);
+    public void testHbmXml_branch_parsesLargeEntity() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
+            assertNotNull("Branch.hbm.xml must be on classpath", is);
 
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
 
             assertNotNull(model);
-            assertEquals("DepartmentBO", model.getEntityName());
-            assertEquals("DEPARTMENT", model.getTableName());
+            assertEquals("Branch", model.getEntityName());
+            assertEquals("BRANCH", model.getTableName());
 
-            // 70+ fields: properties + relationships + component fields
+            // 50+ fields: properties + relationships + component fields
             assertTrue("Should have 40+ fields, got " + model.getFields().size(),
                     model.getFields().size() >= 40);
         }
     }
 
     @Test
-    public void testHbmXml_department_allTypesMapped() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
+    public void testHbmXml_branch_allTypesMapped() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
 
             // String property
             assertEquals("string", model.getFields().get("name").getJsonSchemaType());
@@ -475,86 +475,86 @@ public class JpaSchemaGeneratorTest {
             assertEquals("boolean", model.getFields().get("active").getJsonSchemaType());
 
             // Double property
-            assertEquals("number", model.getFields().get("usageScore").getJsonSchemaType());
+            assertEquals("number", model.getFields().get("occupancyRate").getJsonSchemaType());
 
             // Long property
-            assertEquals("integer", model.getFields().get("loginCount1Week").getJsonSchemaType());
-            assertEquals("int64", model.getFields().get("loginCount1Week").getJsonSchemaFormat());
+            assertEquals("integer", model.getFields().get("loansLast7Days").getJsonSchemaType());
+            assertEquals("int64", model.getFields().get("loansLast7Days").getJsonSchemaFormat());
 
             // text type (maps to string)
-            assertEquals("string", model.getFields().get("historicalDataOptions").getJsonSchemaType());
+            assertEquals("string", model.getFields().get("notes").getJsonSchemaType());
         }
     }
 
     @Test
-    public void testHbmXml_department_manyToOneRelationships() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
+    public void testHbmXml_branch_manyToOneRelationships() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
 
             // 4 many-to-one relationships
-            EntitySchemaModel.FieldModel company = model.getFields().get("company");
-            assertNotNull("company relationship must be parsed", company);
-            assertEquals("object", company.getJsonSchemaType());
-            assertEquals("CompanyBO", company.getRefEntityName());
-            assertFalse("company is not-null", company.isNullable());
+            EntitySchemaModel.FieldModel library = model.getFields().get("library");
+            assertNotNull("library relationship must be parsed", library);
+            assertEquals("object", library.getJsonSchemaType());
+            assertEquals("Library", library.getRefEntityName());
+            assertFalse("library is not-null", library.isNullable());
 
-            EntitySchemaModel.FieldModel policy = model.getFields().get("passwordPolicy");
+            EntitySchemaModel.FieldModel policy = model.getFields().get("accessPolicy");
             assertNotNull(policy);
-            assertEquals("PasswordPolicyBO", policy.getRefEntityName());
-            assertTrue("passwordPolicy is nullable", policy.isNullable());
+            assertEquals("AccessPolicy", policy.getRefEntityName());
+            assertTrue("accessPolicy is nullable", policy.isNullable());
         }
     }
 
     @Test
-    public void testHbmXml_department_collectionSets() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
+    public void testHbmXml_branch_collectionSets() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
 
             // 4 <set> collections
-            EntitySchemaModel.FieldModel users = model.getFields().get("users");
-            assertNotNull("users collection must be parsed", users);
-            assertEquals("array", users.getJsonSchemaType());
-            assertTrue(users.isCollection());
-            assertEquals("UserBO", users.getRefEntityName());
+            EntitySchemaModel.FieldModel members = model.getFields().get("members");
+            assertNotNull("members collection must be parsed", members);
+            assertEquals("array", members.getJsonSchemaType());
+            assertTrue(members.isCollection());
+            assertEquals("Member", members.getRefEntityName());
 
-            EntitySchemaModel.FieldModel portfolios = model.getFields().get("portfolios");
-            assertNotNull("portfolios collection must be parsed", portfolios);
-            assertEquals("PortfolioBO", portfolios.getRefEntityName());
+            EntitySchemaModel.FieldModel catalogItems = model.getFields().get("catalogItems");
+            assertNotNull("catalogItems collection must be parsed", catalogItems);
+            assertEquals("CatalogItem", catalogItems.getRefEntityName());
 
-            EntitySchemaModel.FieldModel customFields = model.getFields().get("customFields");
-            assertNotNull(customFields);
-            assertEquals("CustomFieldBO", customFields.getRefEntityName());
+            EntitySchemaModel.FieldModel events = model.getFields().get("events");
+            assertNotNull(events);
+            assertEquals("BranchEvent", events.getRefEntityName());
 
-            EntitySchemaModel.FieldModel ipRanges = model.getFields().get("ipAddressRanges");
-            assertNotNull(ipRanges);
-            assertEquals("IPAddressRangeBO", ipRanges.getRefEntityName());
+            EntitySchemaModel.FieldModel reservations = model.getFields().get("reservations");
+            assertNotNull(reservations);
+            assertEquals("RoomReservation", reservations.getRefEntityName());
         }
     }
 
     @Test
-    public void testHbmXml_department_componentFlattened() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
+    public void testHbmXml_branch_componentFlattened() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
 
-            // Component fields are flattened with prefix: departmentAddress.city
-            EntitySchemaModel.FieldModel city = model.getFields().get("departmentAddress.city");
-            assertNotNull("component field departmentAddress.city must be present", city);
+            // Component fields are flattened with prefix: branchAddress.city
+            EntitySchemaModel.FieldModel city = model.getFields().get("branchAddress.city");
+            assertNotNull("component field branchAddress.city must be present", city);
             assertEquals("string", city.getJsonSchemaType());
 
-            EntitySchemaModel.FieldModel zip = model.getFields().get("departmentAddress.zip");
+            EntitySchemaModel.FieldModel zip = model.getFields().get("branchAddress.zip");
             assertNotNull(zip);
             assertEquals("integer", zip.getJsonSchemaType());
         }
     }
 
     @Test
-    public void testHbmXml_department_nestedColumnNotNull() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
+    public void testHbmXml_branch_nestedColumnNotNull() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
 
             // "deleted" uses nested <column not-null="true"> instead of attribute
             EntitySchemaModel.FieldModel deleted = model.getFields().get("deleted");
@@ -566,10 +566,10 @@ public class JpaSchemaGeneratorTest {
     }
 
     @Test
-    public void testHbmXml_department_schemaGeneration() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
+    public void testHbmXml_branch_schemaGeneration() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
             HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-            EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+            EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
 
             ObjectNode readSchema = JpaSchemaGenerator.generateReadSchema(model);
             ObjectNode writeSchema = JpaSchemaGenerator.generateWriteSchema(model);
@@ -581,9 +581,9 @@ public class JpaSchemaGeneratorTest {
             assertTrue(readProps.has("id"));
             assertTrue(readProps.has("version"));
             assertTrue(readProps.has("name"));
-            assertTrue(readProps.has("users"));
-            assertTrue(readProps.has("company"));
-            assertTrue(readProps.has("departmentAddress.city"));
+            assertTrue(readProps.has("members"));
+            assertTrue(readProps.has("library"));
+            assertTrue(readProps.has("branchAddress.city"));
 
             // Write schema excludes generated ID and version
             assertFalse(writeProps.has("id"));
@@ -591,16 +591,16 @@ public class JpaSchemaGeneratorTest {
 
             // Write schema still has regular fields, relationships, collections
             assertTrue(writeProps.has("name"));
-            assertTrue(writeProps.has("users"));
-            assertTrue(writeProps.has("company"));
-            assertTrue(writeProps.has("departmentAddress.city"));
+            assertTrue(writeProps.has("members"));
+            assertTrue(writeProps.has("library"));
+            assertTrue(writeProps.has("branchAddress.city"));
 
             // Relationship refs in read schema
-            assertEquals("#/components/schemas/CompanyBO",
-                    readProps.get("company").get("$ref").asText());
-            assertEquals("array", readProps.get("users").get("type").asText());
-            assertEquals("#/components/schemas/UserBO",
-                    readProps.get("users").get("items").get("$ref").asText());
+            assertEquals("#/components/schemas/Library",
+                    readProps.get("library").get("$ref").asText());
+            assertEquals("array", readProps.get("members").get("type").asText());
+            assertEquals("#/components/schemas/Member",
+                    readProps.get("members").get("items").get("$ref").asText());
         }
     }
 }

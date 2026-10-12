@@ -135,17 +135,17 @@ Map&lt;String, ObjectNode&gt; schemas = JpaSchemaGenerator.generateBothSchemas(m
 <h2 id="custom_annotations">Custom Audit Annotation Support</h2>
 
 <p>Many enterprise codebases have project-specific annotations that mark
-fields as server-managed (e.g., <code>@IgnoreChanges</code> for audit
+fields as server-managed (e.g., an <code>@AuditField</code> marker for audit
 timestamps, <code>@CreatedBy</code>, <code>@LastModifiedDate</code>).
 Register these with the introspector to exclude them from write schemas:</p>
 
 <pre>
 AnnotationIntrospector introspector = new AnnotationIntrospector();
-introspector.addWriteExcludeAnnotation("com.example.IgnoreChanges");
+introspector.addWriteExcludeAnnotation("com.example.audit.AuditField");
 introspector.addWriteExcludeAnnotation("com.example.audit.CreatedBy");
 
 EntitySchemaModel model = introspector.introspect(Product.class);
-// Fields annotated with @IgnoreChanges or @CreatedBy are now
+// Fields annotated with @AuditField or @CreatedBy are now
 // excluded from the write schema but present in the read schema.
 </pre>
 
@@ -157,8 +157,8 @@ files and produces the same <code>EntitySchemaModel</code>:</p>
 
 <pre>
 HbmXmlIntrospector introspector = new HbmXmlIntrospector();
-try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
-    EntitySchemaModel model = introspector.introspect(is, "DepartmentBO.hbm.xml");
+try (InputStream is = getClass().getResourceAsStream("/Branch.hbm.xml")) {
+    EntitySchemaModel model = introspector.introspect(is, "Branch.hbm.xml");
     ObjectNode readSchema = JpaSchemaGenerator.generateReadSchema(model);
 }
 </pre>
@@ -198,8 +198,8 @@ try (InputStream is = getClass().getResourceAsStream("/DepartmentBO.hbm.xml")) {
   <li><strong>Schema generation</strong> (6 tests): read includes all fields, write excludes
     server-managed fields, required array, relationship $refs, enum values,
     generateBothSchemas</li>
-  <li><strong>HBM XML introspection</strong> (10 tests): parses CompanyBO and DepartmentBO
-    (70+ field production-grade entity), verifies type mapping, relationships,
+  <li><strong>HBM XML introspection</strong> (10 tests): parses Library and Branch
+    (a 50+ field entity), verifies type mapping, relationships,
     collections, component flattening, nested column not-null</li>
 </ul>
 
@@ -270,17 +270,17 @@ directory, different output artifact:</p>
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Generated from 146 HBM XML mappings",
+    "title": "Generated from 3 HBM XML mappings",
     "version": "1.0.0"
   },
   "components": {
     "schemas": {
-      "CompanyBO": { "type": "object", "properties": { ... } },
-      "CompanyBOWrite": { "type": "object", "properties": { ... } },
-      "DepartmentBO": { ... },
-      "DepartmentBOWrite": { ... },
-      "ProductBO": { ... },
-      "ProductBOWrite": { ... }
+      "Book": { "type": "object", "properties": { ... } },
+      "BookWrite": { "type": "object", "properties": { ... } },
+      "Branch": { ... },
+      "BranchWrite": { ... },
+      "Library": { ... },
+      "LibraryWrite": { ... }
     }
   }
 }
@@ -288,19 +288,17 @@ directory, different output artifact:</p>
 
 <p>Each entity produces two schemas:</p>
 <ul>
-  <li><strong>EntityBO</strong> — read schema (GET responses): all fields,
+  <li><strong>Entity</strong> — read schema (GET responses): all fields,
     generated IDs marked <code>readOnly</code></li>
-  <li><strong>EntityBOWrite</strong> — write schema (POST/PUT requests):
+  <li><strong>EntityWrite</strong> — write schema (POST/PUT requests):
     excludes generated IDs, version fields, and custom audit annotations</li>
 </ul>
 
 <p>Console output reports each entity processed:</p>
 <pre>
-  OK   CompanyBO.hbm.xml → CompanyBO (12 fields, 2 relationships)
-  OK   DepartmentBO.hbm.xml → DepartmentBO (58 fields, 8 relationships)
-  OK   ProductBO.hbm.xml → ProductBO (8 fields, 1 relationships)
-  OK   OrderBO.hbm.xml → OrderBO (15 fields, 3 relationships)
-  SKIP HistoryData.hbm.xml (no entity found)
+  OK   Book.hbm.xml → Book (15 fields, 2 relationships)
+  OK   Branch.hbm.xml → Branch (55 fields, 8 relationships)
+  OK   Library.hbm.xml → Library (15 fields, 3 relationships)
 
 Generated 8 schemas (4 entities × 2 [read + write]) from 5 HBM files
 Output: /path/to/resources-axis2/openapi-schemas.json
