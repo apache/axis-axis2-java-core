@@ -26,7 +26,7 @@
     <property name="maven.compiler.release" value="17"/>
 
     <property environment="env"/>
-    <property name="AXIS2_HOME" value="../../"/>
+    <property name="AXIS2_HOME" value="../../../"/>
 
     <property name="build.dir" value="build"/>
 
@@ -67,7 +67,7 @@
         <jar destfile="${build.dir}/SamplePingService.aar">
             <fileset excludes="**/Test.class" dir="${build.dir}/classes"/>
         </jar>
-		<copy file="${build.dir}/SamplePingService.aar" destfile="../../repository/services" />
+		<copy file="${build.dir}/SamplePingService.aar" destfile="../../../repository/services" />
     </target>
 
     <target name="run.client" depends="compile">

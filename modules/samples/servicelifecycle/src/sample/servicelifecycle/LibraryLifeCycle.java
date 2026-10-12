@@ -21,8 +21,7 @@ package sample.servicelifecycle;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLBuilderFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
@@ -38,7 +37,6 @@ import sample.servicelifecycle.bean.User;
 import sample.servicelifecycle.bean.UserList;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.util.Iterator;
 
@@ -59,10 +57,8 @@ public class LibraryLifeCycle implements ServiceLifeCycle {
                 libraryElement = allBooks.getParameterElement();
             } else {
                 InputStream in = new FileInputStream(libFile);
-                XMLStreamReader xmlReader = StAXUtils
-                        .createXMLStreamReader(in);
-                StAXOMBuilder staxOMBuilder = new StAXOMBuilder(xmlReader);
-                libraryElement = staxOMBuilder.getDocumentElement();
+                libraryElement = OMXMLBuilderFactory.createOMBuilder(in)
+                        .getDocumentElement();
                 noFile = false;
             }
             processOmelemnt(libraryElement, service, noFile);

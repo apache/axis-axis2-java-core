@@ -28,7 +28,7 @@
 	<property environment="env" />
 	<property name="service-name" value="WeatherSpringService" />
 	<property name="dest.dir" value="target" />
-	<property name="axis2.home" value="../../" />
+	<property name="axis2.home" value="../../../" />
 
 	<property name="repository.path" value="${axis2.home}/repository" />
 
@@ -114,27 +114,36 @@
 		<copy file="${dest.dir}/${service-name}.aar" todir="${catalina-modules}" />
 	</target>
 
-        <!--We are not shipping spring jar with the release. This target can be used to
-        download spring jar to run this sample.-->
+        <!-- Spring is not shipped with Axis2. The service is compiled against these
+             jars, downloaded once from Maven Central into lib/. -->
+	<property name="spring.version" value="7.0.9" />
+	<property name="maven.central" value="https://repo.maven.apache.org/maven2/org/springframework" />
+
 	<target name="checkSpringJarAvailability">
-	    <!--if either one of jar is not available, spring_available will set to false-->
+	    <!--if any jar is missing, spring_available stays unset-->
 	    <condition property="spring_available">
 		<and>
-		        <available file="lib/spring-core-1.2.8.jar" />
-			<available file="lib/spring-context-1.2.8.jar" />			
-	         	<available file="lib/spring-beans-1.2.8.jar" />
+			<available file="lib/spring-core-${spring.version}.jar" />
+			<available file="lib/spring-beans-${spring.version}.jar" />
+			<available file="lib/spring-context-${spring.version}.jar" />
+			<available file="lib/spring-aop-${spring.version}.jar" />
+			<available file="lib/spring-expression-${spring.version}.jar" />
 		</and>
 	    </condition>
 	</target>
 
 	<target name="download.jars" depends="checkSpringJarAvailability" unless="spring_available">
-	    <echo message="Spring jars not available.Downloading...."/>
+	    <echo message="Spring jars not available. Downloading from Maven Central...."/>
 	    <mkdir dir="lib"/>
-            <get src="http://ws.zones.apache.org/repository/org.springframework/jars/spring-core-1.2.8.jar"
-	             dest="lib/spring-core-1.2.8.jar" verbose="true"/>
-	    <get src="http://ws.zones.apache.org/repository/org.springframework/jars/spring-context-1.2.8.jar"
-	             dest="lib/spring-context-1.2.8.jar" verbose="true"/>
-	    <get src="http://ws.zones.apache.org/repository/org.springframework/jars/spring-beans-1.2.8.jar"
-	             dest="lib/spring-beans-1.2.8.jar" verbose="true"/>
+	    <get src="${maven.central}/spring-core/${spring.version}/spring-core-${spring.version}.jar"
+	         dest="lib/spring-core-${spring.version}.jar" verbose="true"/>
+	    <get src="${maven.central}/spring-beans/${spring.version}/spring-beans-${spring.version}.jar"
+	         dest="lib/spring-beans-${spring.version}.jar" verbose="true"/>
+	    <get src="${maven.central}/spring-context/${spring.version}/spring-context-${spring.version}.jar"
+	         dest="lib/spring-context-${spring.version}.jar" verbose="true"/>
+	    <get src="${maven.central}/spring-aop/${spring.version}/spring-aop-${spring.version}.jar"
+	         dest="lib/spring-aop-${spring.version}.jar" verbose="true"/>
+	    <get src="${maven.central}/spring-expression/${spring.version}/spring-expression-${spring.version}.jar"
+	         dest="lib/spring-expression-${spring.version}.jar" verbose="true"/>
 	</target>
 </project>

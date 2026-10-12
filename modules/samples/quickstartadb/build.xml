@@ -20,7 +20,7 @@
 <project name="quickstartadb" basedir="." default="generate.service">
 
     <property environment="env"/>
-    <property name="AXIS2_HOME" value="../.."/>
+    <property name="AXIS2_HOME" value="../../.."/>
 
 	<property name="wsdl.uri" value="./resources/META-INF/StockQuoteService.wsdl"/>
 	<property name="service.target" value="build/service"/>
@@ -78,7 +78,7 @@
             <property name="axis2.home" value="../../${AXIS2_HOME}"/>
         </ant> 
 		<copy file="${basedir}/build/service/build/lib/StockQuoteService.aar"
-              toDir="${basedir}/../../repository/services"
+              toDir="${basedir}/../../../repository/services"
               overwrite="yes">
         </copy>
 		

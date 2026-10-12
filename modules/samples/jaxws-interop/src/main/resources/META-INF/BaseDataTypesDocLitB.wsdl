@@ -512,7 +512,7 @@
     <wsdl:service name="BaseDataTypesDocLitBService">
         <wsdl:port name="BasicHttpBinding_IBaseDataTypesDocLitB" binding="tns:BasicHttpBinding_IBaseDataTypesDocLitB">
             <soap:address
-                    location="http://localhost:8080/axis2/services/TopDownSampleServiceService.IBaseDataTypesDocLitBPort"/>
+                    location="http://localhost:8080/axis2/services/BaseDataTypesDocLitBService.BasicHttpBinding_IBaseDataTypesDocLitB"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

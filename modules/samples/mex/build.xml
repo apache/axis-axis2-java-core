@@ -24,10 +24,10 @@
          output cannot outlive a JDK change. A value inherited from the Maven
          build wins over this default. -->
     <property name="maven.compiler.release" value="17"/>
-    <property name="mainDir" value="../.."/>
+    <property name="mainDir" value="../../.."/>
     <property name="classes.dir" value="build/classes"/>
     <path id="axis.classpath">
-        <fileset dir="../../lib">
+        <fileset dir="../../../lib">
             <include name="*.jar"/>
         </fileset>
         <pathelement location="build/userguideMex.jar"/>
@@ -58,7 +58,7 @@
                 <include name="userguide/mex/services/example1/**/*.class"/>
             </fileset>
         </jar>
-        <copy file="build/DefaultAxis2DataLocatorDemoService.aar" tofile="../../repository/services/DefaultAxis2DataLocatorDemoService.aar" overwrite="true"/>
+        <copy file="build/DefaultAxis2DataLocatorDemoService.aar" tofile="../../../repository/services/DefaultAxis2DataLocatorDemoService.aar" overwrite="true"/>
         <jar destfile="build/ServiceLevelDataLocatorDemoService.aar" >
             <fileset dir="src/userguide/mex/services/example2/">
                 <include name="META-INF/**"/>
@@ -70,7 +70,7 @@
                 <include name="userguide/mex/datalocators/*.class"/>
             </fileset>
         </jar>
-        <copy file="build/ServiceLevelDataLocatorDemoService.aar" tofile="../../repository/services/ServiceLevelDataLocatorDemoService.aar" overwrite="true"/>
+        <copy file="build/ServiceLevelDataLocatorDemoService.aar" tofile="../../../repository/services/ServiceLevelDataLocatorDemoService.aar" overwrite="true"/>
         <jar destfile="build/WSDLDataLocatorDemoService.aar">
             <fileset dir="src/userguide/mex/services/example3/">
                 <include name="META-INF/**"/>
@@ -82,7 +82,7 @@
                 <include name="userguide/mex/datalocators/*.class"/>
             </fileset>
         </jar>
-        <copy file="build/WSDLDataLocatorDemoService.aar" tofile="../../repository/services/WSDLDataLocatorDemoService.aar" overwrite="true"/>
+        <copy file="build/WSDLDataLocatorDemoService.aar" tofile="../../../repository/services/WSDLDataLocatorDemoService.aar" overwrite="true"/>
     </target>
     
      <target name="run.client.default" depends="compile">

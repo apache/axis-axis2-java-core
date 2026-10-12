@@ -29,7 +29,7 @@
 	<property name="dest.dir" value="build" />
 	<property name="dest.dir.classes" value="${dest.dir}/${service.name}" />
 	<property name="dest.dir.lib" value="${dest.dir}/lib" />	
-	<property name="axis2.home" value="../../" />
+	<property name="axis2.home" value="../../../" />
 	<property name="repository.path" value="${axis2.home}/repository" />
 
 	<path id="build.class.path">

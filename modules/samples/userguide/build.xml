@@ -24,10 +24,10 @@
          output cannot outlive a JDK change. A value inherited from the Maven
          build wins over this default. -->
     <property name="maven.compiler.release" value="17"/>
-    <property name="mainDir" value="../.."/>
+    <property name="mainDir" value="../../.."/>
     <property name="classes.dir" value="build/classes"/>
     <path id="axis.classpath">
-        <fileset dir="../../lib">
+        <fileset dir="../../../lib">
             <include name="*.jar"/>
         </fileset>
         <pathelement location="build/userguide.jar"/>
@@ -61,7 +61,7 @@
                 <include name="userguide/example1/**/*.class"/>
             </fileset>
         </jar>
-        <copy file="build/MyService.aar" tofile="../../repository/services/sample-MyService.aar" overwrite="true"/>
+        <copy file="build/MyService.aar" tofile="../../../repository/services/sample-MyService.aar" overwrite="true"/>
         <jar destfile="build/MyServiceWithModule.aar" >
             <fileset dir="src/userguide/example2/">
                 <include name="META-INF/**"/>
@@ -70,7 +70,7 @@
                 <include name="userguide/example2/**/*.class"/>
             </fileset>
         </jar>
-        <copy file="build/MyServiceWithModule.aar" tofile="../../repository/services/sample-MyServiceWithModule.aar" overwrite="true"/>
+        <copy file="build/MyServiceWithModule.aar" tofile="../../../repository/services/sample-MyServiceWithModule.aar" overwrite="true"/>
         <jar destfile="build/WsaMappingService.aar">
             <fileset dir="src/userguide/example3/">
                 <include name="META-INF/**"/>
@@ -79,7 +79,7 @@
                 <include name="userguide/example3/**/*.class"/>
             </fileset>
         </jar>
-        <copy file="build/WsaMappingService.aar" tofile="../../repository/services/sample-WsaMappingService.aar" overwrite="true"/>
+        <copy file="build/WsaMappingService.aar" tofile="../../../repository/services/sample-WsaMappingService.aar" overwrite="true"/>
     </target>
     
     <target name="generate.module" depends="compile">
@@ -91,8 +91,8 @@
                 <include name="userguide/loggingmodule/**/*.class"/>
             </fileset>
        </jar>
-       <copy file="build/logging.mar" tofile="../../repository/modules/sample-logging.mar" overwrite="true"/>
-       <echo message="*** Please add the logging phase to the ../../conf/axis2.xml. For more details please refer to the http://ws.apache.org/axis2/1_2/modules.html ***"/>
+       <copy file="build/logging.mar" tofile="../../../repository/modules/sample-logging.mar" overwrite="true"/>
+       <echo message="*** Please add the logging phase to the ../../../conf/axis2.xml. For more details please refer to the http://ws.apache.org/axis2/1_2/modules.html ***"/>
     </target>
 
     <target name="run.client.blocking" depends="compile">
