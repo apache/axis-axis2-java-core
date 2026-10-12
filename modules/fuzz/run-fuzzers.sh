@@ -31,7 +31,7 @@ set -e
 
 DURATION=${1:-60}  # Default 60 seconds per fuzzer
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-JAR_PATH="${SCRIPT_DIR}/target/axis2-fuzz-2.0.1-SNAPSHOT.jar"
+JAR_PATH="${SCRIPT_DIR}/target/axis2-fuzz.jar"
 
 # Find Jazzer
 JAZZER="${JAZZER_PATH:-jazzer}"

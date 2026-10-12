@@ -135,9 +135,9 @@ public static void fuzzerTestOneInput(FuzzedDataProvider data) {
 - **Jazzer**: Java fuzzing framework compatible with libFuzzer
   - https://github.com/CodeIntelligenceTesting/jazzer
   - Version: 0.22.1
-- **Axis2**: 2.0.0 (March 2025 release)
+- **Axis2**: the current snapshot (the fuzz module's own `<version>`, kept in step with the root pom)
 - **AXIOM**: 2.0.0
-- **Gson**: 2.10.1
+- **Gson**: 2.14.0
 
 ### Security Sanitizers
 
@@ -234,7 +234,7 @@ Apache Axis2 qualifies on all criteria given its use in enterprise SOAP/REST ser
 
 ### Prerequisites
 
-1. Java 11+
+1. Java 17+
 2. Maven 3.6+
 3. Jazzer (download from GitHub releases)
 
@@ -249,7 +249,7 @@ mvn package -DskipTests
 
 ```bash
 JAVA_OPTS="" jazzer \
-  --cp=target/axis2-fuzz-2.0.1-SNAPSHOT.jar \
+  --cp=target/axis2-fuzz.jar \
   --target_class=org.apache.axis2.fuzz.XmlParserFuzzer \
   -max_total_time=3600
 ```
@@ -287,4 +287,4 @@ Following Apache's coordinated disclosure policy.
 ---
 
 *Document created: February 5, 2026*
-*Fuzz module tested against Axis2/Java 2.0.0*
+*The February 2026 results above were run against Axis2/Java 2.0.0*

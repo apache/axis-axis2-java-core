@@ -32,7 +32,8 @@ docker pull cifuzz/jazzer
 ```bash
 cd /path/to/axis-axis2-java-core
 
-# Build all modules first
+# Install the current snapshot jars first: this module is outside the reactor
+# and fuzzes the Axis2 version given by its own <version>
 mvn install -DskipTests
 
 # Build the fuzz module
@@ -44,37 +45,31 @@ mvn package
 
 ```bash
 # XML Parser Fuzzer
-./jazzer --cp=target/axis2-fuzz-2.0.1-SNAPSHOT.jar \
+./jazzer --cp=target/axis2-fuzz.jar \
     --target_class=org.apache.axis2.fuzz.XmlParserFuzzer \
     --instrumentation_includes=org.apache.axiom.** \
     -max_total_time=300
 
 # JSON Parser Fuzzer
-./jazzer --cp=target/axis2-fuzz-2.0.1-SNAPSHOT.jar \
+./jazzer --cp=target/axis2-fuzz.jar \
     --target_class=org.apache.axis2.fuzz.JsonParserFuzzer \
     --instrumentation_includes=com.google.gson.** \
     -max_total_time=300
 
 # HTTP Header Fuzzer
-./jazzer --cp=target/axis2-fuzz-2.0.1-SNAPSHOT.jar \
+./jazzer --cp=target/axis2-fuzz.jar \
     --target_class=org.apache.axis2.fuzz.HttpHeaderFuzzer \
     --instrumentation_includes=org.apache.axis2.** \
     -max_total_time=300
 
 # URL Parser Fuzzer
-./jazzer --cp=target/axis2-fuzz-2.0.1-SNAPSHOT.jar \
+./jazzer --cp=target/axis2-fuzz.jar \
     --target_class=org.apache.axis2.fuzz.UrlParserFuzzer \
     --instrumentation_includes=org.apache.axis2.** \
     -max_total_time=300
 ```
 
-### Run with JUnit (Regression Testing)
-
-The fuzzers can also be run as JUnit tests for CI integration:
-
-```bash
-mvn test -Djazzer.fuzz=true
-```
+`run-fuzzers.sh` runs all four in sequence.
 
 ## Understanding Output
 
@@ -87,13 +82,13 @@ INFO: Seed: 1234567890
 ### Crash Found
 ```
 == Java Exception: java.lang.OutOfMemoryError
-    at org.apache.axiom.om.impl.builder.StAXOMBuilder.<init>
+    at org.apache.axiom.om.OMXMLBuilderFactory.createOMBuilder
 Crash file: crash-abc123def456
 ```
 
 The crash file contains the input that triggered the bug. Reproduce with:
 ```bash
-./jazzer --cp=target/axis2-fuzz-2.0.1-SNAPSHOT.jar \
+./jazzer --cp=target/axis2-fuzz.jar \
     --target_class=org.apache.axis2.fuzz.XmlParserFuzzer \
     crash-abc123def456
 ```
