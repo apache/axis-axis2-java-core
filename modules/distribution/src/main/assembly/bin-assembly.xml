@@ -128,7 +128,6 @@
                 <include>jaxws-calculator/**/*</include>
                 <include>jaxws-addressbook/**/*</include>
                 <include>jaxws-samples/**/*</include>
-                <include>java_first_jaxws/**/*</include>
                 <include>jaxws-interop/**/*</include>
                 <include>jaxws-version/**/*</include>
                 <include>json/**/*</include>
@@ -142,7 +141,6 @@
                 <include>quickstartxmlbeans/**/*</include>
                 <include>servicelifecycle/**/*</include>
                 <include>soapwithattachments/**/*</include>
-                <include>transport/**/*</include>
                 <include>userguide/**/*</include>
                 <include>version/**/*</include>
                 <include>wsdl/**/*</include>

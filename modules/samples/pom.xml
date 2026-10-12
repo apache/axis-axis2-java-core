@@ -35,14 +35,11 @@
     <name>Samples parent POM</name>
 
     <modules>
-        <module>java_first_jaxws</module>
         <module>jaxws-addressbook</module>
         <module>jaxws-calculator</module>
         <module>jaxws-interop</module>
         <module>jaxws-samples</module>
         <module>jaxws-version</module>
-        <module>transport/https-sample</module>
-        <module>transport/jms-sample</module>
     </modules>
 
     <scm>

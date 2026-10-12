@@ -201,13 +201,12 @@ service.</p>
 described in the <a href="json_support_gson.html">JSON support
 documentation</a>.</p>
 <p><strong>jaxws-addressbook, jaxws-calculator, jaxws-interop,
-jaxws-samples, jaxws-version, java_first_jaxws</strong>: JAX-WS samples,
+jaxws-samples, jaxws-version</strong>: JAX-WS samples,
 covering JAXB-based services, code-first and WSDL-first development and
 deployment in a servlet container.</p>
 <p><strong>swagger-server</strong>: A REST service documented with
 OpenAPI; see the <a href="openapi-rest-userguide.html">OpenAPI REST
 Services Guide</a>.</p>
-<p><strong>transport</strong>: HTTPS and JMS transport samples.</p>
 <p><strong>See Next Section</strong> - <a href=
 "userguide-forfurtherstudy.html">For Further Study</a></p>
 </body>
