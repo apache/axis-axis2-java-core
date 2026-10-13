@@ -57,7 +57,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
 
-        <axis2.version>2.0.2-SNAPSHOT</axis2.version>
+        <axis2.version>2.0.2</axis2.version>
 
         <!-- Shared source root — avoids duplicating 37 Java files -->
         <tomcat11.src>${project.basedir}/../springbootdemo-tomcat11</tomcat11.src>

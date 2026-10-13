@@ -51,7 +51,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
 
-        <axis2.version>2.0.2-SNAPSHOT</axis2.version>
+        <axis2.version>2.0.2</axis2.version>
 
         <!-- Exploded WAR handed to the application server; see the header comment. -->
         <deploy.dir>${project.build.directory}/deploy/axis2-json-api</deploy.dir>

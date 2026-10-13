@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>systests</artifactId>
-        <version>2.0.2-SNAPSHOT</version>
+        <version>2.0.2</version>
     </parent>
 
     <artifactId>webapp-tests</artifactId>
@@ -34,7 +34,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/axis-axis2-java-core.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=axis-axis2-java-core.git;a=summary</url>
-        <tag>HEAD</tag>
+        <tag>v2.0.2</tag>
     </scm>
 
     <dependencies>
@@ -146,14 +146,8 @@
                                      unpacked copy only. failOnNoReplacements keeps this honest: if
                                      the shipped parameters ever change shape, this fails loudly
                                      instead of silently testing a console nobody can log into. -->
-                                <replace file="${project.build.directory}/axis2-webapp/WEB-INF/conf/axis2.xml"
-                                         token="&lt;parameter name=&quot;userName&quot;&gt;&lt;/parameter&gt;"
-                                         value="&lt;parameter name=&quot;userName&quot;&gt;admin&lt;/parameter&gt;"
-                                         failOnNoReplacements="true"/>
-                                <replace file="${project.build.directory}/axis2-webapp/WEB-INF/conf/axis2.xml"
-                                         token="&lt;parameter name=&quot;password&quot;&gt;&lt;/parameter&gt;"
-                                         value="&lt;parameter name=&quot;password&quot;&gt;axis2&lt;/parameter&gt;"
-                                         failOnNoReplacements="true"/>
+                                <replace file="${project.build.directory}/axis2-webapp/WEB-INF/conf/axis2.xml" token="&lt;parameter name=&quot;userName&quot;&gt;&lt;/parameter&gt;" value="&lt;parameter name=&quot;userName&quot;&gt;admin&lt;/parameter&gt;" failOnNoReplacements="true" />
+                                <replace file="${project.build.directory}/axis2-webapp/WEB-INF/conf/axis2.xml" token="&lt;parameter name=&quot;password&quot;&gt;&lt;/parameter&gt;" value="&lt;parameter name=&quot;password&quot;&gt;axis2&lt;/parameter&gt;" failOnNoReplacements="true" />
                             </target>
                         </configuration>
                     </execution>
