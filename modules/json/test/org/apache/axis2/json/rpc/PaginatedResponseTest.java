@@ -183,6 +183,27 @@ public class PaginatedResponseTest {
         assertEquals(0, req.getOffset());
     }
 
+    @Test
+    public void testRequest_gsonBindingCannotRaiseMaxLimit() {
+        // maxLimit is a server-side control: a request body that names it must
+        // not be able to raise its own cap. Gson binds private fields by name,
+        // so the field has to stay invisible to the wire format.
+        PaginationRequest req = new com.google.gson.Gson().fromJson(
+                "{\"offset\":0,\"limit\":999999,\"maxLimit\":999999}",
+                PaginationRequest.class);
+        assertEquals(PaginationRequest.DEFAULT_MAX_LIMIT, req.getMaxLimit());
+        assertEquals(PaginationRequest.DEFAULT_MAX_LIMIT, req.getLimit());
+    }
+
+    @Test
+    public void testRequest_moshiBindingCannotRaiseMaxLimit() throws Exception {
+        PaginationRequest req = new com.squareup.moshi.Moshi.Builder().build()
+                .adapter(PaginationRequest.class)
+                .fromJson("{\"offset\":0,\"limit\":999999,\"maxLimit\":999999}");
+        assertEquals(PaginationRequest.DEFAULT_MAX_LIMIT, req.getMaxLimit());
+        assertEquals(PaginationRequest.DEFAULT_MAX_LIMIT, req.getLimit());
+    }
+
     // ═══════════════════════════════════════════════════════════════════════
     // Integration: request → response round-trip
     // ═══════════════════════════════════════════════════════════════════════
