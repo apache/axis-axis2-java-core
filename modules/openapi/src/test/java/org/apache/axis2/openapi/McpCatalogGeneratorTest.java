@@ -986,6 +986,26 @@ public class McpCatalogGeneratorTest extends TestCase {
         assertEquals("PortfolioService", resources.get(0).path("name").asText());
     }
 
+    public void testHiddenServiceExcludedFromToolsAndResources() throws Exception {
+        addService("PortfolioService", "getPortfolio");
+        AxisService hidden = new AxisService("InternalOpsService");
+        hidden.addParameter(new org.apache.axis2.description.Parameter(
+                org.apache.axis2.Constants.HIDDEN_SERVICE_PARAM_NAME, "true"));
+        addOperation(hidden, "purgeAll");
+        axisConfig.addService(hidden);
+
+        String catalog = generator.generateMcpCatalogJson(mockRequest);
+        assertFalse("hidden service must not appear in the MCP catalog",
+                catalog.contains("InternalOpsService"));
+        assertFalse("hidden service operation must not appear in the MCP catalog",
+                catalog.contains("purgeAll"));
+
+        JsonNode resources = MAPPER.readTree(generator.generateMcpResourcesJson(mockRequest))
+                .path("resources");
+        assertEquals("only PortfolioService, not the hidden service", 1, resources.size());
+        assertEquals("PortfolioService", resources.get(0).path("name").asText());
+    }
+
     public void testMcpResourcesIncludesOperationList() throws Exception {
         AxisService svc = new AxisService("PortfolioService");
         addOperation(svc, "getPortfolio");
