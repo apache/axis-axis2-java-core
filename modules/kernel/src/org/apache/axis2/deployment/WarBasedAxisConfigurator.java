@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -161,7 +162,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             }
             Parameter param = new Parameter();
             param.setName(Constants.Configuration.ARTIFACTS_TEMP_DIR);
-            File f = new File((File) config.getServletContext().getAttribute("javax.servlet.context.tempdir"), "_axis2");
+            File f = new File((File) config.getServletContext().getAttribute(ServletContext.TEMPDIR), "_axis2");
             if (f.exists() || f.mkdirs()) {
                 param.setValue(f);
             } else {
