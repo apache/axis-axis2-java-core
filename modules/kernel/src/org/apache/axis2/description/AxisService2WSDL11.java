@@ -99,6 +99,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	private HashMap messagesMap;
 	
 	private boolean checkIfEndPointActive = true;
+
+	private String requestURL;
 	
 	public AxisService2WSDL11() { }
 
@@ -118,6 +120,19 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
      */
     public void setCheckIfEndPointActive(boolean flag) {
         checkIfEndPointActive = flag;
+    }
+
+    /**
+     * Sets the address the WSDL was requested at. Its host is used for the
+     * port addresses in the generated WSDL, unless the hostname parameter or
+     * modifyUserWSDLPortAddress says otherwise. It belongs to the request being
+     * answered, so it is kept here rather than on the shared AxisService.
+     *
+     * @param requestURL the address of the request, or null to use the
+     *                   endpoint URL set on the service
+     */
+    public void setRequestURL(String requestURL) {
+        this.requestURL = requestURL;
     }
 
 	protected void init() throws AxisFault {
@@ -1337,7 +1352,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         
             //If it is not set extract the hostIP from the URL
             if (hostIP == null) {
-                hostIP = WSDLSerializationUtil.extractHostIP(axisService.getEndpointURL());
+                hostIP = WSDLSerializationUtil.extractHostIP(
+                        requestURL != null ? requestURL : axisService.getEndpointURL());
             }
         
             //TODO This is to prevent problems when JAVA2WSDL tool is used where there is no

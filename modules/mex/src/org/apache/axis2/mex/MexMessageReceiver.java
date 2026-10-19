@@ -77,7 +77,6 @@ public class MexMessageReceiver extends AbstractInOutMessageReceiver {
 		
 		try {
 			Metadata metadata = handleRequest(msgContext);
-		        theService.setEndpointURL(msgContext.getTo().getAddress());
 
 			if (metadata != null) {
 				SOAPEnvelope envelope = newmsgContext.getEnvelope();
