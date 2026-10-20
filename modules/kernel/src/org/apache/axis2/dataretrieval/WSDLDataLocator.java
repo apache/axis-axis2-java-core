@@ -116,7 +116,6 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
             if (msgContext != null) {
                 theService = msgContext.getAxisService();
                 serviceURL = msgContext.getTo().getAddress();
-                theService.setEndpointURL(serviceURL);
             } else {
                 throw new DataRetrievalException("MessageContext was not set!");
             }
@@ -128,6 +127,7 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
 
                 try {
                     axisService2WOM = new AxisService2WSDL11(theService);
+                    axisService2WOM.setRequestURL(serviceURL);
                     wsdlElement = axisService2WOM.generateOM();
                     
                 } catch (Exception e) {
