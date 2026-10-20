@@ -71,8 +71,11 @@ public class PaginationRequest {
      * Server-enforced ceiling on limit.  Prevents clients from requesting
      * unbounded result sets (e.g. limit=999999) that could exhaust heap.
      * Services can lower this per-operation via {@link #setMaxLimit(int)}.
+     * Transient so the reflective JSON binding (Gson, Moshi) never populates
+     * it from the request body alongside offset and limit; only service code
+     * can change the cap.
      */
-    private int maxLimit = DEFAULT_MAX_LIMIT;
+    private transient int maxLimit = DEFAULT_MAX_LIMIT;
 
     public PaginationRequest() {
         this.offset = 0;
