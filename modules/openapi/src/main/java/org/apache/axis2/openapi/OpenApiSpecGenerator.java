@@ -503,6 +503,14 @@ public class OpenApiSpecGenerator {
             return false;
         }
 
+        // hiddenService is the separate control that keeps a service out of the
+        // /services listing on both HTTP render paths. The spec and the MCP
+        // catalog enumerate deployed services the same way, so they honour it too.
+        if (org.apache.axis2.util.Utils.isHiddenService(service)) {
+            log.debug("Skipping service with hiddenService=true: " + serviceName);
+            return false;
+        }
+
         String servicePackage = getServicePackage(service);
 
         // If readAllResources is false, check specific resource classes/packages

@@ -279,6 +279,38 @@ public class OpenApiSpecGeneratorTest extends TestCase {
     }
 
     /**
+     * Test that a service with hiddenService=true is omitted from the spec, as
+     * it is from the /services listing.
+     */
+    public void testHiddenServiceIsExcluded() throws Exception {
+        // Arrange
+        AxisService visible = new AxisService("PublicService");
+        AxisOperation visibleOp = new org.apache.axis2.description.InOutAxisOperation();
+        visibleOp.setName(javax.xml.namespace.QName.valueOf("getData"));
+        visible.addOperation(visibleOp);
+
+        AxisService hidden = new AxisService("InternalService");
+        hidden.addParameter(new org.apache.axis2.description.Parameter(
+                org.apache.axis2.Constants.HIDDEN_SERVICE_PARAM_NAME, "true"));
+        AxisOperation hiddenOp = new org.apache.axis2.description.InOutAxisOperation();
+        hiddenOp.setName(javax.xml.namespace.QName.valueOf("secretOp"));
+        hidden.addOperation(hiddenOp);
+
+        axisConfiguration.addService(visible);
+        axisConfiguration.addService(hidden);
+
+        // Act
+        OpenAPI openApi = generator.generateOpenApiSpec(mockRequest);
+
+        // Assert
+        assertNotNull(openApi.getPaths());
+        assertNotNull("Public service path should be present",
+                openApi.getPaths().get("/services/PublicService/getData"));
+        assertNull("Hidden service path must be absent",
+                openApi.getPaths().get("/services/InternalService/secretOp"));
+    }
+
+    /**
      * Test that a qualified "ServiceName/operationName" entry in ignoredOperations
      * removes only that specific operation, leaving other operations on the same
      * service in the spec.
