@@ -102,6 +102,36 @@ public class ServiceListingFilterTest extends TestCase {
         assertFalse(listedServices().containsKey("HiddenParam"));
     }
 
+    private AxisService faultyServiceModel(String serviceName) throws Exception {
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        HttpServletResponse res = mock(HttpServletResponse.class);
+        when(req.getParameter("serviceName")).thenReturn(serviceName);
+        final AxisService[] captured = new AxisService[1];
+        org.mockito.Mockito.doAnswer(invocation -> {
+            if (Constants.SINGLE_SERVICE.equals(invocation.getArgument(0))) {
+                captured[0] = (AxisService) invocation.getArgument(1);
+            }
+            return null;
+        }).when(req).setAttribute(org.mockito.ArgumentMatchers.anyString(),
+                org.mockito.ArgumentMatchers.any());
+        try {
+            new ListingAgent(configContext).processListFaultyServices(req, res);
+        } catch (Exception rendering) {
+            // The view cannot render without a container; the model is what matters.
+        }
+        return captured[0];
+    }
+
+    /**
+     * ListFaultyServices?serviceName= renders a single service by name, so it has to
+     * withhold the same services the listing does.
+     */
+    public void testFaultyServicesPageWithholdsWithheldServices() throws Exception {
+        assertNotNull(faultyServiceModel("Visible"));
+        assertNull(faultyServiceModel("NotExposed"));
+        assertNull(faultyServiceModel("HiddenParam"));
+    }
+
     /** Nothing null reaches the model, since the view would throw on it. */
     public void testNoNullServiceReachesTheModel() throws Exception {
         for (AxisService service : listedServices().values()) {
