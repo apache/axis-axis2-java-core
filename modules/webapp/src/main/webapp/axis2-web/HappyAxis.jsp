@@ -46,7 +46,6 @@
 <body>
 <jsp:include page="/WEB-INF/include/header.inc"/>
 <jsp:include page="/WEB-INF/include/link-footer.jsp"/>
-<%IP = request.getRequestURL().toString();%>
 <%!
     /*
     * Happiness tests for axis2. These look at the classpath and warn if things
@@ -54,8 +53,6 @@
     * but here we want to validate JSP compilation too, and have a drop-in
     * page for easy re-use
     */
-    String IP;
-
     /**
      * Get a string providing install information.
      * TODO: make this platform aware and give specific hints
@@ -325,20 +322,24 @@
         return method;
     }
 
-    public boolean invokeTheService() {
+    public boolean invokeTheService(HttpServletRequest request) {
         try {
             // since this one is an internal request we do not use public frontendHostUrl
-            // for it
-            int lastindex = IP.lastIndexOf('/');
-            IP = IP.substring(0, lastindex);
-            ///axis2/axis2-web/services/version
-            IP = IP.replaceAll("axis2-web", "");
+            // for it. The address is that of the connector this request arrived on, not
+            // request.getRequestURL(): that is built from the client's Host header, which
+            // would let an anonymous caller choose the host and port the server connects to.
+            String host = request.getLocalAddr();
+            if (host.indexOf(':') >= 0) {
+                host = "[" + host + "]";
+            }
+            String address = request.getScheme() + "://" + host + ":" + request.getLocalPort()
+                    + request.getContextPath() + "/";
 
             OMElement payload = createEnvelope();
             ConfigurationContext configctx =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
             ServiceClient client = new ServiceClient(configctx, null);
-            EndpointReference targetEPR = new EndpointReference(IP + configctx.getServicePath() + "/Version");
+            EndpointReference targetEPR = new EndpointReference(address + configctx.getServicePath() + "/Version");
             Options options = new Options();
             client.setOptions(options);
             options.setTo(targetEPR);
@@ -438,7 +439,7 @@
 
 <h2>Examining Version Service</h2>
 <%
-    boolean serviceStatus = invokeTheService();
+    boolean serviceStatus = invokeTheService(request);
     if (serviceStatus) {
 %>
 <div>
