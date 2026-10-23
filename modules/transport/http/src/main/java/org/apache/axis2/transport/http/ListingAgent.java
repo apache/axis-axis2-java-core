@@ -84,7 +84,12 @@ public class ListingAgent extends AbstractAgent {
         String serviceName = req.getParameter("serviceName");
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
-            req.setAttribute(Constants.SINGLE_SERVICE, service);
+            // listFaultyService.jsp renders the name, EPR and operations of this
+            // service, so it takes the same two controls the listing does.
+            if (service != null && !Utils.isHiddenService(service)
+                    && service.isMetadataExposed()) {
+                req.setAttribute(Constants.SINGLE_SERVICE, service);
+            }
         }
         renderView(LIST_FAULTY_SERVICES_JSP_NAME, req, res);
     }
