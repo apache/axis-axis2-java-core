@@ -158,4 +158,37 @@ public class RequestURIBasedServiceDispatcherTest extends TestCase {
         assertEquals(as4, messageContext.getAxisService());
     }
 
+    /**
+     * The service comes from the request path alone. A REST To address still
+     * carries the query string, and the servlet container matched its URL
+     * patterns against the path only, so a service path inside a query value or
+     * in a repeated path suffix must not select a different service.
+     */
+    public void testServiceNotTakenFromQueryStringOrRepeatedPath() throws AxisFault {
+        AxisService as1 = new AxisService("Service1");
+        AxisService as2 = new AxisService("Service2");
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        AxisConfiguration ac = cc.getAxisConfiguration();
+        ac.addService(as1);
+        ac.addService(as2);
+        RequestURIBasedServiceDispatcher ruisd = new RequestURIBasedServiceDispatcher();
+
+        MessageContext messageContext = cc.createMessageContext();
+        messageContext.setTo(new EndpointReference(
+                "/axis2/services/Service1?next=/axis2/services/Service2/operation"));
+        ruisd.invoke(messageContext);
+        assertEquals(as1, messageContext.getAxisService());
+
+        messageContext = cc.createMessageContext();
+        messageContext.setTo(new EndpointReference(
+                "/axis2/services/NoSuchService?next=/axis2/services/Service2"));
+        ruisd.invoke(messageContext);
+        assertNull(messageContext.getAxisService());
+
+        messageContext = cc.createMessageContext();
+        messageContext.setTo(new EndpointReference(
+                "/axis2/services/Service1/axis2/services/Service2"));
+        ruisd.invoke(messageContext);
+        assertEquals(as1, messageContext.getAxisService());
+    }
 }
