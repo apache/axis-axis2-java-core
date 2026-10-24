@@ -80,4 +80,13 @@ public class UtilsParseRequestTest extends AbstractTestCase {
         assertEquals(operation, strings[1]);
     }
 
+    public void testServiceNotTakenFromQuery() throws Exception {
+        assertParsesTo("http://localhost:8081/axis2/services/System?next=/axis2/services/Other/operation",
+                       "System");
+    }
+
+    public void testOperationNotTakenFromQuery() throws Exception {
+        assertParsesTo("http://localhost:8081/axis2/services/System/operation?next=/axis2/services/Other/other",
+                       "System", "operation");
+    }
 }

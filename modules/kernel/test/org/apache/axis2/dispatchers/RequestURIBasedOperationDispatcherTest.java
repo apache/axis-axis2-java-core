@@ -117,4 +117,32 @@ public class RequestURIBasedOperationDispatcherTest extends TestCase {
         assertEquals(operation4, messageContext.getAxisOperation());
     }
 
+    /**
+     * The operation comes from the request path alone, never from a query value
+     * that happens to contain the service name.
+     */
+    public void testOperationNotTakenFromQueryString() throws AxisFault {
+        AxisService service = new AxisService("Service1");
+        AxisOperation operation1 = new InOnlyAxisOperation(new QName("operation1"));
+        AxisOperation operation2 = new InOnlyAxisOperation(new QName("operation2"));
+        service.addOperation(operation1);
+        service.addOperation(operation2);
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        cc.getAxisConfiguration().addService(service);
+        RequestURIBasedOperationDispatcher ruisd = new RequestURIBasedOperationDispatcher();
+
+        MessageContext messageContext = cc.createMessageContext();
+        messageContext.setTo(new EndpointReference(
+                "/axis2/services/Service1/operation1?next=/axis2/services/Service1/operation2"));
+        messageContext.setAxisService(service);
+        ruisd.invoke(messageContext);
+        assertEquals(operation1, messageContext.getAxisOperation());
+
+        messageContext = cc.createMessageContext();
+        messageContext.setTo(new EndpointReference(
+                "/axis2/services/Service1?next=/axis2/services/Service1/operation2"));
+        messageContext.setAxisService(service);
+        ruisd.invoke(messageContext);
+        assertNull(messageContext.getAxisOperation());
+    }
 }

@@ -210,8 +210,13 @@ public class Utils {
         }
         String[] values = new String[2];
 
+        // The query string is not part of the path the container matched, so it
+        // takes no part in choosing the service or the operation. The service path
+        // is then the first match: a later one is a suffix the caller appended.
+        path = withoutQuery(path);
+
         // TODO. This is kind of brittle. Any service with the name /services would cause fun.
-        int index = path.lastIndexOf(servicePath);
+        int index = path.indexOf(servicePath);
         String service;
 
         if (-1 != index) {
@@ -219,12 +224,6 @@ public class Utils {
 
             if (path.length() > serviceStart + 1) {
                 service = path.substring(serviceStart + 1);
-
-                int queryIndex = service.indexOf('?');
-
-                if (queryIndex > 0) {
-                    service = service.substring(0, queryIndex);
-                }
 
                 int operationIndex = service.indexOf('/');
 
@@ -265,7 +264,11 @@ public class Utils {
         	servicePath = servicePath+"/";
         }
 
-        int index = path.lastIndexOf(servicePath);
+        // Only the path names the service: a query value or a repeated suffix that
+        // contains the service path must not win over the segment the container saw.
+        path = withoutQuery(path);
+
+        int index = path.indexOf(servicePath);
         String serviceOpPart = null;
 
         if (-1 != index) {
@@ -274,12 +277,6 @@ public class Utils {
             //get the string after services path
             if (path.length() > serviceStart) {
                 serviceOpPart = path.substring(serviceStart);
-
-                //remove everything after ?
-                int queryIndex = serviceOpPart.indexOf('?');
-                if (queryIndex > 0) {
-                    serviceOpPart = serviceOpPart.substring(0, queryIndex);
-                }
             }
         }
         return serviceOpPart;
@@ -299,6 +296,9 @@ public class Utils {
         if (path == null || serviceName == null) {
             return null;
         }
+        // The operation is read from the path only; a query value may legitimately
+        // contain the service name followed by a slash.
+        path = withoutQuery(path);
         int idx = path.lastIndexOf(serviceName + "/");
         String operationName = null;
         if (idx != -1) {
@@ -313,17 +313,20 @@ public class Utils {
         }
 
         if (operationName != null) {
-            //remove everyting after '?'
-            int queryIndex = operationName.indexOf('?');
-            if (queryIndex > 0) {
-                operationName = operationName.substring(0, queryIndex);
-            }
             //take the part upto / as the operation name
             if (operationName.indexOf("/") != -1) {
                 operationName = operationName.substring(0, operationName.indexOf("/"));
             }
         }
         return operationName;
+    }
+
+    /**
+     * Strips the query string from a request URL or URI, if it has one.
+     */
+    private static String withoutQuery(String path) {
+        int queryIndex = path.indexOf('?');
+        return queryIndex == -1 ? path : path.substring(0, queryIndex);
     }
 
     public static ConfigurationContext getNewConfigurationContext(String repositry)
