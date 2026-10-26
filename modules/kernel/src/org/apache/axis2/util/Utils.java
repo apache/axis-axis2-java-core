@@ -288,7 +288,7 @@ public class Utils {
      * Ex:  ../services/Echo/echoString -> echoString
      *      ../services/foo/1.0.0/Echo/echoString -> echoString
      *      ../services/Echo/ -> null
-     * @param path - request URI
+     * @param path - request URI, or the part of it after the service context path
      * @param serviceName - service name
      * @return - operation name if any, else null
      */
@@ -297,15 +297,17 @@ public class Utils {
             return null;
         }
         // The operation is read from the path only; a query value may legitimately
-        // contain the service name followed by a slash.
+        // contain the service name followed by a slash. The operation follows the
+        // first occurrence of the service name: a later one is a suffix the caller
+        // appended.
         path = withoutQuery(path);
-        int idx = path.lastIndexOf(serviceName + "/");
+        int idx = path.indexOf(serviceName + "/");
         String operationName = null;
         if (idx != -1) {
             operationName = path.substring(idx + serviceName.length() + 1);
         } else {
             //this scenario occurs if the endpoint name is there in the URL after service name
-            idx = path.lastIndexOf(serviceName + ".");
+            idx = path.indexOf(serviceName + ".");
             if (idx != -1) {
                 operationName = path.substring(idx + serviceName.length() + 1);
                 operationName = operationName.substring(operationName.indexOf('/') + 1);
