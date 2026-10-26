@@ -44,7 +44,7 @@ public class SessionManager {
             sessionContext = (SessionContext) this.sessionmap.get(sessionKey);
         }
         if (sessionContext == null) {
-            sessionKey = UIDGenerator.generateUID();
+            sessionKey = UIDGenerator.generateURNString();
             sessionContext = new SessionContext(null);
             sessionContext.setCookieID(sessionKey);
             this.sessionmap.put(sessionKey, sessionContext);
