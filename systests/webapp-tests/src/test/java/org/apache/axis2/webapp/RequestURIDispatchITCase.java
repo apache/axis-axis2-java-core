@@ -34,23 +34,26 @@ import org.junit.Test;
  * not select anything.
  */
 public class RequestURIDispatchITCase {
-    private static String get(String pathAndQuery) throws Exception {
+    private static HttpResponse<String> get(String pathAndQuery) throws Exception {
         int port = Integer.getInteger("jetty.httpPort", 8080);
         HttpRequest request = HttpRequest.newBuilder(
                 URI.create("http://localhost:" + port + "/axis2" + pathAndQuery)).GET().build();
-        return HttpClient.newHttpClient()
-                .send(request, HttpResponse.BodyHandlers.ofString()).body();
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Test
     public void testServiceIsTakenFromThePathOnly() throws Exception {
         // Control: the operation answers when the path names it.
-        assertThat(get("/services/Version/getVersion")).contains("getVersionResponse");
+        HttpResponse<String> response = get("/services/Version/getVersion");
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body()).contains("getVersionResponse");
         // The path names no deployed service; neither the query string nor a
         // repeated service path after it may route the request to Version.
-        assertThat(get("/services/NoSuchService?next=/axis2/services/Version/getVersion"))
-                .doesNotContain("getVersionResponse");
-        assertThat(get("/services/NoSuchService/axis2/services/Version/getVersion"))
-                .doesNotContain("getVersionResponse");
+        response = get("/services/NoSuchService?next=/axis2/services/Version/getVersion");
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(response.body()).doesNotContain("getVersionResponse");
+        response = get("/services/NoSuchService/axis2/services/Version/getVersion");
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(response.body()).doesNotContain("getVersionResponse");
     }
 }

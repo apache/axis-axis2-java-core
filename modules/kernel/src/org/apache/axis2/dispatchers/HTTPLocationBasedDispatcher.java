@@ -99,7 +99,14 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
     private String parseRequestURL(String path, String serviceName) {
 
         serviceName = "/" + serviceName;
-        int index = path.lastIndexOf(serviceName);
+        // The query string stays in the location, since location templates may
+        // match on it, but only the path may say where the service name and the
+        // location start: a query value can contain both.
+        int pathEnd = path.indexOf('?');
+        if (pathEnd == -1) {
+            pathEnd = path.length();
+        }
+        int index = path.lastIndexOf(serviceName, pathEnd - serviceName.length());
         String httpLocation = null;
 
         if (-1 != index) {
@@ -111,7 +118,8 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
 
         if (httpLocation != null) {
             index = httpLocation.indexOf("/");
-            if (-1 != index) {
+            int locationQuery = httpLocation.indexOf("?");
+            if (-1 != index && (locationQuery == -1 || index < locationQuery)) {
                 httpLocation = httpLocation.substring(index);
             } else {
                 int queryIndex = httpLocation.indexOf("?");

@@ -145,4 +145,32 @@ public class RequestURIBasedOperationDispatcherTest extends TestCase {
         ruisd.invoke(messageContext);
         assertNull(messageContext.getAxisOperation());
     }
+
+    /**
+     * A path suffix that repeats the service name must not choose the operation:
+     * the operation is the segment right after the service the path names.
+     */
+    public void testOperationNotTakenFromRepeatedServiceName() throws AxisFault {
+        AxisService service = new AxisService("Echo");
+        AxisOperation echo = new InOnlyAxisOperation(new QName("echo"));
+        AxisOperation deleteAll = new InOnlyAxisOperation(new QName("deleteAll"));
+        service.addOperation(echo);
+        service.addOperation(deleteAll);
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        cc.getAxisConfiguration().addService(service);
+        RequestURIBasedOperationDispatcher ruisd = new RequestURIBasedOperationDispatcher();
+
+        MessageContext messageContext = cc.createMessageContext();
+        messageContext.setTo(new EndpointReference("/axis2/services/Echo/echo/Echo/deleteAll"));
+        messageContext.setAxisService(service);
+        ruisd.invoke(messageContext);
+        assertEquals(echo, messageContext.getAxisOperation());
+
+        messageContext = cc.createMessageContext();
+        messageContext.setTo(new EndpointReference(
+                "/axis2/services/Echo.EchoEndpoint/echo/Echo.EchoEndpoint/deleteAll"));
+        messageContext.setAxisService(service);
+        ruisd.invoke(messageContext);
+        assertEquals(echo, messageContext.getAxisOperation());
+    }
 }
