@@ -36,10 +36,6 @@ import org.apache.neethi.PolicyRegistryImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -203,6 +199,9 @@ public class ListingAgent extends AbstractAgent {
                                      HttpServletResponse res,
                                      String serviceName,
                                      AxisService axisService) throws IOException, ServletException {
+        // Every policy below is written through this serializer, as the WSDL
+        // generators do, so the assertions modules declare local (RampartConfig
+        // and its keystore settings, for one) are never published.
         ExternalPolicySerializer serializer = new ExternalPolicySerializer();
         serializer.setAssertionsToFilter(configContext
                 .getAxisConfiguration().getLocalPolicyAssertions());
@@ -216,23 +215,10 @@ public class ListingAgent extends AbstractAgent {
             Policy targetPolicy = findPolicy(idParam, axisService);
 
             if (targetPolicy != null) {
-                XMLStreamWriter writer;
-
                 try {
-                    OutputStream out = res.getOutputStream();
-                    writer = XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(out);
-
                     res.setContentType("application/wspolicy+xml");
-                    targetPolicy.serialize(writer);
-                    writer.flush();
-
-                } catch (XMLStreamException e) {
-                    throw new ServletException(
-                            "Error occured when serializing the Policy",
-                            e);
-
-                } catch (FactoryConfigurationError e) {
+                    serializer.serialize(targetPolicy, res.getOutputStream());
+                } catch (RuntimeException e) {
                     throw new ServletException(
                             "Error occured when serializing the Policy",
                             e);
@@ -248,23 +234,10 @@ public class ListingAgent extends AbstractAgent {
             Policy effecPolicy = policyInclude.getEffectivePolicy();
 
             if (effecPolicy != null) {
-                XMLStreamWriter writer;
-
                 try {
-                    OutputStream out = res.getOutputStream();
-                    writer = XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(out);
-
                     res.setContentType("application/wspolicy+xml");
-                    effecPolicy.serialize(writer);
-                    writer.flush();
-
-                } catch (XMLStreamException e) {
-                    throw new ServletException(
-                            "Error occured when serializing the Policy",
-                            e);
-
-                } catch (FactoryConfigurationError e) {
+                    serializer.serialize(effecPolicy, res.getOutputStream());
+                } catch (RuntimeException e) {
                     throw new ServletException(
                             "Error occured when serializing the Policy",
                             e);
