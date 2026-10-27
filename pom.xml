@@ -471,7 +471,7 @@
         <google.gson.version>2.14.0</google.gson.version>
         <groovy.version>6.0.0</groovy.version>
         <httpcore.version>5.4.4</httpcore.version>
-        <httpclient.version>5.6.4</httpclient.version>
+        <httpclient.version>5.6.5</httpclient.version>
         <jaxbri.version>4.0.3</jaxbri.version>
         <jetty.version>12.1.14</jetty.version>
         <!-- jibx.version removed: AXIS2-6105 -->
@@ -931,7 +931,7 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.18.14</version>
+                <version>1.18.15</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
