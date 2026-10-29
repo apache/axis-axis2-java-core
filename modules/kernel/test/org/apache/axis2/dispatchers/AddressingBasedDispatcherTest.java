@@ -21,7 +21,12 @@ package org.apache.axis2.dispatchers;
 import junit.framework.TestCase;
 
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 
 public class AddressingBasedDispatcherTest extends TestCase {
 
@@ -38,5 +43,24 @@ public class AddressingBasedDispatcherTest extends TestCase {
         // AxisOperation, this shouldn't throw a fault.
         AddressingBasedDispatcher dispatcher = new AddressingBasedDispatcher();
         dispatcher.invoke(mc);
+    }
+
+    /**
+     * A RelatesTo that correlates to no operation context must not stop the service
+     * being bound from the To here, in the Addressing phase. Otherwise the Dispatch
+     * phase binds it from the same To after the Security phase has run with no
+     * service, and that service's security handlers never see the message.
+     */
+    public void testUncorrelatedRelatesToStillDispatchesOnTo() throws Exception {
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        cc.getAxisConfiguration().addService(new AxisService("Service1"));
+        MessageContext mc = cc.createMessageContext();
+        mc.setTo(new EndpointReference("http://127.0.0.1:8080/axis2/services/Service1"));
+        mc.addRelatesTo(new RelatesTo("urn:uuid:no-such-operation-context"));
+
+        new AddressingBasedDispatcher().invoke(mc);
+
+        assertNotNull("the service must be bound from the To", mc.getAxisService());
+        assertEquals("Service1", mc.getAxisService().getName());
     }
 }

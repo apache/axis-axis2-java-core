@@ -112,6 +112,13 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                     }
                 }
             }
+            // A RelatesTo that correlates to no operation context, such as a reply or
+            // fault sent on to a ReplyTo or FaultTo, still binds the service from the To
+            // here. Left unbound, the Dispatch phase binds it from that same To after the
+            // Security phase has run without it.
+            if (msgctx.getOperationContext() == null) {
+                response = super.invoke(msgctx);
+            }
         }
         //Else we will try to dispatch based on the WS-A Action
         else {
