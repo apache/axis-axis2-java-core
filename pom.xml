@@ -463,12 +463,12 @@
         <xmlschema.version>2.3.3</xmlschema.version>
         <ant.version>1.10.18</ant.version>
         <antlr.version>2.7.7</antlr.version>
-        <aspectj.version>1.9.25.1</aspectj.version>
+        <aspectj.version>1.9.26</aspectj.version>
         <bsf.version>2.4.0</bsf.version>
 	<commons.fileupload.version>2.0.0-M5</commons.fileupload.version>
         <commons.logging.version>1.4.0</commons.logging.version>
         <!-- fi.version removed: AXIS2-6105 -->
-        <google.gson.version>2.14.0</google.gson.version>
+        <google.gson.version>2.15.0</google.gson.version>
         <groovy.version>6.0.0</groovy.version>
         <httpcore.version>5.4.4</httpcore.version>
         <httpclient.version>5.6.5</httpclient.version>
@@ -479,7 +479,7 @@
         <maven.version>3.10.0</maven.version>
         <rhino.version>1.9.1</rhino.version>
         <slf4j.version>2.0.20</slf4j.version>
-        <spring.version>7.0.9</spring.version>
+        <spring.version>7.0.10</spring.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xmlbeans.version>5.4.1</xmlbeans.version>
         <xmlunit.version>2.14.0</xmlunit.version>
@@ -493,7 +493,7 @@
         <maven-plugin-tools.version>3.16.0</maven-plugin-tools.version>
         <maven-archetype.version>3.4.1</maven-archetype.version>
         <activemq.version>6.3.2</activemq.version>
-        <surefire.version>3.6.0</surefire.version>
+        <surefire.version>3.6.1</surefire.version>
         <!-- This variable is used in some Xdocs and is substituted using Velocity. Note that
              we can't use the project.version variable directly because of the dot. See
              http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html -->
@@ -931,7 +931,7 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.18.15</version>
+                <version>1.18.16</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
