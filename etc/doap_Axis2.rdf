@@ -79,6 +79,7 @@
     <release><Version><name>Apache Axis2</name><created>2022-07-13</created><revision>1.8.2</revision></Version></release>
     <release><Version><name>Apache Axis2</name><created>2025-03-04</created><revision>2.0.0</revision></Version></release>
     <release><Version><name>Apache Axis2</name><created>2026-05-17</created><revision>2.0.1</revision></Version></release>
+    <release><Version><name>Apache Axis2</name><created>2026-10-28</created><revision>2.0.2</revision></Version></release>
      
     <repository>
       <GitRepository>
