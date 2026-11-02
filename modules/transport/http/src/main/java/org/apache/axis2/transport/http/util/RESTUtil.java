@@ -53,6 +53,7 @@ public class RESTUtil {
                                                                InputStream in,
                                                                OutputStream out, String contentType)
             throws AxisFault {
+        checkJSONOnly(msgContext, contentType);
         try {
             msgContext.setDoingREST(true);
             String charSetEncoding = BuilderUtil.getCharSetEncoding(contentType);
@@ -95,6 +96,7 @@ public class RESTUtil {
                                                                OutputStream out, String contentType,
                                                                Builder builder)
             throws AxisFault {
+        checkJSONOnly(msgContext, contentType);
         try {
             msgContext.setDoingREST(true);
             String charSetEncoding = BuilderUtil.getCharSetEncoding(contentType);
@@ -136,6 +138,7 @@ public class RESTUtil {
     public static Handler.InvocationResponse processURLRequest(MessageContext msgContext,
                                                                OutputStream out, String contentType)
             throws AxisFault {
+        checkJSONOnly(msgContext, contentType);
         // here, only the parameters in the URI are supported. Others will be discarded.
         try {
 
@@ -188,6 +191,7 @@ public class RESTUtil {
                                                                OutputStream out,
                                                                String contentType, Builder builder)
             throws AxisFault {
+        checkJSONOnly(msgContext, contentType);
         // here, only the parameters in the URI are supported. Others will be discarded.
         try {
 
@@ -235,6 +239,24 @@ public class RESTUtil {
             }
         }
         return invokeAxisEngine(msgContext);
+    }
+
+    /**
+     * enableJSONOnly refuses any request whose content type is not application/json.
+     * HTTPTransportUtils.processHTTPPostRequest applies that to POSTed messages; the
+     * REST entry points need the same check, or a GET, PUT or DELETE (and a REST POST
+     * on the standalone server) still reaches the operation through the XML and form
+     * builders.
+     */
+    private static void checkJSONOnly(MessageContext msgContext, String contentType)
+            throws AxisFault {
+        String enableJSONOnly = (String) msgContext.getConfigurationContext()
+                .getAxisConfiguration().getParameterValue(Constants.Configuration.ENABLE_JSON_ONLY);
+        if (enableJSONOnly != null && enableJSONOnly.equalsIgnoreCase("true")
+                && !HTTPTransportUtils.isJSONRequest(contentType)) {
+            throw new AxisFault("JSON-only mode enabled but content-type is not application/json: "
+                    + contentType);
+        }
     }
 
     private static Handler.InvocationResponse invokeAxisEngine(MessageContext messageContext)
