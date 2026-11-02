@@ -146,11 +146,20 @@ public class HTTPProxyConfigurator {
 
 	// AXIS2-6051, CredentialsProvider no longer has setCredentials() however BasicCredentialsProvider
 	// does have it. clientContext.getCredentialsProvider() returns CredentialsProvider. 
-	if (proxyCredentials != null) {
+	if (proxyCredentials != null && proxyHost != null) {
             requestConfig.setAuthenticationEnabled(true);
-            BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-            clientContext.setCredentialsProvider(credsProvider);
-            credsProvider.setCredentials(new AuthScope(null, -1), proxyCredentials);
+            // The same provider answers the origin server's challenges, so the
+            // credentials are scoped to the proxy rather than to any host, and a
+            // provider already holding the origin's credentials is kept.
+            CredentialsProvider existingProvider = clientContext.getCredentialsProvider();
+            BasicCredentialsProvider credsProvider;
+            if (existingProvider instanceof BasicCredentialsProvider) {
+                credsProvider = (BasicCredentialsProvider) existingProvider;
+            } else {
+                credsProvider = new BasicCredentialsProvider();
+                clientContext.setCredentialsProvider(credsProvider);
+            }
+            credsProvider.setCredentials(new AuthScope(proxyHost, proxyPort), proxyCredentials);
 	}
 	if (proxyHost != null && proxyPort > 0) {
             HttpHost proxy = new HttpHost(proxyHost, proxyPort);

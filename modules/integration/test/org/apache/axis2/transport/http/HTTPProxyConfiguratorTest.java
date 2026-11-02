@@ -37,6 +37,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.axis2.transport.http.impl.httpclient5.HTTPProxyConfigurator;
 
@@ -93,10 +94,12 @@ public class HTTPProxyConfiguratorTest {
 
         final CredentialsProvider provider = clientContext.getCredentialsProvider();
         assertNotNull(provider);
-        final Credentials credentials = provider.getCredentials(new AuthScope(null, -1), clientContext);
+        final Credentials credentials = provider.getCredentials(new AuthScope(hostname, portNumber), clientContext);
         assertNotNull(credentials);
         assertEquals(user, credentials.getUserPrincipal().getName());
         assertEquals(pass, new String(credentials.getPassword()));
+        // The origin server's challenge must not be answered with the proxy credentials
+        assertNull(provider.getCredentials(new AuthScope("origin.example", 443), clientContext));
     }
 
     @Test
