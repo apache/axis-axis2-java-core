@@ -372,6 +372,9 @@ public class HTTPTransportUtils {
      * This contains,
      * 1. application/json
      * <p/>
+     * Only the media type, the part before any parameters and the part the message
+     * builder is selected by, is compared, so "text/plain; x=application/json" is not
+     * a JSON request.
      * If the request does not contain a content type, this will return false.
      *
      * @param contentType content type to check
@@ -381,7 +384,9 @@ public class HTTPTransportUtils {
         if (contentType == null || contentType.isEmpty()) {
             return false;
         }
-        return (contentType.toLowerCase().indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_JSON) != -1);
+        int index = contentType.indexOf(';');
+        String mediaType = index >= 0 ? contentType.substring(0, index) : contentType;
+        return HTTPConstants.MEDIA_TYPE_APPLICATION_JSON.equalsIgnoreCase(mediaType);
     }
 
     public static EndpointReference[] getEPRsForService(ConfigurationContext configurationContext,
