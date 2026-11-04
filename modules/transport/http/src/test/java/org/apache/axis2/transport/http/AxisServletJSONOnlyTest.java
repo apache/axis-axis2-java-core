@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
@@ -34,13 +35,17 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.ApplicationXMLBuilder;
+import org.apache.axis2.builder.XFormURLEncodedBuilder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.MessageReceiver;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -202,6 +207,47 @@ public class AxisServletJSONOnlyTest extends TestCase {
         String responseContent = responseOutputStream.toString();
         assertTrue("Should return JSON error message for non-JSON request",
                    responseContent.contains("application/json is mandatory"));
+    }
+
+    /**
+     * GET and PUT go through RESTUtil rather than processHTTPPostRequest, and must
+     * refuse a request that is not application/json as POST does, rather than
+     * binding the operation from the query string or an XML body.
+     */
+    public void testEnableJSONOnlyRejectsNonJSONRestRequests() throws Exception {
+        axisConfig.addParameter(new Parameter(Constants.Configuration.ENABLE_JSON_ONLY, "true"));
+        axisConfig.addMessageBuilder("application/x-www-form-urlencoded", new XFormURLEncodedBuilder());
+        axisConfig.addMessageBuilder("application/xml", new ApplicationXMLBuilder());
+
+        final AtomicInteger invocations = new AtomicInteger();
+        AxisOperation operation = axisConfig.getService("TestService")
+                .getOperation(new QName("testOperation"));
+        operation.setMessageReceiver(new MessageReceiver() {
+            public void receive(MessageContext messageContext) {
+                invocations.incrementAndGet();
+            }
+        });
+
+        String uri = "/axis2/services/TestService/testOperation";
+        when(mockRequest.getRequestURI()).thenReturn(uri);
+        when(mockRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080" + uri));
+
+        when(mockServletContext.getAttribute(AxisServlet.CONFIGURATION_CONTEXT)).thenReturn(configContext);
+        servlet.init(mockServletConfig);
+
+        when(mockRequest.getMethod()).thenReturn("GET");
+        when(mockRequest.getQueryString()).thenReturn("value=1");
+        servlet.doGet(mockRequest, mockResponse);
+
+        when(mockRequest.getMethod()).thenReturn("PUT");
+        when(mockRequest.getQueryString()).thenReturn(null);
+        when(mockRequest.getContentType()).thenReturn("application/xml");
+        when(mockRequest.getInputStream()).thenReturn(
+                new MockServletInputStream("<testOperation><value>1</value></testOperation>"));
+        servlet.doPut(mockRequest, mockResponse);
+
+        assertEquals("non-JSON REST requests must not reach the operation", 0, invocations.get());
+        verify(mockResponse, times(2)).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     // Helper classes for mocking
