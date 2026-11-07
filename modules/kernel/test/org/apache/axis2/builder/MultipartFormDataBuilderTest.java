@@ -20,6 +20,7 @@
 package org.apache.axis2.builder;
 
 import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import junit.framework.TestCase;
@@ -35,6 +36,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -166,6 +168,42 @@ public class MultipartFormDataBuilderTest extends TestCase {
     }
 
     /**
+     * A file part is spilled into the servlet context's private temp directory,
+     * not the shared {@code java.io.tmpdir}, where the umask-mode file would be
+     * readable by other local accounts.
+     */
+    public void testFilePartIsSpilledIntoServletContextTempDir() throws Exception {
+        File contextTempDir = Files.createTempDirectory("axis2-context-tmp").toFile();
+        try {
+            int sharedBefore = countUploadTempFiles();
+
+            MessageContext messageContext = newMessageContext(buildBody("bigFile", "big.bin"));
+            HttpServletRequest request = (HttpServletRequest) messageContext.getProperty(
+                    HTTPConstants.MC_HTTP_SERVLETREQUEST);
+            ServletContext servletContext = mock(ServletContext.class);
+            when(servletContext.getAttribute(ServletContext.TEMPDIR)).thenReturn(contextTempDir);
+            when(request.getServletContext()).thenReturn(servletContext);
+
+            OMElement result = new MultipartFormDataBuilder().processDocument(null,
+                    multipartContentType(), messageContext);
+            assertNotNull(result);
+
+            assertEquals("The file part must not be written to the shared temp directory",
+                    sharedBefore, countUploadTempFiles());
+            assertEquals("The file part should be in the servlet context temp directory",
+                    1, countUploadTempFiles(contextTempDir));
+        } finally {
+            File[] files = contextTempDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    file.delete();
+                }
+            }
+            contextTempDir.delete();
+        }
+    }
+
+    /**
      * Poll for the temp-file count to fall back to the expected value, nudging
      * the collector each time, since the reaper only acts once the owning item
      * has been collected.
@@ -182,7 +220,11 @@ public class MultipartFormDataBuilderTest extends TestCase {
     }
 
     private int countUploadTempFiles() {
-        String[] names = tempDirectory.list();
+        return countUploadTempFiles(tempDirectory);
+    }
+
+    private static int countUploadTempFiles(File directory) {
+        String[] names = directory.list();
         if (names == null) {
             return 0;
         }
