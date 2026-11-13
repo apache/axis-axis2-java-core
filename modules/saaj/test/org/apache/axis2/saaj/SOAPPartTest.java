@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,6 +41,7 @@ import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPPart;
 import jakarta.xml.soap.Text;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -108,6 +110,38 @@ public class SOAPPartTest extends Assert {
             message.saveChanges();
         } catch (SOAPException expected) {
             // DTD rejected outright is also fine
+            return;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        message.writeTo(out);
+        assertFalse("external entity must not be expanded into the message",
+                    out.toString("UTF-8").contains(marker));
+    }
+
+    /**
+     * A SAXSource without its own XMLReader is parsed by the transformer that
+     * setContent copies it through, not by the hardened StAX factory.
+     */
+    @Test
+    public void testSetContentSAXSourceRejectsExternalEntity() throws Exception {
+        File secret = File.createTempFile("saaj-xxe", ".txt");
+        secret.deleteOnExit();
+        String marker = "SAAJ_XXE_SECRET_MARKER";
+        try (FileWriter w = new FileWriter(secret)) {
+            w.write(marker);
+        }
+        String xml =
+                "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE x [ <!ENTITY xxe SYSTEM \"" + secret.toURI() + "\"> ]>\n" +
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                "<soapenv:Body><item>&xxe;</item></soapenv:Body></soapenv:Envelope>";
+
+        SOAPMessage message = MessageFactory.newInstance().createMessage();
+        SOAPPart soapPart = message.getSOAPPart();
+        try {
+            soapPart.setContent(new SAXSource(new InputSource(new StringReader(xml))));
+            message.saveChanges();
+        } catch (SOAPException expected) {
             return;
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
