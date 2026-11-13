@@ -263,11 +263,15 @@ migration from `commons-fileupload` 1.x to `commons-fileupload2` in
      generation rather than being ignored, so the tool cannot quietly parse a
      document other than the one named. Connect and read timeouts apply
      (`axis2.codegen.wsdl.connect.timeout`, `axis2.codegen.wsdl.read.timeout`).
-   - Not screened: `WSDL11ToAxisServiceBuilder.readInTheWSDLFile` when no
-     resolver is supplied parses the top document with the hardened
-     `XMLUtils.newDocument`, but wsdl4j fetches any `wsdl:import` itself. The
-     deployment callers do supply a resolver; a caller that does not, with a
-     remote base URI, is outside what is screened.
+   - `WSDL11ToAxisServiceBuilder.readInTheWSDLFile` with no resolver supplied
+     (the public `InputStream` constructors, and exploded-directory deployment)
+     now also reads through `HardenedWSDLLocator`, over a locator that refuses
+     every absolute or network-path `wsdl:import` location and `xsd:import`
+     schemaLocation -- `file:` included -- and resolves a relative one against
+     the base URI, the rule the schema resolver below already applied. Until
+     2.0.3 this branch handed wsdl4j a parsed `Document`, and wsdl4j fetched the
+     imports itself. A caller that needs absolute imports opts in with
+     `setCustomWSDLResolver`.
 
 3. **Schema import security:** URI resolvers for AAR and WAR deployments
    refuse HTTP/HTTPS/FTP/JAR/file scheme resolution, so an import cannot

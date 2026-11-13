@@ -50,7 +50,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -95,9 +95,8 @@ import javax.wsdl.extensions.soap12.SOAP12Operation;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -2324,13 +2323,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // AxisService.createClientSideAxisService() defaults to false and uses
         // a hardened WSDLLocator when opt-in is enabled.
         //
-        // Note what this method does and does not enforce. Where a resolver is
-        // supplied -- which the deployment callers do -- both the document and its
-        // imports are screened, below. On the resolver-less branch only the top
-        // document is (XMLUtils.newDocument is hardened); wsdl4j fetches any
-        // wsdl:import itself, and nothing here checks that the input really is
-        // local. A caller handing this method a remote base URI without a resolver
-        // is outside what is screened.
+        // Both branches below read through a WSDLLocator, because that is the only
+        // hook wsdl4j offers: given a Document instead, it fetches every
+        // wsdl:import location and xsd:import schemaLocation itself, with any
+        // scheme and host the document names. Where a resolver is supplied -- which
+        // the deployment callers do -- it decides where imports come from and is
+        // only screened for a DOCTYPE. Where none is, the input is a stream whose
+        // origin nothing here can check, so an absolute import location is refused
+        // outright and only a relative one resolves, against the base URI; this is
+        // the same rule getXMLSchema applies to schema imports.
         reader.setFeature("javax.wsdl.importDocuments", true);
 
         Definition def;
@@ -2344,30 +2345,84 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             def.setDocumentBaseURI(customWSDLResolver.getBaseURI());
             return def;
         } else {
-            Document doc;
-            try {
-                doc = XMLUtils.newDocument(in);
-            } catch (ParserConfigurationException e) {
-                throw new WSDLException(WSDLException.PARSER_ERROR,
-                                        "Parser Configuration Error", e);
-            } catch (SAXException e) {
-                throw new WSDLException(WSDLException.PARSER_ERROR,
-                                        "Parser SAX Error", e);
-
-            } catch (IOException e) {
-                throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error",
-                                        e);
-            }
-
             // Log when and from where the WSDL is loaded.
             if (log.isDebugEnabled()) {
                 log.debug("Reading 1.1 WSDL with base uri = " + getBaseUri());
                 log.debug("  the document base uri = " + getDocumentBaseUri());
                 log.trace("  the stack at this point is: " + stackToString());
             }
-            def = reader.readWSDL(getBaseUri(), doc);
+            // The hardened wrapper screens the top document for a DOCTYPE, which is
+            // what the XMLUtils.newDocument parse used to do here, and reads each
+            // relative import the inner locator resolves.
+            def = reader.readWSDL(new HardenedWSDLLocator(
+                    new RelativeImportsOnlyLocator(in, getBaseUri())));
             def.setDocumentBaseURI(getDocumentBaseUri());
             return def;
+        }
+    }
+
+    /**
+     * The locator for a WSDL supplied as a stream with no resolver. It refuses an
+     * absolute or network-path import location -- {@code file:} included, like the
+     * schema resolver in {@link WSDLToAxisServiceBuilder#getXMLSchema} -- and resolves
+     * a relative one against its parent document, so co-packaged documents keep
+     * loading while the document cannot name a location of its own choosing. It
+     * never reads anything itself: an import comes back as a bare system id for
+     * {@link HardenedWSDLLocator} to open and screen. A caller that needs absolute
+     * imports opts in with {@link #setCustomWSDLResolver(WSDLLocator)}.
+     */
+    private static final class RelativeImportsOnlyLocator implements WSDLLocator {
+
+        private final InputStream in;
+        private final String baseURI;
+        private String latestImportURI;
+
+        RelativeImportsOnlyLocator(InputStream in, String baseURI) {
+            this.in = in;
+            this.baseURI = baseURI;
+        }
+
+        public InputSource getBaseInputSource() {
+            InputSource source = new InputSource(in);
+            source.setSystemId(baseURI);
+            return source;
+        }
+
+        public String getBaseURI() {
+            return baseURI;
+        }
+
+        public InputSource getImportInputSource(String parentLocation, String importLocation) {
+            if (isAbsoluteSchemaLocation(importLocation)) {
+                throw new RuntimeException("Absolute import location blocked: "
+                        + importLocation + " (use setCustomWSDLResolver to opt in)");
+            }
+            String context = parentLocation != null ? parentLocation : baseURI;
+            if (context == null) {
+                throw new RuntimeException("Cannot resolve import location "
+                        + importLocation + ": the WSDL was read from a stream"
+                        + " with no base URI");
+            }
+            String resolved;
+            try {
+                resolved = URI.create(context).resolve(importLocation).toString();
+            } catch (IllegalArgumentException e) {
+                // Fail closed: a location that cannot be resolved against its parent
+                // is not one to open as given.
+                throw new RuntimeException("Cannot resolve import location "
+                        + importLocation + " against " + context, e);
+            }
+            latestImportURI = resolved;
+            InputSource source = new InputSource();
+            source.setSystemId(resolved);
+            return source;
+        }
+
+        public String getLatestImportURI() {
+            return latestImportURI;
+        }
+
+        public void close() {
         }
     }
 
