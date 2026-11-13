@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.utility;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,7 +30,6 @@ import javax.imageio.ImageIO;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import jakarta.xml.ws.WebServiceException;
@@ -221,7 +221,7 @@ public class ConvertUtils {
                 }
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 Result result = new StreamResult(out);
-                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                Transformer transformer = XMLUtils.newSecureTransformerFactory().newTransformer();
                 transformer.transform((Source) arg, result);
                 byte[] bytes = out.toByteArray();
                 return bytes;

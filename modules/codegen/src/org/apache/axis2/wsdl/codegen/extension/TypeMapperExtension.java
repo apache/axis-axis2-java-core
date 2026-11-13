@@ -25,6 +25,7 @@ import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.databinding.CTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -134,8 +135,7 @@ public class TypeMapperExtension implements CodeGenExtension {
             throws CodeGenerationException {
         try {
             DocumentBuilderFactory documentBuilderFactory
-                    = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
+                    = XMLUtils.newSecureDocumentBuilderFactory();
             DocumentBuilder documentBuilder =
                     documentBuilderFactory.newDocumentBuilder();
             return documentBuilder.parse(configuration.getTypeMappingFile());

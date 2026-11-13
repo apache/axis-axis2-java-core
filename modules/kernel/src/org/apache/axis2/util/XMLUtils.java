@@ -36,15 +36,16 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -56,65 +57,26 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Stack;
 
 
 public class XMLUtils {
     public static final String charEncoding = "ISO-8859-1";
-    private static final String saxParserFactoryProperty =
-            "javax.xml.parsers.SAXParserFactory";
 
     private static DocumentBuilderFactory dbf = getDOMFactory();
-    private static SAXParserFactory saxFactory;
-    private static Stack saxParsers = new Stack();
 
     private static String empty = "";
     private static ByteArrayInputStream bais = new ByteArrayInputStream(empty.getBytes());
 
-    static {
-        // Initialize SAX Parser factory defaults
-        initSAXFactory(null, true, false);
-    }
-
     /**
-     * Initializes the SAX parser factory.
+     * Formerly configured a pooled SAX parser factory that nothing in Axis2 ever
+     * handed out.
      *
-     * @param factoryClassName The (optional) class name of the desired
-     *                         SAXParserFactory implementation. Will be
-     *                         assigned to the system property
-     *                         <b>javax.xml.parsers.SAXParserFactory</b>
-     *                         unless this property is already set.
-     *                         If <code>null</code>, leaves current setting
-     *                         alone.
-     * @param namespaceAware   true if we want a namespace-aware parser
-     * @param validating       true if we want a validating parser
+     * @deprecated has no effect; use a hardened parser at the point of use instead
      */
+    @Deprecated
     public static void initSAXFactory(String factoryClassName,
                                       boolean namespaceAware,
                                       boolean validating) {
-        if (factoryClassName != null) {
-            try {
-                saxFactory = (SAXParserFactory) Loader.loadClass(factoryClassName).
-                        newInstance();
-                /*
-                 * Set the system property only if it is not already set to
-                 * avoid corrupting environments in which Axis is embedded.
-                 */
-                if (System.getProperty(saxParserFactoryProperty) == null) {
-                    System.setProperty(saxParserFactoryProperty,
-                                       factoryClassName);
-                }
-            } catch (Exception e) {
-                saxFactory = SAXParserFactory.newInstance();
-            }
-        } else {
-            saxFactory = SAXParserFactory.newInstance();
-        }
-        saxFactory.setNamespaceAware(namespaceAware);
-        saxFactory.setValidating(validating);
-
-        // Discard existing parsers
-        saxParsers.clear();
     }
 
     /**
@@ -142,6 +104,39 @@ public class XMLUtils {
         return dbf;
     }
 
+    /**
+     * A TransformerFactory that refuses external DTDs, external entities and
+     * external stylesheets.
+     * <p>
+     * Use this for any transform whose Source may come from outside Axis2. An
+     * identity transform parses a StreamSource, or a SAXSource without its own
+     * XMLReader, with the transformer's internal parser, which ignores every
+     * parser hardening applied elsewhere. Implementations that do not recognise
+     * a restriction keep the rest rather than fail, since the JAXP 1.5 access
+     * attributes are optional for third-party processors.
+     *
+     * @return a TransformerFactory with secure processing and no external access
+     */
+    public static TransformerFactory newSecureTransformerFactory() {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        try {
+            tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (TransformerConfigurationException e) {
+            // Not supported by this processor; the access attributes still apply.
+        }
+        setAttributeIfSupported(tf, XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        setAttributeIfSupported(tf, XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        return tf;
+    }
+
+    private static void setAttributeIfSupported(TransformerFactory tf, String name, String value) {
+        try {
+            tf.setAttribute(name, value);
+        } catch (IllegalArgumentException e) {
+            // Not recognised by this processor.
+        }
+    }
+
     private static DocumentBuilderFactory getDOMFactory() {
         DocumentBuilderFactory dbf;
         try {
@@ -164,31 +159,14 @@ public class XMLUtils {
         return (dbf);
     }
 
-    private static boolean tryReset = true;
-
     /**
-     * Returns a SAX parser for reuse.
+     * Formerly returned a parser to a pool that was never drawn from, so every
+     * released parser was retained for the life of the class.
      *
-     * @param parser A SAX parser that is available for reuse
+     * @deprecated has no effect
      */
+    @Deprecated
     public static void releaseSAXParser(SAXParser parser) {
-        if (!tryReset) {
-            return;
-        }
-
-        //Free up possible ref. held by past contenthandler.
-        try {
-            XMLReader xmlReader = parser.getXMLReader();
-            if (null != xmlReader) {
-                synchronized (XMLUtils.class) {
-                    saxParsers.push(parser);
-                }
-            } else {
-                tryReset = false;
-            }
-        } catch (org.xml.sax.SAXException e) {
-            tryReset = false;
-        }
     }
 
     /**

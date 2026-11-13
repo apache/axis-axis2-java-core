@@ -32,6 +32,7 @@ import org.apache.axis2.jaxrs.JAXRSModel;
 import org.apache.axis2.jaxrs.JAXRSUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -228,8 +229,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     private void loadCustomSchemaFile() {
         if (customSchemaLocation != null) {
             try {
-                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-                documentBuilderFactory.setNamespaceAware(true);
+                DocumentBuilderFactory documentBuilderFactory = XMLUtils.newSecureDocumentBuilderFactory();
                 Document doc = documentBuilderFactory.newDocumentBuilder().parse(new File(customSchemaLocation));
                 XmlSchema schema = xmlSchemaCollection.read(doc, null);
                 schemaMap.put(schema.getTargetNamespace(), schema);

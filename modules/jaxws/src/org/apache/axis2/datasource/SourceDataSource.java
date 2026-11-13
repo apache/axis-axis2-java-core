@@ -22,6 +22,7 @@ package org.apache.axis2.datasource;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.ds.AbstractPullOMDataSource;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +31,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
@@ -82,7 +82,7 @@ public class SourceDataSource extends AbstractPullOMDataSource {
             } else {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 Result result = new StreamResult(out);
-                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                Transformer transformer = XMLUtils.newSecureTransformerFactory().newTransformer();
                 transformer.transform(data, result);
                 bytes = out.toByteArray();
             }            

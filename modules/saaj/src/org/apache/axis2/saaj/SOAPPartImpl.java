@@ -30,6 +30,7 @@ import org.apache.axiom.soap.SOAPModelBuilder;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.kernel.http.HTTPConstants;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
@@ -61,7 +62,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -331,7 +331,7 @@ public class SOAPPartImpl extends SOAPPart {
                 reader = inputFactory.createXMLStreamReader(source);
             } else {
                 Result result = new StreamResult(baos);
-                Transformer xformer = TransformerFactory.newInstance().newTransformer();
+                Transformer xformer = XMLUtils.newSecureTransformerFactory().newTransformer();
                 xformer.transform(source, result);
                 InputStream is = new ByteArrayInputStream(baos.toByteArray());
                 reader = inputFactory.createXMLStreamReader(is);

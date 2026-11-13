@@ -47,7 +47,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -192,7 +191,7 @@ public class LogicalMessageImpl implements LogicalMessage {
                 
         if (Source.class.isAssignableFrom(content.getClass())) {
             try {
-                Transformer trans = TransformerFactory.newInstance().newTransformer();
+                Transformer trans = XMLUtils.newSecureTransformerFactory().newTransformer();
                         
                 // First we have to get the content out of the original
                 // Source object so we can build the cache from there.
