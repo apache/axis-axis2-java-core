@@ -20,6 +20,7 @@
 package org.apache.axis2.builder;
 
 import junit.framework.TestCase;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
@@ -158,5 +159,73 @@ public class RequestSizeLimitsTest extends TestCase {
         assertEquals(RequestSizeLimits.UNLIMITED, RequestSizeLimits.resolve(messageContext,
                 RequestSizeLimits.SOAP_MAX_REQUEST_SIZE,
                 RequestSizeLimits.DEFAULT_SOAP_MAX_REQUEST_SIZE));
+    }
+
+    /**
+     * application/xml is registered for every configuration, so the plain SOAP
+     * ceiling was avoided by sending the same body with that Content-Type.
+     */
+    public void testApplicationXMLBuilderIsBounded() throws Exception {
+        axisConfiguration.addParameter(
+                new Parameter(RequestSizeLimits.SOAP_MAX_REQUEST_SIZE, "64"));
+        try {
+            readPOXText(1000);
+            fail("An over-sized application/xml body was read in full");
+        } catch (Exception e) {
+            assertExceedsCeiling(e);
+        }
+    }
+
+    public void testApplicationXMLBuilderAcceptsABodyUnderTheCeiling() throws Exception {
+        axisConfiguration.addParameter(
+                new Parameter(RequestSizeLimits.SOAP_MAX_REQUEST_SIZE, "64"));
+        assertEquals("AAAAAAAA", readPOXText(8));
+    }
+
+    /**
+     * DataSourceBuilder copies the whole body into a byte[], so it was unbounded
+     * for any content type a deployment registers it for.
+     */
+    public void testDataSourceBuilderIsBounded() throws Exception {
+        axisConfiguration.addParameter(
+                new Parameter(RequestSizeLimits.SOAP_MAX_REQUEST_SIZE, "64"));
+        try {
+            new DataSourceBuilder().processDocument(
+                    new ByteArrayInputStream(new byte[4096]), "application/octet-stream",
+                    messageContext);
+            fail("An over-sized body was copied in full");
+        } catch (Exception e) {
+            assertExceedsCeiling(e);
+        }
+    }
+
+    public void testDataSourceBuilderAcceptsABodyUnderTheCeiling() throws Exception {
+        axisConfiguration.addParameter(
+                new Parameter(RequestSizeLimits.SOAP_MAX_REQUEST_SIZE, "64"));
+        assertNotNull(new DataSourceBuilder().processDocument(
+                new ByteArrayInputStream(new byte[8]), "application/octet-stream",
+                messageContext));
+    }
+
+    /** Builds an application/xml body and reads its content the way a receiver does. */
+    private String readPOXText(int length) throws Exception {
+        StringBuilder sb = new StringBuilder("<a>");
+        for (int i = 0; i < length; i++) {
+            sb.append('A');
+        }
+        sb.append("</a>");
+        SOAPEnvelope envelope = (SOAPEnvelope) new ApplicationXMLBuilder().processDocument(
+                new ByteArrayInputStream(sb.toString().getBytes("UTF-8")),
+                "application/xml", messageContext);
+        return envelope.getBody().getFirstElement().getText();
+    }
+
+    private static void assertExceedsCeiling(Throwable t) {
+        for (Throwable c = t; c != null; c = c.getCause()) {
+            if (c.getMessage() != null && c.getMessage().contains("exceeds the configured maximum")) {
+                return;
+            }
+        }
+        fail("Expected the request-size ceiling to be hit, got " + t);
     }
 }
