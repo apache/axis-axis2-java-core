@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -143,8 +145,9 @@ public class TempFileManager {
         if (files != null) {
             for (File file : files) {
                 // If the file is a directory, we will
-                // recursively call delete on it.
-                if (file.isDirectory()) {
+                // recursively call delete on it. A symbolic link is
+                // deleted itself and never followed.
+                if (Files.isDirectory(file.toPath(), LinkOption.NOFOLLOW_LINKS)) {
                     recursiveDelete(file);
                 } else {
                     // It is just a file so we are safe to
@@ -183,7 +186,7 @@ public class TempFileManager {
         FileFilter tmpDirFilter =
                 new FileFilter() {
                     public boolean accept(File pathname) {
-                        return (pathname.isDirectory() &&
+                        return (Files.isDirectory(pathname.toPath(), LinkOption.NOFOLLOW_LINKS) &&
                                 pathname.getName().startsWith(TEMP_DIR_PREFIX));
                     }
                 };
