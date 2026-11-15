@@ -24,6 +24,7 @@ import org.apache.axiom.blob.MemoryBlob;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.datasource.SourceDataSource;
@@ -178,7 +179,9 @@ public class SourceBlockImpl extends BlockImpl<Source,Void> implements SourceBlo
             */
 
             if (busObj instanceof StreamSource) {
-                XMLInputFactory f = StAXUtils.getXMLInputFactory();
+                // STANDALONE: the payload comes from the application, so do not
+                // resolve external entities or load an external DTD while reading it.
+                XMLInputFactory f = StAXUtils.getXMLInputFactory(StAXParserConfiguration.STANDALONE);
 
                 return f.createXMLStreamReader(busObj);
             }
