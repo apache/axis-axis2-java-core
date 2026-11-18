@@ -31,6 +31,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonHtmlEncoding;
 import org.apache.axis2.json.moshi.JsonHtmlEncoder;
 import org.apache.axis2.json.moshi.MoshiXMLStreamWriter;
 import org.apache.axis2.kernel.MessageFormatter;
@@ -278,10 +279,12 @@ public class EnhancedMoshiJsonFormatter implements MessageFormatter {
 
         try {
             // Create optimized Moshi instance with enhanced adapters
-            Moshi moshi = new Moshi.Builder()
-                .add(String.class, new JsonHtmlEncoder())
-                .add(Date.class, new Rfc3339DateJsonAdapter())
-                .build();
+            Moshi.Builder moshiBuilder = new Moshi.Builder();
+            if (!JsonHtmlEncoding.isDisabled(outMsgCtxt)) {
+                // XSS protection, encode JSON Strings as HTML
+                moshiBuilder.add(String.class, new JsonHtmlEncoder());
+            }
+            Moshi moshi = moshiBuilder.add(Date.class, new Rfc3339DateJsonAdapter()).build();
             JsonAdapter<Object> adapter = moshi.adapter(Object.class);
 
             // Create buffered sink with optimization (concept from HTTP/2 integration)

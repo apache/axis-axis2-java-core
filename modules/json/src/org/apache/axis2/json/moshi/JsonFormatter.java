@@ -32,6 +32,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonHtmlEncoding;
 import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -60,7 +61,12 @@ public class JsonFormatter implements MessageFormatter {
         String msg;
 
         try {
-            Moshi moshi = new Moshi.Builder().add(String.class, new JsonHtmlEncoder()).add(Date.class, new Rfc3339DateJsonAdapter()).build();
+            Moshi.Builder moshiBuilder = new Moshi.Builder();
+            if (!JsonHtmlEncoding.isDisabled(outMsgCtxt)) {
+                // XSS protection, encode JSON Strings as HTML
+                moshiBuilder.add(String.class, new JsonHtmlEncoder());
+            }
+            Moshi moshi = moshiBuilder.add(Date.class, new Rfc3339DateJsonAdapter()).build();
             JsonAdapter<Object> adapter = moshi.adapter(Object.class);
             BufferedSink sink = Okio.buffer(Okio.sink(outputStream));
             jsonWriter = JsonWriter.of(sink);

@@ -30,6 +30,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonHtmlEncoding;
 import org.apache.axis2.json.gson.GsonXMLStreamWriter;
 import org.apache.axis2.json.gson.JsonHtmlEncoder;
 import org.apache.axis2.kernel.MessageFormatter;
@@ -226,7 +227,10 @@ public class JSONStreamingMessageFormatter implements MessageFormatter {
                                      Object retObj) throws AxisFault {
         try {
             GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlEncoder());
+            if (!JsonHtmlEncoding.isDisabled(outMsgCtxt)) {
+                // XSS protection, encode JSON Strings as HTML
+                gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlEncoder());
+            }
             Gson gson = gsonBuilder.create();
 
             jsonWriter.beginObject();

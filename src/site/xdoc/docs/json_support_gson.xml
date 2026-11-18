@@ -137,6 +137,20 @@
                 a pure JSON string to the wire using JsonWriter in google-gson API. The native approach doesn’t support
                 namespaces. If you need namespace support with JSON then go through XML Stream API based approach.</p>
 
+            <p>Every String value that the Native approach formatters write (the Gson and Moshi
+                JsonFormatter, the streaming formatters and the HTTP/2 enhanced formatters) is HTML
+                content encoded once: <tt>&amp;</tt>, <tt>&lt;</tt> and <tt>&gt;</tt> are served as
+                <tt>&amp;amp;</tt>, <tt>&amp;lt;</tt> and <tt>&amp;gt;</tt>. This protects a browser that
+                inserts a response value into a page as HTML against reflected XSS, but it also changes
+                the data for every other consumer: <tt>AT&amp;T</tt> arrives as <tt>AT&amp;amp;T</tt>, and
+                a value the service had already encoded is encoded twice. Request strings are not
+                decoded. To serve strings exactly as the service produced them, set the
+                <tt>disableJSONHtmlEncoding</tt> parameter to <tt>true</tt> in <tt>axis2.xml</tt>, or in
+                <tt>services.xml</tt> to turn it off for one service only. The consumer is then
+                responsible for encoding a value before placing it in HTML.</p>
+<pre><![CDATA[
+    <parameter name="disableJSONHtmlEncoding">true</parameter>
+]]></pre>
 
         </section>
 

@@ -28,6 +28,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonHtmlEncoding;
 import org.apache.axis2.kernel.MessageFormatter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -99,9 +100,11 @@ public class JsonFormatter implements MessageFormatter {
 
             } else {
                 try {
-                    GsonBuilder gsonBuilder = new GsonBuilder(); 
-                    // XSS protection, encode JSON Strings as HTML
-                    gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlEncoder());
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    if (!JsonHtmlEncoding.isDisabled(outMsgCtxt)) {
+                        // XSS protection, encode JSON Strings as HTML
+                        gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlEncoder());
+                    }
                     Gson gson = gsonBuilder.create();
                     jsonWriter.beginObject();
                     jsonWriter.name(JsonConstant.RESPONSE);

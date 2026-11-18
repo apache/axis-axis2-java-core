@@ -36,6 +36,17 @@ public class JsonConstant {
      */
     public static final String FIELD_FILTER = "jsonFieldFilter";
 
+    /**
+     * Name of the parameter, in axis2.xml or services.xml, that turns off the HTML
+     * content encoding of String values in JSON responses. By default every String
+     * written by the Gson and Moshi formatters goes through OWASP
+     * {@code Encode.forHtmlContent}, so {@code &}, {@code <} and {@code >} are served
+     * as entities. Set to {@code true} to serve strings as the service produced them.
+     *
+     * @see JsonHtmlEncoding
+     */
+    public static final String DISABLE_JSON_HTML_ENCODING = "disableJSONHtmlEncoding";
+
     public static final String IS_JSON_STREAM = "isJsonStream";
 
     public static final String GSON_XML_STREAM_READER = "GsonXMLStreamReader";

@@ -28,6 +28,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonHtmlEncoding;
 import org.apache.axis2.json.gson.JsonHtmlEncoder;
 import org.apache.axis2.json.gson.GsonXMLStreamWriter;
 import org.apache.axis2.kernel.MessageFormatter;
@@ -277,10 +278,13 @@ public class EnhancedGsonJsonFormatter implements MessageFormatter {
 
         try {
             // Create optimized GSON instance with enhanced configuration
-            Gson gson = new GsonBuilder()
-                .registerTypeAdapter(String.class, new JsonHtmlEncoder())
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-                .create();
+            GsonBuilder gsonBuilder = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+            if (!JsonHtmlEncoding.isDisabled(outMsgCtxt)) {
+                // XSS protection, encode JSON Strings as HTML
+                gsonBuilder.registerTypeAdapter(String.class, new JsonHtmlEncoder());
+            }
+            Gson gson = gsonBuilder.create();
 
             // Create JsonWriter with character encoding
             if (charSetEncoding == null) {

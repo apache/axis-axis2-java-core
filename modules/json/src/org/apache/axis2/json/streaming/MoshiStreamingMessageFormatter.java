@@ -35,6 +35,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.json.factory.JsonConstant;
+import org.apache.axis2.json.factory.JsonHtmlEncoding;
 import org.apache.axis2.json.moshi.JsonHtmlEncoder;
 import org.apache.axis2.json.moshi.MoshiXMLStreamWriter;
 import org.apache.axis2.kernel.MessageFormatter;
@@ -105,11 +106,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
                 + flushInterval + " byte flush interval");
         }
 
-        Moshi moshi = new Moshi.Builder()
-            .add(String.class, new JsonHtmlEncoder())
-            .add(Date.class, new Rfc3339DateJsonAdapter())
-            .build();
-        JsonAdapter<Object> adapter = moshi.adapter(Object.class);
+        Moshi moshi = moshiFor(outMsgCtxt);
 
         try (BufferedSink sink = Okio.buffer(Okio.sink(flushingStream));
              JsonWriter jsonWriter = JsonWriter.of(sink)) {
@@ -123,7 +120,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
                 writeElementResponse(outMsgCtxt, jsonWriter, preserve);
 
             } else {
-                writeObjectResponse(jsonWriter, adapter, retObj, outMsgCtxt);
+                writeObjectResponse(jsonWriter, moshi, retObj, outMsgCtxt);
             }
 
             jsonWriter.flush();
@@ -197,7 +194,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * never written, so no capture buffer is needed.</p>
      */
     @SuppressWarnings("unchecked")
-    private void writeObjectResponse(JsonWriter jsonWriter, JsonAdapter<Object> adapter,
+    private void writeObjectResponse(JsonWriter jsonWriter, Moshi moshi,
                                      Object retObj, MessageContext outMsgCtxt) throws AxisFault {
         try {
             jsonWriter.beginObject();
@@ -205,9 +202,9 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
 
             Object filterProp = outMsgCtxt.getProperty(JsonConstant.FIELD_FILTER);
             if (filterProp instanceof Set && !((Set<?>) filterProp).isEmpty()) {
-                writeFilteredObject(jsonWriter, retObj, (Set<String>) filterProp);
+                writeFilteredObject(jsonWriter, moshi, retObj, (Set<String>) filterProp);
             } else {
-                adapter.toJson(jsonWriter, retObj);
+                moshi.adapter(Object.class).toJson(jsonWriter, retObj);
             }
 
             jsonWriter.endObject();
@@ -234,11 +231,19 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * through to the client as soon as serialization produces enough bytes
      * to trigger a flush.</p>
      */
-    /** Shared Moshi instance for field-level serialization (thread-safe, reusable). */
-    private static final Moshi FIELD_FILTER_MOSHI = new Moshi.Builder()
+    /** Shared Moshi instances (thread-safe, reusable), with and without the HTML encoding of Strings. */
+    private static final Moshi HTML_ENCODING_MOSHI = new Moshi.Builder()
         .add(String.class, new JsonHtmlEncoder())
         .add(Date.class, new Rfc3339DateJsonAdapter())
         .build();
+    private static final Moshi PLAIN_MOSHI = new Moshi.Builder()
+        .add(Date.class, new Rfc3339DateJsonAdapter())
+        .build();
+
+    /** The Moshi to serialize this message with, see {@link JsonHtmlEncoding#isDisabled}. */
+    private static Moshi moshiFor(MessageContext msgCtxt) {
+        return JsonHtmlEncoding.isDisabled(msgCtxt) ? PLAIN_MOSHI : HTML_ENCODING_MOSHI;
+    }
 
     /**
      * Serialize only the requested fields from the return object.
@@ -289,7 +294,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * cannot be selected, as the dot is always interpreted as a nesting
      * delimiter.</p>
      */
-    private void writeFilteredObject(JsonWriter jsonWriter, Object retObj,
+    private void writeFilteredObject(JsonWriter jsonWriter, Moshi moshi, Object retObj,
                                      Set<String> allowedFields)
             throws IOException {
 
@@ -377,7 +382,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
                 Set<String> subFields = nestedSpecs.get(field.getName());
                 if (subFields != null && value != null) {
                     // Nested filtering: serialize container but prune its contents
-                    writeFilteredNested(jsonWriter, value, subFields,
+                    writeFilteredNested(jsonWriter, moshi, value, subFields,
                         field.getGenericType(), fieldCache);
                 } else if (value == null) {
                     jsonWriter.nullValue();
@@ -385,7 +390,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
                     // No nested specs: serialize the entire field value as-is
                     @SuppressWarnings("unchecked")
                     JsonAdapter<Object> fieldAdapter =
-                        (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(
+                        (JsonAdapter<Object>) moshi.adapter(
                             field.getGenericType());
                     fieldAdapter.toJson(jsonWriter, value);
                 }
@@ -456,7 +461,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * {"records":[{"id":"item-1"},{"id":"item-2"}]}}}}</p>
      */
     @SuppressWarnings("unchecked")
-    private void writeFilteredNested(JsonWriter jsonWriter, Object value,
+    private void writeFilteredNested(JsonWriter jsonWriter, Moshi moshi, Object value,
                                      Set<String> subFields, Type declaredType,
                                      java.util.Map<Class<?>, List<Field>> fieldCache)
             throws IOException {
@@ -496,14 +501,14 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
                 if (element == null) {
                     jsonWriter.nullValue();
                 } else if (element instanceof java.util.Map) {
-                    writeFilteredMap(jsonWriter, (java.util.Map<?, ?>) element,
+                    writeFilteredMap(jsonWriter, moshi, (java.util.Map<?, ?>) element,
                         immediateKeep, deeperSpecs, fieldCache);
                 } else if (element instanceof java.util.Collection) {
                     // Nested collection — recurse with the same sub-fields
-                    writeFilteredNested(jsonWriter, element, subFields,
+                    writeFilteredNested(jsonWriter, moshi, element, subFields,
                         Object.class, fieldCache);
                 } else {
-                    writeFilteredPojo(jsonWriter, element,
+                    writeFilteredPojo(jsonWriter, moshi, element,
                         immediateKeep, deeperSpecs, fieldCache);
                 }
             }
@@ -515,18 +520,18 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
              * where keys are "records", "metadata", "diagnostics", etc.
              * Filter keys by immediateKeep, then recurse into deeperSpecs.
              */
-            writeFilteredMap(jsonWriter, (java.util.Map<?, ?>) value,
+            writeFilteredMap(jsonWriter, moshi, (java.util.Map<?, ?>) value,
                 immediateKeep, deeperSpecs, fieldCache);
 
         } else if (value.getClass().getName().startsWith("java.lang.")) {
             /* Scalar — nothing to filter inside. */
             JsonAdapter<Object> adapter =
-                (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(declaredType);
+                (JsonAdapter<Object>) moshi.adapter(declaredType);
             adapter.toJson(jsonWriter, value);
 
         } else {
             /* Single POJO — filter its declared fields recursively. */
-            writeFilteredPojo(jsonWriter, value, immediateKeep, deeperSpecs, fieldCache);
+            writeFilteredPojo(jsonWriter, moshi, value, immediateKeep, deeperSpecs, fieldCache);
         }
     }
 
@@ -539,7 +544,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * that have {@code deeperSpecs}, the value is recursively filtered.</p>
      */
     @SuppressWarnings("unchecked")
-    private void writeFilteredMap(JsonWriter jsonWriter, java.util.Map<?, ?> map,
+    private void writeFilteredMap(JsonWriter jsonWriter, Moshi moshi, java.util.Map<?, ?> map,
                                   Set<String> immediateKeep,
                                   java.util.Map<String, Set<String>> deeperSpecs,
                                   java.util.Map<Class<?>, List<Field>> fieldCache)
@@ -559,14 +564,14 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
             Set<String> deeper = deeperSpecs.get(key);
             if (deeper != null && entryValue != null) {
                 // This key has deeper sub-field specs — recurse
-                writeFilteredNested(jsonWriter, entryValue, deeper,
+                writeFilteredNested(jsonWriter, moshi, entryValue, deeper,
                     Object.class, fieldCache);
             } else if (entryValue == null) {
                 jsonWriter.nullValue();
             } else {
                 // No deeper filtering — serialize the full value
                 JsonAdapter<Object> valAdapter =
-                    (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(Object.class);
+                    (JsonAdapter<Object>) moshi.adapter(Object.class);
                 valAdapter.toJson(jsonWriter, entryValue);
             }
         }
@@ -586,7 +591,7 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
      * collection where every element is the same type.</p>
      */
     @SuppressWarnings("unchecked")
-    private void writeFilteredPojo(JsonWriter jsonWriter, Object pojo,
+    private void writeFilteredPojo(JsonWriter jsonWriter, Moshi moshi, Object pojo,
                                    Set<String> immediateKeep,
                                    java.util.Map<String, Set<String>> deeperSpecs,
                                    java.util.Map<Class<?>, List<Field>> fieldCache)
@@ -615,13 +620,13 @@ public class MoshiStreamingMessageFormatter implements MessageFormatter {
             Set<String> deeper = deeperSpecs != null ? deeperSpecs.get(field.getName()) : null;
             if (deeper != null && value != null) {
                 // Recurse into this field's value
-                writeFilteredNested(jsonWriter, value, deeper,
+                writeFilteredNested(jsonWriter, moshi, value, deeper,
                     field.getGenericType(), fieldCache);
             } else if (value == null) {
                 jsonWriter.nullValue();
             } else {
                 JsonAdapter<Object> adapter =
-                    (JsonAdapter<Object>) FIELD_FILTER_MOSHI.adapter(
+                    (JsonAdapter<Object>) moshi.adapter(
                         field.getGenericType());
                 adapter.toJson(jsonWriter, value);
             }

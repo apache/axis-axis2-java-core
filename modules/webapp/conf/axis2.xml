@@ -26,6 +26,10 @@
     <parameter name="enableMTOM">false</parameter>
     <parameter name="enableSwA">false</parameter>
     <parameter name="enableJSONOnly">false</parameter>
+    <!-- The Gson and Moshi JSON formatters HTML-encode every String value they write
+         (& < > become entities) as a reflected XSS control. Set to true to serve strings
+         exactly as the service produced them. Can also be set per service in services.xml. -->
+    <parameter name="disableJSONHtmlEncoding">false</parameter>
 
     <!--Uncomment if you want to enable file caching for attachments -->
     <!--parameter name="cacheAttachments">true</parameter>

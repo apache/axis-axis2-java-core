@@ -297,7 +297,10 @@ Also provided is a test service, TestwsService. It includes two POJO Objects as 
 be expected, TestwsRequest and TestwsResponse. This service attempts to return
 a String with some Javascript, that is HTML encoded by Axis2 and thereby
 eliminating the possibility of a Javascript engine executing the response i.e. a
-reflected XSS attack.
+reflected XSS attack. This encoding applies to every String in every JSON response
+and changes data such as <tt>AT&amp;T</tt>; it can be turned off with the
+<tt>disableJSONHtmlEncoding</tt> parameter, see the
+<a href="json_support_gson.html#native_approach">JSON Support Guide</a>.
 </p>
 
 <p>
