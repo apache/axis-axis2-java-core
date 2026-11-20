@@ -55,6 +55,17 @@ public class JMSTargetAddressPolicyTest extends TestCase {
         assertRefused("jms:/Queue?transport.jms.ReplyDestination=ldap://attacker.example.com/x");
     }
 
+    /**
+     * Looked up by JMSOutTransportInfo.createJMSSender, which the sender reaches when
+     * transport.jms.ConnectionFactory names no configured factory.
+     */
+    public void testRemoteSchemeAsConnectionFactoryNameIsRefused() {
+        assertRefused("jms:/Queue?transport.jms.ConnectionFactory=none"
+                + "&transport.jms.ConnectionFactoryJNDIName=ldap://attacker.example.com:1389/x");
+        assertRefused("jms:/Queue?transport.jms.ConnectionFactoryJNDIName=rmi://attacker.example.com/x");
+        assertAccepted("jms:/Queue?transport.jms.ConnectionFactoryJNDIName=QueueConnectionFactory");
+    }
+
     /** The provider URL decides where every name resolves, including plain ones. */
     public void testRemoteSchemeAsProviderUrlIsRefused() {
         assertRefused("jms:/Queue?java.naming.provider.url=ldap://attacker.example.com:1389");
