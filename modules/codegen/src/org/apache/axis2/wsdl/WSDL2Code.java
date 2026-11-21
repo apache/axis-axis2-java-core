@@ -90,21 +90,35 @@ public class WSDL2Code {
     }
     
     private static void checkAuthentication(CommandLineOptionParser commandLineOptionParser) {
-        
+        Authenticator authenticator = createAuthenticator(commandLineOptionParser);
+        if (authenticator != null) {
+            Authenticator.setDefault(authenticator);
+        }
+    }
+
+    /**
+     * Builds the authenticator for the credentials given on the command line, or
+     * returns {@code null} if there are none.
+     */
+    static Authenticator createAuthenticator(CommandLineOptionParser commandLineOptionParser) {
+
         String userName = null;
         String password = null;
-        
-        Map allOptions = commandLineOptionParser.getAllOptions();        
+        // Where the credentials may be sent: null means the proxy, otherwise the
+        // server the WSDL URL names.
+        URL origin = null;
+
+        Map allOptions = commandLineOptionParser.getAllOptions();
         CommandLineOption userOption = (CommandLineOption) allOptions
                 .get(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_USER_OPTION_LONG);
         CommandLineOption passwordOption = (CommandLineOption) allOptions
                 .get(CommandLineOptionConstants.WSDL2JavaConstants.HTTP_PROXY_PASSWORD_OPTION_LONG);
         CommandLineOption urlOption = (CommandLineOption) allOptions
                 .get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
-        
-        if(urlOption == null){
-            return;
-        }        
+
+        if (urlOption == null) {
+            return null;
+        }
         if (userOption != null) {
             userName = userOption.getOptionValue();
         }
@@ -113,12 +127,12 @@ public class WSDL2Code {
 
         }
         if (userName == null) {
-            // Try to collect user name and password from UserInfo part of the URL. 
+            // Try to collect user name and password from UserInfo part of the URL.
             URL url = null;
             try {
                 url = new URL(urlOption.getOptionValue());
             } catch (MalformedURLException e) {
-                return;
+                return null;
             }
 
             String userInfo = url.getUserInfo();
@@ -131,21 +145,55 @@ public class WSDL2Code {
                 } else {
                     userName = userInfo;
                 }
+                origin = url;
             }
 
         }
-        
-        if (userName != null) {
-            final String user = userName;
-            final String pass = password == null ? "" : password;
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(user, pass.toCharArray());
+
+        if (userName == null) {
+            return null;
+        }
+        return new ScopedAuthenticator(userName, password == null ? "" : password, origin);
+    }
+
+    /**
+     * Answers a challenge only from the party the credentials were given for.
+     * <p>
+     * This authenticator is JVM-wide, and code generation fetches every document the
+     * WSDL imports, from whatever host the WSDL names. Do not go back to returning the
+     * credentials unconditionally: any of those hosts could then collect them with a
+     * 401. Proxy credentials answer proxy challenges only; credentials taken from the
+     * WSDL URL answer only the host and port of that URL.
+     */
+    static final class ScopedAuthenticator extends Authenticator {
+        private final String user;
+        private final String password;
+        private final URL origin;
+
+        ScopedAuthenticator(String user, String password, URL origin) {
+            this.user = user;
+            this.password = password;
+            this.origin = origin;
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            if (origin == null) {
+                if (getRequestorType() != RequestorType.PROXY) {
+                    return null;
                 }
-            });
+            } else {
+                int originPort = origin.getPort() != -1 ? origin.getPort() : origin.getDefaultPort();
+                if (getRequestorType() != RequestorType.SERVER
+                        || !origin.getHost().equalsIgnoreCase(getRequestingHost())
+                        || originPort != getRequestingPort()) {
+                    return null;
+                }
+            }
+            return new PasswordAuthentication(user, password.toCharArray());
         }
     }
-    
+
     private static void setSystemProperties(CommandLineOptionParser commandLineOptionParser) {
         Map<String, CommandLineOption> allOptions = commandLineOptionParser.getAllOptions();
         // System properties follow "-Dproperty=value" format, only key is required.
