@@ -178,6 +178,47 @@ public class AxisServletJSONOnlyTest extends TestCase {
     }
 
     /**
+     * application/json in a parameter does not make a form-encoded POST a JSON request.
+     * The type is CORS-safelisted, so a cross-site page can send it without a preflight.
+     */
+    public void testEnableJSONOnlyRejectsJSONInContentTypeParameter() throws Exception {
+        axisConfig.addParameter(new Parameter(Constants.Configuration.ENABLE_JSON_ONLY, "true"));
+        axisConfig.addMessageBuilder("application/x-www-form-urlencoded",
+                new org.apache.axis2.builder.XFormURLEncodedBuilder());
+
+        final int[] invocations = new int[1];
+        axisConfig.getService("TestService").getOperation(new QName("testOperation"))
+                .setMessageReceiver(new org.apache.axis2.engine.MessageReceiver() {
+                    public void receive(MessageContext messageContext) {
+                        invocations[0]++;
+                    }
+                });
+
+        String uri = "/axis2/services/TestService/testOperation";
+        when(mockRequest.getRequestURI()).thenReturn(uri);
+        when(mockRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080" + uri));
+        when(mockRequest.getMethod()).thenReturn("POST");
+        when(mockRequest.getContentType()).thenReturn("application/x-www-form-urlencoded; x=application/json");
+        when(mockRequest.getInputStream()).thenReturn(new MockServletInputStream("value=1"));
+
+        when(mockServletContext.getAttribute(AxisServlet.CONFIGURATION_CONTEXT)).thenReturn(configContext);
+        servlet.init(mockServletConfig);
+        servlet.doPost(mockRequest, mockResponse);
+
+        assertEquals("the operation must not be reached", 0, invocations[0]);
+        assertTrue("Should return JSON error message",
+                   responseOutputStream.toString().contains("application/json is mandatory"));
+    }
+
+    public void testIsJSONRequestComparesTheMediaType() {
+        assertTrue(HTTPTransportUtils.isJSONRequest("application/json"));
+        assertTrue(HTTPTransportUtils.isJSONRequest("application/json; charset=UTF-8"));
+        assertTrue(HTTPTransportUtils.isJSONRequest("Application/JSON"));
+        assertFalse(HTTPTransportUtils.isJSONRequest("text/plain; x=application/json"));
+        assertFalse(HTTPTransportUtils.isJSONRequest("application/json-patch+json"));
+    }
+
+    /**
      * Test that non-JSON requests are rejected when enableJSONOnly=true.
      */
     public void testEnableJSONOnlyRejectsNonJSONRequests() throws Exception {
