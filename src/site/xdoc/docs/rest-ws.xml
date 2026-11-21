@@ -140,6 +140,13 @@ via HTTP GET. For example, the following URL requests the Version Service via
 HTTP GET. However, the Web service arriving via GET assumes REST. Other
 parameters are converted into XML and put into the SOAP body.</p>
 <pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
+<p><strong>Note:</strong> this does not work on a JSON-only deployment. When
+<code>enableJSONOnly</code> is <code>true</code> in axis2.xml, as it is in the Spring Boot
+starter's default JSON mode, GET, PUT and DELETE requests are refused with HTTP 400 unless
+they carry <code>Content-Type: application/json</code> (since 2.0.3). The axis2.xml in the
+WAR and binary distributions sets it to <code>false</code>, so the examples on this page
+work there unchanged. See the
+<a href="json-springboot-userguide.html">JSON and REST with Spring Boot User's Guide</a>.</p>
 <p>The result can be shown in the browser as follows:</p>
 <img src="images/userguide/http-get-ws.jpg"/>
 

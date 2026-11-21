@@ -192,6 +192,17 @@ disables Axis2 functionality not required for JSON and sets up the server to exp
 <li><strong>Request Filtering:</strong> Blocks non-JSON requests at the transport level, providing an additional security barrier</li>
 </ul>
 
+<p><strong>All HTTP methods are covered.</strong> Since 2.0.3 the check applies to GET, PUT and
+DELETE as well as POST. A request is accepted only when the media type of its
+<code>Content-Type</code> header is exactly <code>application/json</code>; parameters such as
+<code>; charset=UTF-8</code> are allowed, but <code>application/json</code> appearing only inside
+a parameter is not. A plain browser or <code>curl</code> GET to a service URL such as
+<code>/services/MyService/myOperation?arg=value</code> is therefore refused with HTTP 400 and
+the JSON-only error body. Call services with POST and a JSON body, or add
+<code>-H "Content-Type: application/json"</code> to the request. Metadata requests
+(<code>?wsdl</code>, <code>?xsd</code>, the service listing) and the OpenAPI and Swagger UI
+endpoints are not affected.</p>
+
 <p><strong>Security Best Practice:</strong> When combined with HTTPS-only enforcement (required for HTTP/2),
 enableJSONOnly creates a secure, hardened API endpoint that accepts only authenticated JSON requests over encrypted connections.</p>
 </p>

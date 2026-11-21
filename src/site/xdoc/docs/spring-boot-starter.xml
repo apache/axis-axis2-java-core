@@ -352,6 +352,13 @@ axis2.mode=json
 <p>Uses <code>JsonRpcMessageReceiver</code>, <code>JSONBasedDefaultDispatcher</code>,
 and <code>enableJSONOnly=true</code>. Choose this for new services, MCP/AI integration,
 and REST/OpenAPI consumers.</p>
+<p>With <code>enableJSONOnly=true</code>, every request to a service must carry
+<code>Content-Type: application/json</code>, whatever the HTTP method. Since 2.0.3 this
+includes GET, PUT and DELETE: a plain GET that passes its arguments in the query string
+is refused with HTTP 400. Send POST with a JSON body, or set the JSON content type on
+the request. If a deployment needs query-string GET access to its services, use a
+custom axis2.xml (see below) with <code>enableJSONOnly=false</code>,
+which gives up the JSON-only enforcement for all methods.</p>
 
 <h3>SOAP mode (<code>axis2.mode=soap</code>)</h3>
 <pre>
