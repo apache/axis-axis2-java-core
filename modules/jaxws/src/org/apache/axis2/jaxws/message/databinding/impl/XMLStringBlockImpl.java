@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.ds.StringOMDataSource;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.databinding.XMLStringBlock;
@@ -86,7 +87,8 @@ public class XMLStringBlockImpl extends BlockImpl<String,Void> implements XMLStr
     protected XMLStreamReader _getReaderFromBO(String busObj, Void busContext)
             throws XMLStreamException {
         // Create an XMLStreamReader from the inputFactory using the String as the sources
-        return StAXUtils.createXMLStreamReader(new StringReader(busObj));
+        return StAXUtils.createXMLStreamReader(StAXParserConfiguration.STANDALONE,
+                new StringReader(busObj));
     }
 
     @Override

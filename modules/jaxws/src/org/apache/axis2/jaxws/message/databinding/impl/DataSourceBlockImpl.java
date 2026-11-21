@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.util.StAXParserConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.builder.DataSourceBuilder;
@@ -123,7 +124,8 @@ public class DataSourceBlockImpl extends BlockImpl<DataSource,Void> implements D
     protected XMLStreamReader _getReaderFromBO(DataSource busObj, Void busContext)
             throws XMLStreamException, WebServiceException {
         try {
-            return StAXUtils.createXMLStreamReader(busObj.getInputStream());
+            return StAXUtils.createXMLStreamReader(StAXParserConfiguration.STANDALONE,
+                    busObj.getInputStream());
         } catch (Exception e) {
             String className = (busObj == null) ? "none" : busObj.getClass().getName();
             throw ExceptionFactory
