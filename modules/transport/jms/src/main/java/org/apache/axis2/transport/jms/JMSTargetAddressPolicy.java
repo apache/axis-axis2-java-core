@@ -34,11 +34,13 @@ import org.apache.axis2.transport.base.BaseUtils;
 /**
  * Screens a JMS target address for JNDI names that resolve somewhere remote.
  * <p>
- * A JMS EPR is turned into two JNDI lookups and one JNDI environment:
+ * A JMS EPR is turned into three JNDI lookups and one JNDI environment:
  * <ul>
  * <li>the destination name, which is everything between {@code jms:/} and the query
  *     string ({@link JMSUtils#getDestination}),</li>
  * <li>the reply destination named by {@code transport.jms.ReplyDestination},</li>
+ * <li>the connection factory named by {@code transport.jms.ConnectionFactoryJNDIName},
+ *     looked up when the sender has no configured factory for the address,</li>
  * <li>{@code java.naming.provider.url}, which says where names resolve.</li>
  * </ul>
  * JNDI resolves a name carrying a URL scheme through that scheme's URL context
@@ -89,6 +91,12 @@ final class JMSTargetAddressPolicy {
         Map<String, String> properties = BaseUtils.getEPRProperties(targetAddress);
         reason = checkLookupName("reply destination name",
                 properties.get(JMSConstants.PARAM_REPLY_DESTINATION));
+        if (reason != null) {
+            return reason;
+        }
+
+        reason = checkLookupName("connection factory name",
+                properties.get(JMSConstants.PARAM_CONFAC_JNDI_NAME));
         if (reason != null) {
             return reason;
         }
