@@ -41,6 +41,8 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Date;
@@ -799,10 +801,12 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     private void deleteTempFiles(final File dir) {
+        // Do not descend through a symbolic link: the temp directory can sit in a
+        // shared location, and following a link would delete its target's contents.
         Boolean isDir = AccessController.doPrivileged(
                 new PrivilegedAction<Boolean>() {
                     public Boolean run() {
-                        return dir.isDirectory();
+                        return Files.isDirectory(dir.toPath(), LinkOption.NOFOLLOW_LINKS);
                     }
                 }
         );
