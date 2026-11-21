@@ -183,6 +183,28 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
     
     protected abstract File[] getClassDirectories();
 
+    /**
+     * Resolves the directory a service description is written to.
+     * <p>
+     * The name comes from a services.xml that may have been generated from somebody
+     * else's WSDL, where it is the wsdl:service name verbatim, so it can carry
+     * separators and "..". Keep this check: without it the name decides where the
+     * descriptor and the files next to it are written.
+     */
+    static File resolveServiceDirectory(File parentDirectory, String serviceName)
+            throws MojoFailureException, IOException {
+        if (serviceName == null || serviceName.isEmpty()) {
+            throw new MojoFailureException("The service has no name");
+        }
+        File serviceDirectory = new File(parentDirectory, serviceName);
+        String canonicalParent = parentDirectory.getCanonicalPath();
+        if (!serviceDirectory.getCanonicalPath().startsWith(canonicalParent + File.separator)) {
+            throw new MojoFailureException("The service name '" + serviceName
+                    + "' resolves to a location outside " + canonicalParent);
+        }
+        return serviceDirectory;
+    }
+
     private static void applyParameters(OMElement parentElement, Parameter[] parameters) {
         if (parameters == null) {
             return;
@@ -343,7 +365,7 @@ public abstract class AbstractCreateRepositoryMojo extends AbstractMojo {
                         }
                         String serviceName = serviceElement.getAttributeValue(new QName("name"));
                         log.info("Building service " + serviceName);
-                        metaInfDirectory = new File(new File(parentDirectory, serviceName), "META-INF");
+                        metaInfDirectory = new File(resolveServiceDirectory(parentDirectory, serviceName), "META-INF");
                         metaInfDirectory.mkdirs();
                         if (serviceDescription.getScope() != null) {
                             serviceElement.addAttribute("scope", serviceDescription.getScope(), null);
