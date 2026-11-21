@@ -48,10 +48,16 @@ public class DataSourceBuilder implements Builder {
         
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMNamespace ns = factory.createOMNamespace("", "");
+        // Bounded for the same reason as the other builders that read the
+        // transport stream directly: this one copies the whole body into a
+        // byte[], so without a ceiling an anonymous caller sizes the allocation.
+        long maxRequestSize = RequestSizeLimits.resolve(msgContext,
+                RequestSizeLimits.SOAP_MAX_REQUEST_SIZE,
+                RequestSizeLimits.DEFAULT_SOAP_MAX_REQUEST_SIZE);
         byte[] bytes;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-            IOUtils.copy(inputStream, baos, -1);
+            IOUtils.copy(BoundedInputStream.wrap(inputStream, maxRequestSize), baos, -1);
             baos.flush();
             bytes = baos.toByteArray();
         } catch (IOException e) {

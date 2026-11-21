@@ -48,8 +48,15 @@ public class ApplicationXMLBuilder implements Builder {
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         if (inputStream != null) {
             try {
-                
-                PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream);
+                // Bounded for the same reason as SOAPBuilder: this reads the
+                // transport stream directly, and application/xml is registered in
+                // every shipped config, so the plain SOAP/POX ceiling was avoided
+                // by sending the same body with this Content-Type.
+                long maxRequestSize = RequestSizeLimits.resolve(messageContext,
+                        RequestSizeLimits.SOAP_MAX_REQUEST_SIZE,
+                        RequestSizeLimits.DEFAULT_SOAP_MAX_REQUEST_SIZE);
+                PushbackInputStream pushbackInputStream = new PushbackInputStream(
+                        BoundedInputStream.wrap(inputStream, maxRequestSize));
                 int b;
                 if ((b = pushbackInputStream.read()) > 0) {
                     pushbackInputStream.unread(b);
