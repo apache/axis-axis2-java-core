@@ -19,6 +19,7 @@
 
 package org.apache.axis2.builder;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -94,7 +96,7 @@ public class MultipartFormDataBuilder implements Builder {
 
         MultipleEntryHashMap parameterMap = new MultipleEntryHashMap();
 
-        List items = parseRequest(new JakartaServletRequestContext(request), messageContext);
+        List items = parseRequest(request, messageContext);
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
             DiskFileItem diskFileItem = (DiskFileItem)iter.next();
@@ -144,16 +146,27 @@ public class MultipartFormDataBuilder implements Builder {
         }
     }
 
-    private static List parseRequest(JakartaServletRequestContext requestContext,
+    private static List parseRequest(HttpServletRequest request,
                                      MessageContext messageContext)
             throws FileUploadException {
         // Create a factory for disk-based file items. Parts above the factory's
         // threshold spill to a temp file; register them so the file goes away
         // once the item that owns it is unreachable.
-	DiskFileItemFactory fileItemFactory = DiskFileItemFactory.builder()
+        DiskFileItemFactory.Builder factoryBuilder = DiskFileItemFactory.builder()
                 .setCharset(StandardCharsets.UTF_8)
-                .setFileCleaningTracker(MultipartTempFileTracker.getTracker())
-                .get();
+                .setFileCleaningTracker(MultipartTempFileTracker.getTracker());
+        // commons-fileupload2 otherwise spills into java.io.tmpdir, creating the
+        // file with the process umask, so an uploaded part is readable by other
+        // local accounts. Use the servlet context's private temp directory, as
+        // the container's own multipart handling does.
+        ServletContext servletContext = request.getServletContext();
+        Object tempDir = servletContext == null ? null
+                : servletContext.getAttribute(ServletContext.TEMPDIR);
+        if (tempDir instanceof File) {
+            factoryBuilder.setPath(((File) tempDir).toPath());
+        }
+        DiskFileItemFactory fileItemFactory = factoryBuilder.get();
+        JakartaServletRequestContext requestContext = new JakartaServletRequestContext(request);
         JakartaServletFileUpload upload = new JakartaServletFileUpload<>(fileItemFactory);
         // There must be a limit.
         // This is for contentType="multipart/form-data"

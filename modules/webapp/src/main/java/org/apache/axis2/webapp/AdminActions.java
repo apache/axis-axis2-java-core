@@ -41,6 +41,7 @@ import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletRequestCont
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
@@ -152,7 +153,15 @@ final class AdminActions {
         boolean isMultipart = JakartaServletFileUpload.isMultipartContent(reqContext);
         if (isMultipart) {
             try {
-		JakartaServletFileUpload upload = new JakartaServletFileUpload<>(DiskFileItemFactory.builder().get());
+                // Spill into the servlet context's private temp directory rather
+                // than java.io.tmpdir, where the archive would be readable by
+                // other local accounts while it is being uploaded.
+                DiskFileItemFactory.Builder factoryBuilder = DiskFileItemFactory.builder();
+                Object tempDir = req.getServletContext().getAttribute(ServletContext.TEMPDIR);
+                if (tempDir instanceof File) {
+                    factoryBuilder.setPath(((File) tempDir).toPath());
+                }
+                JakartaServletFileUpload upload = new JakartaServletFileUpload<>(factoryBuilder.get());
                 // There must be a limit. This is for an aar file upload,
                 // presumably only one. See:
                 // https://axis.apache.org/axis2/java/core/docs/webadminguide.html#upservice
