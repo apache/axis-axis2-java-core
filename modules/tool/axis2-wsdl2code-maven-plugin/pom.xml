@@ -158,7 +158,8 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
         </dependency>
-        <dependency><!-- Maven supports SLF4J, so use it. -->
+        <dependency>
+            <!-- Maven supports SLF4J, so use it. -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>

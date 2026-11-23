@@ -530,7 +530,8 @@
                 </executions>
             </plugin>
             
-            <plugin><!-- We don't want to deploy the distributions to the Maven repository.
+            <plugin>
+                <!-- We don't want to deploy the distributions to the Maven repository.
                      Reasons:
                       * Deploying the distributions will heavily increase the size of
                         each release on the Maven repos.

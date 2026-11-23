@@ -109,7 +109,8 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency><!-- Not required for the Maven build, but necessary to avoid errors when
+        <dependency>
+            <!-- Not required for the Maven build, but necessary to avoid errors when
                  importing the project into an IDE. -->
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
@@ -148,7 +149,8 @@
             <version>${project.version}</version>
         </dependency>
         <!-- AXIS2-6106: axis2-transport-xmpp removed -->
-        <dependency><!-- codegen is required for Rampart because of AXIS2-4265 -->
+        <dependency>
+            <!-- codegen is required for Rampart because of AXIS2-4265 -->
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
             <version>${project.version}</version>
@@ -196,7 +198,6 @@
 	<!--
 	 [WEB-INF/lib/commons-fileupload2-jakarta-servlet6-2.0.0-M2.jar, WEB-INF/lib/jetty-jakarta-servlet-api-5.0.2.jar
 	-->
-
     </dependencies>
 
     <build>
@@ -243,7 +244,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin><!-- Compile the JSPs so that syntax errors are detected during the build. -->
+            <plugin>
+                <!-- Compile the JSPs so that syntax errors are detected during the build. -->
                 <groupId>org.eclipse.jetty.ee10</groupId>
                 <artifactId>jetty-ee10-jspc-maven-plugin</artifactId>
                 <executions>
