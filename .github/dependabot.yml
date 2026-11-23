@@ -20,35 +20,18 @@ updates:
       - "modules/samples/**"
     schedule:
       interval: "weekly"
-    ignore:
-      # IO-734
-      - dependency-name: "commons-io:commons-io"
-        versions:
-        - "2.9.0"
-      # Don't upgrade Rhino unless somebody is willing to figure out the necessary code changes.
-      - dependency-name: "rhino:js"
-      # maven-plugin-plugin 3.6.2 is affected by MPLUGIN-384
-      - dependency-name: "org.apache.maven.plugins:maven-plugin-plugin"
-        versions:
-        - "3.6.2"
-      # Recent versions of google-java-format access internal Java APIs and adding the required JVM
-      # flags isn't an option because the code needs to run in Ant.
-      - dependency-name: "com.google.googlejavaformat:google-java-format"
-        versions:
-        - ">= 1.8"
     open-pull-requests-limit: 15
     groups:
-      production-dependencies:
-        dependency-type: "production"
+      all:
         exclude-patterns:
           # we aren't compatible with latest here, excluded here so that it doesn't block the other updates
           - "org.glassfish.jaxb:*"
-      development-dependencies:
-        dependency-type: "development"
+          # uses jackson 3, we still depend on jackson 2
+          - "io.swagger.core.v3:*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     groups:
-      production-actions:
+      all:
         dependency-type: "production"
