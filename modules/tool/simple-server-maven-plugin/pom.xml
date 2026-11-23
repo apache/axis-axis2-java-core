@@ -98,7 +98,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency><!-- Maven supports SLF4J -->
+        <dependency>
+            <!-- Maven supports SLF4J -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>

@@ -1302,7 +1302,8 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-            <plugin><!-- Always build source JARs -->
+            <plugin>
+                <!-- Always build source JARs -->
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
@@ -1529,7 +1530,8 @@
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
-            <plugin><!-- site-deploy is not finding our JavaDoc, so fix that with some maven-resources-plugin config -->
+            <plugin>
+                <!-- site-deploy is not finding our JavaDoc, so fix that with some maven-resources-plugin config -->
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
